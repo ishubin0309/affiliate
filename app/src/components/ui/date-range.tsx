@@ -1,6 +1,6 @@
 import { FormLabel, GridItem } from "@chakra-ui/react";
-import { queryTypes, useQueryState } from "next-usequerystate";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import {
   Select,
@@ -10,12 +10,21 @@ import {
   SelectValue,
 } from "./select";
 
-export const DateRangeSelect = ({}) => {
+export const useDateRange = (defaultRange?: any) => {
+  const router = useRouter();
+  const { from, to } = router.query;
+  console.log("router.query", router.query);
+
+  // console.log(value);
+  return { from, to };
+};
+
+export const DateRangeSelect = ({ setFrom, setTo }) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [userDate, setuserDate] = useState("");
-  const [from, setFrom] = useQueryState("from", queryTypes.isoDateTime);
-  const [to, setTo] = useQueryState("to", queryTypes.isoDateTime);
+  const router = useRouter();
+
   const handleUserDateChange = (userDate: string) => {
     const date = new Date();
     switch (userDate) {
@@ -89,16 +98,17 @@ export const DateRangeSelect = ({}) => {
         break;
     }
   };
-  //   useEffect(() => {
-  //     setFrom(startDate);
-  //     setTo(endDate);
-  //   }, [startDate, endDate]);
 
-  console.log("from", from, "to", to);
+  useEffect(() => {
+    setFrom(startDate);
+    setTo(endDate);
+  }, [startDate, endDate]);
+
   return (
     <>
       <GridItem>
         <div className="mt-2">
+          <FormLabel>Select Date: </FormLabel>
           <Select onValueChange={handleUserDateChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue />

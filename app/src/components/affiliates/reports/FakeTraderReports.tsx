@@ -1,6 +1,7 @@
 import { fakeTraderReportData } from "@/components/affiliates/reports/fake-trader-report-data";
 import { QuerySelect } from "@/components/common/QuerySelect";
 import { DataTable } from "@/components/common/data-table/DataTable";
+import { Button } from "@/components/ui/button";
 import { DateRangeSelect } from "@/components/ui/date-range";
 import { Pagination } from "@/components/ui/pagination";
 import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
@@ -9,20 +10,20 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import type { TraderReportType } from "../../../server/db-types";
-import { useDateRange } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
 
 export const FakeTraderReports = () => {
   const router = useRouter();
-  const { merchant_id } = router.query;
-  const { from, to } = useDateRange();
   const [traderID, setTraderID] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemPerPage] = useState(2);
+  const [from, setFrom] = useState(new Date());
+  const [to, setTo] = useState(new Date());
 
   // TODO: Add pagination
   const pageSize = 10;
   const page = 1;
+  console.log(router.query);
 
   const isLoading = false;
   const startIndex = (page - 1) * pageSize;
@@ -52,7 +53,6 @@ export const FakeTraderReports = () => {
     isLoading,
     from,
     to,
-    merchant_id,
   });
 
   if (isLoading) {
@@ -180,6 +180,12 @@ export const FakeTraderReports = () => {
     setItemPerPage(e);
   };
 
+  // useEffect(() => {
+  //   console.log("from", from, "to", to);
+  // }, [from, to]);
+
+  // console.log("query", router.query);
+
   return (
     <>
       <Grid
@@ -190,7 +196,7 @@ export const FakeTraderReports = () => {
         alignItems={"center"}
         alignSelf="center"
       >
-        <DateRangeSelect />
+        <DateRangeSelect setFrom={setFrom} setTo={setTo} />
         <GridItem>
           <QuerySelect
             label="Merchant"
@@ -211,6 +217,9 @@ export const FakeTraderReports = () => {
             choices={creativeType}
             varName="creative_type"
           />
+        </GridItem>
+        <GridItem mt="10">
+          <Button variant="primary">apply</Button>
         </GridItem>
       </Grid>
       <h2>Trader Report</h2>
