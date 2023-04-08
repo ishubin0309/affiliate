@@ -1,7 +1,8 @@
-import { FormLabel, GridItem } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Label } from "./input";
 import {
   Select,
   SelectContent,
@@ -19,7 +20,12 @@ export const useDateRange = (defaultRange?: any) => {
   return { from, to };
 };
 
-export const DateRangeSelect = ({ setFrom, setTo }) => {
+interface Props {
+  setFrom: React.Dispatch<React.SetStateAction<Date>>;
+  setTo: React.Dispatch<React.SetStateAction<Date>>;
+}
+
+export const DateRangeSelect = ({ setFrom, setTo }: Props) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [userDate, setuserDate] = useState("");
@@ -104,48 +110,88 @@ export const DateRangeSelect = ({ setFrom, setTo }) => {
     setTo(endDate);
   }, [startDate, endDate]);
 
+  const dates = [
+    {
+      id: "today",
+      title: "Today",
+    },
+    {
+      id: "yesterday",
+      title: "Yesterday",
+    },
+    {
+      id: "this_week",
+      title: "This Week",
+    },
+    {
+      id: "this_month",
+      title: "This Month",
+    },
+    {
+      id: "last_month",
+      title: "Last Month",
+    },
+    {
+      id: "this_year",
+      title: "This Year",
+    },
+    {
+      id: "last_year",
+      title: "Last Year",
+    },
+    {
+      id: "custom",
+      title: "Custom",
+    },
+  ];
   return (
     <>
-      <GridItem>
-        <div className="mt-2">
-          <FormLabel>Select Date: </FormLabel>
-          <Select onValueChange={handleUserDateChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="yesterday">YesterDay</SelectItem>
-              <SelectItem value="this_week">This Week</SelectItem>
-              <SelectItem value="this_month">This Month</SelectItem>
-              <SelectItem value="last_month">Last Month</SelectItem>
-              <SelectItem value="this_year">This Year</SelectItem>
-              <SelectItem value="last_year">Last Year</SelectItem>
-              <SelectItem value="custom">Custom</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </GridItem>
-      <GridItem>
-        <FormLabel>From: </FormLabel>
+      <div>
+        <Label>Select Date: </Label>
+        <Select onValueChange={handleUserDateChange}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="today">Today</SelectItem>
+            <SelectItem value="yesterday">YesterDay</SelectItem>
+            <SelectItem value="this_week">This Week</SelectItem>
+            <SelectItem value="this_month">This Month</SelectItem>
+            <SelectItem value="last_month">Last Month</SelectItem>
+            <SelectItem value="this_year">This Year</SelectItem>
+            <SelectItem value="last_year">Last Year</SelectItem>
+            <SelectItem value="custom">Custom</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* <QuerySelect
+          label="Select Date:"
+          choices={dates}
+          varName="merchant_id"
+        /> */}
+      </div>
+      <div>
+        <Label>From: </Label>
         <DatePicker
           selected={startDate}
           onChange={(date: Date) => setStartDate(date)}
           selectsStart
           startDate={startDate}
           endDate={endDate}
+          className="border-slate-300 placeholder:text-slate-400 focus:ring-slate-400 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 flex h-9 w-max rounded-md border bg-transparent py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         />
-      </GridItem>
-      <GridItem>
-        <FormLabel>To: </FormLabel>
+      </div>
+      <div>
+        <Label>To: </Label>
         <DatePicker
           selected={endDate}
           onChange={(date: Date) => setEndDate(date)}
           selectsEnd
           startDate={startDate}
           endDate={endDate}
+          className="border-slate-300 placeholder:text-slate-400 focus:ring-slate-400 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 flex h-9 w-max rounded-md border bg-transparent py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         />
-      </GridItem>
+      </div>
     </>
   );
 };

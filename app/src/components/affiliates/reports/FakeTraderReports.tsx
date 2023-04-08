@@ -1,10 +1,12 @@
 import { fakeTraderReportData } from "@/components/affiliates/reports/fake-trader-report-data";
 import { QuerySelect } from "@/components/common/QuerySelect";
 import { DataTable } from "@/components/common/data-table/DataTable";
+import { Grid } from "@/components/ui/Grid";
 import { Button } from "@/components/ui/button";
 import { DateRangeSelect } from "@/components/ui/date-range";
+import { DropdownButton } from "@/components/ui/drop-down";
+import { Input, Label } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -19,11 +21,15 @@ export const FakeTraderReports = () => {
   const [itemsPerPage, setItemPerPage] = useState(2);
   const [from, setFrom] = useState(new Date());
   const [to, setTo] = useState(new Date());
+  const [isOpen, setOpen] = useState(false);
+
+  const handleDropDown = () => {
+    setOpen(!isOpen);
+  };
 
   // TODO: Add pagination
   const pageSize = 10;
   const page = 1;
-  console.log(router.query);
 
   const isLoading = false;
   const startIndex = (page - 1) * pageSize;
@@ -186,52 +192,45 @@ export const FakeTraderReports = () => {
 
   // console.log("query", router.query);
 
+  console.log("router", router.query);
+  console.log("trader id ----->", traderID);
+
   return (
     <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        width="90%"
-        alignItems={"center"}
-        alignSelf="center"
-      >
+      <Grid columns={4} gaps={2}>
         <DateRangeSelect setFrom={setFrom} setTo={setTo} />
-        <GridItem>
+        <div>
           <QuerySelect
             label="Merchant"
             choices={merchants}
             varName="merchant_id"
           />
-        </GridItem>{" "}
-        <GridItem>
-          <FormLabel>Trader ID</FormLabel>
+        </div>
+        <div>
+          <Label>Trader ID</Label>
           <Input
             value={traderID}
             onChange={(event) => setTraderID(event.target.value)}
           />
-        </GridItem>
-        <GridItem>
+        </div>
+        <div>
           <QuerySelect
             label="Creative Type"
             choices={creativeType}
             varName="creative_type"
           />
-        </GridItem>
-        <GridItem mt="10">
+        </div>
+        <div className="my-8 ml-4">
           <Button variant="primary">apply</Button>
-        </GridItem>
+        </div>
+        <div className="my-8 ml-4">
+          <DropdownButton />
+        </div>
       </Grid>
       <h2>Trader Report</h2>
-      <Grid
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-        alignSelf="center"
-        overflow={"scroll"}
-      >
+      <div className="grid  gap-4">
         <DataTable data={data} columns={columns} footerData={totalObj} />
-      </Grid>
+      </div>
       <div className="grid grid-cols-2 gap-2">
         <Pagination
           count={5}
