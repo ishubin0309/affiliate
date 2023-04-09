@@ -1,6 +1,5 @@
 import { fakeTraderReportData } from "@/components/affiliates/reports/fake-trader-report-data";
 import { QuerySelect } from "@/components/common/QuerySelect";
-import { Grid } from "@/components/ui/Grid";
 import { Button } from "@/components/ui/button";
 import { DateRangeSelect } from "@/components/ui/date-range";
 import {
@@ -218,11 +217,11 @@ export const FakeTraderReports = () => {
   // console.log("router", router.query);
   // console.log("trader id ----->", traderID);
 
-  console.log("trader colums ------>", traderReportColumns);
+  console.log("trader colums ------>", merchants, creativeType);
 
   return (
     <>
-      <Grid columns={5} gaps={2}>
+      <div className="grid grid grid-cols-5 gap-2">
         <DateRangeSelect setFrom={setFrom} setTo={setTo} />
         <div>
           <QuerySelect
@@ -232,19 +231,20 @@ export const FakeTraderReports = () => {
           />
         </div>
         <div>
-          <Label>Trader ID</Label>
-          <Input
-            value={traderID}
-            onChange={(event) => setTraderID(event.target.value)}
-          />
-        </div>
-        <div>
           <QuerySelect
             label="Creative Type"
             choices={creativeType}
             varName="creative_type"
           />
         </div>
+        <div>
+          <Label>Trader ID</Label>
+          <Input
+            value={traderID}
+            onChange={(event) => setTraderID(event.target.value)}
+          />
+        </div>
+
         <div className="my-6 ml-4">
           <Button variant="primary">apply</Button>
         </div>
@@ -261,10 +261,10 @@ export const FakeTraderReports = () => {
             <DialogHeader>Trader Report</DialogHeader>
             <DialogTitle>Trader Report Control</DialogTitle>
             <DialogDescription>
-              <Grid columns={4} gaps={2}>
+              <div className="grid grid-cols-4 gap-2">
                 {traderReportColumns?.map((item, id) => {
                   return (
-                    <Grid columns={4} gaps={2}>
+                    <div className="grid  grid-cols-4 gap-2">
                       <div className="items-top flex space-x-2">
                         <Switch
                           id={item.id}
@@ -282,16 +282,15 @@ export const FakeTraderReports = () => {
                           </label>
                         </div>
                       </div>
-                    </Grid>
+                    </div>
                   );
                 })}
-                <div>09</div>
-              </Grid>
+              </div>
             </DialogDescription>
           </DialogContent>
         </Dialog>
         <div></div>
-      </Grid>
+      </div>
       <h2>Trader Report</h2>
       <div className="grid  gap-4">
         <DataTable data={data} columns={columns} footerData={totalObj} />

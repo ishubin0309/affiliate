@@ -25,29 +25,6 @@ export const QuerySelect = ({ varName, label, choices, emptyTitle }: Props) => {
     choices ? choices[0] : { id: 0, title: "" }
   );
   return (
-    // <FormControl>
-    //   <FormLabel className="ml-2 text-sm font-medium text-[#525252]">
-    //     {label}
-    //   </FormLabel>
-    //   <CSelect
-    //     placeholder={emptyTitle || "All"}
-    //     value={value || ""}
-    //     bg={"white"}
-    //     className="text-[#666666]"
-    //     fontSize={12}
-    //     onChange={(event) => {
-    //       console.log(`muly:change`, { event: event.target });
-    //       void setValue(event.target.value);
-    //     }}
-    //   >
-    //     {choices?.map(({ id, title }) => (
-    //       <option key={id} value={id}>
-    //         {title}
-    //       </option>
-    //     ))}
-    //   </CSelect>
-    // </FormControl>
-
     <Listbox
       value={selected}
       onChange={(event) => {
