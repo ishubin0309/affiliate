@@ -9,8 +9,12 @@ interface Props {
 
 const Grid = React.forwardRef<HTMLBodyElement, Props>(
   ({ className, children, ...props }) => {
-    console.log("props ----->", props);
-    return <div className={`grid grid grid-cols-4 gap-2`}>{children}</div>;
+    // console.log("props ----->", props);
+    return (
+      <div className={`grid grid grid-cols-${props.columns} gap-${props.gaps}`}>
+        {children}
+      </div>
+    );
   }
 );
 

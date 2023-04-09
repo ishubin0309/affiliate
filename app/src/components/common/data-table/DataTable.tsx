@@ -30,6 +30,13 @@ export function DataTable<Data extends object>({
     },
   });
 
+  // console.log(
+  //   "header groups",
+  //   getHeaderGroups(),
+  //   "row data ---->",
+  //   getRowModel()
+  // );
+
   return (
     <div className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100 scrollbar-thumb-rounded-full  scrollbar-track-rounded-full mt-4 overflow-x-scroll lg:overflow-y-hidden xl:overflow-x-hidden ">
       <table className="w-full border border-[F0F0F0]">
