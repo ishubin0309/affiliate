@@ -11,7 +11,6 @@ interface Props {
 }
 
 const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
-  // const [collapseShow, setCollapseShow] = React.useState(false);
   return (
     <>
       {/* Navbar */}

@@ -19,7 +19,6 @@ import DeviceReport from "./DeviceReport";
 
 import type { TopMerchantCreativeType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { DataTable } from "../../common/data-table/DataTable";
 
 import type { ChangeEvent } from "react";
 
@@ -261,13 +260,13 @@ export const Dashboard = () => {
           <div className="flex justify-between pb-5 font-medium md:pb-8 md:pt-12">
             <div className="flex">
               <button
-                className="mr-3 rounded-md bg-[#2262C6] px-3 py-3 text-white md:px-14"
+                className="mr-3 rounded-md bg-[#2262C6] p-3 text-white md:px-14"
                 onClick={handleSelectAll}
               >
                 Select All
               </button>
               <button
-                className="rounded-md border border-[#1B48BB] bg-[#EFEEFF] px-3 py-3 text-[#1B48BB] md:px-12"
+                className="rounded-md border border-[#1B48BB] bg-[#EFEEFF] p-3 text-[#1B48BB] md:px-12"
                 onClick={handleUnSelectAll}
               >
                 Unselect All
@@ -336,7 +335,7 @@ export const Dashboard = () => {
           })}
       </div>
 
-      <div className="my-6 rounded-2xl bg-white px-2 pt-5 pb-5 shadow-sm md:px-6 ">
+      <div className="my-6 rounded-2xl bg-white px-2 py-5 shadow-sm md:px-6">
         <Tabs defaultValue="Performance">
           <TabsList>
             <TabsTrigger value="Performance">Performace Chart</TabsTrigger>
@@ -364,13 +363,13 @@ export const Dashboard = () => {
           mail={account?.mail}
         />
       </div>
-
-      <div className="mb-5 rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
+      {/*  Top Performing Creative Commented for a while will be added later */}
+      {/* <div className="mb-5 rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
         <div className="text-xl font-bold text-[#2262C6] ">
           Top Performing Creative
         </div>
         <DataTable data={creative} columns={columns} />
-      </div>
+      </div> */}
     </div>
   );
 };

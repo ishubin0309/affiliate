@@ -18,11 +18,9 @@ import { FlagBagProvider } from "@happykit/flags/context";
 import { Toaster } from "@/components/ui/toaster";
 
 import "../styles/globals.css";
-import "@tremor/react/dist/esm/tremor.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "@etchteam/next-pagination/dist/index.css";
 
-import { ChakraProvider } from "@chakra-ui/react";
 import { theme } from "../components/chakra-ui-theme";
 
 type MyAppProps = AppProps<{ session: Session | null }> & {
@@ -42,12 +40,10 @@ const MyApp = ({
   return (
     <FlagBagProvider value={flagBag}>
       <SessionProvider session={session}>
-        <ChakraProvider theme={theme}>
-          <Layout>
-            <Component {...pageProps} />
-            <Toaster />
-          </Layout>
-        </ChakraProvider>
+        <Layout>
+          <Component {...pageProps} />
+          <Toaster />
+        </Layout>
       </SessionProvider>
     </FlagBagProvider>
   );

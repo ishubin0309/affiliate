@@ -1,6 +1,6 @@
-import type { Dispatch, SetStateAction } from "react";
-import { useState, useEffect } from "react";
 import Link from "next/link";
+import type { Dispatch, SetStateAction } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
   activeName: string;
@@ -13,6 +13,7 @@ interface Props {
   linkName: LinkName[];
   setactiveName: Dispatch<SetStateAction<string>>;
   setdropdown: Dispatch<SetStateAction<string>>;
+  setCollapseShow: (value: boolean) => void;
 }
 
 interface LinkName {
@@ -23,6 +24,7 @@ interface LinkName {
 const DropdownLink = ({
   setactiveName,
   setdropdown,
+  setCollapseShow,
   activeName,
   collapseShow,
   dropdown,
@@ -38,8 +40,6 @@ const DropdownLink = ({
 
   const activeDropdown = (value: string) => {
     setdropdown(value);
-    console.log(value);
-    console.log(dropdown);
   };
 
   const activeDropdownVector = (value: boolean) => {
@@ -70,7 +70,7 @@ const DropdownLink = ({
         }}
       >
         <Link
-          className="text-white-600 hover:text-white-800 dark:hover:bg-gray-600 relative flex h-11 flex-row items-center justify-between pl-8 hover:bg-white focus:outline-none"
+          className="text-white-600 hover:text-white-800 focus:orutline-none relative flex h-11 flex-row items-center justify-between pl-4 hover:bg-white dark:hover:bg-gray-600"
           href={
             "/affiliates/" +
             (parentLink == "" ? "" : parentLink + "/") +
@@ -80,7 +80,14 @@ const DropdownLink = ({
             activeOnLink(true);
           }}
         >
-          <div className="text-white-600 hover:text-white-800 dark:hover:bg-gray-600 relative flex h-11 flex-row items-center hover:bg-white focus:outline-none">
+          <div
+            className="text-white-600 hover:text-white-800 relative flex h-11 flex-row items-center hover:bg-white focus:outline-none dark:hover:bg-gray-600"
+            onClick={(e) => {
+              console.log(`muly:click link ${collapseShow}`, {});
+              e.preventDefault();
+              setCollapseShow(!collapseShow);
+            }}
+          >
             <img
               alt="..."
               className="w-6 border-none pt-0.5 align-middle"
@@ -104,27 +111,33 @@ const DropdownLink = ({
               ""
             )}
           </div>
-          <div
-            className="mr-8 truncate py-0.5 text-xs font-medium tracking-wide"
-            onClick={(e) => {
-              e.preventDefault();
-              console.log(dropdownVector);
-              activeDropdownVector(!dropdownVector);
-            }}
-          >
-            <img
-              alt="..."
-              className={
-                "border-none align-middle" +
-                (dropdownVector && dropdown == dropdownName ? " w-3" : " w-2 ")
-              }
-              src={
-                "/img/icons/Vector" +
-                (dropdownVector && dropdown == dropdownName ? "1" : "") +
-                ".png"
-              }
-            />
-          </div>
+          {collapseShow ? (
+            <div
+              className="mr-8 truncate py-0.5 text-xs font-medium tracking-wide"
+              onClick={(e) => {
+                console.log(`muly:click dropdownVector`, { dropdownVector });
+                e.preventDefault();
+                activeDropdownVector(!dropdownVector);
+              }}
+            >
+              <img
+                alt="..."
+                className={
+                  "border-none align-middle" +
+                  (dropdownVector && dropdown == dropdownName
+                    ? " w-3"
+                    : " w-2 ")
+                }
+                src={
+                  "/img/icons/Vector" +
+                  (dropdownVector && dropdown == dropdownName ? "1" : "") +
+                  ".png"
+                }
+              />
+            </div>
+          ) : (
+            ""
+          )}
         </Link>
       </div>
 
@@ -140,12 +153,14 @@ const DropdownLink = ({
           <li key={index}>
             <div
               onClick={(e) => {
+                console.log(`muly:link click ${value.link}`, {});
                 e.preventDefault();
                 setactiveName(value.link);
+                setCollapseShow(false);
               }}
             >
               <Link
-                className="text-white-600 hover:text-white-800 dark:hover:bg-gray-600 relative flex h-9 flex-row items-center pl-14 hover:bg-white focus:outline-none"
+                className="text-white-600 hover:text-white-800 relative flex h-9 flex-row items-center pl-14 hover:bg-white focus:outline-none dark:hover:bg-gray-600"
                 href={
                   "/affiliates/" +
                   (parentLink == "" ? "" : parentLink + "/") +
