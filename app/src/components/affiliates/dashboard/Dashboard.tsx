@@ -229,7 +229,7 @@ export const Dashboard = () => {
           </div>
         </div>
 
-        <DialogContent>
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader className="text-left text-sm font-medium text-azure">
             Manage Field On Report - Quick Summary
           </DialogHeader>
@@ -293,12 +293,12 @@ export const Dashboard = () => {
             return (
               <div
                 key={idx}
-                className="rounded-2xl bg-white px-2 pt-3 pb-2 shadow-sm md:px-6"
+                className="mb-1 rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
               >
                 <div className="text-sm font-semibold text-[#2262C6] md:text-base">
                   {item.title}{" "}
                   <span className="hidden text-xs font-normal text-[#B9B9B9] md:inline-flex md:text-sm">
-                    ( Last 6 Month )
+                    ( Last 6 Month)
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -328,6 +328,21 @@ export const Dashboard = () => {
                       performanceChartData={perAllformanceChart}
                       value={item.value}
                     />
+                  </div>
+                </div>
+                <div className="mt-2 flex justify-around border-t border-gray-200 pb-2">
+                  <div>
+                    <p className="mt-1 text-xs text-[#404040]">Last Month</p>
+                    <p className="text-center text-sm font-bold text-[#1A1A1A]">
+                      {lastMonth}
+                    </p>
+                  </div>
+                  <div className="border-r "></div>
+                  <div>
+                    <p className="mt-1 text-xs text-[#404040]">This Month</p>
+                    <p className="text-center text-sm font-bold text-[#1A1A1A]">
+                      {thisMonth}
+                    </p>
                   </div>
                 </div>
               </div>

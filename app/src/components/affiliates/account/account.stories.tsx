@@ -3,19 +3,19 @@
 */
 
 import { FormAccount } from "@/components/affiliates/account/FormAccount";
-import type { AffiliateAccountType } from "@/server/db-types";
-import { FormInvoice } from "./FormInvoice";
 import { FormContact } from "@/components/affiliates/account/FormContact";
 import { FormSignin } from "@/components/affiliates/account/FormSignin";
 import { FormWebSites } from "@/components/affiliates/account/FormWebSites";
-import { FormTest } from "@/components/common/forms/form-test";
-import { schema as paymentDetailsSchema } from "@/shared-types/forms/payment-details";
-import { schema as signupSchema } from "@/shared-types/forms/register";
-import { schema as lostPasswordSchema } from "@/shared-types/forms/lost-password";
-import { schema as pixelMonitorSchema } from "@/shared-types/forms/pixel-monitor";
 import { schema as documentSchema } from "@/components/affiliates/documents/Documents";
-import { schema as ticketSchema } from "@/components/affiliates/tickets/Tickets";
 import { schema as profileSchema } from "@/components/affiliates/profiles/Profiles";
+import { schema as ticketSchema } from "@/components/affiliates/tickets/Tickets";
+import { FormTest } from "@/components/common/forms/form-test";
+import type { AffiliateAccountType } from "@/server/db-types";
+import { schema as lostPasswordSchema } from "@/shared-types/forms/lost-password";
+import { schema as paymentDetailsSchema } from "@/shared-types/forms/payment-details";
+import { schema as pixelMonitorSchema } from "@/shared-types/forms/pixel-monitor";
+import { schema as signupSchema } from "@/shared-types/forms/register";
+import { FormInvoice } from "./FormInvoice";
 
 const meta = {
   component: FormAccount,
