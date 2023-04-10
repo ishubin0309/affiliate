@@ -1,5 +1,6 @@
+import { queryTypes, useQueryState } from "next-usequerystate";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Label } from "./input";
@@ -14,9 +15,7 @@ import {
 export const useDateRange = (defaultRange?: any) => {
   const router = useRouter();
   const { from, to } = router.query;
-  console.log("router.query", router.query);
 
-  // console.log(value);
   return { from, to };
 };
 
@@ -25,11 +24,16 @@ interface Props {
   setTo: React.Dispatch<React.SetStateAction<Date>>;
 }
 
-export const DateRangeSelect = ({ setFrom, setTo }: Props) => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+export const DateRangeSelect = () => {
+  const [startDate, setStartDate] = useQueryState(
+    "startDate",
+    queryTypes.isoDateTime.withDefault(new Date())
+  );
+  const [endDate, setEndDate] = useQueryState(
+    "endDate",
+    queryTypes.isoDateTime.withDefault(new Date())
+  );
   const [userDate, setuserDate] = useState("");
-  const router = useRouter();
 
   const handleUserDateChange = (userDate: string) => {
     const date = new Date();
@@ -105,10 +109,10 @@ export const DateRangeSelect = ({ setFrom, setTo }: Props) => {
     }
   };
 
-  useEffect(() => {
-    setFrom(startDate);
-    setTo(endDate);
-  }, [startDate, endDate]);
+  // useEffect(() => {
+  //   setFrom(startDate);
+  //   setTo(endDate);
+  // }, [startDate, endDate]);
 
   const dates = [
     {
@@ -144,8 +148,9 @@ export const DateRangeSelect = ({ setFrom, setTo }: Props) => {
       title: "Custom",
     },
   ];
+
   return (
-    <>
+    <div className="flex space-x-2">
       <div>
         <Label>Select Date: </Label>
         <Select onValueChange={handleUserDateChange}>
@@ -178,7 +183,7 @@ export const DateRangeSelect = ({ setFrom, setTo }: Props) => {
           selectsStart
           startDate={startDate}
           endDate={endDate}
-          className="border-slate-300 placeholder:text-slate-400 focus:ring-slate-400 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 flex h-9 w-max rounded-md border bg-transparent py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-9 w-max rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900"
         />
       </div>
       <div>
@@ -189,9 +194,9 @@ export const DateRangeSelect = ({ setFrom, setTo }: Props) => {
           selectsEnd
           startDate={startDate}
           endDate={endDate}
-          className="border-slate-300 placeholder:text-slate-400 focus:ring-slate-400 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 flex h-9 w-max rounded-md border bg-transparent py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-9 w-max rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900"
         />
       </div>
-    </>
+    </div>
   );
 };

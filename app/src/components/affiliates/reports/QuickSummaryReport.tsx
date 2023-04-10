@@ -1,3 +1,5 @@
+import { DateRangeSelect, useDateRange } from "@/components/ui/date-range";
+import { DropdownButton } from "@/components/ui/drop-down";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 import type { ChangeEvent } from "react";
@@ -6,7 +8,6 @@ import { QuerySelect } from "../../../components/common/QuerySelect";
 import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
 import type { QuickReportSummary } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
 import { Button } from "../../ui/button";
 import {
@@ -40,8 +41,8 @@ export const QuickSummaryReport = () => {
   const { from, to } = useDateRange();
 
   const { data, isLoading } = api.affiliates.getQuickReportSummary.useQuery({
-    from: from,
-    to: to,
+    from: new Date(from),
+    to: new Date(to),
     display: display ? String(display) : undefined,
     merchant_id: merchant_id ? Number(merchant_id) : 1,
   });
@@ -120,15 +121,15 @@ export const QuickSummaryReport = () => {
     });
   };
 
-  console.log("QuickSummaryReport render", {
-    data,
-    merchants,
-    isLoading,
-    from,
-    to,
-    display,
-    merchant_id,
-  });
+  // console.log("QuickSummaryReport render", {
+  //   data,
+  //   merchants,
+  //   isLoading,
+  //   from,
+  //   to,
+  //   display,
+  //   merchant_id,
+  // });
 
   if (isLoading) {
     return <Loading />;
@@ -381,26 +382,11 @@ export const QuickSummaryReport = () => {
               </div>
             </div>
           </div>
-          <div className="mt-2 items-end justify-between lg:flex">
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-              <QuerySelect
-                label="Period"
-                choices={displayOptions}
-                varName="display"
-              />
-              <QuerySelect
-                label="From"
-                choices={merchants}
-                varName="merchant_id"
-              />
-              <QuerySelect
-                label="To"
-                choices={merchants}
-                varName="merchant_id"
-              />
+          <div className="mt-2 items-center justify-between lg:flex">
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
               <QuerySelect
                 label="Merchant"
-                choices={merchants}
+                choices={[{ id: 1, title: "FXORO" }]}
                 varName="merchant_id"
               />
               <QuerySelect
@@ -416,24 +402,7 @@ export const QuickSummaryReport = () => {
               <button className="hidden rounded-md border border-[#2262C6] py-2 px-8 text-base font-semibold text-[#2262C6] lg:block">
                 Reset Search
               </button>
-              <button className="hidden rounded-md bg-[#2262C6] p-2 text-white lg:block">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="28"
-                  height="24"
-                  viewBox="0 0 28 24"
-                  fill="none"
-                >
-                  <path
-                    d="M13.5701 16L18.0933 11H14.7009V4H12.4393V11H9.04688L13.5701 16Z"
-                    fill="white"
-                  />
-                  <path
-                    d="M22.6161 18H4.52332V11H2.26172V18C2.26172 19.103 3.27605 20 4.52332 20H22.6161C23.8634 20 24.8778 19.103 24.8778 18V11H22.6161V18Z"
-                    fill="white"
-                  />
-                </svg>
-              </button>
+              <DropdownButton />
             </div>
           </div>
 

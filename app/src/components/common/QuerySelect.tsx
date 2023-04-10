@@ -1,7 +1,8 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { useQueryState } from "next-usequerystate";
-import { Fragment, useState } from "react";
+import { queryTypes, useQueryState } from "next-usequerystate";
+import { useRouter } from "next/router";
+import { Fragment } from "react";
 
 interface Item {
   id?: string | number;
@@ -20,27 +21,33 @@ function classNames(...classes: Array<string>) {
 }
 
 export const QuerySelect = ({ varName, label, choices, emptyTitle }: Props) => {
+  const router = useRouter();
   const [value, setValue] = useQueryState(varName);
-  const [selected, setSelected] = useState(
-    choices ? choices[0] : { id: 0, title: "" }
+  const [selected, setSelected] = useQueryState(
+    varName,
+    queryTypes.string.withDefault(JSON.stringify(choices[0]))
   );
+
+  // console.log("router ----->", router.query);
   return (
     <Listbox
       value={selected}
       onChange={(event) => {
-        setSelected(event);
+        setSelected(JSON.stringify(event));
         // setValue(event);
       }}
     >
       {({ open }) => (
-        <>
+        <div className="grid grid-cols-1 gap-2">
           <Listbox.Label className="block text-sm font-medium leading-6 text-gray-900">
             {label}
           </Listbox.Label>
           <div className="relative mt-1">
             <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
               <span className="flex items-center">
-                <span className="ml-3 block truncate">{selected?.title}</span>
+                <span className="ml-3 block truncate">
+                  {JSON.parse(selected)?.title}
+                </span>
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                 <ChevronUpDownIcon
@@ -99,7 +106,7 @@ export const QuerySelect = ({ varName, label, choices, emptyTitle }: Props) => {
               </Listbox.Options>
             </Transition>
           </div>
-        </>
+        </div>
       )}
     </Listbox>
   );

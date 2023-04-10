@@ -2,7 +2,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Button } from "./button";
 
 import { ChevronDownIcon } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 export interface ItemProps {
   id?: string;
@@ -10,9 +10,6 @@ export interface ItemProps {
 }
 
 const DropdownButton = () => {
-  const [bookmarksChecked, setBookmarksChecked] = React.useState(true);
-  const [urlsChecked, setUrlsChecked] = React.useState(false);
-  const [person, setPerson] = React.useState("pedro");
   const [selectedValue, setSelectedItem] = useState<ItemProps>({});
 
   const options = [
