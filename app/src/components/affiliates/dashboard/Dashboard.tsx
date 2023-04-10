@@ -229,7 +229,7 @@ export const Dashboard = () => {
           </div>
         </div>
 
-        <DialogContent>
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader className="text-left text-sm font-medium text-azure">
             Manage Field On Report - Quick Summary
           </DialogHeader>

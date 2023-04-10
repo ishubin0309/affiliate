@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, Select as CSelect } from "@chakra-ui/react";
+import { Select as CSelect, FormControl, FormLabel } from "@chakra-ui/react";
 import { useQueryState } from "next-usequerystate";
 
 interface Item {
