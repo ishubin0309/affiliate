@@ -5,6 +5,7 @@ import { cva } from "class-variance-authority";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import * as React from "react";
 
+import { queryTypes, useQueryState } from "next-usequerystate";
 import {
   Select,
   SelectContent,
@@ -18,11 +19,7 @@ export interface PaginationProps
   error?: any;
   count: number;
   variant?: string;
-  itemsPerPage: number;
   totalItems: number;
-  currentPage: number;
-  paginate: (item: number) => void;
-  handleChange: (e: any) => void;
 }
 
 const paginationVariants = cva(
@@ -41,11 +38,25 @@ const paginationVariants = cva(
 );
 const Pagination = React.forwardRef<HTMLInputElement, PaginationProps>(
   ({ error, className, variant, ...props }, ref) => {
+    let [currentPage, setCurrentPage] = useQueryState(
+      "currentPage",
+      queryTypes.integer.withDefault(1)
+    );
+    let [itemsPerPage, setItemPerPage] = useQueryState(
+      "itemsPerPage",
+      queryTypes.integer.withDefault(10)
+    );
+
+    const paginate = (type: string) =>
+      type === "increase"
+        ? setCurrentPage(++currentPage)
+        : setCurrentPage(--currentPage);
+    const handleChange = (e: any) => {
+      setItemPerPage(e);
+    };
     const pages = [];
     const page =
-      props.totalItems / props.itemsPerPage < 1
-        ? 1
-        : props.totalItems / props.itemsPerPage;
+      props.totalItems / itemsPerPage < 1 ? 1 : props.totalItems / itemsPerPage;
     for (let i = 1; i <= page; i++) {
       pages.push(i);
     }
@@ -58,7 +69,7 @@ const Pagination = React.forwardRef<HTMLInputElement, PaginationProps>(
         {...props}
       >
         <a
-          onClick={() => props.paginate(--props.currentPage)}
+          onClick={() => paginate("decrease")}
           className="inline-flex items-center gap-2 rounded-md p-4 text-gray-500 hover:text-blue-600"
         >
           <ChevronsLeft />
@@ -68,7 +79,7 @@ const Pagination = React.forwardRef<HTMLInputElement, PaginationProps>(
           return (
             <a
               className={
-                item === props.currentPage
+                item === currentPage
                   ? cn(paginationVariants({ variant: "focus" }))
                   : cn(paginationVariants({ variant: "secondary" }))
               }
@@ -81,14 +92,14 @@ const Pagination = React.forwardRef<HTMLInputElement, PaginationProps>(
           );
         })}
         <a
-          onClick={() => props.paginate(++props.currentPage)}
+          onClick={() => paginate("increase")}
           className="inline-flex items-center gap-2 rounded-md p-4 text-gray-500 hover:text-blue-600"
         >
           <ChevronsRight />
         </a>
 
         <div className="mt-2">
-          <Select onValueChange={props.handleChange}>
+          <Select onValueChange={handleChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue />
             </SelectTrigger>

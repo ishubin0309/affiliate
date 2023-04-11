@@ -1,13 +1,14 @@
-import { publicProcedure } from "@/server/api/trpc";
-import { z } from "zod";
 import {
   affiliate_id,
   merchant_id,
 } from "@/server/api/routers/affiliates/const";
-import { Prisma } from "@prisma/client";
-import { formatISO } from "date-fns";
-import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
 import { QuickReportSummarySchema } from "@/server/api/routers/affiliates/reports";
+import { publicProcedure } from "@/server/api/trpc";
+import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
+import { Prisma, PrismaClient } from "@prisma/client";
+import { formatISO } from "date-fns";
+import paginator from "prisma-paginate";
+import { z } from "zod";
 
 const QuickReportSummarySchemaArray = z.array(QuickReportSummarySchema);
 
@@ -29,7 +30,10 @@ export const getQuickReportSummary = publicProcedure
       input: { from, to, display = "", page, items_per_page },
     }) => {
       console.log(from, to);
+      let prismaClient = new PrismaClient();
+      let paginate = paginator(prismaClient);
       console.log("display type", display, merchant_id);
+
       let offset;
       if (page && items_per_page) {
         offset = (page - 1) * items_per_page;
@@ -57,7 +61,7 @@ export const getQuickReportSummary = publicProcedure
         dasboardSQLwhere = Prisma.sql` AND d.AffiliateID = ${affiliate_id}`;
       }
 
-      const data = await ctx.prisma.$queryRaw<
+      const data = await paginate.$queryRaw<
         z.infer<typeof QuickReportSummarySchema>[]
       >(Prisma.sql`select 
         d.Date,

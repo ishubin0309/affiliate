@@ -1,4 +1,3 @@
-import { queryTypes, useQueryState } from "next-usequerystate";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
@@ -25,14 +24,8 @@ interface Props {
 }
 
 export const DateRangeSelect = () => {
-  const [startDate, setStartDate] = useQueryState(
-    "startDate",
-    queryTypes.isoDateTime.withDefault(new Date())
-  );
-  const [endDate, setEndDate] = useQueryState(
-    "endDate",
-    queryTypes.isoDateTime.withDefault(new Date())
-  );
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [userDate, setuserDate] = useState("");
 
   const handleUserDateChange = (userDate: string) => {

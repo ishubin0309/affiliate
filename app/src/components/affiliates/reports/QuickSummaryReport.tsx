@@ -1,11 +1,13 @@
 import { DateRangeSelect, useDateRange } from "@/components/ui/date-range";
-import { DropdownButton } from "@/components/ui/drop-down";
+import { Pagination } from "@/components/ui/pagination";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createColumnHelper } from "@tanstack/react-table";
+import { ChevronDownIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import type { ChangeEvent } from "react";
 import { useEffect, useState } from "react";
 import { QuerySelect } from "../../../components/common/QuerySelect";
-import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
+import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { QuickReportSummary } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { Loading } from "../../common/Loading";
@@ -31,6 +33,10 @@ const fields = [
   "Active Trader",
   "Commission",
 ];
+export interface ItemProps {
+  id?: string;
+  title?: string;
+}
 
 export const QuickSummaryReport = () => {
   const router = useRouter();
@@ -38,13 +44,18 @@ export const QuickSummaryReport = () => {
   const [reportFields, setReportFields] = useState<
     { id: number; title: string; value: string; isChecked: boolean }[]
   >([]);
+  const [selectedValue, setSelectedItem] = useState<ItemProps>({});
   const { from, to } = useDateRange();
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const { currentPage, itemsPerPage } = router.query;
 
   const { data, isLoading } = api.affiliates.getQuickReportSummary.useQuery({
-    from: new Date(from),
-    to: new Date(to),
+    from: new Date("2022-01-03"),
+    to: new Date("2023-01-03"),
     display: display ? String(display) : undefined,
-    merchant_id: merchant_id ? Number(merchant_id) : 1,
+    page: currentPage ? Number(currentPage) : undefined,
+    items_per_page: itemsPerPage ? Number(itemsPerPage) : undefined,
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<QuickReportSummary>();
@@ -222,6 +233,21 @@ export const QuickSummaryReport = () => {
     }),
   ];
 
+  const options = [
+    {
+      id: "excel",
+      title: "Excel",
+    },
+    {
+      id: "csv",
+      title: "CSV",
+    },
+    {
+      id: "json",
+      title: "JSON",
+    },
+  ];
+
   const displayOptions = [
     {
       id: "monthly",
@@ -300,6 +326,7 @@ export const QuickSummaryReport = () => {
     totalComs,
   });
 
+  console.log("router query ----->", router.query);
   return (
     <>
       <div className="w-full pt-3.5">
@@ -386,7 +413,7 @@ export const QuickSummaryReport = () => {
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
               <QuerySelect
                 label="Merchant"
-                choices={[{ id: 1, title: "FXORO" }]}
+                choices={merchants}
                 varName="merchant_id"
               />
               <QuerySelect
@@ -402,7 +429,39 @@ export const QuickSummaryReport = () => {
               <button className="hidden rounded-md border border-[#2262C6] py-2 px-8 text-base font-semibold text-[#2262C6] lg:block">
                 Reset Search
               </button>
-              <DropdownButton />
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <Button variant="primary-outline">
+                    Export{" "}
+                    {Object.keys(selectedValue).length > 0
+                      ? ` ${selectedValue?.title}`
+                      : ``}{" "}
+                    <ChevronDownIcon className="ml-10" />
+                  </Button>
+                </DropdownMenu.Trigger>
+
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content
+                    className="data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade z-40 min-w-[220px] rounded-md bg-white p-[10px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform]"
+                    sideOffset={5}
+                    onChange={(event) => {
+                      console.log(event);
+                    }}
+                  >
+                    {options.map((item) => {
+                      return (
+                        <DropdownMenu.Item
+                          key={item.id}
+                          onSelect={() => setSelectedItem(item)}
+                          className="text-violet11 data-[disabled]:text-mauve8 data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1 group relative flex h-[25px] select-none items-center rounded-[3px] px-[2px] py-5 pl-[25px] text-[13px] leading-none outline-none data-[disabled]:pointer-events-none"
+                        >
+                          {item.title}
+                        </DropdownMenu.Item>
+                      );
+                    })}
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Root>
             </div>
           </div>
 
@@ -454,11 +513,15 @@ export const QuickSummaryReport = () => {
         </Dialog>
 
         <div className="mb-5 mt-4 w-full overflow-scroll rounded bg-white px-2 py-4 shadow-sm">
-          <ReportDataTable
+          <DataTable
             data={data}
             columns={columns}
             // reportFields={reportFields}
           />
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Pagination count={5} variant="focus" totalItems={100} />
         </div>
       </div>
     </>
