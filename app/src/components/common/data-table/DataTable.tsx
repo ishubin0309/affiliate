@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import {
   flexRender,
@@ -6,7 +7,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import * as React from "react";
-import { cn } from "@/lib/utils";
 
 export type DataTableProps<Data extends object> = {
   data: Data[] | null | undefined;
@@ -127,6 +127,18 @@ export function DataTable<Data extends object>({
             </tr>
           ))}
         </tbody>
+
+        {footerData && (
+          <tfoot className="py-3 px-3">
+            <tr className="py-5">
+              <td>Total</td>
+              {footerData.length > 0 &&
+                Object.values(footerData[0]).map((item: any, key) => {
+                  return <td key={key}>{item}</td>;
+                })}
+            </tr>
+          </tfoot>
+        )}
       </table>
     </div>
   );

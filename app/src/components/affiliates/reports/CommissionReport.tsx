@@ -5,6 +5,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createColumnHelper } from "@tanstack/react-table";
 import { ChevronDownIcon } from "lucide-react";
 import { useRouter } from "next/router";
+import type { ChangeEvent } from "react";
 import { useState } from "react";
 import { QuerySelect } from "../../../components/common/QuerySelect";
 import { DataTable } from "../../../components/common/data-table/DataTable";
@@ -19,7 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog";
-import { ItemProps } from "./QuickSummaryReport";
+import type { ItemProps } from "./QuickSummaryReport";
 
 export const CommissionReport = () => {
   const router = useRouter();
@@ -31,12 +32,15 @@ export const CommissionReport = () => {
     { id: number; title: string; value: string; isChecked: boolean }[]
   >([]);
 
+  const { currentPage, itemsPerPage } = router.query;
+
   const { data, isLoading } = api.affiliates.getCommissionReport.useQuery({
     from: new Date("2016-01-03"),
     to: new Date("2023-01-03"),
-    merchant_id: String(merchant_id),
-    commission: String(commission),
+    commission: commission ? String(commission) : "",
     trader_id: traderID,
+    page: currentPage ? Number(currentPage) : 1,
+    items_per_page: itemsPerPage ? Number(itemsPerPage) : 10,
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<CommissionReportType>();
@@ -66,44 +70,64 @@ export const CommissionReport = () => {
   };
 
   const columns = [
-    columnHelper.accessor("merchant.name", {
-      cell: (info) => info.getValue(),
+    columnHelper.accessor("merchant.name" as any, {
+      cell: (info) => info.getValue() as string,
       header: "Merchant Name",
     }),
-    columnHelper.accessor("merchant_id", {
-      cell: (info) => info.getValue(),
+    columnHelper.accessor("merchant_id" as any, {
+      cell: (info) => info.getValue() as number,
       header: "Merchant ID",
     }),
-    columnHelper.accessor("traderID", {
-      cell: (info) => info.getValue(),
+    columnHelper.accessor("traderID" as any, {
+      cell: (info) => info.getValue() as number,
       header: "Trader ID",
     }),
-    columnHelper.accessor("transactionID", {
-      cell: (info) => info.getValue(),
+    columnHelper.accessor("transactionID" as any, {
+      cell: (info) => info.getValue() as number,
       header: "Transaction ID",
       // meta: {
       //   isNumeric: true,
       // },
     }),
-    columnHelper.accessor("Type", {
-      cell: (info) => info.getValue(),
+    columnHelper.accessor("Type" as any, {
+      cell: (info) => info.getValue() as string,
       header: "Type",
     }),
-    columnHelper.accessor("Amount", {
-      cell: (info) => info.getValue(),
+    columnHelper.accessor("Amount" as any, {
+      cell: (info) => info.getValue() as number,
       header: "Amount",
     }),
-    columnHelper.accessor("level", {
-      cell: (info) => info.getValue(),
+    columnHelper.accessor("level" as any, {
+      cell: (info) => info.getValue() as string,
       header: "Location",
     }),
-    columnHelper.accessor("Commission", {
-      cell: (info) => info.getValue(),
+    columnHelper.accessor("Commission" as any, {
+      cell: (info) => info.getValue() as number,
       header: "Commission",
     }),
   ];
 
-  const handleSelectAll = async () => {
+  const handleReportField = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = reportFields.map((item) => {
+      const temp = Object.assign({}, item);
+      if (temp.id === parseInt(event.target.value)) {
+        temp.isChecked = event.target.checked;
+      }
+      return temp;
+    });
+    setReportFields(value);
+    const hiddenCols = value.filter((item) => item.isChecked === false);
+    const remove_fields = hiddenCols
+      .map((item) => {
+        return item.value;
+      })
+      .join("|");
+    // await upsertReportsField.mutateAsync({
+    //   remove_fields,
+    // });
+  };
+
+  const handleSelectAll = () => {
     const value = reportFields.map((item) => {
       const temp = Object.assign({}, item);
       temp.isChecked = true;
@@ -121,7 +145,7 @@ export const CommissionReport = () => {
     // });
   };
 
-  const handleUnSelectAll = async () => {
+  const handleUnSelectAll = () => {
     const value = reportFields.map((item) => {
       const temp = Object.assign({}, item);
       temp.isChecked = false;
@@ -139,15 +163,26 @@ export const CommissionReport = () => {
     // });
   };
 
+  interface Commission {
+    totalAmount: number;
+    Commission: number;
+  }
+
   let totalAmount = 0;
   let totalCommission = 0;
   const totalData = [];
-  data?.forEach((item) => {
-    totalAmount += item.Amount;
-    totalCommission += item.Commission;
-  });
+  data ||
+    [].forEach((item: any) => {
+      totalAmount += item?.Amount || 0;
+      totalCommission += item?.Commission || 0;
+    });
   totalData.push({
+    merchant_id: "",
+    traderID: "",
+    transactionID: "",
+    type: "",
     totalAmount: totalAmount.toFixed(2),
+    location: "",
     totalCommission: totalCommission.toFixed(2),
   });
 

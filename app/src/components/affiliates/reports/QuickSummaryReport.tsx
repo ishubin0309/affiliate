@@ -54,8 +54,8 @@ export const QuickSummaryReport = () => {
     from: new Date("2022-01-03"),
     to: new Date("2023-01-03"),
     display: display ? String(display) : undefined,
-    page: currentPage ? Number(currentPage) : undefined,
-    items_per_page: itemsPerPage ? Number(itemsPerPage) : undefined,
+    page: currentPage ? Number(currentPage) : 1,
+    items_per_page: itemsPerPage ? Number(itemsPerPage) : 10,
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<QuickReportSummary>();

@@ -60,7 +60,7 @@ export type QuickReportSummary =
   RouterOutput["affiliates"]["getQuickReportSummary"][0];
 
 export type CommissionReportType =
-  RouterOutput["affiliates"]["getCommissionReport"][0];
+  RouterOutput["affiliates"]["getCommissionReport"];
 
 export type ClicksReportType = RouterOutput["affiliates"]["getClicksReport"][0];
 

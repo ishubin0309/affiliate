@@ -25,17 +25,19 @@ export const QuerySelect = ({ varName, label, choices, emptyTitle }: Props) => {
   const [value, setValue] = useQueryState(varName);
   const [selected, setSelected] = useQueryState(
     varName,
-    queryTypes.string.withDefault(JSON.stringify(choices[0]))
+    queryTypes.string.withDefault(
+      choices ? JSON.stringify(choices[0]) : JSON.stringify([])
+    )
   );
 
   // console.log("router ----->", router.query);
   return (
     <Listbox
       value={selected}
-      onChange={(event) => {
-        setSelected(JSON.stringify(event));
+      onChange={
+        (event) => setSelected(JSON.stringify(event))
         // setValue(event);
-      }}
+      }
     >
       {({ open }) => (
         <div className="grid grid-cols-1 gap-2">

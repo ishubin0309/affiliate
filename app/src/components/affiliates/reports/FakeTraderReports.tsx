@@ -198,7 +198,7 @@ export const FakeTraderReports = () => {
     setItemPerPage(e);
   };
   const handleToggleChange = (event: any, id: string) => {
-    let newData = traderReportColumns.map((item) => {
+    const newData = traderReportColumns.map((item) => {
       if (item.id === id) {
         return { ...item, isOpen: event };
       } else {
@@ -222,7 +222,7 @@ export const FakeTraderReports = () => {
   return (
     <>
       <div className="grid grid grid-cols-5 gap-2">
-        <DateRangeSelect setFrom={setFrom} setTo={setTo} />
+        <DateRangeSelect />
         <div>
           <QuerySelect
             label="Merchant"
@@ -264,7 +264,7 @@ export const FakeTraderReports = () => {
               <div className="grid grid-cols-4 gap-2">
                 {traderReportColumns?.map((item, id) => {
                   return (
-                    <div className="grid  grid-cols-4 gap-2">
+                    <div className="grid  grid-cols-4 gap-2" key={id}>
                       <div className="items-top flex space-x-2">
                         <Switch
                           id={item.id}
@@ -296,15 +296,7 @@ export const FakeTraderReports = () => {
         <DataTable data={data} columns={columns} footerData={totalObj} />
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <Pagination
-          count={5}
-          variant="focus"
-          currentPage={currentPage}
-          itemsPerPage={itemsPerPage}
-          totalItems={data.length}
-          paginate={paginate}
-          handleChange={handleChange}
-        />
+        <Pagination count={5} variant="focus" totalItems={data.length} />
       </div>
     </>
   );

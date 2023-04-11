@@ -30,8 +30,8 @@ export const getQuickReportSummary = publicProcedure
       input: { from, to, display = "", page, items_per_page },
     }) => {
       console.log(from, to);
-      let prismaClient = new PrismaClient();
-      let paginate = paginator(prismaClient);
+      const prismaClient = new PrismaClient();
+      const paginate = paginator(prismaClient);
       console.log("display type", display, merchant_id);
 
       let offset;

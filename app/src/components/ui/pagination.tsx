@@ -38,21 +38,26 @@ const paginationVariants = cva(
 );
 const Pagination = React.forwardRef<HTMLInputElement, PaginationProps>(
   ({ error, className, variant, ...props }, ref) => {
-    let [currentPage, setCurrentPage] = useQueryState(
+    const [currentPage, setCurrentPage] = useQueryState(
       "currentPage",
       queryTypes.integer.withDefault(1)
     );
-    let [itemsPerPage, setItemPerPage] = useQueryState(
+    const [itemsPerPage, setItemPerPage] = useQueryState(
       "itemsPerPage",
       queryTypes.integer.withDefault(10)
     );
 
-    const paginate = (type: string) =>
-      type === "increase"
-        ? setCurrentPage(++currentPage)
-        : setCurrentPage(--currentPage);
+    const paginate = (event: any, type: string) => {
+      if (type === "increase") {
+        void setCurrentPage((currentPage) => currentPage + 1);
+      } else if (type === "decrease") {
+        void setCurrentPage((currentPage) => currentPage - 1);
+      } else {
+        void setCurrentPage(event);
+      }
+    };
     const handleChange = (e: any) => {
-      setItemPerPage(e);
+      void setItemPerPage(e);
     };
     const pages = [];
     const page =
@@ -69,7 +74,7 @@ const Pagination = React.forwardRef<HTMLInputElement, PaginationProps>(
         {...props}
       >
         <a
-          onClick={() => paginate("decrease")}
+          onClick={(event) => paginate(event, "decrease")}
           className="inline-flex items-center gap-2 rounded-md p-4 text-gray-500 hover:text-blue-600"
         >
           <ChevronsLeft />
@@ -83,7 +88,7 @@ const Pagination = React.forwardRef<HTMLInputElement, PaginationProps>(
                   ? cn(paginationVariants({ variant: "focus" }))
                   : cn(paginationVariants({ variant: "secondary" }))
               }
-              onClick={() => props.paginate(item)}
+              onClick={(event) => paginate(item, "onpoint")}
               aria-current="page"
               key={key}
             >
@@ -92,7 +97,7 @@ const Pagination = React.forwardRef<HTMLInputElement, PaginationProps>(
           );
         })}
         <a
-          onClick={() => paginate("increase")}
+          onClick={(event) => paginate(event, "increase")}
           className="inline-flex items-center gap-2 rounded-md p-4 text-gray-500 hover:text-blue-600"
         >
           <ChevronsRight />
