@@ -8,8 +8,8 @@ interface Props {
   item: { id: number; title: string; value: string; isChecked: boolean };
   thisMonth: number | undefined;
   lastMonth: number | undefined;
-  value: number | undefined;
-  performanceChartData: [];
+  value: numbe;
+  performanceChartData: any;
 }
 
 const DashboardCards = ({
