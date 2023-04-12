@@ -8,7 +8,7 @@ interface Props {
   item: { id: number; title: string; value: string; isChecked: boolean };
   thisMonth: number | undefined;
   lastMonth: number | undefined;
-  value: number | { valueOf(): number };
+  value: number | undefined;
   performanceChartData: any;
 }
 
@@ -81,7 +81,7 @@ const DashboardCards = ({
               <UpwardArrowIcon />
             </div>
             <span className="ml-1 text-xl font-bold md:ml-3">
-              {format("~s")(value)}
+              {format("~s")(value as number | { valueOf(): number })}
             </span>
           </div>
         </div>
@@ -100,14 +100,14 @@ const DashboardCards = ({
         <div>
           <p className="mt-1 text-xs text-[#404040]">Last Month</p>
           <p className="text-center text-sm font-bold text-[#1A1A1A]">
-            {format("~s")(lastMonth)}
+            {format("~s")(lastMonth as number | { valueOf(): number })}
           </p>
         </div>
         <div className="border-r "></div>
         <div>
           <p className="mt-1 text-xs text-[#404040]">This Month</p>
           <p className="text-center text-sm font-bold text-[#1A1A1A]">
-            {format("~s")(thisMonth)}
+            {format("~s")(thisMonth as number | { valueOf(): number })}
           </p>
         </div>
       </div>
