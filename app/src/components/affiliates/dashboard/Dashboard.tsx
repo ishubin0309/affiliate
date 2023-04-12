@@ -67,7 +67,7 @@ export const Dashboard = () => {
   const { data: performanceChart } =
     api.affiliates.getPerformanceChart.useQuery({ from, to });
 
-  const { data: perAllformanceChart } =
+  const { data: allPerformanceChart } =
     api.affiliates.getAllPerformanceChart.useQuery({ from, to });
 
   const { data: conversionChart } = api.affiliates.getConversionChart.useQuery({
@@ -100,7 +100,7 @@ export const Dashboard = () => {
     !creative ||
     !report ||
     !performanceChart ||
-    !perAllformanceChart ||
+    !allPerformanceChart ||
     !conversionChart ||
     !lastMonthData ||
     !thisMonthData
@@ -295,7 +295,7 @@ export const Dashboard = () => {
                 lastMonth={lastMonth}
                 thisMonth={thisMonth}
                 value={value}
-                performanceChartData={perAllformanceChart}
+                performanceChartData={allPerformanceChart}
               />
             );
           })}

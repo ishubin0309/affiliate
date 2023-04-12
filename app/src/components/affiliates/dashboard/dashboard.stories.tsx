@@ -109,19 +109,34 @@ export const Charts = {
 };
 export const impression = {
   render: () => (
-    <DashboardCards
-      idx={0}
-      item={{
-        id: 0,
-        title: "title",
-        value: "RealAccount",
-        isChecked: false,
-      }}
-      thisMonth={212}
-      lastMonth={414}
-      value={2300000}
-      performanceChartData={undefined}
-    />
+    <>
+      <DashboardCards
+        idx={0}
+        item={{
+          id: 0,
+          title: "title",
+          value: "RealAccount",
+          isChecked: false,
+        }}
+        thisMonth={212000}
+        lastMonth={40000}
+        value={23000}
+        performanceChartData={undefined}
+      />
+      <DashboardCards
+        idx={0}
+        item={{
+          id: 0,
+          title: "title",
+          value: "RealAccount",
+          isChecked: false,
+        }}
+        thisMonth={2120000000000}
+        lastMonth={400}
+        value={2300000}
+        performanceChartData={undefined}
+      />
+    </>
   ),
   parameters: {
     design: {

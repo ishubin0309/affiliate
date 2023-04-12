@@ -127,14 +127,14 @@ const DashboardCards = ({
         <div>
           <p className="mt-1 text-xs text-[#404040]">Last Month</p>
           <p className="text-center text-sm font-bold text-[#1A1A1A]">
-            {lastMonth}
+            {format("~s")(lastMonth)}
           </p>
         </div>
         <div className="border-r "></div>
         <div>
           <p className="mt-1 text-xs text-[#404040]">This Month</p>
           <p className="text-center text-sm font-bold text-[#1A1A1A]">
-            {thisMonth}
+            {format("~s")(thisMonth)}
           </p>
         </div>
       </div>
