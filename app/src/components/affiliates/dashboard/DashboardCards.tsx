@@ -1,24 +1,8 @@
 import DashboardChart from "@/components/common/chart/DashboardChart";
+import { UpwardArrowIcon } from "@/components/icons";
 import { format } from "d3-format";
 import { Bar } from "react-chartjs-2";
-const performanceChartData2: any = [
-  {
-    date: "Dec, 2022",
-    Accounts: 5,
-  },
-  {
-    date: "Jan, 2023",
-    Accounts: 3,
-  },
-  {
-    date: "Feb, 2023",
-    Accounts: 6,
-  },
-  {
-    date: "Mar, 2023",
-    Accounts: 4,
-  },
-];
+
 interface Props {
   idx: number | undefined;
   item: { id: number; title: string; value: string; isChecked: boolean };
@@ -94,18 +78,7 @@ const DashboardCards = ({
         <div className="flex-1">
           <div className="flex h-12 items-center">
             <div className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="12"
-                height="13"
-                viewBox="0 0 12 13"
-                fill="none"
-              >
-                <path
-                  d="M6.66685 13.0001L6.66685 3.27612L10.1955 6.80479L11.1382 5.86212L6.00018 0.724121L0.862183 5.86212L1.80485 6.80479L5.33352 3.27612L5.33352 13.0001L6.66685 13.0001Z"
-                  fill="#50B8B6"
-                />
-              </svg>
+              <UpwardArrowIcon />
             </div>
             <span className="ml-1 text-xl font-bold md:ml-3">
               {format("~s")(value)}

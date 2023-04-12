@@ -107,7 +107,7 @@ export const Charts = {
     },
   },
 };
-export const impression = {
+export const Impression = {
   render: () => (
     <>
       <DashboardCards
