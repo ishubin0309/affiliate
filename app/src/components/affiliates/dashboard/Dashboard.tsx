@@ -282,7 +282,7 @@ export const Dashboard = () => {
               [index: string]: number;
             }
             const sumObject = data[0]?._sum as Sum;
-            const value: number = sumObject ? sumObject[item.value] : 0;
+            const value: number = sumObject ? Number(sumObject[item.value]) : 0;
             const lastMonthObject = lastMonthData[0]?._sum as Sum;
             const lastMonth = lastMonthObject ? lastMonthObject[item.value] : 0;
             const thisMonthObject = thisMonthData[0]?._sum as Sum;

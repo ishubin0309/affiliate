@@ -8,7 +8,7 @@ interface Props {
   item: { id: number; title: string; value: string; isChecked: boolean };
   thisMonth: number | undefined;
   lastMonth: number | undefined;
-  value: numbe;
+  value: number;
   performanceChartData: any;
 }
 
@@ -20,8 +20,6 @@ const DashboardCards = ({
   value,
   performanceChartData,
 }: Props) => {
-  console.log("=============");
-  console.log(performanceChartData);
   const options = {
     responsive: false,
     plugins: {
