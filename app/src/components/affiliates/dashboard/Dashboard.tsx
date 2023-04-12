@@ -1,9 +1,6 @@
 import { SettingsIcon } from "@chakra-ui/icons";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-import ConversionChart from "../../common/chart/ConversionChart";
-import DashboardChart from "../../common/chart/DashboardChart";
-import PerformanceChart from "../../common/chart/PerformanceChart";
 import { Button } from "../../ui/button";
 import {
   Dialog,
@@ -12,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import AccountManager from "./AccountManager";
 import CountryReport from "./CountryReport";
 import DeviceReport from "./DeviceReport";
@@ -31,6 +27,8 @@ import {
 import { Loading } from "@/components/common/Loading";
 import { Home } from "lucide-react";
 import Affiliates from "../../../layouts/AffiliatesLayout";
+import DashboardCards from "./DashboardCards";
+import DashboardCharts from "./DashboardCharts";
 const fields = [
   "Impressions",
   "Clicks",
@@ -291,82 +289,23 @@ export const Dashboard = () => {
             const thisMonth = thisMonthObject ? thisMonthObject[item.value] : 0;
 
             return (
-              <div
-                key={idx}
-                className="mb-1 rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
-              >
-                <div className="text-sm font-semibold text-[#2262C6] md:text-base">
-                  {item.title}{" "}
-                  <span className="hidden text-xs font-normal text-[#B9B9B9] md:inline-flex md:text-sm">
-                    ( Last 6 Month)
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <div className="flex-1">
-                    <div className="flex h-12 items-center">
-                      <div className="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="12"
-                          height="13"
-                          viewBox="0 0 12 13"
-                          fill="none"
-                        >
-                          <path
-                            d="M6.66685 13.0001L6.66685 3.27612L10.1955 6.80479L11.1382 5.86212L6.00018 0.724121L0.862183 5.86212L1.80485 6.80479L5.33352 3.27612L5.33352 13.0001L6.66685 13.0001Z"
-                            fill="#50B8B6"
-                          />
-                        </svg>
-                      </div>
-                      <span className="ml-1 text-xl font-bold md:ml-3">
-                        {value}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex flex-1 justify-end">
-                    <DashboardChart
-                      performanceChartData={perAllformanceChart}
-                      value={item.value}
-                    />
-                  </div>
-                </div>
-                <div className="mt-2 flex justify-around border-t border-gray-200 pb-2">
-                  <div>
-                    <p className="mt-1 text-xs text-[#404040]">Last Month</p>
-                    <p className="text-center text-sm font-bold text-[#1A1A1A]">
-                      {lastMonth}
-                    </p>
-                  </div>
-                  <div className="border-r "></div>
-                  <div>
-                    <p className="mt-1 text-xs text-[#404040]">This Month</p>
-                    <p className="text-center text-sm font-bold text-[#1A1A1A]">
-                      {thisMonth}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <DashboardCards
+                idx={idx}
+                item={item}
+                lastMonth={lastMonth}
+                thisMonth={thisMonth}
+                value={value}
+                performanceChartData={perAllformanceChart}
+              />
             );
           })}
       </div>
 
       <div className="my-6 rounded-2xl bg-white px-2 py-5 shadow-sm md:px-6">
-        <Tabs defaultValue="Performance">
-          <TabsList>
-            <TabsTrigger value="Performance">Performace Chart</TabsTrigger>
-            <TabsTrigger value="conversion">Conversion Chart</TabsTrigger>
-          </TabsList>
-          <TabsContent className="border-0" value="Performance">
-            <div className="mt-5 h-80 pb-5">
-              <PerformanceChart performanceChartData={performanceChart} />
-            </div>
-          </TabsContent>
-          <TabsContent className="border-0" value="conversion">
-            <div className="mt-5 h-80  pb-5">
-              <ConversionChart conversionChartData={conversionChart} />
-            </div>
-          </TabsContent>
-        </Tabs>
+        <DashboardCharts
+          performanceChart={performanceChart}
+          conversionChart={conversionChart}
+        />
       </div>
 
       <div className="my-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
