@@ -9,7 +9,7 @@ interface Props {
   thisMonth: number | undefined;
   lastMonth: number | undefined;
   value: number | undefined;
-  performanceChartData: any;
+  performanceChartData: [];
 }
 
 const DashboardCards = ({
@@ -20,6 +20,8 @@ const DashboardCards = ({
   value,
   performanceChartData,
 }: Props) => {
+  console.log("=============");
+  console.log(performanceChartData);
   const options = {
     responsive: false,
     plugins: {

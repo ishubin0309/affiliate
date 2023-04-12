@@ -290,6 +290,7 @@ export const Dashboard = () => {
 
             return (
               <DashboardCards
+                key={idx}
                 idx={idx}
                 item={item}
                 lastMonth={lastMonth}
