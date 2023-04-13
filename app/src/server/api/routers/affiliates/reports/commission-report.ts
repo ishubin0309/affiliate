@@ -1,26 +1,31 @@
-import { publicProcedure } from "@/server/api/trpc";
-import { z } from "zod";
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
+import { publicProcedure } from "@/server/api/trpc";
+import { PrismaClient } from "@prisma/client";
+import paginator from "prisma-paginate";
+import { z } from "zod";
 
 export const getCommissionReport = publicProcedure
   .input(
     z.object({
       from: z.date().optional(),
       to: z.date().optional(),
-      merchant_id: z.string().optional(),
-      trader_id: z.string().optional(),
       commission: z.string().optional(),
+      trader_id: z.string().optional(),
+      page: z.number().int().optional(),
+      items_per_page: z.number().int().optional(),
     })
   )
   .query(
     async ({
       ctx,
-      input: { from, to, merchant_id, trader_id, commission },
+      input: { from, to, trader_id, commission, page, items_per_page },
     }) => {
-      // let offset;
-      // console.log("item per page ------>", page, items_per_page);
-      // if (page && items_per_page) {
-      // 	offset = (page - 1) * items_per_page;
+      const prismaClient = new PrismaClient();
+      const paginate = paginator(prismaClient);
+      let offset;
+      if (page && items_per_page) {
+        offset = (page - 1) * items_per_page;
+      }
       // }
       let deal_filter = {};
       switch (commission) {
@@ -38,7 +43,9 @@ export const getCommissionReport = publicProcedure
           break;
       }
 
-      const data = await ctx.prisma.commissions.findMany({
+      const data = await paginate.commissions.paginate({
+        limit: items_per_page ? items_per_page : 10,
+        page: page,
         orderBy: {
           Date: "asc",
         },
@@ -65,7 +72,7 @@ export const getCommissionReport = publicProcedure
         },
       });
 
-      console.log("data ----->", data);
+      // console.log("data ----->", data);
 
       return data;
     }

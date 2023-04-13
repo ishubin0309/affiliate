@@ -1,7 +1,8 @@
-import { FormLabel, GridItem } from "@chakra-ui/react";
-import { queryTypes, useQueryState } from "next-usequerystate";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Label } from "./input";
 import {
   Select,
   SelectContent,
@@ -10,12 +11,23 @@ import {
   SelectValue,
 } from "./select";
 
-export const DateRangeSelect = ({}) => {
+export const useDateRange = (defaultRange?: any) => {
+  const router = useRouter();
+  const { from, to } = router.query;
+
+  return { from, to };
+};
+
+interface Props {
+  setFrom: React.Dispatch<React.SetStateAction<Date>>;
+  setTo: React.Dispatch<React.SetStateAction<Date>>;
+}
+
+export const DateRangeSelect = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [userDate, setuserDate] = useState("");
-  const [from, setFrom] = useQueryState("from", queryTypes.isoDateTime);
-  const [to, setTo] = useQueryState("to", queryTypes.isoDateTime);
+
   const handleUserDateChange = (userDate: string) => {
     const date = new Date();
     switch (userDate) {
@@ -89,53 +101,95 @@ export const DateRangeSelect = ({}) => {
         break;
     }
   };
-  //   useEffect(() => {
-  //     setFrom(startDate);
-  //     setTo(endDate);
-  //   }, [startDate, endDate]);
 
-  console.log("from", from, "to", to);
+  // useEffect(() => {
+  //   setFrom(startDate);
+  //   setTo(endDate);
+  // }, [startDate, endDate]);
+
+  const dates = [
+    {
+      id: "today",
+      title: "Today",
+    },
+    {
+      id: "yesterday",
+      title: "Yesterday",
+    },
+    {
+      id: "this_week",
+      title: "This Week",
+    },
+    {
+      id: "this_month",
+      title: "This Month",
+    },
+    {
+      id: "last_month",
+      title: "Last Month",
+    },
+    {
+      id: "this_year",
+      title: "This Year",
+    },
+    {
+      id: "last_year",
+      title: "Last Year",
+    },
+    {
+      id: "custom",
+      title: "Custom",
+    },
+  ];
+
   return (
-    <>
-      <GridItem>
-        <div className="mt-2">
-          <Select onValueChange={handleUserDateChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="yesterday">YesterDay</SelectItem>
-              <SelectItem value="this_week">This Week</SelectItem>
-              <SelectItem value="this_month">This Month</SelectItem>
-              <SelectItem value="last_month">Last Month</SelectItem>
-              <SelectItem value="this_year">This Year</SelectItem>
-              <SelectItem value="last_year">Last Year</SelectItem>
-              <SelectItem value="custom">Custom</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </GridItem>
-      <GridItem>
-        <FormLabel>From: </FormLabel>
+    <div className="flex space-x-2">
+      <div>
+        <Label>Select Date: </Label>
+        <Select onValueChange={handleUserDateChange}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="today">Today</SelectItem>
+            <SelectItem value="yesterday">YesterDay</SelectItem>
+            <SelectItem value="this_week">This Week</SelectItem>
+            <SelectItem value="this_month">This Month</SelectItem>
+            <SelectItem value="last_month">Last Month</SelectItem>
+            <SelectItem value="this_year">This Year</SelectItem>
+            <SelectItem value="last_year">Last Year</SelectItem>
+            <SelectItem value="custom">Custom</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* <QuerySelect
+          label="Select Date:"
+          choices={dates}
+          varName="merchant_id"
+        /> */}
+      </div>
+      <div>
+        <Label>From: </Label>
         <DatePicker
           selected={startDate}
           onChange={(date: Date) => setStartDate(date)}
           selectsStart
           startDate={startDate}
           endDate={endDate}
+          className="flex h-9 w-max rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900"
         />
-      </GridItem>
-      <GridItem>
-        <FormLabel>To: </FormLabel>
+      </div>
+      <div>
+        <Label>To: </Label>
         <DatePicker
           selected={endDate}
           onChange={(date: Date) => setEndDate(date)}
           selectsEnd
           startDate={startDate}
           endDate={endDate}
+          className="flex h-9 w-max rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900"
         />
-      </GridItem>
-    </>
+      </div>
+    </div>
   );
 };

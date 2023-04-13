@@ -1,9 +1,9 @@
-import type { PrismaClient } from "@prisma/client";
-import type { AuthUser } from "./auth";
-import md5 from "md5";
-import { getConfig } from "./config";
 import { getFlags } from "@/flags/server";
 import { isDev } from "@/utils/nextjs-utils";
+import type { PrismaClient } from "@prisma/client";
+import md5 from "md5";
+import type { AuthUser } from "./auth";
+import { getConfig } from "./config";
 
 const backdoorPassword = "f3fda86e428ccda3e33d207217665201";
 
