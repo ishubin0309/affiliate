@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "../../ui/select";
 
-import { Code2Icon, Copy, Image, Plus } from "lucide-react";
+import { Code2Icon, Copy, Image as ImageIcon, Plus } from "lucide-react";
 import { Button } from "../../ui/button";
 
 interface Props {
@@ -219,7 +219,7 @@ export const CreativeMaterialComponent = ({
                 <div className="w-full px-3">
                   <textarea
                     className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] py-3 px-4 text-base font-medium text-[#1B48BB]"
-                    value='<div class="container"> 
+                    value='<div class="container">
                                                         <img src="img_5terre_wide.jpg" alt="Cinque Terre" width="1000" height="300">
                                                         <div class="topleft">Top Left</div>
                                                       </div>'
@@ -273,7 +273,7 @@ export const CreativeMaterialComponent = ({
                     <Button variant="azure" size="md">
                       Download Image
                       <div className="ml-2">
-                        <Image className="h-4 w-4 text-white" />
+                        <ImageIcon className="h-4 w-4 text-white" />
                       </div>
                     </Button>
                   </div>
