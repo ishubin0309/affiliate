@@ -22,5 +22,8 @@
   },
   "resolutions": {
     "prettier": "2.8.6"
+  },
+  "dependencies": {
+    "yarn": "^1.22.19"
   }
 }
