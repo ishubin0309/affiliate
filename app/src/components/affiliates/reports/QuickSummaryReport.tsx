@@ -57,12 +57,24 @@ export const QuickSummaryReport = () => {
     page: currentPage ? Number(currentPage) : 1,
     items_per_page: itemsPerPage ? Number(itemsPerPage) : 10,
   });
+
+  const { refetch } = api.affiliates.exportQuickSummaryReport.useQuery({
+    from: new Date("2022-01-03"),
+    to: new Date("2023-01-03"),
+    display: display ? String(display) : undefined,
+    page: currentPage ? Number(currentPage) : 1,
+    items_per_page: itemsPerPage ? Number(itemsPerPage) : 5000,
+  });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<QuickReportSummary>();
   const { data: reportsHiddenCols } =
     api.affiliates.getReportsHiddenCols.useQuery();
 
   const upsertReportsField = api.affiliates.upsertReportsField.useMutation();
+
+  const handleExportData = () => {
+    refetch();
+  };
 
   useEffect(() => {
     const fieldsArray = fields.map((field, i) => {
@@ -431,7 +443,7 @@ export const QuickSummaryReport = () => {
               </button>
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
-                  <Button variant="primary-outline">
+                  <Button variant="primary-outline" onClick={handleExportData}>
                     Export{" "}
                     {Object.keys(selectedValue).length > 0
                       ? ` ${selectedValue?.title}`

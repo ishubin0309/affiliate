@@ -16,6 +16,7 @@
     "publish-storybook": "chromatic --project-token=cddc24775ebe"
   },
   "dependencies": {
+    "@atomictech/xlsx-write-stream": "^2.0.2",
     "@chakra-ui/icons": "^2.0.17",
     "@chakra-ui/react": "^2.4.9",
     "@emotion/react": "^11.10.5",
