@@ -1,20 +1,12 @@
 // import DatePicker from "react-datepicker";
-import { useState } from "react";
 import {
-  Box,
   FormControl,
-  FormLabel,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  SimpleGrid,
   HStack,
   Image,
-  Select,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
   useDisclosure,
 } from "@chakra-ui/react";
 import {
@@ -31,6 +23,7 @@ import {
 } from "date-fns";
 import { queryTypes, useQueryState } from "next-usequerystate";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { DatePicker } from "./datepicker/Datepicker";
 
 export type DateRange =
@@ -175,6 +168,8 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
   };
 
   const handleSelectDateRange = async (value: DateRange) => {
+    console.log(value);
+
     await setValue(value);
   };
 
