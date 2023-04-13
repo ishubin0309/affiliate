@@ -4,7 +4,7 @@ import { affiliate_id, merchant_id } from "./const";
 export const getDashboardDeviceReport = publicProcedure.query(
   async ({ ctx }) => {
     const data = await ctx.prisma.merchants_creative_stats.groupBy({
-      by: ["merchant_id"],
+      by: ["CountryID"],
       where: {
         merchant_id: merchant_id ? merchant_id : 1,
         affiliate_id,
