@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "../../ui/select";
 
-import { Code2Icon, Copy, Image, Plus } from "lucide-react";
+import { Code2Icon, Copy, Image as ImageIcon, Plus } from "lucide-react";
 import { Button } from "../../ui/button";
 
 interface Props {
@@ -273,7 +273,7 @@ export const CreativeMaterialComponent = ({
                     <Button variant="azure" size="md">
                       Download Image
                       <div className="ml-2">
-                        <Image className="h-4 w-4 text-white" alt="" />
+                        <ImageIcon className="h-4 w-4 text-white" />
                       </div>
                     </Button>
                   </div>
