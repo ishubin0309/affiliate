@@ -1098,6 +1098,7 @@ model merchants_creative_stats {
   Date         DateTime @db.Date
   affiliate_id Int      @map("AffiliateID")
   merchant_id  Int      @map("MerchantID")
+  CountryID    String   @db.VarChar(2)
   BannerID     Int
   Impressions  Int      @default(0)
   Clicks       Int      @default(0)

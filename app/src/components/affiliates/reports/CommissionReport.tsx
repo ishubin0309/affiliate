@@ -26,6 +26,7 @@ export const CommissionReport = () => {
   const router = useRouter();
   const { merchant_id, commission } = router.query;
   const [selectedValue, setSelectedItem] = useState<ItemProps>({});
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const { from, to } = useDateRange();
   const [traderID, setTraderID] = useState<string>("");
   const [reportFields, setReportFields] = useState<
@@ -209,6 +210,10 @@ export const CommissionReport = () => {
       title: "JSON",
     },
   ];
+
+  if (!data) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -403,7 +408,11 @@ export const CommissionReport = () => {
         </Dialog>
 
         <div className="mb-5 mt-4 w-full overflow-scroll rounded bg-white px-2 py-4 shadow-sm">
-          <DataTable data={data} columns={columns} footerData={totalData} />
+          <DataTable
+            data={data.result}
+            columns={columns}
+            footerData={totalData}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-2">

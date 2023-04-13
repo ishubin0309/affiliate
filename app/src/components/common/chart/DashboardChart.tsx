@@ -95,7 +95,7 @@ interface performanceChartDataType {
 }
 
 const DashboardChart = ({ performanceChartData, value }: Props) => {
-  const dataValue = performanceChartData.map((field, i) => {
+  const dataValue = performanceChartData?.map((field, i) => {
     interface Sum {
       [index: string]: number;
     }

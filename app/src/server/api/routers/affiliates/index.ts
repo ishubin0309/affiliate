@@ -17,6 +17,7 @@ import {
   getTopMerchantCreative,
   upsertReportsField,
 } from "./dashboard";
+import { getDashboardDeviceReport } from "./dashboard-device-report";
 import { deleteProfile, getProfiles, upsertProfile } from "./profile";
 import { getMerchantSubCreative, getMerchantSubCreativeMeta } from "./sub";
 import { deleteTicket, getTickets, upsertTicket } from "./ticket";
@@ -106,4 +107,6 @@ export const affiliatesRouter = createTRPCRouter({
   deletePixelMonitor,
 
   badQuerySample,
+
+  getDashboardDeviceReport,
 });

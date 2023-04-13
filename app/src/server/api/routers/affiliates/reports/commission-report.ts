@@ -16,7 +16,7 @@ export const getCommissionReport = publicProcedure
     })
   )
   .query(
-    ({
+    async ({
       ctx,
       input: { from, to, trader_id, commission, page, items_per_page },
     }) => {
@@ -43,45 +43,34 @@ export const getCommissionReport = publicProcedure
           break;
       }
 
-      let data;
-      paginate.commissions.paginate(
-        {
-          limit: items_per_page ? items_per_page : 10,
-          page: page,
-          orderBy: {
-            Date: "asc",
+      const data = await paginate.commissions.paginate({
+        limit: items_per_page ? items_per_page : 10,
+        page: page,
+        orderBy: {
+          Date: "asc",
+        },
+        where: {
+          ...deal_filter,
+          Date: {
+            gte: from,
+            lt: to,
           },
-          where: {
-            ...deal_filter,
-            Date: {
-              gte: from,
-              lt: to,
+          affiliate_id: affiliate_id,
+          traderID: trader_id ? trader_id : "",
+        },
+        include: {
+          merchant: {
+            select: {
+              name: true,
             },
-            affiliate_id: affiliate_id,
-            traderID: trader_id ? trader_id : "",
           },
-          include: {
-            merchant: {
-              select: {
-                name: true,
-              },
-            },
-            affiliate: {
-              select: {
-                username: true,
-              },
+          affiliate: {
+            select: {
+              username: true,
             },
           },
         },
-        (err, result) => {
-          if (err) {
-            console.log("error ---->", err);
-          }
-          console.log("result ---->", result);
-
-          data = result?.result;
-        }
-      );
+      });
 
       // console.log("data ----->", data);
 

@@ -168,6 +168,8 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
   };
 
   const handleSelectDateRange = async (value: DateRange) => {
+    console.log(value);
+
     await setValue(value);
   };
 

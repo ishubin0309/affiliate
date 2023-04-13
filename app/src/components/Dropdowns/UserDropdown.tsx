@@ -28,8 +28,6 @@ const UserDropdown = () => {
     setDropdownPopoverShow(false);
   };
 
-  console.log(`muly:UserDropdown`, { session });
-
   return (
     <>
       <span className="hidden h-9 items-center justify-center pr-2 text-base font-semibold text-[#303134] md:inline-flex">
