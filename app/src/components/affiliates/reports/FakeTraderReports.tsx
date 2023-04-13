@@ -22,6 +22,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { TraderReportType } from "../../../server/db-types";
 import { Loading } from "../../common/Loading";
+import { isSSR } from "@/utils/nextjs-utils";
 
 export const FakeTraderReports = () => {
   const router = useRouter();
@@ -98,7 +99,7 @@ export const FakeTraderReports = () => {
   //   to,
   // });
 
-  if (isLoading) {
+  if (isLoading || isSSR()) {
     return <Loading />;
   }
 
