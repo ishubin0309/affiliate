@@ -17,10 +17,26 @@ import {
   getTopMerchantCreative,
   upsertReportsField,
 } from "./dashboard";
+import { getDashboardDeviceReport } from "./dashboard-device-report";
 import { deleteProfile, getProfiles, upsertProfile } from "./profile";
 import { getMerchantSubCreative, getMerchantSubCreativeMeta } from "./sub";
 import { deleteTicket, getTickets, upsertTicket } from "./ticket";
 
+import { badQuerySample } from "@/server/api/routers/affiliates/bad-query-sample";
+import {
+  getAllMerchants,
+  getLongCountries,
+} from "@/server/api/routers/affiliates/reports";
+import { getClicksReport } from "@/server/api/routers/affiliates/reports/clicks-report";
+import { getCommissionReport } from "@/server/api/routers/affiliates/reports/commission-report";
+import { getCreativeReport } from "@/server/api/routers/affiliates/reports/creative-report";
+import { getInstallReport } from "@/server/api/routers/affiliates/reports/install-reports";
+import { getLandingPageData } from "@/server/api/routers/affiliates/reports/landing-page";
+import { getPixelLogReport } from "@/server/api/routers/affiliates/reports/pixel-log-report";
+import { getProfileReportData } from "@/server/api/routers/affiliates/reports/profile-report";
+import { getQuickReportSummary } from "@/server/api/routers/affiliates/reports/quick-summary";
+import { getSubAffiliateReport } from "@/server/api/routers/affiliates/reports/sub-affiliate-report";
+import { getTraderReport } from "@/server/api/routers/affiliates/reports/trader-report";
 import { getCommissions } from "./commission";
 import { getDocuments } from "./document";
 import {
@@ -29,21 +45,6 @@ import {
   getPixelMonitorMeta,
   upsertPixelMonitor,
 } from "./pixel";
-import { badQuerySample } from "@/server/api/routers/affiliates/bad-query-sample";
-import { getQuickReportSummary } from "@/server/api/routers/affiliates/reports/quick-summary";
-import { getInstallReport } from "@/server/api/routers/affiliates/reports/install-reports";
-import {
-  getAllMerchants,
-  getLongCountries,
-} from "@/server/api/routers/affiliates/reports";
-import { getCommissionReport } from "@/server/api/routers/affiliates/reports/commission-report";
-import { getClicksReport } from "@/server/api/routers/affiliates/reports/clicks-report";
-import { getCreativeReport } from "@/server/api/routers/affiliates/reports/creative-report";
-import { getLandingPageData } from "@/server/api/routers/affiliates/reports/landing-page";
-import { getTraderReport } from "@/server/api/routers/affiliates/reports/trader-report";
-import { getPixelLogReport } from "@/server/api/routers/affiliates/reports/pixel-log-report";
-import { getProfileReportData } from "@/server/api/routers/affiliates/reports/profile-report";
-import { getSubAffiliateReport } from "@/server/api/routers/affiliates/reports/sub-affiliate-report";
 
 export const affiliatesRouter = createTRPCRouter({
   getDashboard,
@@ -102,4 +103,6 @@ export const affiliatesRouter = createTRPCRouter({
   deletePixelMonitor,
 
   badQuerySample,
+
+  getDashboardDeviceReport,
 });
