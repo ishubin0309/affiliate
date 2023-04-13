@@ -1,5 +1,5 @@
 import { CreativeMaterialComponent } from "./CreativeMaterialComponent";
-
+import { CreativeMaterialDialogComponent } from "./CreativeMaterialDialogComponent";
 const meta = {
   component: CreativeMaterialComponent,
 };
@@ -33,4 +33,24 @@ export const CreativeMaterial = {
       url={"https://ckcasino.com/#/lobby"}
     />
   ),
+};
+export const MaterialDialog = {
+  render: () => (
+    <CreativeMaterialDialogComponent
+      key={1}
+      isOpen={true}
+      values={values}
+      // file={
+      //   "https://www.figma.com/file/CHxJV6V2o7WVj1rsYmRRWe/Affiliate_client_Design?node-id=161-22504&t=Cw4CgrEMKeymnN7m-4"
+      // }
+      // alt={"CKcasino Logo"}
+      // url={"https://ckcasino.com/#/lobby"}
+    />
+  ),
+  parameters: {
+    design: {
+      type: "figma",
+      url: "https://www.figma.com/file/CHxJV6V2o7WVj1rsYmRRWe/Affiliate_client_Design?node-id=161-22504&t=Q2vhI3l6CTB7qwBh-0",
+    },
+  },
 };
