@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import type { ChangeEvent } from "react";
 import { useState } from "react";
 import { QuerySelect } from "../../../components/common/QuerySelect";
-import { DataTable } from "../../../components/common/data-table/DataTable";
+import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
 import type { CommissionReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { Loading } from "../../common/Loading";
@@ -408,7 +408,7 @@ export const CommissionReport = () => {
         </Dialog>
 
         <div className="mb-5 mt-4 w-full overflow-scroll rounded bg-white px-2 py-4 shadow-sm">
-          <DataTable
+          <ReportDataTable
             data={data.result}
             columns={columns}
             footerData={totalData}

@@ -5,12 +5,14 @@ import {
 import { QuickReportSummarySchema } from "@/server/api/routers/affiliates/reports";
 import { publicProcedure } from "@/server/api/trpc";
 import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
-import XLSXWriteStream from "@atomictech/xlsx-write-stream";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { formatISO } from "date-fns";
-import fs from "fs";
+import path from "path";
 import paginator from "prisma-paginate";
 import { z } from "zod";
+import { uploadFile } from "../config";
+import { exportCSVReport } from "../config/exportCSV";
+import { exportXLSX } from "../config/exportXLSX";
 const QuickReportSummarySchemaArray = z.array(QuickReportSummarySchema);
 
 export const getQuickReportSummary = publicProcedure
@@ -62,6 +64,8 @@ export const getQuickReportSummary = publicProcedure
         dasboardSQLwhere = Prisma.sql` AND d.AffiliateID = ${affiliate_id}`;
       }
 
+      // dasboardSQLwhere = Prisma.sql` LIMIT ${offset}, ${items_per_page}`;
+
       const data = await paginate.$queryRaw<
         z.infer<typeof QuickReportSummarySchema>[]
       >(Prisma.sql`select 
@@ -98,9 +102,9 @@ export const getQuickReportSummary = publicProcedure
           d.Date >= ${formatISO(from, { representation: "date" })}
         AND d.Date <  ${formatISO(to, {
           representation: "date",
-        })} ${dasboardSQLwhere}  ${dasboardSQLperiod}`);
+        })} ${dasboardSQLwhere}  ${dasboardSQLperiod}  LIMIT ${offset}, ${items_per_page}`);
 
-      console.log("data ----->", data);
+      // console.log("quick report data ----->", data);
 
       return data?.map(convertPrismaResultsToNumbers) || data;
     }
@@ -204,11 +208,50 @@ export const exportQuickSummaryReport = publicProcedure
       "Active Trader",
       "Commission",
     ];
-    const xlsxWriter = new XLSXWriteStream({ header: true, columns });
-    const writeStream = fs.createWriteStream("file.xlsx");
-    xlsxWriter.pipe(writeStream);
+    const data_rows = [] as any;
+    data.map((item) => {
+      data_rows.push(
+        item.Impressions,
+        item.Clicks,
+        item.Install,
+        item.Leads,
+        item.Demo,
+        item.RealAccount,
+        item.FTD,
+        item.Withdrawal,
+        item.ChargeBack,
+        item.ActiveTrader,
+        item.Commission
+      );
+    });
 
-    console.log("object values", Object.values(data[0]));
-    xlsxWriter.write(Object.values(data[0]));
-    xlsxWriter.end();
+    const filename_excel = "quick-summary-report.xlsx";
+    const filename_csv = "quick-summary-report.csv";
+    exportXLSX(columns, data_rows, filename_excel);
+    exportCSVReport(columns, data_rows, filename_csv);
+
+    const localFileName = path.join(
+      __dirname,
+      `../../../../../${filename_excel}`
+    );
+
+    const bucketName = "reports-download-tmp";
+    const serviceKey = path.join(
+      __dirname,
+      "../../../../../api-front-dashbord-a4ee8aec074c.json"
+    );
+
+    console.log("above");
+    const public_url = uploadFile(
+      serviceKey,
+      "api-front-dashbord",
+      bucketName,
+      localFileName
+    );
+
+    // console.log("object values", data_rows);
+    // console.log("object rows", data_rows);
+    // console.log("server key", serviceKey);
+    console.log("public url index", public_url);
+    return public_url;
   });
