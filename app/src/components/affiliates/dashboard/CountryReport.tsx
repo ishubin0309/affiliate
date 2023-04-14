@@ -1,5 +1,6 @@
-import type { DashboardDeviceReport } from "@/server/db-types";
 import { useState } from "react";
+import type { DashboardDeviceReport } from "../../../server/db-types";
+import { api } from "../../../utils/api";
 import CountryChart from "../../common/chart/CountryChart";
 import {
   Select,
@@ -13,11 +14,11 @@ const AccountManager = () => {
   const [selectedReport, setSelectedReport] = useState<string>("Clicks");
   const [lastDays, setLastDays] = useState<number>(0);
 
-  const { data: reportData } = api.affiliates.getDashboardDeviceReport.useQuery<
-    DashboardDeviceReport[]
-  >({
-    lastDays,
-  });
+  const { data: reportData } = api.affiliates.getDashboardDeviceReport.useQuery(
+    {
+      lastDays,
+    }
+  );
   const labels: string[] =
     reportData?.map((item: DashboardDeviceReport) => item?.CountryID) ?? [];
   const values: number[] =
