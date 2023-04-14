@@ -1,12 +1,8 @@
-import React, { useRef, useContext } from "react";
-import {
-  Calendar as CalendarIcon,
-  ChevronLeft,
-  ChevronRight,
-} from "react-feather";
+import React, { useContext, useRef } from "react";
+import { ChevronLeft, ChevronRight } from "react-feather";
 
 // TODO remove react-popper?
-import { Manager, Reference, Popper } from "react-popper";
+import { Manager, Reference } from "react-popper";
 import { DatepickerCtx, useDatepickerCtx } from "./DatepickerContext";
 
 const daysOfWeekNames = [

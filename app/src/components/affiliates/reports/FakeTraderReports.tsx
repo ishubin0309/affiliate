@@ -1,24 +1,69 @@
 import { fakeTraderReportData } from "@/components/affiliates/reports/fake-trader-report-data";
 import { QuerySelect } from "@/components/common/QuerySelect";
-import { DataTable } from "@/components/common/data-table/DataTable";
+import { Button } from "@/components/ui/button";
 import { DateRangeSelect } from "@/components/ui/date-range";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { DropdownButton } from "@/components/ui/drop-down";
+import { Input, Label } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
+import { Switch } from "@/components/ui/switch";
 import { createColumnHelper } from "@tanstack/react-table";
+import { SettingsIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
+import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { TraderReportType } from "../../../server/db-types";
-import { useDateRange } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
+import { isSSR } from "@/utils/nextjs-utils";
 
 export const FakeTraderReports = () => {
   const router = useRouter();
-  const { merchant_id } = router.query;
-  const { from, to } = useDateRange();
   const [traderID, setTraderID] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemPerPage] = useState(2);
+  const [from, setFrom] = useState(new Date());
+  const [to, setTo] = useState(new Date());
+  const [isOpen, setOpen] = useState(false);
+  const [traderReportColumns, settraderReportColumns] = useState([
+    { id: "TraderID", title: "Trader ID", isOpen: true },
+    { id: "sub_trader_count", title: "Trader Sub Accounts", isOpen: true },
+    { id: "RegistrationDate", title: "Registration Date", isOpen: true },
+    { id: "TraderStatus", title: "Trader Status", isOpen: true },
+    { id: "Country", title: "Country", isOpen: true },
+    { id: "affiliate_id", title: "Affiliate ID", isOpen: true },
+    { id: "AffiliateUsername", title: "Affiliate Username", isOpen: true },
+    { id: "merchant_id", title: "Merchant ID", isOpen: true },
+    { id: "MerchantName", title: "Merchant Name", isOpen: true },
+    { id: "CreativeID", title: "Creative ID", isOpen: true },
+    { id: "CreativeName", title: "Creative Name", isOpen: true },
+    { id: "Type", title: "Type", isOpen: true },
+    { id: "CreativeLanguage", title: "Creative Language", isOpen: true },
+    { id: "ProfileID", title: "Profile ID", isOpen: true },
+    { id: "ProfileName", title: "Profile Name", isOpen: true },
+    { id: "Param", title: "Param", isOpen: true },
+    { id: "Param2", title: "Param2", isOpen: true },
+    { id: "Param3", title: "Param3", isOpen: true },
+    { id: "Param4", title: "Param4", isOpen: true },
+    { id: "Param5", title: "Param5", isOpen: true },
+    { id: "FirstDeposit", title: "First Deposit", isOpen: true },
+    { id: "Volume", title: "Volume", isOpen: true },
+    { id: "WithdrawalAmount", title: "Withdrawal Amount", isOpen: true },
+    { id: "ChargeBackAmount", title: "ChargeBack Amount", isOpen: true },
+    { id: "totalLots", title: "Lots", isOpen: true },
+    { id: "SaleStatus", title: "Sale Status", isOpen: true },
+  ]);
+
+  const handleDropDown = () => {
+    setOpen(!isOpen);
+  };
 
   // TODO: Add pagination
   const pageSize = 10;
@@ -46,16 +91,15 @@ export const FakeTraderReports = () => {
   const merchants = [{ id: 1, title: "FXoro" }];
   const columnHelper = createColumnHelper<TraderReportType>();
 
-  console.log("trader render", {
-    data,
-    merchants,
-    isLoading,
-    from,
-    to,
-    merchant_id,
-  });
+  // console.log("trader render", {
+  //   data,
+  //   merchants,
+  //   isLoading,
+  //   from,
+  //   to,
+  // });
 
-  if (isLoading) {
+  if (isLoading || isSSR()) {
     return <Loading />;
   }
 
@@ -66,34 +110,9 @@ export const FakeTraderReports = () => {
     });
 
   // TODO: no match between columns here and what display on screen
-  const columns = [
-    createColumn("TraderID", "Trader ID"),
-    createColumn("sub_trader_count", "Trader Sub Accounts"),
-    createColumn("RegistrationDate", "Registration Date"),
-    createColumn("TraderStatus", "Trader Status"),
-    createColumn("Country", "Country"),
-    createColumn("affiliate_id", "Affiliate ID"),
-    createColumn("AffiliateUsername", "Affiliate Username"),
-    createColumn("merchant_id", "Merchant ID"),
-    createColumn("MerchantName", "Merchant Name"),
-    createColumn("CreativeID", "Creative ID"),
-    createColumn("CreativeName", "Creative Name"),
-    createColumn("Type", "Type"),
-    createColumn("CreativeLanguage", "Creative Language"),
-    createColumn("ProfileID", "Profile ID"),
-    createColumn("ProfileName", "Profile Name"),
-    createColumn("Param", "Param"),
-    createColumn("Param2", "Param2"),
-    createColumn("Param3", "Param3"),
-    createColumn("Param4", "Param4"),
-    createColumn("Param5", "Param5"),
-    createColumn("FirstDeposit", "First Deposit"),
-    createColumn("Volume", "Volume"),
-    createColumn("WithdrawalAmount", "Withdrawal Amount"),
-    createColumn("ChargeBackAmount", "ChargeBack Amount"),
-    createColumn("totalLots", "Lots"),
-    createColumn("SaleStatus", "Sale Status"),
-  ];
+  const columns = traderReportColumns?.map((item: any) =>
+    createColumn(item.id, item.title)
+  );
 
   const creativeType = [
     {
@@ -179,60 +198,106 @@ export const FakeTraderReports = () => {
   const handleChange = (e: any) => {
     setItemPerPage(e);
   };
+  const handleToggleChange = (event: any, id: string) => {
+    const newData = traderReportColumns.map((item) => {
+      if (item.id === id) {
+        return { ...item, isOpen: event };
+      } else {
+        return item;
+      }
+    });
+
+    settraderReportColumns(newData);
+  };
+  // useEffect(() => {
+  //   console.log("from", from, "to", to);
+  // }, [from, to]);
+
+  // console.log("query", router.query);
+
+  // console.log("router", router.query);
+  // console.log("trader id ----->", traderID);
+
+  console.log("trader colums ------>", merchants, creativeType);
 
   return (
     <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        width="90%"
-        alignItems={"center"}
-        alignSelf="center"
-      >
+      <div className="grid grid grid-cols-5 gap-2">
         <DateRangeSelect />
-        <GridItem>
+        <div>
           <QuerySelect
             label="Merchant"
             choices={merchants}
             varName="merchant_id"
           />
-        </GridItem>{" "}
-        <GridItem>
-          <FormLabel>Trader ID</FormLabel>
-          <Input
-            value={traderID}
-            onChange={(event) => setTraderID(event.target.value)}
-          />
-        </GridItem>
-        <GridItem>
+        </div>
+        <div>
           <QuerySelect
             label="Creative Type"
             choices={creativeType}
             varName="creative_type"
           />
-        </GridItem>
-      </Grid>
+        </div>
+        <div>
+          <Label>Trader ID</Label>
+          <Input
+            value={traderID}
+            onChange={(event) => setTraderID(event.target.value)}
+          />
+        </div>
+
+        <div className="my-6 ml-4">
+          <Button variant="primary">apply</Button>
+        </div>
+        <div className="my-6 ml-4">
+          <DropdownButton />
+        </div>
+        <Dialog>
+          <DialogTrigger>
+            <Button variant="azure">
+              <SettingsIcon />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>Trader Report</DialogHeader>
+            <DialogTitle>Trader Report Control</DialogTitle>
+            <DialogDescription>
+              <div className="grid grid-cols-4 gap-2">
+                {traderReportColumns?.map((item, id) => {
+                  return (
+                    <div className="grid  grid-cols-4 gap-2" key={id}>
+                      <div className="items-top flex space-x-2">
+                        <Switch
+                          id={item.id}
+                          checked={item.isOpen}
+                          onCheckedChange={(event) =>
+                            handleToggleChange(event, item.id)
+                          }
+                        />
+                        <div>
+                          <label
+                            htmlFor={item.id}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {item?.title}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </DialogDescription>
+          </DialogContent>
+        </Dialog>
+        <div></div>
+      </div>
       <h2>Trader Report</h2>
-      <Grid
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-        alignSelf="center"
-        overflow={"scroll"}
-      >
+      <div className="grid  gap-4">
         <DataTable data={data} columns={columns} footerData={totalObj} />
-      </Grid>
+      </div>
       <div className="grid grid-cols-2 gap-2">
-        <Pagination
-          count={5}
-          variant="focus"
-          currentPage={currentPage}
-          itemsPerPage={itemsPerPage}
-          totalItems={data.length}
-          paginate={paginate}
-          handleChange={handleChange}
-        />
+        <Pagination count={5} variant="focus" totalItems={data.length} />
       </div>
     </>
   );

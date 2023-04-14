@@ -1,8 +1,52 @@
 import AccountManager from "./AccountManager";
 import CountryReport from "./CountryReport";
+import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
 import DeviceReport from "./DeviceReport";
-
+const performanceChart = [
+  {
+    date: "Dec, 2022",
+    Accounts: 5,
+    ActiveTraders: 1,
+  },
+  {
+    date: "Jan, 2023",
+    Accounts: 3,
+    ActiveTraders: 1,
+  },
+  {
+    date: "Feb, 2023",
+    Accounts: 6,
+    ActiveTraders: 1,
+  },
+  {
+    date: "Mar, 2023",
+    Accounts: 4,
+    ActiveTraders: 1,
+  },
+];
+const conversionChart = [
+  {
+    date: "Dec, 2022",
+    Conversions: 16.666666666666664,
+  },
+  {
+    date: "Jan, 2023",
+    Conversions: 14,
+  },
+  {
+    date: "Feb, 2023",
+    Conversions: 18,
+  },
+  {
+    date: "Mar, 2023",
+    Conversions: 19,
+  },
+  {
+    date: "Apr, 2023",
+    Conversions: 11,
+  },
+];
 const meta = {
   component: DeviceReport,
 };
@@ -50,7 +94,12 @@ export const AccountManagers = {
   },
 };
 export const Charts = {
-  render: () => <DashboardCharts />,
+  render: () => (
+    <DashboardCharts
+      performanceChart={performanceChart}
+      conversionChart={conversionChart}
+    />
+  ),
   parameters: {
     design: {
       type: "figma",
@@ -58,49 +107,36 @@ export const Charts = {
     },
   },
 };
-export const impression = {
+export const Impression = {
   render: () => (
-    <div className="mb-1 w-60 rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6">
-      <div className="text-sm font-semibold text-[#2262C6] md:text-base">
-        Impression{" "}
-        <span className="hidden text-xs font-normal text-[#B9B9B9] md:inline-flex md:text-sm">
-          {" "}
-          ( Last 6 Month)
-        </span>
-      </div>
-      <div className="flex justify-between">
-        <div className="flex-1">
-          <div className="flex h-12 items-center">
-            <div className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="12"
-                height="13"
-                viewBox="0 0 12 13"
-                fill="none"
-              >
-                <path
-                  d="M6.66685 13.0001L6.66685 3.27612L10.1955 6.80479L11.1382 5.86212L6.00018 0.724121L0.862183 5.86212L1.80485 6.80479L5.33352 3.27612L5.33352 13.0001L6.66685 13.0001Z"
-                  fill="#50B8B6"
-                />
-              </svg>
-            </div>
-            <span className="ml-1 text-xl font-bold md:ml-3">10</span>
-          </div>
-        </div>
-      </div>
-      <div className="mt-2 flex justify-around border-t border-gray-200 pb-2">
-        <div>
-          <p className="mt-1 text-xs text-[#404040]">Last Month</p>
-          <p className="text-center text-sm font-bold text-[#1A1A1A]">440</p>
-        </div>
-        <div className="border-r "></div>
-        <div>
-          <p className="mt-1 text-xs text-[#404040]">This Month</p>
-          <p className="text-center text-sm font-bold text-[#1A1A1A]">210</p>
-        </div>
-      </div>
-    </div>
+    <>
+      <DashboardCards
+        idx={0}
+        item={{
+          id: 0,
+          title: "title",
+          value: "RealAccount",
+          isChecked: false,
+        }}
+        thisMonth={212000}
+        lastMonth={40000}
+        value={23000}
+        performanceChartData={undefined}
+      />
+      <DashboardCards
+        idx={0}
+        item={{
+          id: 0,
+          title: "title",
+          value: "RealAccount",
+          isChecked: false,
+        }}
+        thisMonth={2120000000000}
+        lastMonth={400}
+        value={2300000}
+        performanceChartData={undefined}
+      />
+    </>
   ),
   parameters: {
     design: {
