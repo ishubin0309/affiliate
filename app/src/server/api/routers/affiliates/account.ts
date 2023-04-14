@@ -127,7 +127,7 @@ export const registerAccount = publicProcedure
         newsletter: 1,
       },
     });
-    return data;
+    return newData;
   });
 
 export const recoverPassword = publicProcedure
@@ -160,7 +160,12 @@ export const recoverPassword = publicProcedure
 
       await ctx.prisma.affiliates.update({ where: { id }, data: { password } });
 
-      await sentEmailTemplate("ResetPassword", { affiliate, password });
+      await sentEmailTemplate(mail, "resetPassword", {
+        affiliate,
+        password,
+        UserName: affiliate.first_name || affiliate.last_name || affiliate.mail,
+        AppName: "Affiliate dashboard", // getConfig().appName,
+      });
     }
 
     return true;

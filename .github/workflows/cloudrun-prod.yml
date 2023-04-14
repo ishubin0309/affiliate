@@ -52,13 +52,14 @@ jobs:
             DATABASE_URL=PROD_GAMINGAFFILIATES_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
+            SENDGRID_API_KEY=SENDGRID_API_KEY:latest
           env_vars: |
             LEGACY_PHP_URL=https://go.gamingaffiliates.co
             NEXTAUTH_URL=https://affiliate.gamingaffiliates.co
             NODE_ENV=production
           flags: |
             --allow-unauthenticated
-            --vpc-connector=production-serverless-vp 
+            --vpc-connector=production-serverless-vp
             --vpc-egress=all-traffic
             --port=3000
             --max-instances=5
@@ -77,13 +78,14 @@ jobs:
             DATABASE_URL=PROD_BESTBROKERSPARTNERS_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
+            SENDGRID_API_KEY=SENDGRID_API_KEY:latest
           env_vars: |
             LEGACY_PHP_URL=https://go.best-brokers-partners.com
             NEXTAUTH_URL=https://affiliate.best-brokers-partners.com
             NODE_ENV=production
           flags: |
             --allow-unauthenticated
-            --vpc-connector=production-serverless-vp 
+            --vpc-connector=production-serverless-vp
             --vpc-egress=all-traffic
             --port=3000
             --max-instances=5
