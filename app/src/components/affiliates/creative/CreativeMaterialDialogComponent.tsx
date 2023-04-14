@@ -87,7 +87,7 @@ export const CreativeMaterialDialogComponent = ({
             </div>
             <div className="mt-2 flex justify-between md:block">
               <div>
-                <div className=" text-sm font-medium text-[#717171]">
+                <div className="text-sm font-medium text-[#717171]">
                   {values[4]?.title}
                 </div>
                 <div className=" text-sm text-[#353535] md:text-lg">
@@ -95,7 +95,7 @@ export const CreativeMaterialDialogComponent = ({
                 </div>
               </div>
               <div className="md:hidden">
-                <div className=" text-sm font-medium text-[#717171]">
+                <div className="text-sm font-medium text-[#717171]">
                   Language
                 </div>
                 <div className=" text-sm text-[#353535] md:text-lg">
