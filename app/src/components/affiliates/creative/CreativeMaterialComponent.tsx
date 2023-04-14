@@ -1,4 +1,3 @@
-
 import { Code2Icon, Copy } from "lucide-react";
 
 import { Button } from "../../ui/button";
@@ -29,9 +28,7 @@ export const CreativeMaterialComponent = ({
           <img src={file} className="rounded-xl bg-cover" alt={alt} />
         </div>
 
-
         <CreativeMaterialDialogComponent values={values} />
-
       </div>
       <div className="mt-1 items-end md:mt-3 md:hidden">
         <div className="">
