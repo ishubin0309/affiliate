@@ -9,8 +9,7 @@ export const getDashboardDeviceReport = publicProcedure
       lastDays: z.number().int(),
     })
   )
-  .query(async ({ ctx, input }) => {
-    const { lastDays } = input;
+  .query(async ({ ctx, input: { lastDays } }) => {
     const dateQuery = sub(new Date(), { days: lastDays ? lastDays : 0 });
     const data = await ctx.prisma.merchants_creative_stats.groupBy({
       by: ["merchant_id", "CountryID"],
