@@ -4,7 +4,7 @@ import { numericCheckbox } from "./common";
 
 export const schema = z
   .object({
-    username: z.string().describe("Username"),
+    username: z.string().optional().describe("Username"),
     mail: z.string().email().optional().describe("email"),
   })
   .refine(
