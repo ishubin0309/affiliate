@@ -1,16 +1,76 @@
+import { api } from "@/utils/api";
+import { useEffect, useState } from "react";
 import CountryChart from "../../common/chart/CountryChart";
 import {
   Select,
-  SelectGroup,
-  SelectValue,
-  SelectTrigger,
   SelectContent,
-  SelectLabel,
+  SelectGroup,
   SelectItem,
-  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
 } from "../../ui/select";
-
+const apiMockData = [
+  {
+    _sum: {
+      Clicks: 1,
+      BannerID: 3,
+      Impressions: 2,
+    },
+    merchant_id: 1,
+    CountryID: "FR",
+  },
+  {
+    _sum: {
+      Clicks: 4,
+      BannerID: 1,
+      Impressions: 0,
+    },
+    merchant_id: 1,
+    CountryID: "US",
+  },
+];
+interface ApiData {
+  _sum: {
+    Clicks: number;
+    BannerID: number;
+    Impressions: number;
+  };
+  merchant_id: number;
+  CountryID: string;
+}
 const AccountManager = () => {
+  const [selectedReport, setSelectedReport] = useState<string>("");
+  const [countryDropDown, setCountryDropDown] = useState<string[]>([]);
+  const [chartLabels, setChartLabels] = useState<string[]>([]);
+  const [chartValues, setChartValues] = useState<number[]>([]);
+  const [chartData, setChartData] = useState<ApiData[]>([]);
+  const getDashboardDeviceReport =
+    api.affiliates.getDashboardDeviceReport.useMutation();
+  useEffect(() => {
+    getApiData(0);
+  }, []);
+  const onReportChange = (value: string) => {
+    // set chart label
+    setSelectedReport(value);
+    // set the chart value
+    const values: number[] = chartData.map(
+      (data: ApiData) => data._sum[value as keyof ApiData["_sum"]]
+    );
+    setChartValues(values);
+  };
+  const getApiData = async (lastDays: number) => {
+    const data: unknown = await getDashboardDeviceReport.mutateAsync({
+      lastDays,
+    });
+    if (Array.isArray(data)) {
+      setChartData(data);
+      setCountryDropDown(Object.keys(data[0]?._sum));
+      const labels: string[] = data.map((data: ApiData) => data.CountryID);
+      const values: number[] = data.map((data: ApiData) => data._sum.Clicks);
+      setChartLabels(labels);
+      setChartValues(values);
+    }
+  };
   return (
     <div className="rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
       <div className="mb-3 text-xl font-bold text-[#2262C6]">
@@ -19,7 +79,10 @@ const AccountManager = () => {
       <div className="mb-7 flex justify-between">
         <div className="text-base font-light">session by device</div>
         <div className="flex items-center justify-center text-xs font-light">
-          <Select defaultValue={"90"}>
+          <Select
+            defaultValue={"90"}
+            onValueChange={(e: string) => getApiData(parseInt(e) as number)}
+          >
             <SelectTrigger className="pr-2 text-xs font-light text-black">
               <SelectValue placeholder="Select days" />
             </SelectTrigger>
@@ -40,19 +103,17 @@ const AccountManager = () => {
       <div className="mb-3 flex justify-between">
         <div className="text-base font-medium text-[#2262C6]">Report</div>
         <div className="flex w-48 items-center justify-center text-xs">
-          <Select>
+          <Select onValueChange={onReportChange}>
             <SelectTrigger className="w-full rounded-sm bg-[#EDF2F7] py-1 px-2">
               <SelectValue placeholder="Clicks" />
             </SelectTrigger>
             <SelectContent className="">
               <SelectGroup>
-                <SelectItem value={"SignUp"}>SignUp</SelectItem>
-                <SelectItem value={"Acquisition"}>Acquisition</SelectItem>
-                <SelectItem value={"Demo"}>Demo</SelectItem>
-                <SelectItem value={"FTD"}>FTD</SelectItem>
-                <SelectItem value={"Account"}>Account</SelectItem>
-                <SelectItem value={"FTD"}>FTD Account</SelectItem>
-                <SelectItem value={"Withdrawal"}>Withdrawal</SelectItem>
+                {countryDropDown.map((i: string) => (
+                  <>
+                    <SelectItem value={i}>{i}</SelectItem>
+                  </>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -60,7 +121,11 @@ const AccountManager = () => {
       </div>
 
       <div className="flex h-48 items-center justify-between">
-        <CountryChart />
+        <CountryChart
+          label={selectedReport}
+          labels={chartLabels}
+          data={chartValues}
+        />
       </div>
     </div>
   );
