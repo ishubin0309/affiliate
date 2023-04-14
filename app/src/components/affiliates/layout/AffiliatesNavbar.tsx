@@ -1,9 +1,11 @@
+import SelectLanguageDropdown, {
+  OptionsItem,
+} from "@/components/Dropdowns/SelectLanguageDropdown";
+import SelectUserDropdown from "@/components/Dropdowns/SelectUserDropdown";
 import { Image } from "@chakra-ui/react";
 import Link from "next/link";
-import type { Dispatch, SetStateAction } from "react";
-import LanguageDropdown from "../../Dropdowns/LanguageDropdown";
+import { Dispatch, SetStateAction, useState } from "react";
 import NotificationDropDown from "../../Dropdowns/NotificationDropdown";
-import UserDropdown from "../../Dropdowns/UserDropdown";
 
 interface Props {
   collapseShow: boolean;
@@ -11,6 +13,56 @@ interface Props {
 }
 
 const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
+  const [selectLanguageItem, setSelectLanguageItem] =
+    useState<OptionsItem | null>(null);
+
+  const languageDropDown = [
+    {
+      title: "English",
+      icon: "US",
+    },
+    {
+      title: "Russian",
+      icon: "RU",
+    },
+    {
+      title: "Dutch",
+      icon: "NL",
+    },
+    {
+      title: "Spain",
+      icon: "ES",
+    },
+    {
+      title: "French",
+      icon: "FR",
+    },
+    {
+      title: "Italian",
+      icon: "IT",
+    },
+    {
+      title: "Arabic",
+      icon: "AR",
+    },
+    {
+      title: "Chinese",
+      icon: "CN",
+    },
+    {
+      title: "Portugese",
+      icon: "PT",
+    },
+    {
+      title: "Hebrew",
+      icon: "IL",
+    },
+    {
+      title: "Japanese",
+      icon: "JP",
+    },
+  ];
+
   return (
     <>
       {/* Navbar */}
@@ -109,9 +161,13 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
           </div>
           {/* User */}
           <ul className="flex list-none flex-row items-center">
-            <LanguageDropdown />
+            <SelectLanguageDropdown
+              onLanguageChange={(val) => setSelectLanguageItem(val)}
+              selectedOptions={selectLanguageItem}
+              options={languageDropDown}
+            />
             <NotificationDropDown />
-            <UserDropdown />
+            <SelectUserDropdown />
           </ul>
         </div>
       </nav>
