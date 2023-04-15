@@ -22,7 +22,7 @@ const Page: MyPage = () => {
       </Head>
       <main className="flex min-h-screen items-center justify-center px-5">
         <div className="m-auto min-h-full w-[527px] items-center justify-center py-12">
-          <div className="w-full">
+          <div className="w-full max-w-xs">
             <AuthenticationHeader />
             <FormSignin />
             <AuthenticationFooter />
