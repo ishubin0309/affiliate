@@ -1,19 +1,12 @@
-import { Box, Flex, Link, Stack, Text } from "@chakra-ui/react";
 import { Form } from "../../common/forms/Form";
 import type { z } from "zod";
 import { schema } from "../../../shared-types/forms/login";
 import { signIn, useSession } from "next-auth/react";
-import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-} from "@chakra-ui/react";
-
 import { useState } from "react";
 import NextLink from "next/link";
 import { useTranslation } from "next-i18next";
 import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
+import Link from "next/link";
 
 // Sample user
 // user001
@@ -53,15 +46,33 @@ export const FormSignin = () => {
         schema={schema}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit}
-        formProps={{ submit: { text: "Sign In", notification: false } }}
+        formProps={{
+          submit: {
+            text: "Sign In",
+            notification: false,
+          },
+        }}
       ></Form>
-
-      {!!loginError && (
-        <Alert status="error">
-          <AlertIcon />
-          {loginError}
-        </Alert>
-      )}
+      {!!loginError && <div>{loginError}</div>}
+      <div className="mt-10 mb-10 text-center">
+        Don’t have an account yet?
+        <Link
+          className="ml-1 inline-block font-bold text-primary"
+          href={"/auth/signup"}
+        >
+          Sign Up
+        </Link>
+      </div>
+      <hr />
+      <div className="mt-10 text-center">
+        Are you an admin?
+        <Link
+          className="ml-1 inline-block font-bold text-primary"
+          href="/auth/signin"
+        >
+          Sign In here
+        </Link>
+      </div>
     </>
   );
 };
