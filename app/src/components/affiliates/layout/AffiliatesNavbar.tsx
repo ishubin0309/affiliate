@@ -1,9 +1,12 @@
+import { languageDropDown } from "@/components/Dropdowns/languages-list";
+import type { LanguageOption } from "@/components/Dropdowns/LanguageSelector";
+import { LanguageSelector } from "@/components/Dropdowns/LanguageSelector";
+import SelectUserDropdown from "@/components/Dropdowns/SelectUserDropdown";
 import { Image } from "@chakra-ui/react";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
-import LanguageDropdown from "../../Dropdowns/LanguageDropdown";
+import { useState } from "react";
 import NotificationDropDown from "../../Dropdowns/NotificationDropdown";
-import UserDropdown from "../../Dropdowns/UserDropdown";
 
 interface Props {
   collapseShow: boolean;
@@ -11,6 +14,9 @@ interface Props {
 }
 
 const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
+  const [selectLanguageItem, setSelectLanguageItem] =
+    useState<LanguageOption | null>(null);
+
   return (
     <>
       {/* Navbar */}
@@ -109,9 +115,13 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
           </div>
           {/* User */}
           <ul className="flex list-none flex-row items-center">
-            <LanguageDropdown />
+            <LanguageSelector
+              onLanguageChange={(val) => setSelectLanguageItem(val)}
+              selectedOption={selectLanguageItem}
+              options={languageDropDown}
+            />
             <NotificationDropDown />
-            <UserDropdown />
+            <SelectUserDropdown />
           </ul>
         </div>
       </nav>
