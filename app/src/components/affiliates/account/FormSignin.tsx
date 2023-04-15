@@ -53,9 +53,42 @@ export const FormSignin = () => {
         schema={schema}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit}
-        formProps={{ submit: { text: "Sign In", notification: false } }}
+        formProps={{
+          submit: {
+            text: "Sign In",
+            notification: false,
+            className: "w-full mt-6",
+          },
+          link: {
+            linkText: "Forgot your password?",
+            routePath: "/auth/lost-password",
+          },
+          // haveLink={true}
+        }}
       ></Form>
-
+      <div className="mt-10 mb-10 text-center">
+        Don’t have an account yet?
+        <Link
+          className="ml-1 inline-block font-bold text-primary"
+          key={"/auth/signup"}
+          as={NextLink}
+          href={"/auth/signup"}
+        >
+          Sign Up
+        </Link>
+      </div>
+      <hr />
+      <div className="mt-10 text-center">
+        Are you an admin?
+        <Link
+          className="ml-1 inline-block font-bold text-primary"
+          // key={"/auth/signup"}
+          // as={NextLink}
+          // href={"/auth/signup"}
+        >
+          Sign In here
+        </Link>
+      </div>
       {!!loginError && (
         <Alert status="error">
           <AlertIcon />
