@@ -3,7 +3,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
@@ -17,7 +17,7 @@ const SelectUserDropdown = () => {
       </span>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="rounded-full p-1 mr-2">
+          <Button variant="outline" size="sm" className="mr-2 rounded-full p-1">
             <User />
           </Button>
         </DropdownMenuTrigger>
@@ -26,7 +26,11 @@ const SelectUserDropdown = () => {
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => {void signOut();}}>
+          <DropdownMenuItem
+            onClick={() => {
+              void signOut();
+            }}
+          >
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>

@@ -1,10 +1,11 @@
-import SelectLanguageDropdown, {
-  OptionsItem,
-} from "@/components/Dropdowns/SelectLanguageDropdown";
+import { languageDropDown } from "@/components/Dropdowns/languages-list";
+import type { LanguageOption } from "@/components/Dropdowns/LanguageSelector";
+import { LanguageSelector } from "@/components/Dropdowns/LanguageSelector";
 import SelectUserDropdown from "@/components/Dropdowns/SelectUserDropdown";
 import { Image } from "@chakra-ui/react";
 import Link from "next/link";
-import { Dispatch, SetStateAction, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useState } from "react";
 import NotificationDropDown from "../../Dropdowns/NotificationDropdown";
 
 interface Props {
@@ -14,54 +15,7 @@ interface Props {
 
 const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
   const [selectLanguageItem, setSelectLanguageItem] =
-    useState<OptionsItem | null>(null);
-
-  const languageDropDown = [
-    {
-      title: "English",
-      icon: "US",
-    },
-    {
-      title: "Russian",
-      icon: "RU",
-    },
-    {
-      title: "Dutch",
-      icon: "NL",
-    },
-    {
-      title: "Spain",
-      icon: "ES",
-    },
-    {
-      title: "French",
-      icon: "FR",
-    },
-    {
-      title: "Italian",
-      icon: "IT",
-    },
-    {
-      title: "Arabic",
-      icon: "AR",
-    },
-    {
-      title: "Chinese",
-      icon: "CN",
-    },
-    {
-      title: "Portugese",
-      icon: "PT",
-    },
-    {
-      title: "Hebrew",
-      icon: "IL",
-    },
-    {
-      title: "Japanese",
-      icon: "JP",
-    },
-  ];
+    useState<LanguageOption | null>(null);
 
   return (
     <>
@@ -161,9 +115,9 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
           </div>
           {/* User */}
           <ul className="flex list-none flex-row items-center">
-            <SelectLanguageDropdown
+            <LanguageSelector
               onLanguageChange={(val) => setSelectLanguageItem(val)}
-              selectedOptions={selectLanguageItem}
+              selectedOption={selectLanguageItem}
               options={languageDropDown}
             />
             <NotificationDropDown />
