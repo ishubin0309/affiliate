@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import type { ChangeEvent } from "react";
 import { useEffect, useState } from "react";
 import { QuerySelect } from "../../../components/common/QuerySelect";
-import { DataTable } from "../../../components/common/data-table/DataTable";
+import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
 import type { QuickReportSummary } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { Loading } from "../../common/Loading";
@@ -57,12 +57,25 @@ export const QuickSummaryReport = () => {
     page: currentPage ? Number(currentPage) : 1,
     items_per_page: itemsPerPage ? Number(itemsPerPage) : 10,
   });
+
+  const { refetch, data: link } =
+    api.affiliates.exportQuickSummaryReport.useQuery({
+      from: new Date("2022-01-03"),
+      to: new Date("2023-01-03"),
+      display: display ? String(display) : undefined,
+      page: currentPage ? Number(currentPage) : 1,
+      items_per_page: itemsPerPage ? Number(itemsPerPage) : 5000,
+    });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<QuickReportSummary>();
   const { data: reportsHiddenCols } =
     api.affiliates.getReportsHiddenCols.useQuery();
 
   const upsertReportsField = api.affiliates.upsertReportsField.useMutation();
+
+  const handleExportData = async () => {
+    await refetch();
+  };
 
   useEffect(() => {
     const fieldsArray = fields.map((field, i) => {
@@ -326,7 +339,7 @@ export const QuickSummaryReport = () => {
     totalComs,
   });
 
-  console.log("router query ----->", router.query);
+  console.log("link ----->", link);
   return (
     <>
       <div className="w-full pt-3.5">
@@ -431,7 +444,7 @@ export const QuickSummaryReport = () => {
               </button>
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
-                  <Button variant="primary-outline">
+                  <Button variant="primary-outline" onClick={handleExportData}>
                     Export{" "}
                     {Object.keys(selectedValue).length > 0
                       ? ` ${selectedValue?.title}`
@@ -513,7 +526,7 @@ export const QuickSummaryReport = () => {
         </Dialog>
 
         <div className="mb-5 mt-4 w-full overflow-scroll rounded bg-white px-2 py-4 shadow-sm">
-          <DataTable
+          <ReportDataTable
             data={data}
             columns={columns}
             // reportFields={reportFields}

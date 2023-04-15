@@ -9,98 +9,131 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { formatISO } from "date-fns";
 import paginator from "prisma-paginate";
 import { z } from "zod";
-
+import type { Simplify } from "@trpc/server";
+import {
+  exportReportLoop,
+  pageParams,
+  reportParams,
+} from "@/server/api/routers/affiliates/reports/reports-utils";
 const QuickReportSummarySchemaArray = z.array(QuickReportSummarySchema);
 
-export const getQuickReportSummary = publicProcedure
-  .input(
-    z.object({
-      from: z.date(),
-      to: z.date(),
-      display: z.string().optional(),
-      merchant_id: z.number().optional(),
-      page: z.number().int().optional(),
-      items_per_page: z.number().int().optional(),
-    })
-  )
-  .output(QuickReportSummarySchemaArray)
-  .query(
-    async ({
-      ctx,
-      input: { from, to, display = "", page, items_per_page },
-    }) => {
-      console.log(from, to);
-      const prismaClient = new PrismaClient();
-      const paginate = paginator(prismaClient);
-      console.log("display type", display, merchant_id);
+const params = z.object({
+  from: z.date(),
+  to: z.date(),
+  display: z.string().optional(),
+  merchant_id: z.number().optional(),
+});
 
-      let offset;
-      if (page && items_per_page) {
-        offset = (page - 1) * items_per_page;
-      }
-      let dasboardSQLperiod = Prisma.sql`GROUP BY d.MerchantId ORDER BY d.MerchantId ASC`;
-      let dasboardSQLwhere = Prisma.empty;
+const paramsWithPage = params.extend(pageParams);
+const paramsWithReport = params.extend(reportParams);
 
-      if (display === "monthly") {
-        dasboardSQLperiod = Prisma.sql`GROUP BY d.MerchantId, YEAR(d.Date), MONTH(d.Date) ORDER BY YEAR(d.Date) ASC, MONTH(d.Date) ASC, d.MerchantId ASC`;
-      }
+type InputType = z.infer<typeof paramsWithPage>;
 
-      if (display === "weekly") {
-        dasboardSQLperiod = Prisma.sql`GROUP BY d.MerchantId, YEAR(d.Date), WEEK(d.Date,1) ORDER BY YEAR(d.Date) ASC, WEEK(d.Date,1) ASC, d.MerchantId ASC`;
-      }
+const quickReportSummary = async ({
+  ctx,
+  input: { from, to, display = "", page, items_per_page },
+}: {
+  ctx: Simplify<unknown>;
+  input: InputType;
+}) => {
+  console.log(from, to);
 
-      if (display === "daily") {
-        dasboardSQLperiod = Prisma.sql`GROUP BY d.MerchantId, d.Date ORDER BY d.Date ASC, d.MerchantId ASC`;
-      }
+  // TODO: no reason to use paginator, can use the prisma query directly as paginator does not support $queryRaw
+  const prismaClient = new PrismaClient();
+  const paginate = paginator(prismaClient);
+  console.log("display type", display, merchant_id);
 
-      if (merchant_id) {
-        dasboardSQLwhere = Prisma.sql` AND d.MerchantId = '${merchant_id}`;
-      }
+  let offset;
+  if (page && items_per_page) {
+    offset = (page - 1) * items_per_page;
+  }
+  let dasboardSQLperiod = Prisma.sql`GROUP BY d.MerchantId ORDER BY d.MerchantId ASC`;
+  let dasboardSQLwhere = Prisma.empty;
 
-      if (affiliate_id) {
-        dasboardSQLwhere = Prisma.sql` AND d.AffiliateID = ${affiliate_id}`;
-      }
+  if (display === "monthly") {
+    dasboardSQLperiod = Prisma.sql`GROUP BY d.MerchantId, YEAR(d.Date), MONTH(d.Date) ORDER BY YEAR(d.Date) ASC, MONTH(d.Date) ASC, d.MerchantId ASC`;
+  }
 
-      const data = await paginate.$queryRaw<
-        z.infer<typeof QuickReportSummarySchema>[]
-      >(Prisma.sql`select 
+  if (display === "weekly") {
+    dasboardSQLperiod = Prisma.sql`GROUP BY d.MerchantId, YEAR(d.Date), WEEK(d.Date,1) ORDER BY YEAR(d.Date) ASC, WEEK(d.Date,1) ASC, d.MerchantId ASC`;
+  }
+
+  if (display === "daily") {
+    dasboardSQLperiod = Prisma.sql`GROUP BY d.MerchantId, d.Date ORDER BY d.Date ASC, d.MerchantId ASC`;
+  }
+
+  if (merchant_id) {
+    dasboardSQLwhere = Prisma.sql` AND d.MerchantId = '${merchant_id}`;
+  }
+
+  if (affiliate_id) {
+    dasboardSQLwhere = Prisma.sql` AND d.AffiliateID = ${affiliate_id}`;
+  }
+
+  // dasboardSQLwhere = Prisma.sql` LIMIT ${offset}, ${items_per_page}`;
+
+  const data = await paginate.$queryRaw<
+    z.infer<typeof QuickReportSummarySchema>[]
+  >(Prisma.sql`select
         d.Date,
-        d.MerchantId AS merchant_id, 
-        YEAR(d.Date) AS Year, 
-        MONTH(d.Date) AS Month , 
+        d.MerchantId AS merchant_id,
+        YEAR(d.Date) AS Year,
+        MONTH(d.Date) AS Month ,
         WEEK(d.Date) AS Week,
-        sum(d.Impressions) as Impressions, 
-        sum(d.Clicks) as Clicks,  
-        sum(d.Install) as Install, 
-        sum(d.Leads) as Leads,  
-        sum(d.Demo) as Demo,  
-        sum(d.RealAccount) as RealAccount,  
-        sum(d.FTD) as FTD,  
-        sum(d.FTDAmount) as FTDAmount,  
-        sum(d.RawFTD) as RawFTD,  
-        sum(d.RawFTDAmount) as RawFTDAmount,  
-        sum(d.Deposits) as Deposits,  
-        sum(d.DepositsAmount) as DepositsAmount, 
-        sum(d.Bonus) as Bonus, 
-        sum(d.Withdrawal) as Withdrawal, 
-        sum(d.ChargeBack) as ChargeBack, 
-        sum(d.NetDeposit) as NetDeposit, 
-        sum(d.PNL) as PNL, 
-        sum(d.Volume) as Volume, 
-        sum(d.ActiveTrader) as ActiveTrader, 
-        sum(d.Commission) as Commission, 
-        sum(d.PendingDeposits) as PendingDeposits, 
-        sum(d.PendingDepositsAmount) as PendingDepositsAmount 
+        sum(d.Impressions) as Impressions,
+        sum(d.Clicks) as Clicks,
+        sum(d.Install) as Install,
+        sum(d.Leads) as Leads,
+        sum(d.Demo) as Demo,
+        sum(d.RealAccount) as RealAccount,
+        sum(d.FTD) as FTD,
+        sum(d.FTDAmount) as FTDAmount,
+        sum(d.RawFTD) as RawFTD,
+        sum(d.RawFTDAmount) as RawFTDAmount,
+        sum(d.Deposits) as Deposits,
+        sum(d.DepositsAmount) as DepositsAmount,
+        sum(d.Bonus) as Bonus,
+        sum(d.Withdrawal) as Withdrawal,
+        sum(d.ChargeBack) as ChargeBack,
+        sum(d.NetDeposit) as NetDeposit,
+        sum(d.PNL) as PNL,
+        sum(d.Volume) as Volume,
+        sum(d.ActiveTrader) as ActiveTrader,
+        sum(d.Commission) as Commission,
+        sum(d.PendingDeposits) as PendingDeposits,
+        sum(d.PendingDepositsAmount) as PendingDepositsAmount
         from Dashboard d
         INNER JOIN affiliates aff ON d.AffiliateID = aff.id
-        WHERE 
+        WHERE
           d.Date >= ${formatISO(from, { representation: "date" })}
         AND d.Date <  ${formatISO(to, {
           representation: "date",
-        })} ${dasboardSQLwhere}  ${dasboardSQLperiod}`);
+        })} ${dasboardSQLwhere}  ${dasboardSQLperiod}  LIMIT ${offset}, ${items_per_page}`);
 
-      console.log("data ----->", data);
+  // console.log("quick report data ----->", data);
 
-      return data?.map(convertPrismaResultsToNumbers) || data;
-    }
-  );
+  return data?.map(convertPrismaResultsToNumbers) || data;
+};
+
+export const getQuickReportSummary = publicProcedure
+  .input(paramsWithPage)
+  .output(QuickReportSummarySchemaArray)
+  .query(quickReportSummary);
+
+export const exportQuickSummaryReport = publicProcedure
+  .input(paramsWithReport)
+  .query(async function ({ ctx, input }) {
+    const items_per_page = 5000;
+    const { exportType, ...params } = input;
+
+    const columns: unknown[] = [
+      /* TBD to define info that needed for export */
+    ];
+
+    await exportReportLoop(exportType || "csv", columns, async (page) =>
+      quickReportSummary({
+        ctx,
+        input: { ...params, page, items_per_page },
+      })
+    );
+  });

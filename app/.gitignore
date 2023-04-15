@@ -18,6 +18,7 @@
 /out/
 next-env.d.ts
 
+
 # production
 /build
 
@@ -49,4 +50,6 @@ yarn-error.log*
 
 # Contentlayer
 .contentlayer
+*.csv
+*.xlsx
 api-front-dashbord-a4ee8aec074c.json
