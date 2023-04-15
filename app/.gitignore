@@ -44,10 +44,12 @@ yarn-error.log*
 *.tsbuildinfo
 .env.staging
 .env.production
-api-front-dashbord-a4ee8aec074c.json
 # Sentry
 .sentryclirc
 
 
 # Contentlayer
 .contentlayer
+*.csv
+*.xlsx
+api-front-dashbord-a4ee8aec074c.json
