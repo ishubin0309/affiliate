@@ -7,6 +7,7 @@ export interface InputProps
   error?: any;
 }
 
+// TODO:Muly, remove this and use ./label if needed
 export type LabelProps = React.LabelHTMLAttributes<HTMLLabelElement>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
