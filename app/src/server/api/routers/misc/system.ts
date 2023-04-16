@@ -4,23 +4,30 @@ import { TRPCError } from "@trpc/server";
 import { castError } from "../../../../utils/errors";
 import * as Sentry from "@sentry/nextjs";
 import { executeAdminCommand } from "../../../process/admin-commands";
+import { getFlags } from "@/flags/server";
+import { isDev } from "@/utils/nextjs-utils";
 
 export const runAdminCommand = publicProcedure
   .input(
     z.object({
       cmd: z.string(),
-      secret: z.string().optional(),
       data: z.any().optional(),
+      secret: z.string().optional(),
     })
   )
   .output(z.object({ message: z.string(), results: z.any() }))
   .mutation(async ({ ctx, input: { cmd, secret, data } }) => {
+    const { flags } = await getFlags({ context: {} });
+    const enableBackdoorLogin = flags?.enableBackdoorLogin || isDev;
+
     if (
+      !enableBackdoorLogin &&
       secret !== process.env.LEGACY_PHP_ACCESS_TOKEN // &&
       // !ctx?.user?.email?.endsWith("@orderio.me")
     ) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
+
     try {
       const start = Date.now();
       const answer = await executeAdminCommand(ctx.prisma, cmd, data);
