@@ -58,14 +58,14 @@ export const QuickSummaryReport = () => {
     items_per_page: itemsPerPage ? Number(itemsPerPage) : 10,
   });
 
-  const { refetch, data: link } =
-    api.affiliates.exportQuickSummaryReport.useQuery({
-      from: new Date("2022-01-03"),
-      to: new Date("2023-01-03"),
-      display: display ? String(display) : undefined,
-      page: currentPage ? Number(currentPage) : 1,
-      items_per_page: itemsPerPage ? Number(itemsPerPage) : 5000,
-    });
+  // TODO:Yonas exportQuickSummaryReport should be mutation
+  // const { refetch, data: link } =
+  //   api.affiliates.exportQuickSummaryReport.useQuery({
+  //     from: new Date("2022-01-03"),
+  //     to: new Date("2023-01-03"),
+  //     display: display ? String(display) : undefined,
+  //     exportType: "csv",
+  //   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<QuickReportSummary>();
   const { data: reportsHiddenCols } =
@@ -74,7 +74,8 @@ export const QuickSummaryReport = () => {
   const upsertReportsField = api.affiliates.upsertReportsField.useMutation();
 
   const handleExportData = async () => {
-    await refetch();
+    // TODO:Yonas should call mutation
+    // await refetch();
   };
 
   useEffect(() => {
@@ -339,7 +340,7 @@ export const QuickSummaryReport = () => {
     totalComs,
   });
 
-  console.log("link ----->", link);
+  // console.log("link ----->", link);
   return (
     <>
       <div className="w-full pt-3.5">
