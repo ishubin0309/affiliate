@@ -3,13 +3,15 @@ import React from "react";
 
 interface Props {
   title: string;
+  subTitle?: string;
 }
 
-export const Breadcrumb = ({ title }: Props) => {
+export const Breadcrumb = ({ title, subTitle }: Props) => {
   return (
     <div className="flex items-center px-4 text-base font-medium">
       <Home />
-      &nbsp;/&nbsp;{title}
+      <span>&nbsp;/&nbsp;{title}</span>
+      {!!subTitle && <span>&nbsp;/&nbsp;{subTitle}</span>}
     </div>
   );
 };
