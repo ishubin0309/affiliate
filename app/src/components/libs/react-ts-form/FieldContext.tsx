@@ -9,7 +9,7 @@ import type {
 import { useController } from "react-hook-form";
 import { printUseEnumWarning } from "./logging";
 import { errorFromRhfErrorObject } from "./zodObjectErrors";
-import { MetaInfo, ZodMetaDataItem } from "../../../utils/zod-meta";
+import { ChoiceType, MetaInfo, ZodMetaDataItem } from "../../../utils/zod-meta";
 import { TranslationFn } from "../../../utils/i18n-utils";
 import { WizardControlProps } from "@/components/common/wizard/useWizardFlow";
 
@@ -178,6 +178,35 @@ export function requiredDescriptionDataNotPassedError(
 export function useMeta(): ZodMetaDataItem {
   const { meta } = useContextProt("useReqDescription");
   return meta;
+}
+
+interface MetaEx {
+  placeholder?: string;
+  disabled?: boolean;
+  choices?: ChoiceType[];
+}
+
+export function useMetaEx(): MetaEx {
+  const { meta } = useContextProt("useReqDescription");
+
+  const {
+    props,
+    label,
+    placeholder,
+    choices: choicesDescription,
+    className,
+    // preprocess,
+  } = meta || {
+    label: "",
+    placeholder: "",
+  };
+
+  const disabled =
+    typeof props?.disabled === "boolean" ? props.disabled : false;
+
+  const choices = choicesDescription;
+
+  return { placeholder, disabled, choices };
 }
 
 /**

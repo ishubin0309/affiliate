@@ -1,10 +1,13 @@
 import type { MailDataRequired } from "@sendgrid/mail";
 import sgMail from "@sendgrid/mail";
 import { env } from "@/env.mjs";
+import { castError } from "@/utils/errors";
 
 sgMail.setApiKey(env.SENDGRID_API_KEY);
 
-const EMAIL_SUPPORT = "marketing@affiliatets.com";
+// Need to verify
+// const EMAIL_SUPPORT = "marketing@affiliatets.com";
+const EMAIL_SUPPORT = "muly.oved@affiliatets.com";
 
 export const sendgridEmailTemplates = {
   // verificationCode: "d-b9383307af154b15a91cf00d70f70a9f",
@@ -30,8 +33,11 @@ const sendEmail = async (
 
     await sgMail.send(msg);
     return true;
-  } catch (error) {
-    console.error(error);
+  } catch (_error) {
+    const error = castError(_error);
+    console.error(`Failed to send email: ${error.message}`, {
+      error: error.stack,
+    });
     throw new Error("Failed to send email");
   }
 };
