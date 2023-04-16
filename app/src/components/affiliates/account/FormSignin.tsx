@@ -54,7 +54,7 @@ export const FormSignin = () => {
         }}
       ></Form>
       {!!loginError && <div>{loginError}</div>}
-      <div className="mt-10 mb-10 text-center">
+      <div className="mt-6 mb-6 text-center">
         Don’t have an account yet?
         <Link
           className="ml-1 inline-block font-bold text-primary"
@@ -63,8 +63,8 @@ export const FormSignin = () => {
           Sign Up
         </Link>
       </div>
-      <hr />
-      <div className="mt-10 text-center">
+      {/* <hr />
+      <div className="mt-6 text-center">
         Are you an admin?
         <Link
           className="ml-1 inline-block font-bold text-primary"
@@ -72,7 +72,7 @@ export const FormSignin = () => {
         >
           Sign In here
         </Link>
-      </div>
+      </div> */}
     </>
   );
 };

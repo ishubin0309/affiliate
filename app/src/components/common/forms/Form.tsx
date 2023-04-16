@@ -40,7 +40,7 @@ const CommonForm = ({
   return (
     <form onSubmit={handleSubmit} noValidate>
       <div className="flex flex-col items-center">
-        <div className={cn("mb-4 flex w-full flex-col gap-4", className)}>
+        <div className={cn("mb-6 flex w-full flex-col gap-4", className)}>
           {children}
         </div>
         <Button
