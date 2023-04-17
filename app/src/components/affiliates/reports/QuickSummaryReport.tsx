@@ -2,6 +2,7 @@ import { DateRangeSelect, useDateRange } from "@/components/ui/date-range";
 import { Pagination } from "@/components/ui/pagination";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createColumnHelper } from "@tanstack/react-table";
+import JsFileDownloader from "js-file-downloader";
 import { ChevronDownIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import type { ChangeEvent } from "react";
@@ -12,6 +13,7 @@ import type { QuickReportSummary } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { Loading } from "../../common/Loading";
 import { Button } from "../../ui/button";
+
 import {
   Dialog,
   DialogContent,
@@ -65,6 +67,7 @@ export const QuickSummaryReport = () => {
       display: display ? String(display) : undefined,
       page: currentPage ? Number(currentPage) : 1,
       items_per_page: itemsPerPage ? Number(itemsPerPage) : 5000,
+      exportType: selectedValue ? selectedValue.id : undefined,
     });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<QuickReportSummary>();
@@ -88,6 +91,16 @@ export const QuickSummaryReport = () => {
     });
     setReportFields(fieldsArray);
   }, [reportsHiddenCols]);
+
+  useEffect(() => {
+    new JsFileDownloader({ url: link })
+      .then((result) => {
+        console.log("result ---->", result);
+      })
+      .catch((err) => {
+        console.log("err ---->", err);
+      });
+  }, [link]);
 
   const handleReportField = async (event: ChangeEvent<HTMLInputElement>) => {
     const value = reportFields.map((item) => {
@@ -248,7 +261,7 @@ export const QuickSummaryReport = () => {
 
   const options = [
     {
-      id: "excel",
+      id: "xlsx",
       title: "Excel",
     },
     {

@@ -3,18 +3,20 @@ import {
   merchant_id,
 } from "@/server/api/routers/affiliates/const";
 import { QuickReportSummarySchema } from "@/server/api/routers/affiliates/reports";
-import { publicProcedure } from "@/server/api/trpc";
-import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
-import { Prisma, PrismaClient } from "@prisma/client";
-import { formatISO } from "date-fns";
-import paginator from "prisma-paginate";
-import { z } from "zod";
-import type { Simplify } from "@trpc/server";
 import {
   exportReportLoop,
   pageParams,
   reportParams,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { publicProcedure } from "@/server/api/trpc";
+import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
+import { Prisma, PrismaClient } from "@prisma/client";
+import type { Simplify } from "@trpc/server";
+import { formatISO } from "date-fns";
+import path from "path";
+import paginator from "prisma-paginate";
+import { z } from "zod";
+import { uploadFile } from "../config";
 const QuickReportSummarySchemaArray = z.array(QuickReportSummarySchema);
 
 const params = z.object({
@@ -126,14 +128,51 @@ export const exportQuickSummaryReport = publicProcedure
     const items_per_page = 5000;
     const { exportType, ...params } = input;
 
-    const columns: unknown[] = [
-      /* TBD to define info that needed for export */
+    const columns = [
+      "Impressions",
+      "Clicks",
+      "Install",
+      "Leads",
+      "Demo",
+      "Real Account",
+      "FTD",
+      "Withdrawal",
+      "ChargeBack",
+      "Active Trader",
+      "Commission",
     ];
+    const generic_filename = "quick-summary-report";
 
-    await exportReportLoop(exportType || "csv", columns, async (page) =>
-      quickReportSummary({
-        ctx,
-        input: { ...params, page, items_per_page },
-      })
+    console.log("export type ---->", exportType);
+    await exportReportLoop(
+      exportType || "csv",
+      columns,
+      generic_filename,
+      async (page, items_per_page) =>
+        quickReportSummary({
+          ctx,
+          input: { ...params, page, items_per_page },
+        })
     );
+
+    const localFileName = path.join(
+      __dirname,
+      `../../../../../${generic_filename}.${exportType}`
+    );
+
+    const bucketName = "reports-download-tmp";
+    const serviceKey = path.join(
+      __dirname,
+      "../../../../../api-front-dashbord-a4ee8aec074c.json"
+    );
+
+    console.log("export type ---->", exportType);
+    const public_url = uploadFile(
+      serviceKey,
+      "api-front-dashbord",
+      bucketName,
+      localFileName,
+      exportType ? exportType : "xlsx"
+    );
+    return public_url;
   });

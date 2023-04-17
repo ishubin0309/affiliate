@@ -76,6 +76,8 @@
     "i18next": "^22.4.13",
     "i18next-browser-languagedetector": "^7.0.1",
     "i18next-http-backend": "^2.2.0",
+    "js-file-download": "^0.4.12",
+    "js-file-downloader": "^1.1.24",
     "lucide-react": "^0.127.0",
     "markdown-wasm": "^1.2.0",
     "md5": "^2.3.0",
