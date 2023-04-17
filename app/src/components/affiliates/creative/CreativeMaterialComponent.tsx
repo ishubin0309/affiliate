@@ -28,7 +28,7 @@ export const CreativeMaterialComponent = ({
           <img src={file} className="rounded-xl bg-cover" alt={alt} />
         </div>
 
-        <CreativeMaterialDialogComponent values={values} />
+        <CreativeMaterialDialogComponent values={values} url={url} />
       </div>
       <div className="mt-1 items-end md:mt-3 md:hidden">
         <div className="">
@@ -42,7 +42,11 @@ export const CreativeMaterialComponent = ({
         <div className="mt-5 flex items-end justify-center md:justify-end">
           <div className="">
             <div className="">
-              <Button variant="azure" size="md">
+              <Button
+                variant="azure"
+                size="md"
+                onClick={() => window.navigator.clipboard.writeText(url ?? "")}
+              >
                 <div className="text-white">Copy Click Url</div>
                 <div className="ml-2 items-center">
                   <Copy className="h-4 w-4 text-white" />

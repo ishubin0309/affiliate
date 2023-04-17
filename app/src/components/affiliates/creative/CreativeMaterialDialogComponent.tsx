@@ -91,7 +91,7 @@ export const CreativeMaterialDialogComponent = ({
                   {values[4]?.title}
                 </div>
                 <div className=" text-sm text-[#353535] md:text-lg">
-                  {values[4]?.value}
+                  {!values[4]?.value ? values[4]?.value : 0}
                 </div>
               </div>
               <div className="md:hidden">
@@ -112,25 +112,28 @@ export const CreativeMaterialDialogComponent = ({
           </div>
         </div>
         <div className="mt-1 hidden items-end justify-between md:mt-3 md:block lg:block xl:flex">
-          <div className="">
-            <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">
-              Click URL
+          <div className="flex items-start justify-center md:justify-start">
+            <div className="">
+              <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">
+                Click URL
+              </div>
+              <div className="rounded border border-[#D7D7D7] bg-[#F9F9FF] py-2 px-3 text-sm font-medium text-[#666666] xl:w-60 2xl:w-96">
+                {url}
+              </div>
             </div>
-            <div className="rounded border border-[#D7D7D7] bg-[#F9F9FF] py-2 px-3 text-sm font-medium text-[#666666] xl:w-60 2xl:w-96">
-              {url}
+            <div className="mt-5 ml-5">
+              <Button
+                variant="azure"
+                onClick={() => window.navigator.clipboard.writeText(url ?? "")}
+              >
+                <div className="text-white">Copy Click Url</div>
+                <div className="ml-2 items-center">
+                  <Copy className="text-white" />
+                </div>
+              </Button>
             </div>
           </div>
           <div className="mt-5 flex items-end justify-center md:justify-end">
-            <div className="">
-              <div className="">
-                <Button variant="azure">
-                  <div className="text-white">Copy Click Url</div>
-                  <div className="ml-2 items-center">
-                    <Copy className="text-white" />
-                  </div>
-                </Button>
-              </div>
-            </div>
             <div className="ml-2">
               <div className="">
                 <DialogTrigger>
@@ -242,7 +245,13 @@ export const CreativeMaterialDialogComponent = ({
           <div className="flex justify-between md:justify-center md:space-x-2">
             <div className="hidden rounded md:block">
               <div className="rounded">
-                <Button variant="azure" size="md">
+                <Button
+                  variant="azure"
+                  size="md"
+                  onClick={() =>
+                    window.navigator.clipboard.writeText(url ?? "")
+                  }
+                >
                   <div className="text-base text-white md:font-medium">
                     Copy Click Url
                   </div>
