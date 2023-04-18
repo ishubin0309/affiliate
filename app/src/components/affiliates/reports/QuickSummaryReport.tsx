@@ -12,6 +12,7 @@ import type { QuickReportSummary } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { Loading } from "../../common/Loading";
 import { Button } from "../../ui/button";
+
 import {
   Dialog,
   DialogContent,
@@ -19,6 +20,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog";
+import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { exportOptions } from "@/components/affiliates/reports/utils";
+import { ExportButton } from "@/components/affiliates/reports/export-button";
 
 const fields = [
   "Impressions",
@@ -34,7 +38,7 @@ const fields = [
   "Commission",
 ];
 export interface ItemProps {
-  id?: string;
+  id?: ExportType;
   title?: string;
 }
 
@@ -58,14 +62,9 @@ export const QuickSummaryReport = () => {
     items_per_page: itemsPerPage ? Number(itemsPerPage) : 10,
   });
 
-  // TODO:Yonas exportQuickSummaryReport should be mutation
-  // const { refetch, data: link } =
-  //   api.affiliates.exportQuickSummaryReport.useQuery({
-  //     from: new Date("2022-01-03"),
-  //     to: new Date("2023-01-03"),
-  //     display: display ? String(display) : undefined,
-  //     exportType: "csv",
-  //   });
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportQuickSummaryReport.useMutation();
+
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<QuickReportSummary>();
   const { data: reportsHiddenCols } =
@@ -73,10 +72,13 @@ export const QuickSummaryReport = () => {
 
   const upsertReportsField = api.affiliates.upsertReportsField.useMutation();
 
-  const handleExportData = async () => {
-    // TODO:Yonas should call mutation
-    // await refetch();
-  };
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      from: new Date("2022-01-03"),
+      to: new Date("2023-01-03"),
+      display: display ? String(display) : undefined,
+      exportType,
+    });
 
   useEffect(() => {
     const fieldsArray = fields.map((field, i) => {
@@ -245,21 +247,6 @@ export const QuickSummaryReport = () => {
       cell: (info) => info.getValue(),
       header: "Volume",
     }),
-  ];
-
-  const options = [
-    {
-      id: "excel",
-      title: "Excel",
-    },
-    {
-      id: "csv",
-      title: "CSV",
-    },
-    {
-      id: "json",
-      title: "JSON",
-    },
   ];
 
   const displayOptions = [
@@ -443,39 +430,7 @@ export const QuickSummaryReport = () => {
               <button className="hidden rounded-md border border-[#2262C6] py-2 px-8 text-base font-semibold text-[#2262C6] lg:block">
                 Reset Search
               </button>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <Button variant="primary-outline" onClick={handleExportData}>
-                    Export{" "}
-                    {Object.keys(selectedValue).length > 0
-                      ? ` ${selectedValue?.title}`
-                      : ``}{" "}
-                    <ChevronDownIcon className="ml-10" />
-                  </Button>
-                </DropdownMenu.Trigger>
-
-                <DropdownMenu.Portal>
-                  <DropdownMenu.Content
-                    className="data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade z-40 min-w-[220px] rounded-md bg-white p-[10px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform]"
-                    sideOffset={5}
-                    onChange={(event) => {
-                      console.log(event);
-                    }}
-                  >
-                    {options.map((item) => {
-                      return (
-                        <DropdownMenu.Item
-                          key={item.id}
-                          onSelect={() => setSelectedItem(item)}
-                          className="text-violet11 data-[disabled]:text-mauve8 data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1 group relative flex h-[25px] select-none items-center rounded-[3px] px-[2px] py-5 pl-[25px] text-[13px] leading-none outline-none data-[disabled]:pointer-events-none"
-                        >
-                          {item.title}
-                        </DropdownMenu.Item>
-                      );
-                    })}
-                  </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Root>
+              <ExportButton onExport={handleExport} />
             </div>
           </div>
 

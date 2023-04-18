@@ -4,6 +4,7 @@ export const uploadFile = async (
   projectId: string,
   bucketName: string,
   localFilePath: string,
+  exportType: string,
   generationMatchPrecondition = 0
 ) => {
   try {
@@ -35,7 +36,7 @@ export const uploadFile = async (
       metadata: {
         cacheControl: "public, max-age=31536000",
       },
-      destination: `/reports/quick-summary${file_date}.xslx`,
+      destination: `/reports/quick-summary${file_date}.${exportType}`,
     });
     const public_url: string = response[0].metadata.selfLink;
     console.log("respobse ---->", response[0].metadata.selfLink);
@@ -46,7 +47,7 @@ export const uploadFile = async (
       "/" +
       "reports" +
       "/" +
-      `quick-summary${file_date}.xslx`;
+      `quick-summary${file_date}.${exportType}`;
     console.log("testing url", publicUrl);
     return public_url;
   } catch (error) {

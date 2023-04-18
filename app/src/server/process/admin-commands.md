@@ -8,9 +8,9 @@ Open [trpc-playground](http://localhost:3001/api/trpc-playground)
 
 ```js
 await trpc.misc.runAdminCommand.mutate({
-    cmd: "affiliate-delete",
-    data: {id: 670}
-    })
+  cmd: "affiliate-delete",
+  data: { id: 670 },
+});
 ```
 
 data can be any prisma "where" condition like { mail: "mulyoved@gmail.com" }
