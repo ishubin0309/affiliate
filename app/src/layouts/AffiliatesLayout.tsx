@@ -2,12 +2,11 @@ import type { PropsWithChildren } from "react";
 import React, { useState } from "react";
 // components
 
-import AffiliatesNavbar from "../components/affiliates/layout/AffiliatesNavbar";
-import Sidebar from "../components/affiliates/layout/Sidebar";
+import { SearchProvider } from "@/components/common/search/search-context";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "usehooks-ts";
-import { isSSR } from "@/utils/nextjs-utils";
-import { SearchProvider } from "@/components/common/search/search-context";
+import AffiliatesNavbar from "../components/affiliates/layout/AffiliatesNavbar";
+import Sidebar from "../components/affiliates/layout/Sidebar";
 // import HeaderStats from "components/Headers/HeaderStats.js";
 // import FooterAdmin from "components/Footers/FooterAdmin.js";
 
@@ -37,10 +36,9 @@ const AffiliatesLayout = ({ children }: PropsWithChildren) => {
   return (
     <div className="max-w-full">
       <div
-        className={cn([
-          { "md:ml-64": tempCollapseShow, "md:ml-14": !tempCollapseShow },
-          "bg-blueGray-100 sidebar relative z-10 transition-all duration-300",
-        ])}
+        className={
+          "bg-blueGray-100 sidebar relative z-10 transition-all duration-300"
+        }
       >
         <Sidebar
           collapseShow={collapseShow}
@@ -53,7 +51,12 @@ const AffiliatesLayout = ({ children }: PropsWithChildren) => {
         />
 
         <SearchProvider>
-          <div className="mx-auto min-h-screen w-full bg-[#F5F8FA] px-4 pt-16 pb-4 md:px-10 md:pt-20">
+          <div
+            className={cn([
+              { "md:ml-64": tempCollapseShow, "md:ml-14": !tempCollapseShow },
+              "bg-[#F5F8FA] px-4 pb-4 md:px-10",
+            ])}
+          >
             {children}
           </div>
         </SearchProvider>
