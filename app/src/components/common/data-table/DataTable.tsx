@@ -11,6 +11,9 @@ import * as React from "react";
 export type DataTableProps<Data extends object> = {
   data: Data[] | null | undefined;
   columns: ColumnDef<Data, any>[];
+
+  // TODO: remove this param
+  footerData?: any;
 };
 
 export function DataTable<Data extends object>({

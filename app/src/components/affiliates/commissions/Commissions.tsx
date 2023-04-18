@@ -1,7 +1,7 @@
 import { Loading } from "@/components/common/Loading";
 import { DataTable } from "@/components/common/data-table/DataTable";
 import { PageHeader } from "@/components/common/page/page-header";
-import { AffiliateCommissionType } from "@/server/db-types";
+import type { AffiliateCommissionType } from "@/server/db-types";
 import { createColumnHelper } from "@tanstack/react-table";
 import { api } from "../../../utils/api";
 
