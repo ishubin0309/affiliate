@@ -35,7 +35,7 @@ const AccountManager = () => {
       setChartValues(values);
     }
   };
-  const data: unknown = api.affiliates.getDashboardDeviceReport.useQuery({
+  const { data: unknown } = api.affiliates.getDashboardDeviceReport.useQuery({
     lastDays,
   });
   getApiData();
