@@ -6,7 +6,7 @@ export const exportCSVReport = (
   data: Array<number>,
   fileName: string
 ) => {
-  const writer = csvWriter({ headers: header });
+  const writer = csvWriter({ headers: header, separator: ",\t\t\t" });
   writer.pipe(fs.createWriteStream(fileName));
   writer.write(data);
   writer.end();
