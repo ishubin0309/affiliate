@@ -60,7 +60,7 @@ export const FormSignin = () => {
         Don’t have an account yet?
         <Link
           className="ml-1 inline-block font-bold text-primary"
-          href={"/auth/signup"}
+          href="/auth/signup"
         >
           Sign Up
         </Link>

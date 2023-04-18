@@ -245,11 +245,17 @@ export const evaluateControlCallback = (
 };
 
 export const maybeConvertChild = (
-  label?: string | ControlCallback | undefined
+  label: string | ControlCallback | undefined,
+  wizard?: WizardControlProps
 ): React.ReactNode => {
   if (typeof label === "string" || !label) {
     return label;
   }
 
-  throw new Error("maybeConvertChild, Not yet supported, should be");
+  if (!wizard) {
+    throw new Error("maybeConvertChild, wizard is not defined");
+  }
+
+  return label(wizard);
+  // throw new Error("maybeConvertChild, Not yet supported, should be");
 };
