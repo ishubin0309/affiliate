@@ -16,9 +16,8 @@ export const RecoverLostPassword = ({ setIsSent }: IProps) => {
   const mutation = api.affiliates.recoverPassword.useMutation();
 
   const handleSubmit = async (values: z.infer<typeof schema>) => {
-    // await mutation.mutateAsync(values);
+    await mutation.mutateAsync(values);
     setIsSent(true);
-    // setIsSent(false);
   };
 
   return (
