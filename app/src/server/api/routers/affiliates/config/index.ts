@@ -1,9 +1,10 @@
 import { Storage } from "@google-cloud/storage";
+import path from "path";
 export const uploadFile = async (
   keyFilename: string,
   projectId: string,
   bucketName: string,
-  localFilePath: string,
+  generic_filename: string,
   exportType: string,
   generationMatchPrecondition = 0
 ) => {
@@ -24,30 +25,33 @@ export const uploadFile = async (
       preconditionOpts: { ifGenerationMatch: generationMatchPrecondition },
     };
 
-    console.log(
-      "bucket name,",
-      bucketName,
-      "local file path ---->",
-      localFilePath
-    );
+    // console.log(
+    //   "bucket name,",
+    //   bucketName,
+    //   "local file path ---->",
+    //   generic_filename
+    // );
 
-    const file_date = new Date().toISOString();
-    const response = await storage.bucket(bucketName).upload(localFilePath, {
+    const localFileName = path.join(
+      __dirname,
+      `../../../../../${generic_filename}.${exportType}`
+    );
+    console.log("local file name ----->", localFileName);
+    // const file_date = new Date().toISOString();
+    const response = await storage.bucket(bucketName).upload(localFileName, {
       metadata: {
         cacheControl: "public, max-age=31536000",
       },
-      destination: `/reports/quick-summary${file_date}.${exportType}`,
+      destination: `/${generic_filename}.${exportType}`,
     });
-    const public_url: string = response[0].metadata.selfLink;
-    console.log("respobse ---->", response[0].metadata.selfLink);
+    const public_url: string = response[0].metadata.mediaLink;
+    console.log("respobse ---->", response[0].metadata);
 
     const publicUrl =
       "https://storage.googleapis.com/" +
       bucketName +
       "/" +
-      "reports" +
-      "/" +
-      `quick-summary${file_date}.${exportType}`;
+      `${generic_filename}.${exportType}`;
     console.log("testing url", publicUrl);
     return public_url;
   } catch (error) {

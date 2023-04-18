@@ -1,8 +1,6 @@
 import { DateRangeSelect, useDateRange } from "@/components/ui/date-range";
 import { Pagination } from "@/components/ui/pagination";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createColumnHelper } from "@tanstack/react-table";
-import { ChevronDownIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import type { ChangeEvent } from "react";
 import { useEffect, useState } from "react";
@@ -13,6 +11,8 @@ import { api } from "../../../utils/api";
 import { Loading } from "../../common/Loading";
 import { Button } from "../../ui/button";
 
+import { ExportButton } from "@/components/affiliates/reports/export-button";
+import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import {
   Dialog,
   DialogContent,
@@ -20,9 +20,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog";
-import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { exportOptions } from "@/components/affiliates/reports/utils";
-import { ExportButton } from "@/components/affiliates/reports/export-button";
 
 const fields = [
   "Impressions",
@@ -327,7 +324,6 @@ export const QuickSummaryReport = () => {
     totalComs,
   });
 
-  // console.log("link ----->", link);
   return (
     <>
       <div className="w-full pt-3.5">

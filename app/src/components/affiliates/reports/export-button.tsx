@@ -1,11 +1,11 @@
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { ChevronDownIcon } from "lucide-react";
-import { exportOptions } from "@/components/affiliates/reports/utils";
-import { useState } from "react";
 import type { ItemProps } from "@/components/affiliates/reports/QuickSummaryReport";
+import { Button } from "@/components/ui/button";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import JsFileDownloader from "js-file-downloader";
+import { ChevronDownIcon } from "lucide-react";
+import { useState } from "react";
+import { exportOptions } from "./utils";
 
 interface Props {
   onExport: (exportType: ExportType) => Promise<string | undefined>;
@@ -16,13 +16,26 @@ export const ExportButton = ({ onExport }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleExport = async () => {
+    console.log("selected value ----->", selectedValue);
     setIsLoading(true);
     try {
-      const link = await onExport("csv"); // selectedValue.id);
+      const link = await onExport(selectedValue.id); // selectedValue.id);
+
+      console.log("link  ---->", link);
 
       if (link) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        const download = new JsFileDownloader({ url: link, autoStart: false });
+        const date = new Date();
+        const file_date = date
+          .toLocaleDateString("en-GB")
+          .split("/")
+          .reverse()
+          .join("");
+        const download = new JsFileDownloader({
+          url: link,
+          autoStart: false,
+          filename: `quick-summary-${file_date}.${selectedValue.id}`,
+        });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         await download.start();
       }
@@ -32,9 +45,13 @@ export const ExportButton = ({ onExport }: Props) => {
   };
 
   return (
-    <div className="flex flex-row">
-      <Button onClick={handleExport} isLoading={isLoading}>
-        Export
+    <div className="flex flex-row space-x-4">
+      <Button
+        className="rounded-md bg-[#2262C6] px-8 py-2 text-white"
+        onClick={handleExport}
+        isLoading={isLoading}
+      >
+        Export {selectedValue ? selectedValue.title : ""}
       </Button>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
