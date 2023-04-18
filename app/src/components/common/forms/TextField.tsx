@@ -171,7 +171,7 @@ export const TextField = (
           htmlFor={field.name}
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
-          {maybeConvertChild(label)}
+          {maybeConvertChild(label, formContext.flowContext)}
         </label>
       </div>
     );
@@ -194,7 +194,7 @@ export const TextField = (
           htmlFor={field.name}
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
-          {maybeConvertChild(label)}
+          {maybeConvertChild(label, formContext.flowContext)}
         </label>
       </div>
     );
