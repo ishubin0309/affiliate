@@ -208,5 +208,7 @@
     "label": "All Creative"
   },
   "Expected number, received string": "Expected number, received string",
-  "Expected 'post' | 'get' | 'client', received null": "Expected 'post' | 'get' | 'client', received null"
+  "Expected 'post' | 'get' | 'client', received null": "Expected 'post' | 'get' | 'client', received null",
+  "This e-mail already exist in our records": "This e-mail already exist in our records",
+  "Failed to send email": "Failed to send email"
 }

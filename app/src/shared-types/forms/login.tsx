@@ -10,9 +10,9 @@ export const schema = z.object({
     .meta({
       type: "password",
       afterElement: () => (
-        <div className="mt-4 mb-4 flex w-full justify-end">
+        <div className="mb-3 flex w-full justify-end">
           <Link
-            className="ml-1 inline-block font-bold "
+            className="ml-1 inline-block font-bold text-primary"
             href="/auth/lost-password"
           >
             Forgot your password?

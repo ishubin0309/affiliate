@@ -27,7 +27,7 @@ export const Test2 = {
 
 const SampleDialog = (props: any) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(props.isOpen);
+  const [isOpen, setIsOpen] = useState<boolean>(props.isOpen);
   return (
     <Dialog
       isOpen={isOpen}

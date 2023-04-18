@@ -409,7 +409,7 @@ export const CommissionReport = () => {
 
         <div className="mb-5 mt-4 w-full overflow-scroll rounded bg-white px-2 py-4 shadow-sm">
           <ReportDataTable
-            data={data.result}
+            data={data}
             columns={columns}
             footerData={totalData}
           />
