@@ -11,57 +11,23 @@ const createColumn = (id: keyof AffiliateCommissionType, header: string) =>
     header,
   });
 
-export const Commissions = () => {
-  const { data, refetch } = api.affiliates.getCommissions.useQuery();
+const findDealByType = (item: AffiliateCommissionType, dealType: string) => {
+  const deal = item?.deals?.find((el) => el.dealType === dealType);
+  return deal ? `${deal.amount}%` : "-";
+};
 
-  if (!data) {
-    return null;
-  }
+export const Commissions = () => {
+  const { data } = api.affiliates.getCommissions.useQuery();
 
   const columns = [
     createColumn("id", "#"),
     createColumn("name", "Merchant"),
-    columnHelper.accessor(
-      (item) => {
-        const pnl = item?.deals?.find((el) => el.dealType === "pnl")
-          ? item.deals.find((el) => el.dealType === "pnl")
-          : null;
-        return pnl ? String(pnl.amount) + "%" : "-";
-      },
-      {
-        id: "PNL",
-      }
-    ),
-    columnHelper.accessor(
-      (item) => {
-        return "Passport";
-      },
-      {
-        id: "Deposit Charge",
-      }
-    ),
-    columnHelper.accessor(
-      (item) => {
-        const cpa = item?.deals?.find((el) => el.dealType === "cpa")
-          ? item.deals.find((el) => el.dealType === "cpa")
-          : null;
-        return cpa ? String(cpa.amount) + "%" : "-";
-      },
-      {
-        id: "CPA",
-      }
-    ),
-    columnHelper.accessor(
-      (item) => {
-        const dcpa = item?.deals?.find((el) => el.dealType === "dcpa")
-          ? item.deals.find((el) => el.dealType === "dcpa")
-          : null;
-        return dcpa ? String(dcpa.amount) + "%" : "-";
-      },
-      {
-        id: "DCPA",
-      }
-    ),
+    columnHelper.accessor((item) => findDealByType(item, "pnl"), { id: "PNL" }),
+    columnHelper.accessor(() => "Passport", { id: "Deposit Charge" }),
+    columnHelper.accessor((item) => findDealByType(item, "cpa"), { id: "CPA" }),
+    columnHelper.accessor((item) => findDealByType(item, "dcpa"), {
+      id: "DCPA",
+    }),
   ];
 
   return data ? (
