@@ -6,8 +6,9 @@ import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
 import { api } from "../../../utils/api";
 import { CreativeMaterialComponent } from "../creative/CreativeMaterialComponent";
+import { MerchantSubCreativeType } from "@/server/db-types";
 
-const renderRow = (item: any) => {
+const renderRow = (item: MerchantSubCreativeType) => {
   const values = [
     { title: "Creative Name", value: item.title },
     { title: "Format", value: item.type },
@@ -53,16 +54,11 @@ export const SubCreativeMaterial = () => {
         <SearchApply isLoading={isRefetching} />
       </PageHeader>
       <div className="flex-row flex-wrap gap-2 pb-3 md:flex">
-        <div className="mb-4 md:w-1/6">
-          <label className="mb-1 block text-sm font-bold text-gray-700">
-            Creative Type
-          </label>
-          <SearchSelect
-            label="Creative Type"
-            varName="type"
-            choices={meta?.type}
-          />
-        </div>
+        <SearchSelect
+          label="Creative Type"
+          varName="type"
+          choices={meta?.type}
+        />
       </div>
       {data?.map(renderRow)}
     </div>

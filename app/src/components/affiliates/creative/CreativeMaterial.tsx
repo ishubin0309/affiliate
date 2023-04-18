@@ -69,53 +69,28 @@ export const CreativeMaterial = () => {
         <SearchApply isLoading={isRefetching} />
       </PageHeader>
       <div className="flex-row flex-wrap gap-2 pb-3 md:flex">
-        <div className="mb-4 md:w-1/6">
-          <label className="mb-1 block text-sm font-bold text-gray-700">
-            Creative Type
-          </label>
-          <SearchSelect
-            label="Creative Type"
-            varName="type"
-            choices={meta?.type}
-          />
-        </div>
-        <div className="mb-4 md:w-1/6">
-          <label className="mb-1 block text-sm font-bold text-gray-700">
-            Category
-          </label>
-          <SearchSelect
-            label="Category"
-            varName="category"
-            choices={meta?.merchants_creative_categories}
-          />
-        </div>
-        <div className="mb-4 md:w-1/6">
-          <label className="mb-1 block text-sm font-bold text-gray-700">
-            Language
-          </label>
-          <SearchSelect
-            label="Language"
-            varName="language"
-            choices={meta?.language}
-          />
-        </div>
-        <div className="mb-4 md:w-1/6">
-          <label className="mb-1 block text-sm font-bold text-gray-700">
-            Size
-          </label>
-          <SearchSelect label="Size" varName="size" choices={meta?.size} />
-        </div>
-        <div className="mb-4 md:w-1/6">
-          <label className="mb-1 block text-sm font-bold text-gray-700">
-            Promotion
-          </label>
-          <SearchSelect
-            label="Promotion"
-            varName="promotion"
-            emptyTitle="General"
-            choices={meta?.merchants_promotions}
-          />
-        </div>
+        <SearchSelect
+          label="Creative Type"
+          varName="type"
+          choices={meta?.type}
+        />
+        <SearchSelect
+          label="Category"
+          varName="category"
+          choices={meta?.merchants_creative_categories}
+        />
+        <SearchSelect
+          label="Language"
+          varName="language"
+          choices={meta?.language}
+        />
+        <SearchSelect label="Size" varName="size" choices={meta?.size} />
+        <SearchSelect
+          label="Promotion"
+          varName="promotion"
+          emptyTitle="General"
+          choices={meta?.merchants_promotions}
+        />
       </div>
       {data?.map(renderRow)}
     </div>

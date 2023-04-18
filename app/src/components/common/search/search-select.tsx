@@ -41,22 +41,27 @@ export const SearchSelect = ({
   console.log(`muly:SearchSelect`, { placeholder, label });
 
   return (
-    <Select
-      value={value}
-      name={varName}
-      onValueChange={(value) => {
-        setValue(value);
-        setControlValue(varName, value);
-      }}
-    >
-      <SelectTrigger>
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
+    <div className="mb-4 md:w-1/6">
+      <label className="mb-1 block text-sm font-bold text-gray-700">
+        {label}
+      </label>
+      <Select
+        value={value}
+        name={varName}
+        onValueChange={(value) => {
+          setValue(value);
+          setControlValue(varName, value);
+        }}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
 
-      <SelectContent>
-        <SelectItem value={""}>{emptyTitle || "All"}</SelectItem>
-        {choices?.map(renderChoice)}
-      </SelectContent>
-    </Select>
+        <SelectContent>
+          <SelectItem value={""}>{emptyTitle || "All"}</SelectItem>
+          {choices?.map(renderChoice)}
+        </SelectContent>
+      </Select>
+    </div>
   );
 };
