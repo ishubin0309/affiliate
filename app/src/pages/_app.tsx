@@ -21,13 +21,13 @@ import "../styles/globals.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "@etchteam/next-pagination/dist/index.css";
 
-// import { Inter as FontSans } from "next/font/google";
-//
-// const fontSans = FontSans({
-//   subsets: ["latin"],
-//   variable: "--font-sans",
-//   display: "swap",
-// });
+import { Inter as FontSans } from "next/font/google";
+
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 type MyAppProps = AppProps<{ session: Session | null }> & {
   Component: NextComponentType<NextPageContext, any, any> & {
@@ -46,10 +46,10 @@ const MyApp = ({
   return (
     <>
       <style jsx global>{`
-				:root {
-					--font-sans: ${fontSans.style.fontFamily};
-				}
-			}`}</style>
+      	:root {
+      		--font-sans: ${fontSans.style.fontFamily};
+      	}
+      }`}</style>
 
       <FlagBagProvider value={flagBag}>
         <SessionProvider session={session}>
