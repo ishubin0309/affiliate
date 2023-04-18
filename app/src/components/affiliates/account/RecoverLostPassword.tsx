@@ -7,15 +7,18 @@ import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
 import React from "react";
 import { Form } from "@/components/common/forms/Form";
 
-export const RecoverLostPassword = () => {
+interface IProps {
+  setIsSent: (open: boolean) => void;
+}
+export const RecoverLostPassword = ({ setIsSent }: IProps) => {
   const { t } = useTranslation("affiliate");
   const formContext = usePrepareSchema(t, schema);
   const mutation = api.affiliates.recoverPassword.useMutation();
-  const [isSent, setIsSent] = React.useState(false);
 
   const handleSubmit = async (values: z.infer<typeof schema>) => {
-    await mutation.mutateAsync(values);
+    // await mutation.mutateAsync(values);
     setIsSent(true);
+    // setIsSent(false);
   };
 
   return (
@@ -29,7 +32,7 @@ export const RecoverLostPassword = () => {
           submit: { text: "Reset Password", notification: false },
         }}
       />
-      {isSent && (
+      {/* {!isSent && (
         <div className="mt-6">
           We have received your password reset request. If an account with the
           provided email address or user name exists, you will receive an email
@@ -37,7 +40,7 @@ export const RecoverLostPassword = () => {
           follow the instructions to reset your password. If you don&apos;t see
           the email, make sure to check your spam or junk folders.
         </div>
-      )}
+      )} */}
     </div>
   );
 };

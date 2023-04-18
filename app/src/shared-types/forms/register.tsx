@@ -41,4 +41,4 @@ export const schema = z
   //     path: ["passwordRepeat"],
   //   }
   // )
-  .meta({ className: "md:grid md:grid-cols-2" });
+  .meta({ className: "md:grid md:grid-cols-2 gap-x-6 gap-y-4" });
