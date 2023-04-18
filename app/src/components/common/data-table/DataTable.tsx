@@ -11,13 +11,11 @@ import * as React from "react";
 export type DataTableProps<Data extends object> = {
   data: Data[] | null | undefined;
   columns: ColumnDef<Data, any>[];
-  footerData?: any;
 };
 
 export function DataTable<Data extends object>({
   data,
   columns,
-  footerData = [],
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const { getHeaderGroups, getRowModel } = useReactTable({
@@ -127,18 +125,6 @@ export function DataTable<Data extends object>({
             </tr>
           ))}
         </tbody>
-
-        {footerData && (
-          <tfoot className="py-3 px-3">
-            <tr className="py-5">
-              <td>Total</td>
-              {footerData.length > 0 &&
-                Object.values(footerData[0]).map((item: any, key) => {
-                  return <td key={key}>{item}</td>;
-                })}
-            </tr>
-          </tfoot>
-        )}
       </table>
     </div>
   );
