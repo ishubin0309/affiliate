@@ -1,13 +1,12 @@
+import { Loading } from "@/components/common/Loading";
+import { PageHeader } from "@/components/common/page/page-header";
+import { SearchApply } from "@/components/common/search/saerch-apply-button";
+import { useSearchContext } from "@/components/common/search/search-context";
+import { SearchSelect } from "@/components/common/search/search-select";
+import { SearchText } from "@/components/common/search/search-text";
+import type { MerchantCreativeType } from "@/server/db-types";
 import { api } from "../../../utils/api";
 import { CreativeMaterialComponent } from "./CreativeMaterialComponent";
-import { PageHeader } from "@/components/common/page/page-header";
-import { SearchText } from "@/components/common/search/search-text";
-import { SearchApply } from "@/components/common/search/saerch-apply-button";
-import { Loading } from "@/components/common/Loading";
-import React from "react";
-import type { MerchantCreativeType } from "@/server/db-types";
-import { SearchSelect } from "@/components/common/search/search-select";
-import { useSearchContext } from "@/components/common/search/search-context";
 
 const renderRow = (item: MerchantCreativeType) => {
   const values = [
@@ -69,29 +68,54 @@ export const CreativeMaterial = () => {
         <SearchText varName="creative" />
         <SearchApply isLoading={isRefetching} />
       </PageHeader>
-      <div className="mx-4 flex flex-row flex-wrap gap-2 pb-3">
-        <SearchSelect
-          label="Creative Type"
-          varName="type"
-          choices={meta?.type}
-        />
-        <SearchSelect
-          label="Category"
-          varName="category"
-          choices={meta?.merchants_creative_categories}
-        />
-        <SearchSelect
-          label="Language"
-          varName="language"
-          choices={meta?.language}
-        />
-        <SearchSelect label="Size" varName="size" choices={meta?.size} />
-        <SearchSelect
-          label="Promotion"
-          varName="promotion"
-          emptyTitle="General"
-          choices={meta?.merchants_promotions}
-        />
+      <div className="flex-row flex-wrap gap-2 pb-3 md:flex">
+        <div className="mb-4 md:w-1/6">
+          <label className="mb-1 block text-sm font-bold text-gray-700">
+            Creative Type
+          </label>
+          <SearchSelect
+            label="Creative Type"
+            varName="type"
+            choices={meta?.type}
+          />
+        </div>
+        <div className="mb-4 md:w-1/6">
+          <label className="mb-1 block text-sm font-bold text-gray-700">
+            Category
+          </label>
+          <SearchSelect
+            label="Category"
+            varName="category"
+            choices={meta?.merchants_creative_categories}
+          />
+        </div>
+        <div className="mb-4 md:w-1/6">
+          <label className="mb-1 block text-sm font-bold text-gray-700">
+            Language
+          </label>
+          <SearchSelect
+            label="Language"
+            varName="language"
+            choices={meta?.language}
+          />
+        </div>
+        <div className="mb-4 md:w-1/6">
+          <label className="mb-1 block text-sm font-bold text-gray-700">
+            Size
+          </label>
+          <SearchSelect label="Size" varName="size" choices={meta?.size} />
+        </div>
+        <div className="mb-4 md:w-1/6">
+          <label className="mb-1 block text-sm font-bold text-gray-700">
+            Promotion
+          </label>
+          <SearchSelect
+            label="Promotion"
+            varName="promotion"
+            emptyTitle="General"
+            choices={meta?.merchants_promotions}
+          />
+        </div>
       </div>
       {data?.map(renderRow)}
     </div>
