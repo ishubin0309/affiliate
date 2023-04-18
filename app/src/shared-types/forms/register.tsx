@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { schema as accountSchema } from "./account";
 import { imUserTypes, numericCheckbox } from "./common";
+import { LanguageSelectList } from "@/components/Dropdowns/LanguageSelectList";
 
 export const schema = z
   .object({
@@ -18,7 +19,10 @@ export const schema = z
       .default("")
       .meta({ choices: imUserTypes }),
     IMUser: z.string().describe("IM Account").default(""),
-    lang: z.string().describe("Language"),
+    lang: z
+      .string()
+      .describe("Language")
+      .meta({ control: () => <LanguageSelectList /> }),
     company: z.string().describe("Company Name").default(""),
     website: z.string().url().describe("Website"),
     approvedTerms: numericCheckbox

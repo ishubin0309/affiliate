@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { InputPassword } from "@/components/common/forms/InputPassword";
 import { evaluateFormControlCallback } from "@/components/common/forms/usePrepareSchema";
+import { SelectField } from "@/components/common/forms/SelectField";
 
 export interface Props {
   choices?: ChoiceType[];
@@ -67,7 +68,16 @@ export const TextField = (
   //   choices = parseChoices(String(options.choices));
   // }
 
+  let control;
   controlName = controlName || meta?.control;
+  if (typeof controlName === "function") {
+    if (!formContext.flowContext) {
+      throw new Error(
+        `TextField: controlName is a function but flowContext is not defined`
+      );
+    }
+    control = controlName(formContext.flowContext);
+  }
 
   // console.log(
   //   `muly:TextField ${field.name} label:${label}, placeholder:${placeholder}`,
@@ -81,8 +91,14 @@ export const TextField = (
   //   }
   // );
 
-  let control;
-  if (!choices) {
+  if (typeof controlName === "function") {
+    if (!formContext.flowContext) {
+      throw new Error(
+        `TextField: controlName is a function but flowContext is not defined`
+      );
+    }
+    control = controlName(formContext.flowContext);
+  } else if (!choices) {
     if (controlName === "Textarea") {
       control = (
         <Textarea
@@ -206,34 +222,7 @@ export const TextField = (
     );
   } else {
     // console.log(`muly:Select Field ${disabled}`, { props });
-    control = (
-      <Select
-        name={field.name}
-        value={field.value ? field.value + "" : ""}
-        disabled={disabled}
-        onValueChange={(value) => {
-          field.onChange(value);
-        }}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-
-        <SelectContent>
-          {choices.map((choice, idx) => {
-            const { id, title } =
-              typeof choice === "string"
-                ? { id: choice, title: choice }
-                : choice;
-            return (
-              <SelectItem key={idx} value={String(id)}>
-                {title}
-              </SelectItem>
-            );
-          })}
-        </SelectContent>
-      </Select>
-    );
+    control = <SelectField />;
   }
 
   // console.log(`muly:TextField`, { formContext });

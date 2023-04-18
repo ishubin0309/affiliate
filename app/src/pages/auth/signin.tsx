@@ -21,9 +21,12 @@ const Page: MyPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen items-center justify-center px-5">
-        <div className="m-auto min-h-full w-[527px] items-center justify-center py-12">
+        <div className="m-auto min-h-full items-center justify-center py-12">
           <div className="w-full max-w-xs">
-            <AuthenticationHeader />
+            <AuthenticationHeader>
+              Login to your <br />
+              <span className="font-bold">Affillate</span> account
+            </AuthenticationHeader>
             <FormSignin />
             <AuthenticationFooter />
           </div>

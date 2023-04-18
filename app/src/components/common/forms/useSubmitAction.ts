@@ -25,16 +25,18 @@ export const useSubmitAction = ({ onSubmit, notification }: Options) => {
   const { toast } = useToast();
   const { handleSubmit, setError } = useFormContext();
   const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState("");
 
   const save = async (fieldValues: FieldValues) => {
     // console.log(`muly:useSubmitAction:save A`, { fieldValues, onSubmit });
+    setFormError("");
     setIsLoading(true);
     try {
       // await pause(2000);
 
       // we never get answer, must throw to report errors
-      await onSubmit(fieldValues);
-      // console.log(`muly:useSubmitAction:save B`, { answer });
+      const answer = await onSubmit(fieldValues);
+      console.log(`muly:useSubmitAction:save B`, { answer });
       if (notification) {
         toast({
           title: "Saved",
@@ -67,6 +69,8 @@ export const useSubmitAction = ({ onSubmit, notification }: Options) => {
             description: `Error: ${err.message}`,
             duration: 10000,
           });
+        } else {
+          setFormError(err.message);
         }
       }
     } finally {
@@ -78,5 +82,6 @@ export const useSubmitAction = ({ onSubmit, notification }: Options) => {
   return {
     handleSubmit: handleSubmit(save),
     isLoading,
+    formError,
   };
 };

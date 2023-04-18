@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "../../ui/select";
 
-import { Code2Icon, Copy, Image, Plus } from "lucide-react";
+import { Code2Icon, Copy, Image as ImageIcon, Plus } from "lucide-react";
 import { Button } from "../../ui/button";
 
 interface Props {
@@ -38,7 +38,7 @@ export const CreativeMaterialDialogComponent = ({
 }: Props) => {
   return (
     <Dialog open={isOpen}>
-      <div className="ml-5 w-full rounded-xl">
+      <div className="w-full rounded-xl lg:ml-5">
         <div className=" bg-[#F5F8FA] p-4 md:px-8">
           <div className="justify-between md:flex">
             <div className="">
@@ -91,7 +91,7 @@ export const CreativeMaterialDialogComponent = ({
                   {values[4]?.title}
                 </div>
                 <div className=" text-sm text-[#353535] md:text-lg">
-                  {values[4]?.value}
+                  {!values[4]?.value ? values[4]?.value : 0}
                 </div>
               </div>
               <div className="md:hidden">
@@ -111,30 +111,34 @@ export const CreativeMaterialDialogComponent = ({
             </div>
           </div>
         </div>
-        <div className="mt-1 hidden items-end justify-between md:mt-3 md:block lg:block xl:flex">
-          <div className="">
-            <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">
-              Click URL
+        <div className="mt-1 hidden items-end justify-between md:mt-3 md:block md:flex">
+          <div className="flex items-start justify-center md:justify-start">
+            <div className="">
+              <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">
+                Click URL
+              </div>
+              <div className="rounded border border-[#D7D7D7] bg-[#F9F9FF] py-2 px-3 text-sm font-medium text-[#666666] xl:w-60 2xl:w-96">
+                {url}
+              </div>
             </div>
-            <div className="rounded border border-[#D7D7D7] bg-[#F9F9FF] py-2 px-3 text-sm font-medium text-[#666666] xl:w-60 2xl:w-96">
-              {url}
+            <div className="mt-5 ml-2">
+              <Button
+                className="md:px-4"
+                variant="azure"
+                onClick={() => window.navigator.clipboard.writeText(url ?? "")}
+              >
+                <div className="text-white">Copy Click Url</div>
+                <div className="ml-2 items-center">
+                  <Copy className="text-white" />
+                </div>
+              </Button>
             </div>
           </div>
           <div className="mt-5 flex items-end justify-center md:justify-end">
-            <div className="">
-              <div className="">
-                <Button variant="azure">
-                  <div className="text-white">Copy Click Url</div>
-                  <div className="ml-2 items-center">
-                    <Copy className="text-white" />
-                  </div>
-                </Button>
-              </div>
-            </div>
             <div className="ml-2">
               <div className="">
                 <DialogTrigger>
-                  <Button variant="azure-outline">
+                  <Button variant="azure-outline" className="md:px-4">
                     Get HTML Code
                     <div className="ml-2 items-center">
                       <Code2Icon className="text-[#282560]" />
@@ -214,7 +218,7 @@ export const CreativeMaterialDialogComponent = ({
             <div className="w-full px-3">
               <textarea
                 className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] py-3 px-4 text-base font-medium text-[#1B48BB]"
-                value='<div class="container"> 
+                value='<div class="container">
                                                         <img src="img_5terre_wide.jpg" alt="Cinque Terre" width="1000" height="300">
                                                         <div class="topleft">Top Left</div>
                                                       </div>'
@@ -242,7 +246,13 @@ export const CreativeMaterialDialogComponent = ({
           <div className="flex justify-between md:justify-center md:space-x-2">
             <div className="hidden rounded md:block">
               <div className="rounded">
-                <Button variant="azure" size="md">
+                <Button
+                  variant="azure"
+                  size="md"
+                  onClick={() =>
+                    window.navigator.clipboard.writeText(url ?? "")
+                  }
+                >
                   <div className="text-base text-white md:font-medium">
                     Copy Click Url
                   </div>
@@ -268,7 +278,7 @@ export const CreativeMaterialDialogComponent = ({
                 <Button variant="azure" size="md">
                   Download Image
                   <div className="ml-2">
-                    <Image className="h-4 w-4 text-white" />
+                    <ImageIcon className="h-4 w-4 text-white" />
                   </div>
                 </Button>
               </div>

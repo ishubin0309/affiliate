@@ -5,6 +5,8 @@ import { FormSignup } from "@/components/affiliates/account/FormSignup";
 import AuthenticationFooter from "../../components/common/footer/AuthenticationFooter";
 import { useAuth } from "@/hooks/useAuth";
 import { Loading } from "@/components/common/Loading";
+import AuthenticationHeader from "@/components/common/header/AuthenticationHeader";
+
 const Page: MyPage = () => {
   const redirected = useAuth();
 
@@ -20,6 +22,10 @@ const Page: MyPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center px-5">
+        <AuthenticationHeader>
+          Register to your <br />
+          <span className="font-bold">Affillate</span> account
+        </AuthenticationHeader>
         <FormSignup />
         <AuthenticationFooter />
       </main>

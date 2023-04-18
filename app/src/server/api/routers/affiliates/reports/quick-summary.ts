@@ -124,7 +124,7 @@ export const getQuickReportSummary = publicProcedure
 
 export const exportQuickSummaryReport = publicProcedure
   .input(paramsWithReport)
-  .query(async function ({ ctx, input }) {
+  .mutation(async function ({ ctx, input }) {
     const items_per_page = 5000;
     const { exportType, ...params } = input;
 

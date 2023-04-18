@@ -12,7 +12,7 @@ type RouterInput = inferRouterInputs<AppRouter>;
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
 export type MerchantCreativeType =
-  RouterOutput["affiliates"]["getMerchantCreative"];
+  RouterOutput["affiliates"]["getMerchantCreative"][0];
 
 export type MerchantSubCreativeType =
   RouterOutput["affiliates"]["getMerchantSubCreative"];
@@ -60,7 +60,7 @@ export type QuickReportSummary =
   RouterOutput["affiliates"]["getQuickReportSummary"][0];
 
 export type CommissionReportType =
-  RouterOutput["affiliates"]["getCommissionReport"]["result"][0];
+  RouterOutput["affiliates"]["getCommissionReport"][0];
 
 export type ClicksReportType = RouterOutput["affiliates"]["getClicksReport"][0];
 
