@@ -14,10 +14,12 @@ export const reportParams = {
   exportType: z.enum(["csv", "xlsx", "json"]).optional(),
 };
 
+export type ExportType = z.infer<typeof reportParams.exportType>;
+
 // Generic function to export data in csv, xlsx, json format
 // Can be used for all reports
 export const exportReportLoop = async (
-  exportType: "csv" | "xlsx" | "json",
+  exportType: ExportType,
   columns: string[], // TODO: define better type, see what is needed for export
   generic_filename: string,
   getPage: (page: number, items_per_page: number) => Promise<any[]>
