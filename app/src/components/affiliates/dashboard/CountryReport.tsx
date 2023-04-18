@@ -9,26 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-// const apiMockData = [
-//   {
-//     _sum: {
-//       Clicks: 1,
-//       BannerID: 3,
-//       Impressions: 2,
-//     },
-//     merchant_id: 1,
-//     CountryID: "FR",
-//   },
-//   {
-//     _sum: {
-//       Clicks: 4,
-//       BannerID: 1,
-//       Impressions: 0,
-//     },
-//     merchant_id: 1,
-//     CountryID: "US",
-//   },
-// ];
 interface ApiData {
   _sum: {
     Clicks: number;
