@@ -1,5 +1,5 @@
 import { api } from "@/utils/api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CountryChart from "../../common/chart/CountryChart";
 import {
   Select,
@@ -9,26 +9,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-const apiMockData = [
-  {
-    _sum: {
-      Clicks: 1,
-      BannerID: 3,
-      Impressions: 2,
-    },
-    merchant_id: 1,
-    CountryID: "FR",
-  },
-  {
-    _sum: {
-      Clicks: 4,
-      BannerID: 1,
-      Impressions: 0,
-    },
-    merchant_id: 1,
-    CountryID: "US",
-  },
-];
+// const apiMockData = [
+//   {
+//     _sum: {
+//       Clicks: 1,
+//       BannerID: 3,
+//       Impressions: 2,
+//     },
+//     merchant_id: 1,
+//     CountryID: "FR",
+//   },
+//   {
+//     _sum: {
+//       Clicks: 4,
+//       BannerID: 1,
+//       Impressions: 0,
+//     },
+//     merchant_id: 1,
+//     CountryID: "US",
+//   },
+// ];
 interface ApiData {
   _sum: {
     Clicks: number;
@@ -40,28 +40,12 @@ interface ApiData {
 }
 const AccountManager = () => {
   const [selectedReport, setSelectedReport] = useState<string>("");
+  const [lastDays, setLastDays] = useState<number>(0);
   const [countryDropDown, setCountryDropDown] = useState<string[]>([]);
   const [chartLabels, setChartLabels] = useState<string[]>([]);
   const [chartValues, setChartValues] = useState<number[]>([]);
   const [chartData, setChartData] = useState<ApiData[]>([]);
-  const getDashboardDeviceReport =
-    api.affiliates.getDashboardDeviceReport.useMutation();
-  useEffect(() => {
-    getApiData(0);
-  }, []);
-  const onReportChange = (value: string) => {
-    // set chart label
-    setSelectedReport(value);
-    // set the chart value
-    const values: number[] = chartData.map(
-      (data: ApiData) => data._sum[value as keyof ApiData["_sum"]]
-    );
-    setChartValues(values);
-  };
-  const getApiData = async (lastDays: number) => {
-    const data: unknown = await getDashboardDeviceReport.mutateAsync({
-      lastDays,
-    });
+  const getApiData = () => {
     if (Array.isArray(data)) {
       setChartData(data);
       setCountryDropDown(Object.keys(data[0]?._sum));
@@ -71,6 +55,20 @@ const AccountManager = () => {
       setChartValues(values);
     }
   };
+  const data: unknown = api.affiliates.getDashboardDeviceReport.useQuery({
+    lastDays,
+  });
+  getApiData();
+  const onReportChange = (value: string) => {
+    // set chart label
+    setSelectedReport(value);
+    // set the chart value
+    const values: number[] = chartData.map(
+      (data: ApiData) => data._sum[value as keyof ApiData["_sum"]]
+    );
+    setChartValues(values);
+  };
+
   return (
     <div className="rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
       <div className="mb-3 text-xl font-bold text-[#2262C6]">
@@ -81,7 +79,7 @@ const AccountManager = () => {
         <div className="flex items-center justify-center text-xs font-light">
           <Select
             defaultValue={"90"}
-            onValueChange={(e: string) => getApiData(parseInt(e) as number)}
+            onValueChange={(e: string) => setLastDays(parseInt(e) as number)}
           >
             <SelectTrigger className="pr-2 text-xs font-light text-black">
               <SelectValue placeholder="Select days" />
