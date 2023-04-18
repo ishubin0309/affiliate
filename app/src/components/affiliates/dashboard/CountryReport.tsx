@@ -25,7 +25,7 @@ const AccountManager = () => {
   const [chartLabels, setChartLabels] = useState<string[]>([]);
   const [chartValues, setChartValues] = useState<number[]>([]);
   const [chartData, setChartData] = useState<ApiData[]>([]);
-  const getApiData = () => {
+  const getApiData = (data: unknown) => {
     if (Array.isArray(data)) {
       setChartData(data);
       setCountryDropDown(Object.keys(data[0]?._sum));
@@ -35,10 +35,10 @@ const AccountManager = () => {
       setChartValues(values);
     }
   };
-  const { data: unknown } = api.affiliates.getDashboardDeviceReport.useQuery({
+  const { data } = api.affiliates.getDashboardDeviceReport.useQuery({
     lastDays,
   });
-  getApiData();
+  getApiData(data);
   const onReportChange = (value: string) => {
     // set chart label
     setSelectedReport(value);
