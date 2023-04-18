@@ -38,7 +38,7 @@ export const CreativeMaterialDialogComponent = ({
 }: Props) => {
   return (
     <Dialog open={isOpen}>
-      <div className="ml-5 w-full rounded-xl">
+      <div className="w-full rounded-xl lg:ml-5">
         <div className=" bg-[#F5F8FA] p-4 md:px-8">
           <div className="justify-between md:flex">
             <div className="">
@@ -111,7 +111,7 @@ export const CreativeMaterialDialogComponent = ({
             </div>
           </div>
         </div>
-        <div className="mt-1 hidden items-end justify-between md:mt-3 md:block lg:block xl:flex">
+        <div className="mt-1 hidden items-end justify-between md:mt-3 md:block md:flex">
           <div className="flex items-start justify-center md:justify-start">
             <div className="">
               <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">
@@ -121,8 +121,9 @@ export const CreativeMaterialDialogComponent = ({
                 {url}
               </div>
             </div>
-            <div className="mt-5 ml-5">
+            <div className="mt-5 ml-2">
               <Button
+                className="md:px-4"
                 variant="azure"
                 onClick={() => window.navigator.clipboard.writeText(url ?? "")}
               >
@@ -137,7 +138,7 @@ export const CreativeMaterialDialogComponent = ({
             <div className="ml-2">
               <div className="">
                 <DialogTrigger>
-                  <Button variant="azure-outline">
+                  <Button variant="azure-outline" className="md:px-4">
                     Get HTML Code
                     <div className="ml-2 items-center">
                       <Code2Icon className="text-[#282560]" />
