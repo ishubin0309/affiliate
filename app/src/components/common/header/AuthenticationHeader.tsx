@@ -14,7 +14,7 @@ const AuthenticationHeader = ({ children }: Props) => {
           alt="logo"
         />
       </div>
-      <hr />
+      <hr className="min-w-[240px]" />
       <div className="mt-6 text-center text-3xl">{children}</div>
     </header>
   );

@@ -1,6 +1,8 @@
 import Affiliates from "../../../layouts/AffiliatesLayout";
-
-const Terms = () => {
+interface IProps {
+  isSignUpTerms?: boolean;
+}
+const Terms = ({ isSignUpTerms }: IProps) => {
   const terms = [
     {
       headline: "Terms & Conditions",
@@ -93,11 +95,17 @@ const Terms = () => {
 
   return (
     <div className="pt-5 pb-4">
-      <div className="mb-5 block px-6 text-base font-medium">
-        <span className="text-[#2262C6]">Dashboard</span> / Terms & Condition
-      </div>
+      {!isSignUpTerms ? (
+        <div className="mb-5 block px-6 text-base font-medium">
+          <span className="text-[#2262C6]">Dashboard</span> / Terms & Condition
+        </div>
+      ) : null}
 
-      <div className="rounded-[5px] bg-white pt-4 pl-3 pb-20 shadow-md md:mb-20 md:rounded-[15px] md:pt-7 md:pl-4">
+      <div
+        className={`rounded-[5px] ${
+          !isSignUpTerms ? "bg-white shadow-md" : null
+        } pt-4 pl-3 pb-20  md:mb-20 md:rounded-[15px] md:pt-7 md:pl-4`}
+      >
         <ul className="mx-4 list-outside list-disc px-1 md:ml-8 md:mr-40 md:px-8">
           {terms.map((terms, index) => {
             return (

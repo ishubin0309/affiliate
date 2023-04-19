@@ -10,6 +10,8 @@ const Home: MyPage = () => {
   const links = [
     { href: "/auth/signup", title: "Auth -> Sign Up" },
     { href: "/auth/signin", title: "Auth -> Sign In" },
+    { href: "/auth/terms", title: "Auth -> Terms" },
+
     { href: "/auth/lost-password", title: "Auth -> Lost Password" },
     { href: "/affiliates/dashboard", title: "Dashboard" },
     { href: "/affiliates/creative", title: "Creative Materials" },

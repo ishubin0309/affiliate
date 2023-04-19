@@ -1,5 +1,3 @@
-import styles from "./../index.module.css";
-import { type NextPage } from "next";
 import Head from "next/head";
 
 import { AccountDetails } from "../../components/affiliates/account/AccountDetails";

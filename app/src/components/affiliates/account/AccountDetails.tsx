@@ -36,20 +36,28 @@ export const AccountDetails = () => {
               <TabsTrigger value="website">Website</TabsTrigger>
             </TabsList>
             <TabsContent className="border-0" value="account">
-              <FormAccount account={account} onSubmit={handleSubmit} />
+              <div className="w-3/6">
+                <FormAccount account={account} onSubmit={handleSubmit} />
+              </div>
             </TabsContent>
             <TabsContent className="border-0" value="contract">
-              <FormContact account={account} onSubmit={handleSubmit} />
+              <div className="w-3/6">
+                <FormContact account={account} onSubmit={handleSubmit} />
+              </div>
             </TabsContent>
             <TabsContent className="border-0" value="invoice">
-              <FormInvoice
-                account={account}
-                onSubmit={handleSubmit}
-                countries={countries || []}
-              />
+              <div className="w-3/6">
+                <FormInvoice
+                  account={account}
+                  onSubmit={handleSubmit}
+                  countries={countries || []}
+                />
+              </div>
             </TabsContent>
             <TabsContent className="border-0" value="website">
-              <FormWebSites account={account} onSubmit={handleSubmit} />
+              <div className="w-3/6">
+                <FormWebSites account={account} onSubmit={handleSubmit} />
+              </div>
             </TabsContent>
           </Tabs>
         </div>
