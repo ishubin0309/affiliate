@@ -20,14 +20,16 @@ const AccountManager = () => {
     }
   );
   const labels: string[] =
-    reportData?.map((item: DashboardDeviceReport) => item?.CountryID) ?? [];
+    reportData?.map((item: DashboardDeviceReport): string => item?.CountryID) ??
+    [];
   const values: number[] =
     reportData?.map(
-      (item: DashboardDeviceReport) =>
-        item?._sum[selectedReport as keyof typeof item._sum]
+      (item: DashboardDeviceReport): number =>
+        item?._sum[selectedReport as keyof typeof item._sum] as number
     ) ?? [];
-  const reportDropDown =
-    reportData?.length > 0 ? Object.keys(reportData[0]?._sum || {}) : [];
+  const reportDropDown = reportData?.length
+    ? Object.keys(reportData[0]?._sum || {})
+    : [];
 
   return (
     <div className="rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
