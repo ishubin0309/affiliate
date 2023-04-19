@@ -6,7 +6,7 @@ import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
 import { api } from "../../../utils/api";
 import { CreativeMaterialComponent } from "../creative/CreativeMaterialComponent";
-import { MerchantSubCreativeType } from "@/server/db-types";
+import type { MerchantSubCreativeType } from "@/server/db-types";
 
 const renderRow = (item: MerchantSubCreativeType) => {
   const values = [

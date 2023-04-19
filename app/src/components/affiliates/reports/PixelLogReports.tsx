@@ -2,8 +2,8 @@ import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { DataTable } from "../../../components/common/data-table/DataTable";
 import { QuerySelect } from "../../../components/common/QuerySelect";
+import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { PixelLogsReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
@@ -201,7 +201,6 @@ export const PixelLogReports = () => {
         alignItems={"center"}
         width="100%"
         alignSelf="center"
-        overflow={"scroll"}
       >
         <DataTable data={data ? data : []} columns={columns} footerData={[]} />
       </Grid>
