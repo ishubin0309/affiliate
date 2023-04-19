@@ -16,26 +16,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-const apiMockData = [
-  {
-    _sum: {
-      Clicks: 1,
-      BannerID: 1,
-      Impressions: 0,
-    },
-    merchant_id: 1,
-    CountryID: "FR",
-  },
-  {
-    _sum: {
-      Clicks: 4,
-      BannerID: 1,
-      Impressions: 0,
-    },
-    merchant_id: 1,
-    CountryID: "US",
-  },
-];
 
 export const options = {
   responsive: true,
@@ -63,26 +43,6 @@ export const options = {
   },
 };
 
-const labels = apiMockData.map((data) => {
-  return data.CountryID;
-});
-const clicks = apiMockData.map((data) => {
-  return data._sum.Clicks;
-});
-// const labels = ["Israel", "Brazil", "Canada", "USA", "Somalia"];
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: "Dataset 1",
-      // data: [60, 10],
-      data: clicks,
-      backgroundColor: "#3B5EC2",
-      maxBarThickness: 17,
-      borderRadius: 3,
-    },
-  ],
-};
 interface Props {
   labels: string[];
   data: number[];
