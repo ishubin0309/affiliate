@@ -1,6 +1,8 @@
+import { ExportButton } from "@/components/affiliates/reports/export-button";
 import { DateRangeSelect, useDateRange } from "@/components/ui/date-range";
 import { Input, Label } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
+import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 import type { ChangeEvent } from "react";
@@ -18,9 +20,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog";
-import type { ItemProps } from "./QuickSummaryReport";
-import { ExportButton } from "@/components/affiliates/reports/export-button";
-import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export const CommissionReport = () => {
   const router = useRouter();
@@ -365,7 +364,7 @@ export const CommissionReport = () => {
           </DialogContent>
         </Dialog>
 
-        <div className="mb-5 mt-4 w-full overflow-scroll rounded bg-white px-2 py-4 shadow-sm">
+        <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
           <ReportDataTable
             data={data}
             columns={columns}
