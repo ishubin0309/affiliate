@@ -150,7 +150,6 @@ export const InstallReport = () => {
         alignItems={"center"}
         width="100%"
         alignSelf="center"
-        overflow={"scroll"}
       >
         <DataTable
           data={Object.values(data || {})}

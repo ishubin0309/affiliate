@@ -1,5 +1,5 @@
-import { DataTable } from "@/components/common/data-table/DataTable";
 import { QuerySelect } from "@/components/common/QuerySelect";
+import { DataTable } from "@/components/common/data-table/DataTable";
 import { FormLabel, Grid, GridItem, Input, Text } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
@@ -253,7 +253,6 @@ export const SubAffiliateReport = () => {
         alignItems={"center"}
         width="100%"
         alignSelf="center"
-        overflow={"scroll"}
       >
         <DataTable data={data} columns={columns} footerData={[]} />
       </Grid>
