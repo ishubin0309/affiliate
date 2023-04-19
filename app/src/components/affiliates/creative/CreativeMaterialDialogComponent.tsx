@@ -117,13 +117,13 @@ export const CreativeMaterialDialogComponent = ({
               <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">
                 Click URL
               </div>
-              <div className="rounded border border-[#D7D7D7] bg-[#F9F9FF] py-2 px-3 text-sm font-medium text-[#666666] xl:w-60 2xl:w-96">
+              <div className="truncate rounded border border-[#D7D7D7] bg-[#F9F9FF] py-2 px-3 text-base font-medium text-[#666666] xl:w-60 2xl:w-96">
                 {url}
               </div>
             </div>
             <div className="mt-5 ml-2">
               <Button
-                className="md:px-4"
+                className="border border-azure md:px-4"
                 variant="azure"
                 onClick={() => window.navigator.clipboard.writeText(url ?? "")}
               >
