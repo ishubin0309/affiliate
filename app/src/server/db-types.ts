@@ -83,3 +83,6 @@ export type ProfileReportType =
 
 export type SubAffiliateReportType =
   RouterOutput["affiliates"]["getSubAffiliateReport"][0];
+
+export type DashboardDeviceReport =
+  RouterOutput["affiliates"]["getDashboardDeviceReport"][0];
