@@ -48,6 +48,7 @@ export const FormSignin = () => {
         onSubmit={handleSubmit}
         formProps={{
           submit: {
+            className: "w-full",
             text: "Sign In",
             notification: false,
           },

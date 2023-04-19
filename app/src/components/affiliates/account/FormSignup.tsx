@@ -32,7 +32,9 @@ export const FormSignup = () => {
         formContext={formContext}
         schema={schema}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        formProps={{ submit: { text: "Sign Up", notification: false } }}
+        formProps={{
+          submit: { text: "Sign Up", notification: false, className: "w-full" },
+        }}
         onSubmit={handleSubmit}
       />
       <div className="mt-6 mb-6 text-center">
