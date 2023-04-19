@@ -1,8 +1,7 @@
-import { z } from "zod";
-import { schema as accountSchema } from "./account";
-import { imUserTypes, numericCheckbox } from "./common";
 import { LanguageSelectList } from "@/components/Dropdowns/LanguageSelectList";
 import Link from "next/link";
+import { z } from "zod";
+import { imUserTypes } from "./common";
 
 export const schema = z
   .object({
@@ -38,8 +37,8 @@ export const schema = z
         label: () => (
           <>
             I have read and accepted the{" "}
-            <Link href="auth/terms">
-              <span>Terms of Service</span>
+            <Link href="/auth/terms">
+              <span className="text-primary">Terms of Service</span>
             </Link>
           </>
         ),
@@ -60,4 +59,4 @@ export const schema = z
   //     path: ["passwordRepeat"],
   //   }
   // )
-  .meta({ className: "md:grid md:grid-cols-2 gap-x-6 gap-y-4" });
+  .meta({ className: "md:grid md:grid-cols-2 gap-x-12 gap-y-4" });

@@ -1,6 +1,9 @@
 import Affiliates from "../../../layouts/AffiliatesLayout";
-
-const Terms = () => {
+import { cn } from "@/lib/utils";
+interface IProps {
+  isSignUpTerms?: boolean;
+}
+const Terms = ({ isSignUpTerms }: IProps) => {
   const terms = [
     {
       headline: "Terms & Conditions",
@@ -93,21 +96,31 @@ const Terms = () => {
 
   return (
     <div className="pt-5 pb-4">
-      <div className="mb-5 block px-6 text-base font-medium">
-        <span className="text-[#2262C6]">Dashboard</span> / Terms & Condition
-      </div>
+      {!isSignUpTerms ? (
+        <div className="mb-5 block px-6 text-base font-medium">
+          <span className="text-[#2262C6]">Dashboard</span> / Terms & Condition
+        </div>
+      ) : null}
 
-      <div className="rounded-[5px] bg-white pt-4 pl-3 pb-20 shadow-md md:mb-20 md:rounded-[15px] md:pt-7 md:pl-4">
+      <div
+        className={`rounded-[5px] ${
+          !isSignUpTerms ? "bg-white shadow-md" : null
+        } py-4 pl-3 md:mb-20 md:rounded-[15px] md:pt-7 md:pl-4`}
+      >
         <ul className="mx-4 list-outside list-disc px-1 md:ml-8 md:mr-40 md:px-8">
           {terms.map((terms, index) => {
             return (
               <li
-                className="list-none pt-3 pb-2 text-xl font-bold md:pt-0"
+                className={cn(
+                  "list-none pt-3 pb-2 font-bold md:pt-0",
+                  { "text-2xl": index === 0 },
+                  { "text-xl": index > 0 }
+                )}
                 key={index}
               >
-                <h1>{terms.headline}</h1>
+                <h2>{terms.headline}</h2>
                 <ul className="list-outside py-2 text-base font-normal md:pb-7 md:text-base">
-                  <h2> {terms.content}</h2>
+                  <p>{terms.content}</p>
                 </ul>
               </li>
             );

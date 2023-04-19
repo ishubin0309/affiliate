@@ -28,7 +28,11 @@ export const RecoverLostPassword = ({ setIsSent }: IProps) => {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit}
         formProps={{
-          submit: { text: "Reset Password", notification: false },
+          submit: {
+            text: "Reset Password",
+            notification: false,
+            className: "w-full",
+          },
         }}
       />
       {/* {!isSent && (

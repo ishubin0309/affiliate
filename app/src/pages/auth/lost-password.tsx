@@ -28,7 +28,7 @@ const Page: MyPage = () => {
           <div className="m-auto w-full max-w-xs">
             <AuthenticationHeader>
               Reset password for your <br />
-              <span className="font-bold">Affillate</span> account
+              Affillate account
             </AuthenticationHeader>
             <RecoverLostPassword setIsSent={setIsSent} />
           </div>
