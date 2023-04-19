@@ -145,10 +145,12 @@ export const exportQuickSummaryReport = publicProcedure
     const generic_filename = `quick-summary${file_date}`;
 
     console.log("export type ---->", exportType);
+    const quick_summary = "quick-summary";
     await exportReportLoop(
       exportType || "csv",
       columns,
       generic_filename,
+      quick_summary,
       async (page, items_per_page) =>
         quickReportSummary({
           ctx,

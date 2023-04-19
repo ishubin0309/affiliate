@@ -426,7 +426,10 @@ export const QuickSummaryReport = () => {
               <button className="hidden rounded-md border border-[#2262C6] py-2 px-8 text-base font-semibold text-[#2262C6] lg:block">
                 Reset Search
               </button>
-              <ExportButton onExport={handleExport} />
+              <ExportButton
+                onExport={handleExport}
+                report_name="quick-summary"
+              />
             </div>
           </div>
 

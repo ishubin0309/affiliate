@@ -1,6 +1,8 @@
+import { ExportButton } from "@/components/affiliates/reports/export-button";
 import { DateRangeSelect, useDateRange } from "@/components/ui/date-range";
 import { Input, Label } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
+import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 import type { ChangeEvent } from "react";
@@ -18,9 +20,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog";
-import type { ItemProps } from "./QuickSummaryReport";
-import { ExportButton } from "@/components/affiliates/reports/export-button";
-import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export const CommissionReport = () => {
   const router = useRouter();
@@ -42,6 +41,8 @@ export const CommissionReport = () => {
     page: currentPage ? Number(currentPage) : 1,
     items_per_page: itemsPerPage ? Number(itemsPerPage) : 10,
   });
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportCommissionReport.useMutation();
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<CommissionReportType>();
 
@@ -196,10 +197,12 @@ export const CommissionReport = () => {
   ];
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  const handleExport = async (exportType: ExportType) => {
-    // TODO
-    return undefined;
-  };
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      from: new Date("2022-01-03"),
+      to: new Date("2023-01-03"),
+      exportType,
+    });
 
   if (!data) {
     return <Loading />;
@@ -314,7 +317,10 @@ export const CommissionReport = () => {
               <button className="hidden rounded-md border border-[#2262C6] py-2 px-8 text-base font-semibold text-[#2262C6] lg:block">
                 Reset Search
               </button>
-              <ExportButton onExport={handleExport} />
+              <ExportButton
+                onExport={handleExport}
+                report_name="commission-report"
+              />
             </div>
           </div>
 

@@ -9,9 +9,10 @@ import { exportOptions } from "./utils";
 
 interface Props {
   onExport: (exportType: ExportType) => Promise<string | undefined>;
+  report_name: string;
 }
 
-export const ExportButton = ({ onExport }: Props) => {
+export const ExportButton = ({ onExport, report_name }: Props) => {
   const [selectedValue, setSelectedItem] = useState<ItemProps>({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,7 +35,7 @@ export const ExportButton = ({ onExport }: Props) => {
         const download = new JsFileDownloader({
           url: link,
           autoStart: false,
-          filename: `quick-summary-${file_date}.${selectedValue.id}`,
+          filename: `${report_name}-${file_date}.${selectedValue.id}`,
         });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         await download.start();

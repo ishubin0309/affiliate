@@ -28,7 +28,10 @@ import {
   getLongCountries,
 } from "@/server/api/routers/affiliates/reports";
 import { getClicksReport } from "@/server/api/routers/affiliates/reports/clicks-report";
-import { getCommissionReport } from "@/server/api/routers/affiliates/reports/commission-report";
+import {
+  exportCommissionReport,
+  getCommissionReport,
+} from "@/server/api/routers/affiliates/reports/commission-report";
 import { getCreativeReport } from "@/server/api/routers/affiliates/reports/creative-report";
 import { getInstallReport } from "@/server/api/routers/affiliates/reports/install-reports";
 import { getLandingPageData } from "@/server/api/routers/affiliates/reports/landing-page";
@@ -87,6 +90,7 @@ export const affiliatesRouter = createTRPCRouter({
   getAllMerchants,
 
   getCommissionReport,
+  exportCommissionReport,
   getClicksReport,
   getDocuments,
 
