@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 interface PropsType {
@@ -34,25 +35,18 @@ const AnnouncementsComponent = ({ propsdata }: PropsType) => {
           className="text-left text-sm  font-medium text-blue-500"
           onClick={() => setExpanded1(!expanded1)}
         >
-          {expanded1 ? "More" : "Less"}
-          <div
-            className={
-              "ml-2 inline-flex items-center justify-center duration-300" +
-              (expanded1 ? " rotate-180" : "")
-            }
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="8"
-              height="12"
-              viewBox="0 0 8 12"
-              fill="none"
-            >
-              <path
-                d="M6.29303 0.293031L0.586031 6.00003L6.29303 11.707L7.70703 10.293L3.41403 6.00003L7.70703 1.70703L6.29303 0.293031Z"
-                fill="#2262C6"
-              />
-            </svg>
+          <div className="ml-2 inline-flex items-center justify-center text-blue-500 duration-300">
+            {expanded1 ? (
+              <>
+                More
+                <ChevronRight className="h-5 w-5" />
+              </>
+            ) : (
+              <>
+                Less
+                <ChevronLeft className="h-5 w-5" />
+              </>
+            )}
           </div>
         </button>
       </div>
