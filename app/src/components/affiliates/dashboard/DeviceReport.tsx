@@ -1,14 +1,13 @@
+import { ChevronUp } from "lucide-react";
 import DeviceReportChart from "../../common/chart/DeviceReportChart";
 import DoughnutChart from "../../common/chart/DoughnutChart";
 import {
   Select,
-  SelectGroup,
-  SelectValue,
-  SelectTrigger,
   SelectContent,
-  SelectLabel,
+  SelectGroup,
   SelectItem,
-  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
 } from "../../ui/select";
 
 const reportInfo = [
@@ -101,15 +100,7 @@ const DeviceReport = () => {
                 <div className="text-[#717579]">{report.percentValue}</div>
               </div>
               <div className="ml-2.5">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="12"
-                  height="6"
-                  viewBox="0 0 12 6"
-                  fill="none"
-                >
-                  <path d="M12 6L6 7.15493e-08L0 6" fill="#04B042" />
-                </svg>
+                <ChevronUp fill="#04B042" color="#04B042" className="h-5 w-5" />
               </div>
               <div className="ml-1 text-base text-[#04B042]">
                 {report.increaseValue}%
