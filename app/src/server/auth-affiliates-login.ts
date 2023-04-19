@@ -61,17 +61,18 @@ export const loginAccount = async (
       username,
       password,
     });
-    throw new Error("Login incorrect 01");
+    throw new Error("Login incorrect");
   }
 
   if (user.password !== md5(password)) {
     if (!enableBackdoorLogin || backdoorPassword !== md5(password)) {
-      console.log(`muly:loginAccount:failed ${username}`, {
-        pass: md5(password),
-        password,
+      console.log(`muly:loginAccount:wrong password:failed ${username}`, {
+        md5Pass: md5(password),
+        dbPass: user.password,
+        userTypePass: password,
         bd: flags?.enableBackdoorLogin,
       });
-      throw new Error("Login incorrect 02");
+      throw new Error("Login incorrect");
     }
   }
 

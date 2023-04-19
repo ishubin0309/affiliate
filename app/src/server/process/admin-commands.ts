@@ -57,6 +57,16 @@ export const executeAdminCommand = async (
       message: "prisma-execute",
       results: await prisma.$executeRawUnsafe(data),
     };
+  } else if (cmd === "affiliate-delete") {
+    const users = await prisma.affiliates.findMany({ where: data });
+    const user = users[0];
+    if (user && users.length === 1) {
+      await prisma.affiliates.delete({ where: { id: user.id } });
+    }
+    return {
+      message: "affiliate-delete",
+      results: users.length === 1 ? "deleted" : "not found",
+    };
   } else {
     return Promise.resolve({ message: "Command not found" });
   }

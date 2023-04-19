@@ -72,8 +72,8 @@ export const getCommissionReport = publicProcedure
         },
       });
 
-      // console.log("data ----->", data);
+      console.log("commission report ----->", data);
 
-      return data;
+      return data?.result;
     }
   );

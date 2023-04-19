@@ -21,6 +21,7 @@ jobs:
             database_url:api-front-dashbord/DEV_DATABASE_URL
             nextauth_secret:api-front-dashbord/DEV_NEXTAUTH_SECRET
 
+
       - run: |-
           touch app/.env
           echo 'DATABASE_URL=${{ steps.secrets.outputs.database_url }}' > app/.env
@@ -30,6 +31,7 @@ jobs:
           echo 'LEGACY_PHP_ACCESS_TOKEN="fake"' >> app/.env
           echo 'SENTRY_IGNORE_API_RESOLUTION_ERROR=1' >> app/.env
           echo 'NEXT_PUBLIC_FLAGS_ENV_KEY=flags' >> app/.env
+          echo 'SENDGRID_API_KEY=SENDGRID_API_KEY=key' >> app/.env
         shell: bash
 
       - id: yarn_confirm

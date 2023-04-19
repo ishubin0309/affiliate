@@ -264,6 +264,7 @@ export function createTsForm<
     formContext,
     schema,
     onSubmit,
+
     props,
     formProps,
     preprocessField,
@@ -574,6 +575,7 @@ export function createTsForm<
           {...formProps}
           className={cn(formProps?.className, propsDesc?.className)}
           onSubmit={submitFn}
+          formContext={formContext}
         >
           {propsDesc.beforeElement &&
             propsDesc.beforeElement(formContext.flowContext, {

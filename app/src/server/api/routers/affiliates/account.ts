@@ -15,6 +15,7 @@ import type { AuthUser } from "../../../auth";
 import type { affiliates } from ".prisma/client";
 import { sentEmailTemplate } from "../../../email";
 import { Prisma } from "@prisma/client";
+import { env } from "@/env.mjs";
 
 export const getAccount = publicProcedure.query(async ({ ctx }) => {
   const data = await ctx.prisma.affiliates.findUnique({
@@ -45,7 +46,7 @@ export const updateAccount = publicProcedure
 export const registerAccount = publicProcedure
   .input(schemaRegister)
   .mutation(async ({ ctx, input }) => {
-    const { username, mail, password, ...data } = input;
+    const { username, mail, password, approvedTerms, ...data } = input;
 
     const [idUserName, idEmail] = await Promise.all([
       ctx.prisma
@@ -69,6 +70,7 @@ export const registerAccount = publicProcedure
     }
 
     // FocusOption/FocusOption-main/site/index.php L680
+    console.log(`muly:create-affiliate`, {});
     const newData = await ctx.prisma.affiliates.create({
       data: {
         ...data,
@@ -127,7 +129,9 @@ export const registerAccount = publicProcedure
         newsletter: 1,
       },
     });
-    return data;
+
+    console.log(`muly:create-affiliate`, { newData });
+    return newData;
   });
 
 export const recoverPassword = publicProcedure
@@ -158,9 +162,18 @@ export const recoverPassword = publicProcedure
       const { id, mail } = affiliate;
       const password = Math.random().toString(36).slice(-8);
 
-      await ctx.prisma.affiliates.update({ where: { id }, data: { password } });
+      await ctx.prisma.affiliates.update({
+        where: { id },
+        data: { password: md5(password) },
+      });
 
-      await sentEmailTemplate("ResetPassword", { affiliate, password });
+      await sentEmailTemplate(mail, "resetPassword", {
+        affiliate,
+        password,
+        UserName: affiliate.first_name || affiliate.last_name || affiliate.mail,
+        AppName: "Affiliate dashboard", // getConfig().appName,
+        Url: env.NEXTAUTH_URL,
+      });
     }
 
     return true;
