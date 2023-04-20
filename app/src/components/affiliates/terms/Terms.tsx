@@ -1,5 +1,6 @@
-import Affiliates from "../../../layouts/AffiliatesLayout";
+import { PageHeader } from "@/components/common/page/page-header";
 import { cn } from "@/lib/utils";
+import Affiliates from "../../../layouts/AffiliatesLayout";
 interface IProps {
   isSignUpTerms?: boolean;
 }
@@ -97,9 +98,7 @@ const Terms = ({ isSignUpTerms }: IProps) => {
   return (
     <div className="pt-5 pb-4">
       {!isSignUpTerms ? (
-        <div className="mb-5 block px-6 text-base font-medium">
-          <span className="text-[#2262C6]">Dashboard</span> / Terms & Condition
-        </div>
+        <PageHeader title="Terms & Condition"></PageHeader>
       ) : null}
 
       <div

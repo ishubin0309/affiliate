@@ -1,10 +1,11 @@
+import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
+import { PageHeader } from "@/components/common/page/page-header";
 import { Flex } from "@chakra-ui/react";
-import { api } from "../../../utils/api";
-import { Form } from "../../common/forms/Form";
+import { useTranslation } from "next-i18next";
 import type { z } from "zod";
 import { schema } from "../../../shared-types/forms/payment-details";
-import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
-import { useTranslation } from "next-i18next";
+import { api } from "../../../utils/api";
+import { Form } from "../../common/forms/Form";
 
 export const AccountPaymentDetails = () => {
   const { t } = useTranslation("affiliate");
@@ -23,20 +24,23 @@ export const AccountPaymentDetails = () => {
   };
 
   return (
-    <Flex direction="column" gap={2} maxW="4xl" width="100%" m="auto">
-      <Form
-        formContext={formContext}
-        schema={schema}
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onSubmit={handleSubmit}
-        defaultValues={account}
-        formProps={{}}
-        props={{
-          preferredCurrency: {
-            choices: ["TBD"],
-          },
-        }}
-      ></Form>
-    </Flex>
+    <div className="w-full">
+      <PageHeader title="My Account" subTitle="Payment"></PageHeader>
+      <Flex direction="column" gap={2} maxW="4xl" width="100%" m="auto">
+        <Form
+          formContext={formContext}
+          schema={schema}
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onSubmit={handleSubmit}
+          defaultValues={account}
+          formProps={{}}
+          props={{
+            preferredCurrency: {
+              choices: ["TBD"],
+            },
+          }}
+        ></Form>
+      </Flex>
+    </div>
   );
 };
