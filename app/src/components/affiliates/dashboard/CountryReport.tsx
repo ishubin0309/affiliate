@@ -20,9 +20,7 @@ const AccountManager = () => {
     }
   );
   const labels: string[] =
-    reportData?.map(
-      (item: DashboardDeviceReport): string => item?.CountryID as string
-    ) ?? [];
+    reportData?.map((item): string => item?.CountryID) ?? [];
   const values: number[] =
     reportData?.map(
       (item: DashboardDeviceReport): number =>
