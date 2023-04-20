@@ -70,7 +70,6 @@
     U+FEFF, U+FFFD;
 }
 
-
 @layer base {
   :root {
     --background: 204 33% 97%;
@@ -149,6 +148,26 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .scrollbar-thin::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    width: 4px; /* Adjust the width of the scrollbar */
+    height: 4px; /* Adjust the height of the scrollbar */
+  }
+  .scrollbar-thin::-webkit-scrollbar-track,
+  body::-webkit-scrollbar-track {
+    @apply rounded bg-gray-200;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb,
+  body::-webkit-scrollbar-thumb {
+    @apply rounded bg-gray-500;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover,
+  body::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-700;
   }
 }
 
