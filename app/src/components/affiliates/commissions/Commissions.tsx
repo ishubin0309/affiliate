@@ -33,7 +33,7 @@ export const Commissions = () => {
   return data ? (
     <>
       <div className="w-full">
-        <PageHeader title="Commissions"></PageHeader>
+        <PageHeader title="My Account" subTitle="Commissions"></PageHeader>
         <DataTable data={data} columns={columns} />
       </div>
     </>
