@@ -135,7 +135,7 @@ export const Documents = () => {
     }),
     columnHelper.accessor("edit-button" as any, {
       cell: (info) => (
-        <Button variant="text">
+        <Button variant="ghost">
           <ViewIcon className="mr-2 h-4 w-4" />
           View
         </Button>

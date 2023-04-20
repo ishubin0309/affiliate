@@ -99,7 +99,7 @@ export const useCRUD = <T,>({
       onSubmit={(newRec) => handleSubmit(row, newRec)}
       formProps={{
         trigger: (
-          <Button variant="text">
+          <Button variant="ghost">
             <EditIcon className="mr-2 h-4 w-4" />
             {text.edit}
           </Button>

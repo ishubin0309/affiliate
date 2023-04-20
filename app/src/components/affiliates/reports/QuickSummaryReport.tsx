@@ -345,7 +345,7 @@ export const QuickSummaryReport = () => {
             <div className="flex items-center justify-between">
               <div className="flex">
                 <DialogTrigger>
-                  <Button variant="white" size="rec-sm">
+                  <Button variant="primary-outline">
                     <Settings className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>

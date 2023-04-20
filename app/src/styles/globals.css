@@ -1,6 +1,7 @@
 @tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* cyrillic-ext */
 @font-face {
   font-family: "Inter";
   font-style: normal;
@@ -69,8 +70,6 @@
     U+FEFF, U+FFFD;
 }
 
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   :root {

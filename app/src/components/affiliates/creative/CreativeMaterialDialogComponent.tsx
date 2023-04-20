@@ -230,12 +230,10 @@ export const CreativeMaterialDialogComponent = ({
         <div className="justify-between md:flex">
           <div className="mb-2 flex justify-between md:block">
             <div className="rounded ">
-              <Button variant="primary" size="md">
-                Get Code
-              </Button>
+              <Button variant="primary">Get Code</Button>
             </div>
             <div className="rounded md:hidden">
-              <Button variant="primary" size="md">
+              <Button variant="primary">
                 <div className="text-base text-white">Copy Click Url</div>
                 <div className="ml-2">
                   <Copy className="h-4 w-4 text-white" />
@@ -248,7 +246,6 @@ export const CreativeMaterialDialogComponent = ({
               <div className="rounded">
                 <Button
                   variant="primary"
-                  size="md"
                   onClick={() =>
                     window.navigator.clipboard.writeText(url ?? "")
                   }
@@ -264,7 +261,7 @@ export const CreativeMaterialDialogComponent = ({
             </div>
             <div className=" rounded">
               <div className="">
-                <Button variant="primary-outline" size="md">
+                <Button variant="primary-outline">
                   Get HTML Code
                   <div className="ml-2">
                     <Code2Icon className="h-5  w-5 text-[#282560]" />
@@ -275,7 +272,7 @@ export const CreativeMaterialDialogComponent = ({
 
             <div className="rounded">
               <div className="">
-                <Button variant="primary" size="md">
+                <Button variant="primary">
                   Download Image
                   <div className="ml-2">
                     <ImageIcon className="h-4 w-4 text-white" />

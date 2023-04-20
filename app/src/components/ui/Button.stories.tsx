@@ -65,3 +65,23 @@ export const Alternate = {
   ...Primary,
   args: { ...Primary.args, variant: "alternate" },
 };
+
+export const Destructive = {
+  ...Primary,
+  args: { ...Primary.args, variant: "destructive" },
+};
+
+export const outline = {
+  ...Primary,
+  args: { ...Primary.args, variant: "outline" },
+};
+
+export const ghost = {
+  ...Primary,
+  args: { ...Primary.args, variant: "ghost" },
+};
+
+export const link = {
+  ...Primary,
+  args: { ...Primary.args, variant: "link" },
+};
