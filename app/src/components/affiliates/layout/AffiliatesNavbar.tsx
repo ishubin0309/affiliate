@@ -23,7 +23,7 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
   return (
     <>
       {/* Navbar */}
-      <nav className="sticky top-0 left-0 z-10 flex w-full flex-row flex-nowrap items-center justify-start border-b-2 border-[#E7E7E7] bg-[#F5F8FA] p-2 md:p-4">
+      <nav className="sticky left-0 top-0 z-10 flex w-full flex-row flex-nowrap items-center justify-start border-b-2 border-[#E7E7E7] bg-[#F5F8FA] p-2 md:p-4">
         <div className="mx-autp flex w-full flex-wrap items-center justify-between md:flex-nowrap ">
           <div className="flex-col items-center justify-center ">
             <div className="flex items-center">

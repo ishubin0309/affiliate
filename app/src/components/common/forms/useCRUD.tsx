@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import type { FormContext } from "@/components/libs/react-ts-form/FieldContext";
 import type { AnyZodObject, ZodEffects } from "zod";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { castError } from "@/utils/errors";
 
 import { EditIcon, PlusIcon, Trash2Icon } from "lucide-react";

@@ -49,14 +49,14 @@ const NotificationDropDown = () => {
           "min-w-56 z-50 float-left list-none rounded bg-white py-2 text-left text-base shadow-lg"
         }
       >
-        <div className="w-60 py-2 px-4 text-sm font-normal">
+        <div className="w-60 px-4 py-2 text-sm font-normal">
           <p className="text-black">
             You got comission{" "}
             <span className="font-medium text-[#2262C6]">$ 1,521</span>
           </p>
           <p className="mt-1 text-[#757575]">22 Feb 2023</p>
         </div>
-        <div className="w-60 py-2 px-4 text-sm font-normal">
+        <div className="w-60 px-4 py-2 text-sm font-normal">
           <p className="text-black">
             You got comission{" "}
             <span className="font-medium text-[#2262C6]">$ 1,521</span>

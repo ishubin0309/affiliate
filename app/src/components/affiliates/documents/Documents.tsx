@@ -3,7 +3,7 @@ import { useCRUD } from "@/components/common/forms/useCRUD";
 import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
 import { PageHeader } from "@/components/common/page/page-header";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { createColumnHelper } from "@tanstack/react-table";
 import axios from "axios";
 import { format } from "date-fns";

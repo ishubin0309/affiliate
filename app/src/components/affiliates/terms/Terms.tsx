@@ -96,7 +96,7 @@ const Terms = ({ isSignUpTerms }: IProps) => {
   ];
 
   return (
-    <div className="pt-5 pb-4">
+    <div className="pb-4 pt-5">
       {!isSignUpTerms ? (
         <PageHeader title="Terms & Condition"></PageHeader>
       ) : null}
@@ -104,14 +104,14 @@ const Terms = ({ isSignUpTerms }: IProps) => {
       <div
         className={`rounded-[5px] ${
           !isSignUpTerms ? "bg-white shadow-md" : null
-        } py-4 pl-3 md:mb-20 md:rounded-[15px] md:pt-7 md:pl-4`}
+        } py-4 pl-3 md:mb-20 md:rounded-[15px] md:pl-4 md:pt-7`}
       >
         <ul className="mx-4 list-outside list-disc px-1 md:ml-8 md:mr-40 md:px-8">
           {terms.map((terms, index) => {
             return (
               <li
                 className={cn(
-                  "list-none pt-3 pb-2 font-bold md:pt-0",
+                  "list-none pb-2 pt-3 font-bold md:pt-0",
                   { "text-2xl": index === 0 },
                   { "text-xl": index > 0 }
                 )}

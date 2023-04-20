@@ -26,9 +26,9 @@ const Announcements = () => {
   ];
 
   return (
-    <div className="pt-5 pb-4">
+    <div className="pb-4 pt-5">
       <PageHeader title="Announcements"></PageHeader>
-      <div className="h-auto rounded-md bg-white px-4 pt-4 pb-20 shadow-md md:mb-10 md:rounded-2xl">
+      <div className="h-auto rounded-md bg-white px-4 pb-20 pt-4 shadow-md md:mb-10 md:rounded-2xl">
         {data.map((data, i) => {
           return <AnnouncementsComponent propsdata={data} key={i} />;
         })}

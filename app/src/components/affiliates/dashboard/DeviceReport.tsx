@@ -62,7 +62,7 @@ const DeviceReport = () => {
         <div className="text-base font-medium text-[#2262C6]">Report</div>
         <div className="flex w-48 items-center justify-center text-xs">
           <Select>
-            <SelectTrigger className="w-full rounded-sm bg-[#EDF2F7] py-1 px-2">
+            <SelectTrigger className="w-full rounded-sm bg-[#EDF2F7] px-2 py-1">
               <SelectValue placeholder="Clicks" />
             </SelectTrigger>
             <SelectContent className="">

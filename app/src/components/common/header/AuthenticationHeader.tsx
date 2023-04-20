@@ -5,7 +5,7 @@ interface Props {
 
 const AuthenticationHeader = ({ children }: Props) => {
   return (
-    <header className="rounded-lg pt-6 pb-6 font-['Inter'] font-normal">
+    <header className="rounded-lg pb-6 pt-6 font-['Inter'] font-normal">
       <div className="mb-7 text-center text-4xl">
         <Image
           className="ml-1 mr-2 inline-block h-auto w-[115px]"

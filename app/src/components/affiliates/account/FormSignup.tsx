@@ -37,7 +37,7 @@ export const FormSignup = () => {
         }}
         onSubmit={handleSubmit}
       />
-      <div className="mt-6 mb-6 text-center">
+      <div className="mb-6 mt-6 text-center">
         Already have an account?
         <Link
           className="ml-1 inline-block font-bold text-primary"

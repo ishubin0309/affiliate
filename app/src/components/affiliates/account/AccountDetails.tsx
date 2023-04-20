@@ -24,7 +24,7 @@ export const AccountDetails = () => {
   return (
     <div className="w-full">
       <PageHeader title="My Account" subTitle="Account"></PageHeader>
-      <div className="h-auto rounded-2xl bg-white px-4 pt-4 pb-20 shadow-[4px_3px_33px_0_rgba(0,0,0,0.05)] md:mb-10">
+      <div className="h-auto rounded-2xl bg-white px-4 pb-20 pt-4 shadow-[4px_3px_33px_0_rgba(0,0,0,0.05)] md:mb-10">
         <div className="flex w-full">
           <Tabs defaultValue="account" className="w-full">
             <TabsList className="mt-2">

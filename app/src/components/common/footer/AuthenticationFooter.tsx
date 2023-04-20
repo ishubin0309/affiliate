@@ -2,7 +2,7 @@ import { Image } from "@chakra-ui/react";
 
 const AuthenticationFooter = () => {
   return (
-    <footer className="flex justify-center pt-7 pb-6 md:px-6 md:pt-7">
+    <footer className="flex justify-center pb-6 pt-7 md:px-6 md:pt-7">
       <span className="mt-1 flex text-xs sm:text-center">
         Power by&nbsp;
         <a href="https://affiliatets.com/" target="_blank">

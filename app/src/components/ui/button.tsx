@@ -12,17 +12,15 @@ const buttonVariants = cva(
       variant: {
         primary: "rounded-md bg-primary text-base text-white",
         text: "text-primary",
-        azure: "rounded-md bg-azure text-base text-white",
         white: "rounded-md bg-white text-base text-black",
         "primary-outline":
-          "rounded-md border border-azure bg-secondary text-base text-azure",
-        "azure-outline":
-          "rounded-md border border-azure bg-secondary text-base text-paris",
+          "rounded-md border border-azure bg-secondary text-base text-primary",
         default:
           "bg-slate-900 text-white hover:bg-slate-700 dark:bg-slate-50 dark:text-slate-900",
         destructive:
           "bg-red-500 text-white hover:bg-red-600 dark:hover:bg-red-600",
-        outline: "rounded-md border border-azure bg-white text-base text-azure",
+        outline:
+          "rounded-md border border-azure bg-white text-base text-primary",
         subtle:
           "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-100",
         ghost:

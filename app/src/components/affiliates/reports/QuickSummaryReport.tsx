@@ -382,7 +382,7 @@ export const QuickSummaryReport = () => {
               <button className="hidden rounded-md bg-[#2262C6] px-8 py-2 text-white lg:block">
                 Show Reports
               </button>
-              <button className="hidden rounded-md border border-[#2262C6] py-2 px-8 text-base font-semibold text-[#2262C6] lg:block">
+              <button className="hidden rounded-md border border-[#2262C6] px-8 py-2 text-base font-semibold text-[#2262C6] lg:block">
                 Reset Search
               </button>
               <ExportButton onExport={handleExport} />
@@ -390,10 +390,10 @@ export const QuickSummaryReport = () => {
           </div>
 
           <DialogContent>
-            <DialogHeader className="text-left text-sm font-medium text-azure">
+            <DialogHeader className="text-left text-sm font-medium text-primary">
               Manage Field On Report - Quick Summary
             </DialogHeader>
-            <DialogTitle className="text-sm font-normal text-disabled md:mb-6 md:pt-2">
+            <DialogTitle className="text-disabled text-sm font-normal md:mb-6 md:pt-2">
               Please activate the fields you want to display on the report:
             </DialogTitle>
             <div className="grid grid-cols-1 md:mt-10 md:grid-cols-2">
