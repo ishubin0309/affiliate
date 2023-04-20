@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-
 const AccountManager = () => {
   const [selectedReport, setSelectedReport] = useState<string>("Clicks");
   const [lastDays, setLastDays] = useState<number>(0);
