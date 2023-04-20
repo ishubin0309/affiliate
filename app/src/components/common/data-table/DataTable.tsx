@@ -91,7 +91,7 @@ export function DataTable<Data extends object>({
                 return (
                   <td
                     key={cell.id}
-                    className={cn("border py-1 px-2 text-sm text-[#404040]", {
+                    className={cn("border px-2 py-1 text-sm text-[#404040]", {
                       // @ts-ignore
                       "text-right": meta?.isNumeric,
                     })}

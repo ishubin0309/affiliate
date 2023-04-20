@@ -8,6 +8,10 @@ export default meta;
 
 export const Default = { render: () => <Input /> };
 
+export const Error = {
+  render: () => <Input error="Error" />,
+};
+
 // TODO: See password input
 export const WithRightButton = { render: () => <Input /> };
 

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/common/page/page-header";
 import Affiliates from "../../../layouts/AffiliatesLayout";
 import Content from "./content";
 
@@ -78,12 +79,9 @@ const Privacy = () => {
   ];
 
   return (
-    <div className="pt-5 pb-4">
-      <div className="mb-5 block px-6 text-base font-medium">
-        <span className="text-[#2262C6]">Dashboard</span> / Privacy Policy
-      </div>
-
-      <div className="rounded-[5px] bg-white pt-7 pl-4 pb-20 shadow-md md:mb-10 md:rounded-[15px]">
+    <div className="pb-4 pt-5">
+      <PageHeader title="Privacy Policy"></PageHeader>
+      <div className="rounded-[5px] bg-white pb-20 pl-4 pt-7 shadow-md md:mb-10 md:rounded-[15px]">
         <ul className="mx-4 list-outside list-disc px-1 md:ml-8 md:mr-40 md:px-8 ">
           {privacy.map((privacy, index) => {
             return (

@@ -90,7 +90,7 @@ export function ReportDataTable<Data extends object>({
                 return (
                   <td
                     key={cell.id}
-                    className={cn("border py-1 px-2 text-sm text-[#404040]", {
+                    className={cn("border px-2 py-1 text-sm text-[#404040]", {
                       // @ts-ignore
                       "text-right": meta?.isNumeric,
                     })}
@@ -104,7 +104,7 @@ export function ReportDataTable<Data extends object>({
         </tbody>
 
         {footerData && (
-          <tfoot className="py-3 px-3">
+          <tfoot className="px-3 py-3">
             <tr className="py-5">
               <td>Total</td>
               {footerData.length > 0 &&

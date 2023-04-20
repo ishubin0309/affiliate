@@ -1,6 +1,7 @@
 import { ExportButton } from "@/components/affiliates/reports/export-button";
 import { DateRangeSelect, useDateRange } from "@/components/ui/date-range";
-import { Input, Label } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Pagination } from "@/components/ui/pagination";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -224,7 +225,7 @@ export const CommissionReport = () => {
             <div className="flex items-center justify-between">
               <div className="flex">
                 <DialogTrigger>
-                  <Button variant="white" size="rec-sm">
+                  <Button variant="ghost">
                     <Settings className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
@@ -268,7 +269,7 @@ export const CommissionReport = () => {
               <button className="hidden rounded-md bg-[#2262C6] px-8 py-2 text-white lg:block">
                 Show Reports
               </button>
-              <button className="hidden rounded-md border border-[#2262C6] py-2 px-8 text-base font-semibold text-[#2262C6] lg:block">
+              <button className="hidden rounded-md border border-[#2262C6] px-8 py-2 text-base font-semibold text-[#2262C6] lg:block">
                 Reset Search
               </button>
               <ExportButton onExport={handleExport} />
@@ -276,10 +277,10 @@ export const CommissionReport = () => {
           </div>
 
           <DialogContent>
-            <DialogHeader className="text-left text-sm font-medium text-azure">
+            <DialogHeader className="text-left text-sm font-medium text-primary">
               Manage Field On Report - Quick Summary
             </DialogHeader>
-            <DialogTitle className="text-sm font-normal text-disabled md:mb-6 md:pt-2">
+            <DialogTitle className="text-disabled text-sm font-normal md:mb-6 md:pt-2">
               Please activate the fields you want to display on the report:
             </DialogTitle>
             <div className="grid grid-cols-1 md:mt-10 md:grid-cols-2">

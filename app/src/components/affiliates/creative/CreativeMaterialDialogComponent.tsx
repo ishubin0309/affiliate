@@ -117,19 +117,19 @@ export const CreativeMaterialDialogComponent = ({
               <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">
                 Click URL
               </div>
-              <div className="truncate rounded border border-[#D7D7D7] bg-[#F9F9FF] py-2 px-3 text-base font-medium text-[#666666] xl:w-60 2xl:w-96">
+              <div className="truncate rounded border border-[#D7D7D7] bg-[#F9F9FF] px-3 py-2 text-base font-medium text-[#666666] xl:w-60 2xl:w-96">
                 {url}
               </div>
             </div>
-            <div className="mt-5 ml-2">
+            <div className="ml-2 mt-5">
               <Button
-                className="border border-azure md:px-4"
-                variant="azure"
+                className="md:px-4"
+                variant="primary"
                 onClick={() => window.navigator.clipboard.writeText(url ?? "")}
               >
-                <div className="text-white">Copy Click Url</div>
+                <div>Copy Click Url</div>
                 <div className="ml-2 items-center">
-                  <Copy className="text-white" />
+                  <Copy />
                 </div>
               </Button>
             </div>
@@ -138,7 +138,7 @@ export const CreativeMaterialDialogComponent = ({
             <div className="ml-2">
               <div className="">
                 <DialogTrigger>
-                  <Button variant="azure-outline" className="md:px-4">
+                  <Button variant="primary-outline" className="md:px-4">
                     Get HTML Code
                     <div className="ml-2 items-center">
                       <Code2Icon className="text-[#282560]" />
@@ -152,7 +152,7 @@ export const CreativeMaterialDialogComponent = ({
       </div>
 
       <DialogContent className="sm:max-w-sm md:max-w-3xl">
-        <DialogHeader className="text-left text-lg font-medium text-azure">
+        <DialogHeader className="text-left text-lg font-medium text-primary">
           HTML Code
         </DialogHeader>
         <form className="w-full pt-5">
@@ -217,7 +217,7 @@ export const CreativeMaterialDialogComponent = ({
           <div className="-mx-3 mb-6 flex flex-wrap">
             <div className="w-full px-3">
               <textarea
-                className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] py-3 px-4 text-base font-medium text-[#1B48BB]"
+                className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
                 value='<div class="container">
                                                         <img src="img_5terre_wide.jpg" alt="Cinque Terre" width="1000" height="300">
                                                         <div class="topleft">Top Left</div>
@@ -230,12 +230,10 @@ export const CreativeMaterialDialogComponent = ({
         <div className="justify-between md:flex">
           <div className="mb-2 flex justify-between md:block">
             <div className="rounded ">
-              <Button variant="azure" size="md">
-                Get Code
-              </Button>
+              <Button variant="primary">Get Code</Button>
             </div>
             <div className="rounded md:hidden">
-              <Button variant="azure" size="md">
+              <Button variant="primary">
                 <div className="text-base text-white">Copy Click Url</div>
                 <div className="ml-2">
                   <Copy className="h-4 w-4 text-white" />
@@ -247,8 +245,7 @@ export const CreativeMaterialDialogComponent = ({
             <div className="hidden rounded md:block">
               <div className="rounded">
                 <Button
-                  variant="azure"
-                  size="md"
+                  variant="primary"
                   onClick={() =>
                     window.navigator.clipboard.writeText(url ?? "")
                   }
@@ -264,7 +261,7 @@ export const CreativeMaterialDialogComponent = ({
             </div>
             <div className=" rounded">
               <div className="">
-                <Button variant="azure-outline" size="md">
+                <Button variant="primary-outline">
                   Get HTML Code
                   <div className="ml-2">
                     <Code2Icon className="h-5  w-5 text-[#282560]" />
@@ -275,7 +272,7 @@ export const CreativeMaterialDialogComponent = ({
 
             <div className="rounded">
               <div className="">
-                <Button variant="azure" size="md">
+                <Button variant="primary">
                   Download Image
                   <div className="ml-2">
                     <ImageIcon className="h-4 w-4 text-white" />

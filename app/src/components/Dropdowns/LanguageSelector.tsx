@@ -64,7 +64,7 @@ export const LanguageSelector = ({
       <div className="text-blueGray-500 block md:pr-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="text">
+            <Button variant="ghost">
               {renderSelectedOption(
                 selectedOption || { title: "English", icon: "US" }
               )}

@@ -11,7 +11,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DropdownButton } from "@/components/ui/drop-down";
-import { Input, Label } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Pagination } from "@/components/ui/pagination";
 import { Switch } from "@/components/ui/switch";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -254,7 +255,7 @@ export const FakeTraderReports = () => {
         </div>
         <Dialog>
           <DialogTrigger>
-            <Button variant="azure">
+            <Button variant="primary">
               <SettingsIcon />
             </Button>
           </DialogTrigger>
