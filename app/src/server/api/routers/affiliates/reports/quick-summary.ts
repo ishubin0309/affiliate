@@ -146,6 +146,7 @@ export const exportQuickSummaryReport = publicProcedure
 
     console.log("export type ---->", exportType);
     const quick_summary = "quick-summary";
+
     await exportReportLoop(
       exportType || "csv",
       columns,

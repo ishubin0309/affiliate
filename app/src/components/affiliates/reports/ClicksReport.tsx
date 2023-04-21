@@ -3,6 +3,7 @@ import { DateRangeSelect, useDateRange } from "@/components/ui/date-range";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Pagination } from "@/components/ui/pagination";
+import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { useRouter } from "next/router";
@@ -43,12 +44,19 @@ export const ClicksReport = () => {
   const [reportFields, setReportFields] = useState<
     { id: number; title: string; value: string; isChecked: boolean }[]
   >([]);
+  const { currentPage, itemsPerPage } = router.query;
 
   const { data, isLoading } = api.affiliates.getClicksReport.useQuery({
     from: new Date("2016-01-03"),
     to: new Date("2023-01-03"),
     trader_id: traderID,
+    page: currentPage ? Number(currentPage) : 1,
+    items_per_page: itemsPerPage ? Number(itemsPerPage) : 10,
   });
+
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportClicksReport.useMutation();
+
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<ClicksReportType>();
 
@@ -250,9 +258,12 @@ export const ClicksReport = () => {
     // });
   };
 
-  const handleExport = () => {
-    return;
-  };
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      from: new Date("2022-01-03"),
+      to: new Date("2023-01-03"),
+      exportType,
+    });
 
   // useEffect(() => {
   //   const fieldsArray = fields.map((field, i) => {

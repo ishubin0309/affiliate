@@ -30,10 +30,11 @@ export const exportReportLoop = async (
   const items_per_page = 5000;
   let hasMoreData = true;
   while (hasMoreData) {
+    console.log("generic file name ------->", generic_filename);
     const data = await getPage(page, items_per_page);
-
     // TODO: write data to to csv, xlsx, json based on exportType
 
+    console.log("data ----->", data);
     const data_rows = filterData(data, report_type);
 
     const xlsx_filename = `${generic_filename}.${exportType}`;
@@ -86,6 +87,9 @@ export const filterData = (data: any[], report_type: string) => {
         );
       });
     default:
+      data.map((item) => {
+        data_rows.push(item);
+      });
       break;
   }
   return data_rows;
