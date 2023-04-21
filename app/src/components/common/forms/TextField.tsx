@@ -10,24 +10,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { InputPassword } from "@/components/common/forms/InputPassword";
-import { evaluateFormControlCallback } from "@/components/common/forms/usePrepareSchema";
 import { SelectField } from "@/components/common/forms/SelectField";
+import { useMetaEx } from "@/components/libs/react-ts-form/FieldContext";
+import { ControlCallback } from "../../../utils/zod-meta";
 
 export interface Props {
   choices?: ChoiceType[];
-  type?: string;
-  controlName?: ZodMetaDataItem["control"];
+  // type?: string;
+  // controlName?: ZodMetaDataItem["control"];
 }
 
 export const TextField = (
@@ -35,24 +26,17 @@ export const TextField = (
   //   // label?: string;
   //   enumValues?: string[];
   // }
-  { type, choices: choicesParams, controlName }: Props
+  {}: /* merged to meta */ Props
 ) => {
   const { field, error, formContext } = useTsController<string>();
-  const meta = useMeta();
   const {
-    props,
+    type,
+    choices,
+    disabled,
     label,
     placeholder,
-    choices: choicesDescription,
-    className,
-    // preprocess,
-  } = meta || {
-    label: "",
-    placeholder: "",
-  };
-
-  const disabled =
-    typeof props?.disabled === "boolean" ? props.disabled : false;
+    control: controlName,
+  } = useMetaEx();
 
   // let extraMeta = undefined;
   // if (preprocess) {
@@ -60,44 +44,20 @@ export const TextField = (
   //   extraMeta = preprocess({ formContext });
   // }
 
-  const choices =
-    /* extraMeta?.choices || */ choicesParams || choicesDescription;
-
   // const options = parseOptionsString(placeholder);
   // if (options.choices && !choices) {
   //   choices = parseChoices(String(options.choices));
   // }
 
   let control;
-  controlName = controlName || meta?.control;
   if (typeof controlName === "function") {
     if (!formContext.flowContext) {
       throw new Error(
         `TextField: controlName is a function but flowContext is not defined`
       );
     }
-    control = controlName(formContext.flowContext);
-  }
-
-  // console.log(
-  //   `muly:TextField ${field.name} label:${label}, placeholder:${placeholder}`,
-  //   {
-  //     error,
-  //     meta,
-  //     choices,
-  //     field,
-  //     label,
-  //     placeholder,
-  //   }
-  // );
-
-  if (typeof controlName === "function") {
-    if (!formContext.flowContext) {
-      throw new Error(
-        `TextField: controlName is a function but flowContext is not defined`
-      );
-    }
-    control = controlName(formContext.flowContext);
+    const controlFn: ControlCallback = controlName;
+    control = controlFn(formContext.flowContext);
   } else if (!choices) {
     if (controlName === "Textarea") {
       control = (

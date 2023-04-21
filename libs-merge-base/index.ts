@@ -1,7 +1,7 @@
 export { createUniqueFieldSchema } from "./createFieldSchema";
 export { createTsForm } from "./createSchemaForm";
 export {
-  useMetaEx,
+  useDescription,
   useReqDescription,
   useEnumValues,
   useTsController,

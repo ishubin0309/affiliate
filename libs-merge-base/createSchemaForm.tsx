@@ -9,11 +9,9 @@ import React, {
 } from "react";
 import { ComponentProps } from "react";
 import {
-  BrowserNativeObject,
   DeepPartial,
   ErrorOption,
   FormProvider,
-  NestedValue,
   useForm,
   UseFormReturn,
 } from "react-hook-form";
@@ -23,7 +21,6 @@ import {
   ZodArray,
   ZodEffects,
   ZodFirstPartyTypeKind,
-  ZodNullableType,
 } from "zod";
 import { getComponentForZodType } from "./getComponentForZodType";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,7 +33,7 @@ import {
 import { getMetaInformationForZodType } from "./getMetaInformationForZodType";
 import { unwrapEffects } from "./unwrap";
 import { RTFBaseZodType, RTFSupportedZodTypes } from "./supportedZodTypes";
-import { FieldContextProvider, FormContext } from "./FieldContext";
+import { FieldContextProvider } from "./FieldContext";
 import { isZodTypeEqual } from "./isZodTypeEqual";
 import { duplicateTypeError, printWarningsForSchema } from "./logging";
 import {
@@ -44,7 +41,6 @@ import {
   HIDDEN_ID_PROPERTY,
   isSchemaWithHiddenProperties,
 } from "./createFieldSchema";
-import { ChoiceType, MetaInfo, ZodMetaDataItem } from "@/utils/zod-meta";
 
 /**
  * @internal
@@ -68,7 +64,6 @@ export type MappingItem<PropType extends ReactProps> = readonly [
 
 export type FormComponentMapping = readonly MappingItem<any>[];
 export type MappableProp =
-  | "choices"
   | "control"
   | "name"
   | "enumValues"
@@ -101,8 +96,6 @@ export type ExtraProps = {
    * An element to render after the field.
    */
   afterElement?: ReactNode;
-
-  choices?: ChoiceType[];
 };
 
 /**
@@ -117,24 +110,6 @@ export type UnwrapEffects<
     ? EffectsSchemaInner
     : EffectsSchema
   : never;
-
-// Muly
-// type UnwrapEffectsNULL<T extends AnyZodObject | ZodEffects<any, any>> =
-//   T extends AnyZodObject
-//     ? ZodNullableType<T>
-//     : T extends ZodEffects<infer EffectsSchema, any>
-//     ? EffectsSchema extends ZodEffects<infer EffectsSchemaInner, any>
-//       ? ZodNullableType<EffectsSchemaInner>
-//       : ZodNullableType<EffectsSchema>
-//     : never;
-//
-// // copy from app/node_modules/react-hook-form/dist/types/utils.d.ts
-// // DeepPartial allow null in defaultValues also when not allowed in schema
-// type DeepPartialMULY<T> = T extends BrowserNativeObject | NestedValue
-//   ? T
-//   : {
-//       [K in keyof T]?: DeepPartialMULY<T[K] | null>;
-//     };
 
 function checkForDuplicateTypes(array: RTFSupportedZodTypes[]) {
   var combinations = array.flatMap((v, i) =>
@@ -163,7 +138,6 @@ function checkForDuplicateUniqueFields(array: RTFSupportedZodTypes[]) {
 const defaultPropsMap = [
   ["name", "name"] as const,
   ["control", "control"] as const,
-  ["choices", "choices"] as const,
   ["enumValues", "enumValues"] as const,
 ] as const;
 
@@ -271,7 +245,6 @@ export type RTFFormProps<
   PropsMapType extends PropsMapping = typeof defaultPropsMap,
   FormType extends FormComponent = "form"
 > = {
-  formContext: FormContext;
   /**
    * A Zod Schema - An input field will be rendered for each property in the schema, based on the mapping passed to `createTsForm`
    */
@@ -397,7 +370,7 @@ export function createTsForm<
      * })
      * ```
      */
-    FormComponent: FormType;
+    FormComponent?: FormType;
     /**
      * Modify which props the form control and such get passed to when rendering components. This can make it easier to integrate existing
      * components with `@ts-react/form` or modify its behavior. The values of the object are the names of the props to forward the corresponding
@@ -425,15 +398,9 @@ export function createTsForm<
 ): <SchemaType extends RTFFormSchemaType>(
   props: RTFFormProps<Mapping, SchemaType, PropsMapType, FormType>
 ) => React.ReactElement<any, any> {
-  //Muly
-  // const ActualFormComponent = options?.FormComponent
-  //   ? options.FormComponent
-  //   : "form";
-  if (!options?.FormComponent) {
-    throw new Error("Missing FormComponent");
-  }
-
-  const ActualFormComponent = options.FormComponent;
+  const ActualFormComponent = options?.FormComponent
+    ? options.FormComponent
+    : "form";
   const schemas = componentMap.map((e) => e[0]);
   checkForDuplicateTypes(schemas);
   checkForDuplicateUniqueFields(schemas);
@@ -441,7 +408,6 @@ export function createTsForm<
     options?.propsMap ? options.propsMap : defaultPropsMap
   );
   return function Component<SchemaType extends RTFFormSchemaType>({
-    formContext,
     schema,
     onSubmit,
     props,
@@ -524,95 +490,47 @@ export function createTsForm<
           noMatchingSchemaErrorMessage(key.toString(), type._def.typeName)
         );
       }
-
-      if (
-        !formContext.formMeta.children ||
-        !formContext.formMeta.children[key.toString()]
-      ) {
-        console.error(`Form error, not found meta info [${key.toString()}]`, {
-          formContext,
-        });
-        throw new Error(`Form error, not found meta info [${key.toString()}]`);
-      }
-
-      const fieldMetaInfo: MetaInfo =
-        formContext.formMeta.children[key.toString()]!;
-      let meta: ZodMetaDataItem = fieldMetaInfo.meta;
-      // const meta = getMetaInformationForZodType(type);
+      const meta = getMetaInformationForZodType(type);
 
       // TODO: we could define a LeafType in the recursive PropType above that only gets applied when we have an actual mapping then we could typeguard to it or cast here
       // until then this thinks (correctly) that fieldProps might not have beforeElement, afterElement at this level of the prop tree
       const fieldProps = props && props[key] ? (props[key] as any) : {};
 
+      const { beforeElement, afterElement } = fieldProps;
+
       const mergedProps = {
         ...(propsMap.name && { [propsMap.name]: prefixedKey }),
         ...(propsMap.control && { [propsMap.control]: control }),
-        // ...(propsMap.enumValues && {
-        //   [propsMap.enumValues]: meta.enumValues,
-        // }),
-        // ...(propsMap.descriptionLabel && {
-        //   [propsMap.descriptionLabel]: meta.description?.label,
-        // }),
-        // ...(propsMap.descriptionPlaceholder && {
-        //   [propsMap.descriptionPlaceholder]: meta.description?.placeholder,
-        // }),
+        ...(propsMap.enumValues && {
+          [propsMap.enumValues]: meta.enumValues,
+        }),
+        ...(propsMap.descriptionLabel && {
+          [propsMap.descriptionLabel]: meta.description?.label,
+        }),
+        ...(propsMap.descriptionPlaceholder && {
+          [propsMap.descriptionPlaceholder]: meta.description?.placeholder,
+        }),
         ...fieldProps,
       };
-
-      if (meta.condition && formContext.flowContext) {
-        const data = _form.watch();
-        const cond = meta.condition(formContext.flowContext, data);
-        console.log(`muly:form:condition ${key.toString()} ${cond}`, {
-          formContext,
-          meta,
-          cond,
-          data,
-        });
-
-        if (!cond) {
-          return null;
-        } else if (typeof cond === "object") {
-          meta = { ...meta, ...cond };
-        }
-      }
-
-      // const ctxLabel = meta.meta?.meta?.label;
-      // const ctxPlaceholder = meta.meta?.meta?.placeholder;
-
-      const controlProps: any = {
-        ...meta,
-        ...mergedProps,
-        ...fieldProps,
-      };
-
-      const {
-        beforeElement,
-        afterElement,
-        description,
-        enumValues,
-        ...mergedPropsM
-      } = controlProps;
-
-      meta = { ...meta, choices: controlProps.choices };
+      const ctxLabel = meta.description?.label;
+      const ctxPlaceholder = meta.description?.placeholder;
 
       return (
         <Fragment key={prefixedKey}>
-          {beforeElement && beforeElement(formContext.flowContext)}
+          {beforeElement}
           <FieldContextProvider
-            formContext={formContext}
             control={control}
             name={prefixedKey}
-            // label={ctxLabel}
+            label={ctxLabel}
             zodType={type}
-            meta={meta}
-            // placeholder={ctxPlaceholder}
-            // enumValues={meta.enumValues as string[] | undefined}
+            placeholder={ctxPlaceholder}
+            enumValues={meta.enumValues as string[] | undefined}
             addToCoerceUndefined={submitter.addToCoerceUndefined}
             removeFromCoerceUndefined={submitter.removeFromCoerceUndefined}
           >
             <Component key={prefixedKey} {...mergedProps} />
           </FieldContextProvider>
-          {afterElement && afterElement(formContext.flowContext)}
+          {afterElement}
         </Fragment>
       );
     }
@@ -644,21 +562,14 @@ export function createTsForm<
     const renderedFieldNodes = flattenRenderedElements(renderedFields);
     return (
       <FormProvider {..._form}>
-        {/* @ts-ignore */}
-        <ActualFormComponent
-          {...formProps}
-          onSubmit={submitFn}
-          formContext={formContext}
-        >
-          <>
-            {renderBefore && renderBefore({ submit: submitFn })}
-            {CustomChildrenComponent ? (
-              <CustomChildrenComponent {...renderedFields} />
-            ) : (
-              renderedFieldNodes
-            )}
-            {renderAfter && renderAfter({ submit: submitFn })}
-          </>
+        <ActualFormComponent {...formProps} onSubmit={submitFn}>
+          {renderBefore && renderBefore({ submit: submitFn })}
+          {CustomChildrenComponent ? (
+            <CustomChildrenComponent {...renderedFields} />
+          ) : (
+            renderedFieldNodes
+          )}
+          {renderAfter && renderAfter({ submit: submitFn })}
         </ActualFormComponent>
       </FormProvider>
     );
@@ -729,18 +640,13 @@ export type RenderedElement =
   | JSX.Element
   | JSX.Element[]
   | RenderedObjectElements
-  | RenderedElement[]
-  | null;
+  | RenderedElement[];
 export type RenderedObjectElements = { [key: string]: RenderedElement };
 
 /***
  * Can be useful in CustomChildComponents to flatten the rendered field map at a given leve
  */
 export function flattenRenderedElements(val: RenderedElement): JSX.Element[] {
-  if (!val) {
-    return [];
-  }
-
   return Array.isArray(val)
     ? val.flatMap((obj) => flattenRenderedElements(obj))
     : typeof val === "object" && val !== null && !React.isValidElement(val)

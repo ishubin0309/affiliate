@@ -1,19 +1,22 @@
-import { useMeta, useTsController } from "../../libs/react-ts-form";
 import { maybeConvertChild } from "@/components/common/wizard/useWizardFlow";
 import { FormControl } from "./FormControl";
 import { clsx } from "clsx";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import type { Props } from "./TextField";
+import {
+  useTsController,
+  useMetaEx,
+} from "@/components/libs/react-ts-form/FieldContext";
 
-export const CheckboxField = ({ controlName }: Props) => {
+export const CheckboxField = ({}: Props) => {
   const { field, error, formContext } = useTsController<boolean>();
-  const meta = useMeta();
+  const meta = useMetaEx();
   const { label, className } = meta || {
     label: "",
   };
 
-  controlName = controlName || meta?.control;
+  const controlName = meta?.control;
 
   let control;
   if (controlName === "Switch") {

@@ -284,7 +284,7 @@ const PixelMonitor = () => {
     }),
   ];
 
-  // console.log(`muly:PixelMonitor`, { data });
+  console.log(`muly:PixelMonitor`, { data, meta });
 
   return data ? (
     <>

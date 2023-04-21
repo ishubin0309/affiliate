@@ -34,11 +34,6 @@ export const AccountPaymentDetails = () => {
           onSubmit={handleSubmit}
           defaultValues={account}
           formProps={{}}
-          props={{
-            preferredCurrency: {
-              choices: ["TBD"],
-            },
-          }}
         ></Form>
       </Flex>
     </div>
