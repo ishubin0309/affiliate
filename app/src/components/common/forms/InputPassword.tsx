@@ -1,8 +1,7 @@
-import { useMeta, useTsController } from "@/components/libs/react-ts-form";
+import { useMetaEx, useTsController } from "@/components/libs/react-ts-form";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useMetaEx } from "@/components/libs/react-ts-form/FieldContext";
 
 interface Props {
   type: string;
