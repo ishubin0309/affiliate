@@ -86,6 +86,23 @@ export const filterData = (data: any[], report_type: string) => {
           item?.Commission
         );
       });
+    case "install-report":
+      data.map((item) => {
+        data_rows.push(
+          item?.type,
+          item?.rdate,
+          item?.trader_id,
+          item?.trader_alias,
+          item?.trader_status,
+          item?.country,
+          item?.affiliate_id,
+          item?.username,
+          item?.merchant_id,
+          item?.name,
+          item?.id,
+          item?.title
+        );
+      });
     default:
       data.map((item) => {
         data_rows.push(item);
