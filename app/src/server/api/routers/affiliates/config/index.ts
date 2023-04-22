@@ -34,7 +34,7 @@ export const uploadFile = async (
 
     const localFileName = path.join(
       __dirname,
-      `../../../../../${generic_filename}.${exportType}`
+      `../../../../../tmp/${generic_filename}.${exportType}`
     );
     console.log("local file name ----->", localFileName);
     // const file_date = new Date().toISOString();

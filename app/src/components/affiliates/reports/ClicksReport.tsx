@@ -24,14 +24,14 @@ export const ClicksReport = () => {
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<ClicksReportType>();
 
-  // console.log("Clicks render", {
-  // 	data,
-  // 	merchants,
-  // 	isLoading,
-  // 	from,
-  // 	to,
-  // 	merchant_id,
-  // });
+  console.log("Clicks render", {
+    data,
+    merchants,
+    isLoading,
+    from,
+    to,
+    merchant_id,
+  });
 
   if (isLoading) {
     return <Loading />;
@@ -58,6 +58,7 @@ export const ClicksReport = () => {
       cell: (info) => info.getValue(),
       header: "Impression",
     }),
+
     columnHelper.accessor("clicks", {
       cell: (info) => info.getValue(),
       header: "Click",
@@ -82,10 +83,10 @@ export const ClicksReport = () => {
       cell: (info) => info.getValue(),
       header: "Profile ID",
     }),
-    // columnHelper.accessor("profile_name" as any, {
-    //   cell: (info) => info.getValue(),
-    //   header: "Profile Name",
-    // }),
+    columnHelper.accessor("profile_name", {
+      cell: (info) => info.getValue(),
+      header: "Profile Name",
+    }),
     columnHelper.accessor("param", {
       cell: (info) => info.getValue(),
       header: "Param",
@@ -222,7 +223,7 @@ export const ClicksReport = () => {
         width="100%"
         alignSelf="center"
       >
-        <DataTable data={data ? data : []} columns={columns} footerData={[]} />
+        <DataTable data={data} columns={columns} footerData={[]} />
       </Grid>
     </>
   );
