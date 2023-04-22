@@ -14,3 +14,5 @@ export const exportOptions: { id: ExportType; title: string }[] = [
     title: "JSON",
   },
 ];
+
+export type OnExport = (exportType: ExportType) => Promise<string | undefined>;

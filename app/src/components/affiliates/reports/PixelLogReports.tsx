@@ -8,6 +8,7 @@ import type { PixelLogsReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
+import { creativeType } from "@/components/affiliates/reports/TraderReports";
 
 export const PixelLogReports = () => {
   const router = useRouter();
@@ -112,45 +113,6 @@ export const PixelLogReports = () => {
       title: country.title,
     };
   });
-
-  const creativeType = [
-    {
-      id: "",
-      title: "All",
-    },
-    {
-      id: "image",
-      title: "Image",
-    },
-    {
-      id: "mobileleader",
-      title: "Mobile Leader",
-    },
-    {
-      id: "mobilesplash",
-      title: "Mobile Splash",
-    },
-    {
-      id: "flash",
-      title: "Flash",
-    },
-    {
-      id: "widget",
-      title: "Widget",
-    },
-    {
-      id: "link",
-      title: "Text Link",
-    },
-    {
-      id: "mail",
-      title: "Email",
-    },
-    {
-      id: "coupon",
-      title: "Coupon",
-    },
-  ];
 
   return (
     <>

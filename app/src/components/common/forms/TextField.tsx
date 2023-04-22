@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 
 import { InputPassword } from "@/components/common/forms/InputPassword";
 import { SelectField } from "@/components/common/forms/SelectField";
-import { ControlCallback } from "../../../utils/zod-meta";
+import type { ControlCallback } from "../../../utils/zod-meta";
 
 export interface Props {
   choices?: ChoiceType[];

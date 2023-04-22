@@ -16,7 +16,7 @@ export const FormHeader = (wizard: WizardControlProps) => {
 
   return (
     <>
-    {/* // form Heading */}
+      {/* // form Heading */}
       <h1 className="text-center text-5xl font-normal">
         {evaluateControlCallback(meta.label, wizard)}
       </h1>

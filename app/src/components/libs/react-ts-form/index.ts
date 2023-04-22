@@ -7,6 +7,6 @@ export {
   useTsController,
   useFieldInfo,
   useStringFieldInfo,
-  useNumberFieldInfo
+  useNumberFieldInfo,
 } from "./FieldContext";
 export type { RTFSupportedZodTypes } from "./supportedZodTypes";

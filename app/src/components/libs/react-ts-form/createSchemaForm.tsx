@@ -572,7 +572,7 @@ export function createTsForm<
         if (!cond) {
           return null;
         } else if (typeof cond === "object") {
-          meta = { ...meta, ...cond };
+          meta = { ...meta, ...(cond as object) };
         }
       }
 
@@ -622,6 +622,7 @@ export function createTsForm<
     ) {
       type SchemaKey = keyof z.infer<UnwrapEffects<SchemaType>>;
       const _schema = unwrapEffects(schema);
+      // @ts-ignore
       const shape: Record<string, RTFSupportedZodTypes> = _schema._def.shape();
       return Object.entries(shape).reduce(
         (accum, [key, type]: [SchemaKey, RTFSupportedZodTypes]) => {
