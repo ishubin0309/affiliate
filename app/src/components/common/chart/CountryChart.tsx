@@ -1,15 +1,13 @@
-import React from "react";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -45,23 +43,30 @@ export const options = {
   },
 };
 
-const labels = ["Israel", "Brazil", "Canada", "USA", "Somalia"];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: "Dataset 1",
-      data: [60, 10, 40, 30, 70],
-      backgroundColor: "#3B5EC2",
-      maxBarThickness: 17,
-      borderRadius: 3,
-    },
-  ],
-};
-
-const CountryChart = () => {
-  return <Bar options={options} data={data} />;
+interface Props {
+  labels: string[];
+  data: number[];
+  label: string;
+}
+const CountryChart = ({ labels, data, label }: Props) => {
+  return (
+    <Bar
+      options={options}
+      data={{
+        labels: labels,
+        datasets: [
+          {
+            label: label,
+            // data: [60, 10],
+            data: data,
+            backgroundColor: "#3B5EC2",
+            maxBarThickness: 17,
+            borderRadius: 3,
+          },
+        ],
+      }}
+    />
+  );
 };
 
 export default CountryChart;

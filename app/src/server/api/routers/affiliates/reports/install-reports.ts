@@ -8,8 +8,9 @@ import {
   reportParams,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { publicProcedure } from "@/server/api/trpc";
-import { PrismaClient, data_install_type } from "@prisma/client";
-import { Simplify } from "@trpc/server";
+import type { data_install_type } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import type { Simplify } from "@trpc/server";
 import path from "path";
 import paginator from "prisma-paginate";
 import { z } from "zod";

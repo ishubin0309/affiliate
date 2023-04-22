@@ -36,7 +36,7 @@ export const CreativeMaterialComponent = ({
           <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">
             Click URL
           </div>
-          <div className="rounded border border-[#D7D7D7] bg-[#F9F9FF] py-2 px-3 text-sm font-medium text-[#666666] lg:w-96">
+          <div className="rounded border border-[#D7D7D7] bg-[#F9F9FF] px-3 py-2 text-sm font-medium text-[#666666] lg:w-96">
             {url}
           </div>
         </div>
@@ -45,20 +45,20 @@ export const CreativeMaterialComponent = ({
             <div>
               <Button
                 className="text-xs"
-                variant="azure"
+                variant="primary"
                 size="sm"
                 onClick={() => window.navigator.clipboard.writeText(url ?? "")}
               >
-                <div className="text-white">Copy Click Url</div>
+                Copy Click Url
                 <div className="ml-2 items-center">
-                  <Copy className="h-4 w-4 text-white" />
+                  <Copy className="h-4 w-4" />
                 </div>
               </Button>
             </div>
           </div>
           <div className="ml-2">
             <div>
-              <Button variant="azure-outline" size="sm" className="text-xs">
+              <Button variant="primary-outline" size="sm" className="text-xs">
                 Get HTML Code
                 <div className="ml-2 items-center">
                   <Code2Icon className="h-4  w-4 text-[#282560]" />

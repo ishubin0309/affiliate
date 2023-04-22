@@ -1,16 +1,34 @@
+import { useState } from "react";
+import type { DashboardDeviceReportType } from "../../../server/db-types";
+import { api } from "../../../utils/api";
 import CountryChart from "../../common/chart/CountryChart";
 import {
   Select,
-  SelectGroup,
-  SelectValue,
-  SelectTrigger,
   SelectContent,
-  SelectLabel,
+  SelectGroup,
   SelectItem,
-  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
 } from "../../ui/select";
-
 const AccountManager = () => {
+  const [selectedReport, setSelectedReport] = useState<string>("Clicks");
+  const [lastDays, setLastDays] = useState<number>(0);
+  const { data: reportData } = api.affiliates.getDashboardDeviceReport.useQuery(
+    {
+      lastDays,
+    }
+  );
+  const labels: string[] =
+    reportData?.map((item) => item?.CountryID ?? "") ?? [];
+  const values: number[] =
+    reportData?.map(
+      (item: DashboardDeviceReportType): number =>
+        item?._sum[selectedReport as keyof typeof item._sum] as number
+    ) ?? [];
+  const reportDropDown = reportData?.length
+    ? Object.keys(reportData[0]?._sum || {})
+    : [];
+
   return (
     <div className="rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
       <div className="mb-3 text-xl font-bold text-[#2262C6]">
@@ -19,7 +37,10 @@ const AccountManager = () => {
       <div className="mb-7 flex justify-between">
         <div className="text-base font-light">session by device</div>
         <div className="flex items-center justify-center text-xs font-light">
-          <Select defaultValue={"90"}>
+          <Select
+            defaultValue={"90"}
+            onValueChange={(e: string) => setLastDays(parseInt(e))}
+          >
             <SelectTrigger className="pr-2 text-xs font-light text-black">
               <SelectValue placeholder="Select days" />
             </SelectTrigger>
@@ -40,19 +61,17 @@ const AccountManager = () => {
       <div className="mb-3 flex justify-between">
         <div className="text-base font-medium text-[#2262C6]">Report</div>
         <div className="flex w-48 items-center justify-center text-xs">
-          <Select>
-            <SelectTrigger className="w-full rounded-sm bg-[#EDF2F7] py-1 px-2">
+          <Select onValueChange={(e) => setSelectedReport(e)}>
+            <SelectTrigger className="w-full rounded-sm bg-[#EDF2F7] px-2 py-1">
               <SelectValue placeholder="Clicks" />
             </SelectTrigger>
             <SelectContent className="">
               <SelectGroup>
-                <SelectItem value={"SignUp"}>SignUp</SelectItem>
-                <SelectItem value={"Acquisition"}>Acquisition</SelectItem>
-                <SelectItem value={"Demo"}>Demo</SelectItem>
-                <SelectItem value={"FTD"}>FTD</SelectItem>
-                <SelectItem value={"Account"}>Account</SelectItem>
-                <SelectItem value={"FTD"}>FTD Account</SelectItem>
-                <SelectItem value={"Withdrawal"}>Withdrawal</SelectItem>
+                {reportDropDown.map((i: string) => (
+                  <>
+                    <SelectItem value={i}>{i}</SelectItem>
+                  </>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -60,7 +79,7 @@ const AccountManager = () => {
       </div>
 
       <div className="flex h-48 items-center justify-between">
-        <CountryChart />
+        <CountryChart label={selectedReport} labels={labels} data={values} />
       </div>
     </div>
   );

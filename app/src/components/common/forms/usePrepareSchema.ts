@@ -43,7 +43,7 @@ export const usePrepareSchema = (
 export const evaluateFormControlCallback = (
   value: string | ControlCallback | undefined,
   formContext: FormContext
-): React.ReactNode => {
+): React.ReactNode | null => {
   if (!value) {
     return null;
   } else if (typeof value === "string") {

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/common/page/page-header";
 import type { AffiliateAccountUpdateType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
@@ -21,12 +22,9 @@ export const AccountDetails = () => {
   };
 
   return (
-    <div className="w-full pt-5 pb-4 ">
-      <div className="mb-5 block px-6 text-base font-medium">
-        <span className="text-[#2262C6]">Dashboard</span> / My Account - Account
-        Details
-      </div>
-      <div className="mt-6 h-auto rounded-2xl bg-white px-4 pt-4 pb-20 shadow-[4px_3px_33px_0_rgba(0,0,0,0.05)] md:mb-10">
+    <div className="w-full">
+      <PageHeader title="My Account" subTitle="Account"></PageHeader>
+      <div className="h-auto rounded-2xl bg-white px-4 pb-20 pt-4 shadow-[4px_3px_33px_0_rgba(0,0,0,0.05)] md:mb-10">
         <div className="flex w-full">
           <Tabs defaultValue="account" className="w-full">
             <TabsList className="mt-2">
@@ -36,20 +34,28 @@ export const AccountDetails = () => {
               <TabsTrigger value="website">Website</TabsTrigger>
             </TabsList>
             <TabsContent className="border-0" value="account">
-              <FormAccount account={account} onSubmit={handleSubmit} />
+              <div className="w-3/6">
+                <FormAccount account={account} onSubmit={handleSubmit} />
+              </div>
             </TabsContent>
             <TabsContent className="border-0" value="contract">
-              <FormContact account={account} onSubmit={handleSubmit} />
+              <div className="w-3/6">
+                <FormContact account={account} onSubmit={handleSubmit} />
+              </div>
             </TabsContent>
             <TabsContent className="border-0" value="invoice">
-              <FormInvoice
-                account={account}
-                onSubmit={handleSubmit}
-                countries={countries || []}
-              />
+              <div className="w-3/6">
+                <FormInvoice
+                  account={account}
+                  onSubmit={handleSubmit}
+                  countries={countries || []}
+                />
+              </div>
             </TabsContent>
             <TabsContent className="border-0" value="website">
-              <FormWebSites account={account} onSubmit={handleSubmit} />
+              <div className="w-3/6">
+                <FormWebSites account={account} onSubmit={handleSubmit} />
+              </div>
             </TabsContent>
           </Tabs>
         </div>

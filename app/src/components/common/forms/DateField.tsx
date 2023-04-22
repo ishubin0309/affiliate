@@ -1,40 +1,16 @@
-import { useMeta, useTsController } from "../../libs/react-ts-form";
-import type { ZodMetaDataItem } from "../../../utils/zod-meta";
 import { maybeConvertChild } from "../wizard/useWizardFlow";
 import { Checkbox } from "@/components/ui/checkbox";
 import { clsx } from "clsx";
 import { FormControl } from "@/components/common/forms/FormControl";
 import DatePicker from "react-datepicker";
+import {
+  useMetaEx,
+  useTsController,
+} from "@/components/libs/react-ts-form/FieldContext";
 
-interface Props {
-  controlName?: ZodMetaDataItem["control"];
-}
-
-export const DateField = (
-  // props: Omit<InputHTMLAttributes<HTMLInputElement>, "name" | "value"> & {
-  //   // label?: string;
-  //   enumValues?: string[];
-  // }
-  { controlName }: Props
-) => {
-  const { field, error, formContext } = useTsController<Date>();
-  const options = useMeta();
-  const { label, placeholder } = options || {
-    label: "",
-    placeholder: "",
-  };
-
-  controlName = controlName || options?.control;
-
-  // console.log(
-  //   `muly:DateField ${field.name} label:${label}, placeholder:${placeholder}`,
-  //   {
-  //     field,
-  //     label,
-  //     placeholder,
-  //     options,
-  //   }
-  // );
+export const DateField = () => {
+  const { field } = useTsController<Date>();
+  const { label, placeholder, control: controlName } = useMetaEx();
 
   let control;
   if (controlName === "Checkbox") {

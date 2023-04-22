@@ -13,7 +13,7 @@ export const mapping = [
   [z.date(), DateField],
   [z.enum([""]), TextField],
   [z.number(), TextField],
-  [z.any(), TextField],
-  [z.nativeEnum(enum_like), TextField],
+  // [z.any(), TextField],
+  // [z.nativeEnum(enum_like), TextField],
   // [z.effect(), TextField],
 ] as const;

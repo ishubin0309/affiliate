@@ -1,7 +1,8 @@
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import { publicProcedure } from "@/server/api/trpc";
+import { debugSaveData } from "@/server/process/debug-utils";
 import { Prisma, PrismaClient, type data_sales_type } from "@prisma/client";
-import { Simplify } from "@trpc/server";
+import type { Simplify } from "@trpc/server";
 import { getUnixTime } from "date-fns";
 import path from "path";
 import paginator from "prisma-paginate";
@@ -18,10 +19,68 @@ const params = z.object({
   type: z.enum(["clicks", "views"]).optional(),
 });
 
+const Merchant = z.object({
+  name: z.string(),
+});
+
+const Affiliate = z.object({
+  username: z.string(),
+});
+
+const output = z.array(
+  z.object({
+    id: z.number().optional(),
+    rdate: z.date().optional(),
+    unixRdate: z.number().optional(),
+    ctag: z.string().optional(),
+    uid: z.string().optional(),
+    ip: z.string().optional(),
+    admin_id: z.number().optional(),
+    affiliate_id: z.number().optional(),
+    group_id: z.number().optional(),
+    banner_id: z.number().optional(),
+    merchant_id: z.number().optional(),
+    profile_id: z.number().optional(),
+    language_id: z.number().optional(),
+    promotion_id: z.number().optional(),
+    valid: z.boolean().optional(),
+    title: z.string().optional(),
+    bannerType: z.string().optional(),
+    type: z.string().optional(),
+    width: z.number().optional(),
+    height: z.number().optional(),
+    file: z.string().optional(),
+    url: z.string().optional(),
+    alt: z.string().optional(),
+    platform: z.string().optional(),
+    os: z.string().optional(),
+    osVersion: z.string().optional(),
+    browser: z.string().optional(),
+    broswerVersion: z.string().optional(),
+    userAgent: z.string().optional(),
+    country_id: z.string().optional(),
+    refer_url: z.string().optional(),
+    param: z.string().optional(),
+    param2: z.string().optional(),
+    param3: z.string().optional(),
+    param4: z.string().optional(),
+    param5: z.string().optional(),
+    views: z.number().optional(),
+    clicks: z.number().optional(),
+    product_id: z.number().optional(),
+    merchant: Merchant.optional(),
+    affiliate: Affiliate.optional(),
+    trader_id2: z.string().optional(),
+    trader_alias: z.string().optional(),
+    sales_status: z.string().optional(),
+  })
+);
+
 const paramsWithPage = params.extend(pageParams);
 const paramsWithReport = params.extend(reportParams);
 
 type InputType = z.infer<typeof paramsWithPage>;
+type OutputType = z.infer<typeof output>;
 
 export const clicksReport = async ({
   ctx,
@@ -38,7 +97,7 @@ export const clicksReport = async ({
 }: {
   ctx: Simplify<unknown>;
   input: InputType;
-}) => {
+}): Promise<OutputType> => {
   const prismaClient = new PrismaClient();
   const paginate = paginator(prismaClient);
   let offset;
@@ -131,7 +190,7 @@ export const clicksReport = async ({
         let demo = 0;
         let real = 0;
 
-        let regg = reggResult?.result;
+        const regg = reggResult?.result;
         for (let i = 0; i < Object.keys(regg).length; i++) {
           regArr.push({
             id: regg[i]?.id,
@@ -162,7 +221,7 @@ export const clicksReport = async ({
   /*
               $sql = "SELECT data_reg.affiliate_id,data_reg.merchant_id,data_reg.initialftddate,tb1.rdate,data_reg.banner_id,data_reg.trader_id,data_reg.profile_id,tb1.amount, tb1.type AS data_sales_type  ,data_reg.country as country
               FROM data_sales as tb1 "
-      
+
                        . "INNER JOIN data_reg AS data_reg ON
                        tb1.merchant_id = data_reg.merchant_id AND
                        tb1.trader_id = data_reg.trader_id AND
@@ -174,7 +233,7 @@ export const clicksReport = async ({
                        . (!empty($affiliate_id) ? ' and tb1.affiliate_id = ' . $affiliate_id :' ')
                        . (isset($banner_id) && !empty($banner_id) ? ' AND data_reg.banner_id = "'.$banner_id.'"' :' ')
                        .(!empty($unique_id) ? ' and data_reg.uid = ' . $unique_id :' ');
-      
+
              */
 
   interface SalesWWType {
@@ -199,7 +258,7 @@ export const clicksReport = async ({
     ? Prisma.sql`AND data_reg.uid = ${unique_id}`
     : Prisma.empty;
 
-  const salesww = await paginate.$queryRaw<SalesWWType[]>`SELECT     
+  const salesww = await paginate.$queryRaw<SalesWWType[]>`SELECT
            data_reg.affiliate_id,
            data_reg.merchant_id,
            data_reg.initialftddate,
@@ -304,20 +363,27 @@ LIMIT ${offset}, ${items_per_page}
     },
   });
 
-  const merged = [];
+  debugSaveData("revww", revww);
+  debugSaveData("clickww", clickww);
+  debugSaveData("regArr", regArr);
+  debugSaveData("balance_sheet", balance_sheet);
+
+  const merged: OutputType = [];
 
   for (let i = 0; i < clickww?.length; i++) {
     merged.push({
       ...clickww[i],
       ...regArr[i],
-      ...balance_sheet[i],
+      // ...balance_sheet[i],
     });
   }
+
   return merged;
 };
 
 export const getClicksReport = publicProcedure
   .input(paramsWithPage)
+  .output(output)
   .query(clicksReport);
 
 export const exportClicksReport = publicProcedure

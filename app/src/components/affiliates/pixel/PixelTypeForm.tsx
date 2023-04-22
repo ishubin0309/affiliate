@@ -5,7 +5,9 @@ import { useTranslation } from "next-i18next";
 import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
 
 const schema = z.object({
-  merchant_id: z.any().describe("Select Merchants // Select Merchants"),
+  merchant_id: z.coerce
+    .number()
+    .describe("Select Merchants // Select Merchants"),
   creative: z
     .string()
     .optional()

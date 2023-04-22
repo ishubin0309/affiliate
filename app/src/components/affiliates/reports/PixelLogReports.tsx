@@ -2,12 +2,13 @@ import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { DataTable } from "../../../components/common/data-table/DataTable";
 import { QuerySelect } from "../../../components/common/QuerySelect";
+import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { PixelLogsReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
+import { creativeType } from "@/components/affiliates/reports/TraderReports";
 
 export const PixelLogReports = () => {
   const router = useRouter();
@@ -113,45 +114,6 @@ export const PixelLogReports = () => {
     };
   });
 
-  const creativeType = [
-    {
-      id: "",
-      title: "All",
-    },
-    {
-      id: "image",
-      title: "Image",
-    },
-    {
-      id: "mobileleader",
-      title: "Mobile Leader",
-    },
-    {
-      id: "mobilesplash",
-      title: "Mobile Splash",
-    },
-    {
-      id: "flash",
-      title: "Flash",
-    },
-    {
-      id: "widget",
-      title: "Widget",
-    },
-    {
-      id: "link",
-      title: "Text Link",
-    },
-    {
-      id: "mail",
-      title: "Email",
-    },
-    {
-      id: "coupon",
-      title: "Coupon",
-    },
-  ];
-
   return (
     <>
       <Grid
@@ -201,7 +163,6 @@ export const PixelLogReports = () => {
         alignItems={"center"}
         width="100%"
         alignSelf="center"
-        overflow={"scroll"}
       >
         <DataTable data={data ? data : []} columns={columns} footerData={[]} />
       </Grid>

@@ -542,7 +542,7 @@ export const profileColumns = [
     cell: (info) => {
       return (
         <Button
-          variant="text"
+          variant="ghost"
           onClick={() => {
             console.log(`muly:Action`, {});
           }}

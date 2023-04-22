@@ -21,6 +21,7 @@ import {
   startOfYear,
   sub,
 } from "date-fns";
+import { Calendar } from "lucide-react";
 import { queryTypes, useQueryState } from "next-usequerystate";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -218,22 +219,7 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
               </select>
 
               <div className="absolute right-2 -mt-9 cursor-pointer md:right-6 md:-mt-8 ">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                >
-                  <path
-                    d="M17 3.00024H16V1.00024C16 0.735028 15.8946 0.480674 15.7071 0.293137C15.5196 0.105601 15.2652 0.000244141 15 0.000244141C14.7348 0.000244141 14.4804 0.105601 14.2929 0.293137C14.1054 0.480674 14 0.735028 14 1.00024V3.00024H6V1.00024C6 0.735028 5.89464 0.480674 5.70711 0.293137C5.51957 0.105601 5.26522 0.000244141 5 0.000244141C4.73478 0.000244141 4.48043 0.105601 4.29289 0.293137C4.10536 0.480674 4 0.735028 4 1.00024V3.00024H3C2.20435 3.00024 1.44129 3.31631 0.87868 3.87892C0.316071 4.44153 0 5.20459 0 6.00024V7.00024H20V6.00024C20 5.20459 19.6839 4.44153 19.1213 3.87892C18.5587 3.31631 17.7956 3.00024 17 3.00024Z"
-                    fill="#2262C6"
-                  />
-                  <path
-                    d="M0 17.0002C0 17.7959 0.316071 18.5589 0.87868 19.1216C1.44129 19.6842 2.20435 20.0002 3 20.0002H17C17.7956 20.0002 18.5587 19.6842 19.1213 19.1216C19.6839 18.5589 20 17.7959 20 17.0002V9.00024H0V17.0002Z"
-                    fill="#2262C6"
-                  />
-                </svg>
+                <Calendar className="h-6 w-6" />
               </div>
             </div>
 

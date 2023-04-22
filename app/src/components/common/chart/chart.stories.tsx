@@ -96,7 +96,7 @@ export const PerformanceLineCharts = {
 };
 
 export const CountryCharts = {
-  render: () => <CountryChart />,
+  render: () => <CountryChart label="TBD" labels={[]} data={[]} />,
 };
 
 export const DeviceReportCharts = {

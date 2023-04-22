@@ -75,7 +75,7 @@ const UserDropdown = () => {
           "z-50 float-left w-32 list-none rounded bg-white py-2 text-left text-base shadow-lg"
         }
       >
-        <div className="flex w-full whitespace-nowrap bg-transparent py-2 px-4 text-sm font-normal">
+        <div className="flex w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal">
           <span className="inline-flex items-center justify-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -95,7 +95,7 @@ const UserDropdown = () => {
           </span>
         </div>
         <div
-          className="flex w-full whitespace-nowrap bg-transparent py-2 px-4 text-sm font-normal"
+          className="flex w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal"
           onClick={() => {
             void signOut();
           }}

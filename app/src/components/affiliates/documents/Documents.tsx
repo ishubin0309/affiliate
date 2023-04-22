@@ -1,19 +1,18 @@
-import { DataTable } from "../../common/data-table/DataTable";
-import { api } from "../../../utils/api";
-import type { AffiliateDocumentType } from "../../../server/db-types";
-import { createColumnHelper } from "@tanstack/react-table";
-import * as z from "zod";
-import axios from "axios";
-import React, { useState } from "react";
-import { format } from "date-fns";
-import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
-import { useTranslation } from "next-i18next";
-import { useCRUD } from "@/components/common/forms/useCRUD";
-import { useToast } from "@/hooks/use-toast";
-import { PageHeader } from "@/components/common/page/page-header";
 import { Loading } from "@/components/common/Loading";
+import { useCRUD } from "@/components/common/forms/useCRUD";
+import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
+import { PageHeader } from "@/components/common/page/page-header";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { createColumnHelper } from "@tanstack/react-table";
+import axios from "axios";
+import { format } from "date-fns";
 import { ViewIcon } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import * as z from "zod";
+import type { AffiliateDocumentType } from "../../../server/db-types";
+import { api } from "../../../utils/api";
+import { DataTable } from "../../common/data-table/DataTable";
 
 const columnHelper = createColumnHelper<AffiliateDocumentType>();
 
@@ -136,7 +135,7 @@ export const Documents = () => {
     }),
     columnHelper.accessor("edit-button" as any, {
       cell: (info) => (
-        <Button variant="text">
+        <Button variant="ghost">
           <ViewIcon className="mr-2 h-4 w-4" />
           View
         </Button>
@@ -149,7 +148,9 @@ export const Documents = () => {
 
   return data ? (
     <>
-      <PageHeader title="Documents">{createDialog}</PageHeader>
+      <PageHeader title="My Account" subTitle="Documents">
+        {createDialog}
+      </PageHeader>
       <DataTable data={data} columns={columns} />
     </>
   ) : (
