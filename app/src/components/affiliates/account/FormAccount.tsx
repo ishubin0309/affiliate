@@ -22,12 +22,6 @@ export const FormAccount = ({ account, onSubmit }: Props) => {
       schema={schema}
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       onSubmit={onSubmit}
-      props={{
-        newsletter: {
-          choices: ["0", "1"],
-          controlName: "Checkbox",
-        },
-      }}
       defaultValues={account}
     ></Form>
   );

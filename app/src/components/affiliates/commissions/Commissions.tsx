@@ -1,61 +1,43 @@
-import {
-  Stack,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-} from "@chakra-ui/react";
+import { Loading } from "@/components/common/Loading";
+import { DataTable } from "@/components/common/data-table/DataTable";
+import { PageHeader } from "@/components/common/page/page-header";
+import type { AffiliateCommissionType } from "@/server/db-types";
+import { createColumnHelper } from "@tanstack/react-table";
 import { api } from "../../../utils/api";
 
+const columnHelper = createColumnHelper<AffiliateCommissionType>();
+const createColumn = (id: keyof AffiliateCommissionType, header: string) =>
+  columnHelper.accessor(id, {
+    header,
+  });
+
+const findDealByType = (item: AffiliateCommissionType, dealType: string) => {
+  const deal = item?.deals?.find((el) => el.dealType === dealType);
+  return deal ? `${deal.amount}%` : "-";
+};
+
 export const Commissions = () => {
-  const { data, refetch } = api.affiliates.getCommissions.useQuery();
+  const { data } = api.affiliates.getCommissions.useQuery();
 
-  if (!data) {
-    return null;
-  }
+  const columns = [
+    createColumn("id", "#"),
+    createColumn("name", "Merchant"),
+    columnHelper.accessor((item) => findDealByType(item, "pnl"), { id: "PNL" }),
+    columnHelper.accessor(() => "Passport", { id: "Deposit Charge" }),
+    columnHelper.accessor((item) => findDealByType(item, "cpa"), { id: "CPA" }),
+    columnHelper.accessor((item) => findDealByType(item, "dcpa"), {
+      id: "DCPA",
+    }),
+  ];
 
-  return (
-    <Stack m={12} gap={4}>
-      <TableContainer>
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>#</Th>
-              <Th>Merchant</Th>
-              <Th>PNL</Th>
-              <Th>Deposit Charge</Th>
-              <Th>CPA</Th>
-              <Th>DCPA</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {data.map((item, index) => {
-              const pnl = item.deals.find((el) => el.dealType === "pnl")
-                ? item.deals.find((el) => el.dealType === "pnl")
-                : null;
-              const cpa = item.deals.find((el) => el.dealType === "cpa")
-                ? item.deals.find((el) => el.dealType === "cpa")
-                : null;
-              const dcpa = item.deals.find((el) => el.dealType === "dcpa")
-                ? item.deals.find((el) => el.dealType === "dcpa")
-                : null;
-              return (
-                <Tr key={index}>
-                  <Td>{item.id}</Td>
-                  <Td>{item.name}</Td>
-                  <Td>{pnl ? String(pnl.amount) + "%" : "-"}</Td>
-                  <Td>Passport</Td>
-                  <Td>{cpa ? String(cpa.amount) + "%" : "-"}</Td>
-                  <Td>{dcpa ? String(dcpa.amount) + "%" : "-"}</Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </TableContainer>
-    </Stack>
+  return data ? (
+    <>
+      <div className="w-full">
+        <PageHeader title="My Account" subTitle="Commissions"></PageHeader>
+        <DataTable data={data} columns={columns} />
+      </div>
+    </>
+  ) : (
+    <Loading />
   );
 };

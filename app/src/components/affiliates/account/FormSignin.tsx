@@ -48,17 +48,20 @@ export const FormSignin = () => {
         onSubmit={handleSubmit}
         formProps={{
           submit: {
+            className: "w-full",
             text: "Sign In",
             notification: false,
           },
         }}
       ></Form>
-      {!!loginError && <div>{loginError}</div>}
-      <div className="mt-6 mb-6 text-center">
+      {!!loginError && (
+        <div className="mt-2 text-sm text-red-500">{loginError}</div>
+      )}
+      <div className="mb-6 mt-6 text-center">
         Don’t have an account yet?
         <Link
           className="ml-1 inline-block font-bold text-primary"
-          href={"/auth/signup"}
+          href="/auth/signup"
         >
           Sign Up
         </Link>

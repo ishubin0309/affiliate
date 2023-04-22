@@ -24,7 +24,7 @@ const Page: MyPage = () => {
       <main className="flex min-h-screen flex-col items-center px-5">
         <AuthenticationHeader>
           Register to your <br />
-          <span className="font-bold">Affillate</span> account
+          Affillate account
         </AuthenticationHeader>
         <FormSignup />
         <AuthenticationFooter />

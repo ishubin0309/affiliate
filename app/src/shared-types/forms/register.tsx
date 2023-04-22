@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { schema as accountSchema } from "./account";
-import { imUserTypes, numericCheckbox } from "./common";
 import { LanguageSelectList } from "@/components/Dropdowns/LanguageSelectList";
+import Link from "next/link";
+import { z } from "zod";
+import { imUserTypes } from "./common";
 
 export const schema = z
   .object({
@@ -25,9 +25,27 @@ export const schema = z
       .meta({ control: () => <LanguageSelectList /> }),
     company: z.string().describe("Company Name").default(""),
     website: z.string().url().describe("Website"),
-    approvedTerms: numericCheckbox
-      .describe("I have read and accepted theTerms & Conditions")
-      .extendMeta({ className: "col-span-2" }),
+    approvedTerms: z.coerce
+      .number()
+      .min(0)
+      .max(1)
+      .refine((v) => v === 1, {
+        message: "You must accept the terms of service",
+      })
+
+      .meta({
+        label: () => (
+          <>
+            I have read and accepted the{" "}
+            <Link href="/auth/terms">
+              <span className="text-primary">Terms of Service</span>
+            </Link>
+          </>
+        ),
+        control: "Checkbox",
+        choices: ["0", "1"],
+        className: "col-span-2",
+      }),
     // newsletter: numericCheckbox.describe(
     //   "Yes, I would like to receive the Affiliate newsletter"
     // ),
@@ -41,4 +59,4 @@ export const schema = z
   //     path: ["passwordRepeat"],
   //   }
   // )
-  .meta({ className: "md:grid md:grid-cols-2" });
+  .meta({ className: "md:grid md:grid-cols-2 gap-x-12 gap-y-4" });

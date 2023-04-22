@@ -3,10 +3,10 @@ import {
   type NavigationLinkData,
 } from "@/components/affiliates/layout/navigation-data";
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import React from "react";
+import { useOnClickOutside } from "usehooks-ts";
 import DropdownLink from "./DropdownLink";
 import SingleLink from "./SingleLink";
-import { useOnClickOutside } from "usehooks-ts";
 
 interface Props {
   collapseShow: boolean;
@@ -78,13 +78,13 @@ const Sidebar: React.FC<Props> = ({
 
   const sidebarClassName = cn(
     tempCollapseShow ? "w-64 rounded-tr-[50px] md:rounded-none" : "w-0 md:w-14",
-    "sidebar fixed top-16 left-0 z-10 flex h-full flex-col bg-white text-white transition-all duration-300 dark:bg-gray-900 md:top-20 scrollbar-thin"
+    "sidebar fixed top-16 left-0 z-10 flex h-full flex-col bg-white transition-all duration-300 dark:bg-gray-900 md:top-20 scrollbar-thin"
   );
 
   return (
     <div className={sidebarClassName} ref={sidebarRef}>
       <div className="flex grow flex-col justify-between overflow-y-auto overflow-x-hidden">
-        <ul className="relative min-h-full space-y-1 overflow-y-auto py-5 md:py-16">
+        <ul className="scrollbar-thin relative min-h-full space-y-1 overflow-y-auto py-5 md:py-16">
           {navigationData.map((item, index) =>
             renderLink(
               item,

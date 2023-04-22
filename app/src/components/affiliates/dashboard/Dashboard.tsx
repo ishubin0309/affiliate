@@ -215,7 +215,7 @@ export const Dashboard = () => {
               Update
             </Button>
             <DialogTrigger>
-              <button className="ml-2 rounded-md bg-white px-2 drop-shadow md:px-3 md:pt-1.5 md:pb-2">
+              <button className="ml-2 rounded-md bg-white px-2 drop-shadow md:px-3 md:pb-2 md:pt-1.5">
                 <SettingsIcon />
               </button>
             </DialogTrigger>
@@ -228,10 +228,10 @@ export const Dashboard = () => {
         </div>
 
         <DialogContent className="sm:max-w-lg">
-          <DialogHeader className="text-left text-sm font-medium text-azure">
+          <DialogHeader className="text-left text-sm font-medium text-primary">
             Manage Field On Report - Quick Summary
           </DialogHeader>
-          <DialogTitle className="text-sm font-normal text-disabled md:mb-6 md:pt-2">
+          <DialogTitle className="text-disabled text-sm font-normal md:mb-6 md:pt-2">
             Please activate the fields you want to display on the report:
           </DialogTitle>
           <div className="grid grid-cols-1 md:mt-10 md:grid-cols-2">

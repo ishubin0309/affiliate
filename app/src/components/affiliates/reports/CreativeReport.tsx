@@ -2,8 +2,8 @@ import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { DataTable } from "../../../components/common/data-table/DataTable";
 import { QuerySelect } from "../../../components/common/QuerySelect";
+import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { InstallReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
@@ -153,7 +153,6 @@ export const CreativeReport = () => {
         alignItems={"center"}
         width="100%"
         alignSelf="center"
-        overflow={"scroll"}
       >
         <DataTable
           data={Object.values(data || {})}

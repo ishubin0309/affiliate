@@ -3,7 +3,7 @@ import { castError } from "../../../utils/errors";
 import type { CommonFormProps } from "./Form";
 import { useFormContext } from "react-hook-form";
 import type { FieldValues } from "react-hook-form";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 export class FormError extends Error {
   formErrors: Record<string, string>;

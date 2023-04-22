@@ -9,9 +9,9 @@ import {
   SelectSeparator,
 } from "./select";
 
-const Selects = () => (
+const Selects = (args: any) => (
   <div className="flex flex-col items-start gap-8">
-    <Select>
+    <Select {...args}>
       <SelectTrigger>
         <SelectValue placeholder="Select a fruit..." />
       </SelectTrigger>
@@ -48,6 +48,16 @@ export const Primary = {
     return (
       <div className="mt-4 flex">
         <Selects />
+      </div>
+    );
+  },
+};
+
+export const Error = {
+  render: (args: any) => {
+    return (
+      <div className="mt-4 flex">
+        <Selects error="error" />
       </div>
     );
   },

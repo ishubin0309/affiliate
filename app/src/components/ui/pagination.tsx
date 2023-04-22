@@ -37,7 +37,7 @@ const paginationVariants = cva(
   }
 );
 const Pagination = React.forwardRef<HTMLInputElement, PaginationProps>(
-  ({ error, className, variant, ...props }, ref) => {
+  ({ totalItems, count, error, className, variant, ...props }, ref) => {
     const [currentPage, setCurrentPage] = useQueryState(
       "currentPage",
       queryTypes.integer.withDefault(1)
@@ -60,8 +60,7 @@ const Pagination = React.forwardRef<HTMLInputElement, PaginationProps>(
       void setItemPerPage(e);
     };
     const pages = [];
-    const page =
-      props.totalItems / itemsPerPage < 1 ? 1 : props.totalItems / itemsPerPage;
+    const page = totalItems / itemsPerPage < 1 ? 1 : totalItems / itemsPerPage;
     for (let i = 1; i <= page; i++) {
       pages.push(i);
     }

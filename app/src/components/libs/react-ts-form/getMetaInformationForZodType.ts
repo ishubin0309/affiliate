@@ -5,13 +5,7 @@ import { getZodMetaInfo } from "../../../utils/zod-meta";
 export const SPLIT_DESCRIPTION_SYMBOL = " // ";
 
 export function getEnumValues(type: RTFSupportedZodTypes) {
-  if (
-    !(
-      type._def.typeName === z.ZodFirstPartyTypeKind.ZodEnum ||
-      type._def.typeName === z.ZodFirstPartyTypeKind.ZodNativeEnum
-    )
-  )
-    return;
+  if (!(type._def.typeName === z.ZodFirstPartyTypeKind.ZodEnum)) return;
   return type._def.values as readonly string[];
 }
 

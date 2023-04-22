@@ -3,11 +3,10 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import type { FormContext } from "@/components/libs/react-ts-form/FieldContext";
 import type { AnyZodObject, ZodEffects } from "zod";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { castError } from "@/utils/errors";
 
 import { EditIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { PreprocessField } from "@/components/libs/react-ts-form/createSchemaForm";
 
 interface Props<T> {
   formContext: FormContext;
@@ -99,7 +98,7 @@ export const useCRUD = <T,>({
       onSubmit={(newRec) => handleSubmit(row, newRec)}
       formProps={{
         trigger: (
-          <Button variant="text">
+          <Button variant="ghost" size="sm">
             <EditIcon className="mr-2 h-4 w-4" />
             {text.edit}
           </Button>

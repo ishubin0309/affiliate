@@ -1,5 +1,5 @@
-import { DataTable } from "@/components/common/data-table/DataTable";
 import { QuerySelect } from "@/components/common/QuerySelect";
+import { DataTable } from "@/components/common/data-table/DataTable";
 import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
@@ -8,6 +8,45 @@ import type { TraderReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
+
+export const creativeType = [
+  {
+    id: "",
+    title: "All",
+  },
+  {
+    id: "image",
+    title: "Image",
+  },
+  {
+    id: "mobileleader",
+    title: "Mobile Leader",
+  },
+  {
+    id: "mobilesplash",
+    title: "Mobile Splash",
+  },
+  {
+    id: "flash",
+    title: "Flash",
+  },
+  {
+    id: "widget",
+    title: "Widget",
+  },
+  {
+    id: "link",
+    title: "Text Link",
+  },
+  {
+    id: "mail",
+    title: "Email",
+  },
+  {
+    id: "coupon",
+    title: "Coupon",
+  },
+];
 
 export const TraderReports = () => {
   const router = useRouter();
@@ -77,45 +116,6 @@ export const TraderReports = () => {
     createColumn("ChargeBackAmount", "ChargeBack Amount"),
     createColumn("totalLots", "Lots"),
     createColumn("SaleStatus", "Sale Status"),
-  ];
-
-  const creativeType = [
-    {
-      id: "",
-      title: "All",
-    },
-    {
-      id: "image",
-      title: "Image",
-    },
-    {
-      id: "mobileleader",
-      title: "Mobile Leader",
-    },
-    {
-      id: "mobilesplash",
-      title: "Mobile Splash",
-    },
-    {
-      id: "flash",
-      title: "Flash",
-    },
-    {
-      id: "widget",
-      title: "Widget",
-    },
-    {
-      id: "link",
-      title: "Text Link",
-    },
-    {
-      id: "mail",
-      title: "Email",
-    },
-    {
-      id: "coupon",
-      title: "Coupon",
-    },
   ];
 
   let totalVolume = 0;
@@ -200,7 +200,6 @@ export const TraderReports = () => {
         alignItems={"center"}
         width="100%"
         alignSelf="center"
-        overflow={"scroll"}
       >
         <DataTable
           data={Object.values(data || {})}

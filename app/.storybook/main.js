@@ -39,9 +39,17 @@ const config = {
     };
 
     // Needed for Tailwind url() backgorund images to be loaded correctly
-    config.resolve.extensions.push(".png", ".jpg", ".jpeg", ".gif", ".svg");
+    config.resolve.extensions.push(
+      ".png",
+      ".jpg",
+      ".jpeg",
+      ".gif",
+      ".svg",
+      ".woff"
+    );
     config.resolve.alias["/images"] =
       require("path").resolve("./public/images");
+    config.resolve.alias["/fonts"] = require("path").resolve("./public/fonts");
 
     return config;
   },
