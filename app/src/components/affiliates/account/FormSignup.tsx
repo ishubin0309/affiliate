@@ -15,7 +15,7 @@ export const FormSignup = () => {
   const registerAccount = api.affiliates.registerAccount.useMutation();
   const handleSubmit = async (values: z.infer<typeof schema>) => {
     await registerAccount.mutateAsync(values);
-    void router.replace(`/`);
+    void router.replace(`/auth/registersuccess`);
   };
 
   return (
