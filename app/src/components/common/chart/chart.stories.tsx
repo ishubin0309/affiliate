@@ -1,8 +1,8 @@
-import CountryChart from "./CountryChart";
 import ConversionChart from "./ConversionChart";
-import PerformanceChart from "./PerformanceChart";
+import CountryChart from "./CountryChart";
 import DeviceReportChart from "./DeviceReportChart";
 import DoughnutChart from "./DoughnutChart";
+import PerformanceChart from "./PerformanceChart";
 import PerformanceLineChart from "./PerformanceLineChart";
 
 const meta = {
@@ -70,7 +70,8 @@ const performanceChart = [
     ActiveTraders: 0,
   },
 ];
-
+const labels: string[] = ["US", "IND", "FS", "UK", "EUR"];
+const data: number[] = [30, 20, 50, 35, 45];
 export const ConversionCharts = {
   render: () => (
     <div className="mt-5 h-80  pb-5">
@@ -96,7 +97,7 @@ export const PerformanceLineCharts = {
 };
 
 export const CountryCharts = {
-  render: () => <CountryChart label="TBD" labels={[]} data={[]} />,
+  render: () => <CountryChart label="TBD" labels={labels} data={data} />,
 };
 
 export const DeviceReportCharts = {
