@@ -11,7 +11,7 @@ const Home: MyPage = () => {
     { href: "/auth/signup", title: "Auth -> Sign Up" },
     { href: "/auth/signin", title: "Auth -> Sign In" },
     { href: "/auth/terms", title: "Auth -> Terms" },
-    { href: "/auth/registersuccess", title: "Auth -> Register Success" },
+    { href: "/auth/register-success", title: "Auth -> Register Success" },
 
     { href: "/auth/lost-password", title: "Auth -> Lost Password" },
     { href: "/affiliates/dashboard", title: "Dashboard" },
