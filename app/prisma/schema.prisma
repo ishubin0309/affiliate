@@ -592,6 +592,7 @@ model data_reg {
   affiliate  affiliates    @relation(fields: [affiliate_id], references: [id])
   data_reg   reporttraders @relation(fields: [trader_id, affiliate_id, merchant_id], references: [TraderID, affiliate_id, merchant_id])
   data_stats data_stats?
+  data_sales data_sales?   @relation(fields: [merchant_id, trader_id, initialftdtranzid], references: [merchant_id, trader_id, tranz_id])
 
   @@index([FTDqualificationDate], map: "FTDqualificationDate")
   @@index([uid], map: "UID")
@@ -647,7 +648,9 @@ model data_sales {
 
   merchant  merchants  @relation(fields: [merchant_id], references: [id])
   affiliate affiliates @relation(fields: [affiliate_id], references: [id])
+  data_reg  data_reg[]
 
+  @@unique([merchant_id, trader_id, tranz_id])
   @@index([affiliate_id], map: "affiliate_id")
   @@index([banner_id], map: "banner_id")
   @@index([merchant_id, trader_id], map: "mer_trader_id")

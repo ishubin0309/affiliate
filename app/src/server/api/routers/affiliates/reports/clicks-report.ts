@@ -1,14 +1,12 @@
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
+import {
+  affiliate_id,
+  merchant_id,
+} from "@/server/api/routers/affiliates/const";
 import { publicProcedure } from "@/server/api/trpc";
-import { debugSaveData } from "@/server/process/debug-utils";
-import { Prisma, PrismaClient, type data_sales_type } from "@prisma/client";
-import type { Simplify } from "@trpc/server";
+import { Prisma, type data_sales_type } from "@prisma/client";
 import { getUnixTime } from "date-fns";
-import path from "path";
-import paginator from "prisma-paginate";
 import { z } from "zod";
-import { uploadFile } from "../config";
-import { exportReportLoop, pageParams, reportParams } from "./reports-utils";
+import { pageParams, reportParams } from "./reports-utils";
 
 const params = z.object({
   from: z.date(),
@@ -82,79 +80,68 @@ const paramsWithReport = params.extend(reportParams);
 type InputType = z.infer<typeof paramsWithPage>;
 type OutputType = z.infer<typeof output>;
 
-export const clicksReport = async ({
-  ctx,
-  input: {
-    from,
-    to,
-    merchant_id,
-    unique_id,
-    trader_id,
-    type,
-    page,
-    items_per_page,
-  },
-}: {
-  ctx: Simplify<unknown>;
-  input: InputType;
-}): Promise<OutputType> => {
-  const prismaClient = new PrismaClient();
-  const paginate = paginator(prismaClient);
-  let offset;
-  if (page && items_per_page) {
-    offset = (page - 1) * items_per_page;
-  }
-  type TypeFilter = {
-    clicks?: {
-      gt: number;
+export const getClicksReport = publicProcedure
+  .input(
+    z.object({
+      from: z.date(),
+      to: z.date(),
+      unique_id: z.string().optional(),
+      trader_id: z.string().optional(),
+      type: z.enum(["clicks", "views"]).optional(),
+    })
+  )
+  .query(async ({ ctx, input: { from, to, unique_id, trader_id, type } }) => {
+    // let offset;
+    // if (page && items_per_page) {
+    //   offset = (page - 1) * items_per_page;
+    // }
+    type TypeFilter = {
+      clicks?: {
+        gt: number;
+      };
+      views?: {
+        gt: number;
+      };
     };
-    views?: {
-      gt: number;
+
+    const clickArray: any = {};
+
+    const getTypeFilter = (type?: "clicks" | "views"): TypeFilter => {
+      if (type === "clicks" || type === "views") {
+        return { [type]: { gt: 0 } };
+      }
+      return {};
     };
-  };
 
-  const getTypeFilter = (type?: "clicks" | "views"): TypeFilter => {
-    if (type === "clicks" || type === "views") {
-      return { [type]: { gt: 0 } };
-    }
-    return {};
-  };
-
-  const listProfiles = async () =>
-    paginate.affiliates_profiles.paginate({
-      limit: items_per_page ? items_per_page : 10,
-      page: page,
-      where: { valid: 1 },
+    const listProfiles = await ctx.prisma.affiliates_profiles.findMany({
+      where: { valid: 1, affiliate_id: affiliate_id },
       select: { name: true, id: true },
     });
 
-  // const getTotalRecords = async (
-  //   type_filter: TypeFilter,
-  //   unique_id: string | undefined,
-  //   from: Date,
-  //   to: Date
-  // ) =>
-  //   paginate.traffic.count({
-  //     where: {
-  //       ...type_filter,
-  //       AND: { uid: unique_id || "" },
-  //       merchant_id: { gt: 0 },
-  //       unixRdate: {
-  //         gte: getUnixTime(from),
-  //         lt: getUnixTime(to),
-  //       },
-  //     },
-  //   });
-
-  const getClickWW = async (from: Date, to: Date) =>
-    await paginate.traffic.paginate({
-      limit: items_per_page ? items_per_page : 10,
-      page: page,
+    const getTotalRecords = await ctx.prisma.traffic.aggregate({
       where: {
+        ...getTypeFilter(type),
+        AND: { uid: unique_id || "" },
+        merchant_id: { gt: 0 },
         unixRdate: {
           gte: getUnixTime(from),
           lt: getUnixTime(to),
         },
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    const getClickWW = await ctx.prisma.traffic.findMany({
+      where: {
+        ...getTypeFilter(type),
+        unixRdate: {
+          gte: getUnixTime(from),
+          lt: getUnixTime(to),
+        },
+        affiliate_id: affiliate_id,
+        merchant_id: merchant_id,
       },
       include: {
         merchant: { select: { name: true } },
@@ -162,63 +149,141 @@ export const clicksReport = async ({
       },
     });
 
-  const type_filter = getTypeFilter(type);
-  const list_profiles = await listProfiles();
-  // const totalRecords = await getTotalRecords(type_filter, unique_id, from, to);
-  const clickResult = await getClickWW(from, to);
-  const clickww = clickResult?.result;
-  const regArr = [];
+    const list_profiles = listProfiles;
+    const totalRecords = getTotalRecords;
+    const clickww = getClickWW;
+    // const regArr = [];
 
-  if (Object.keys(clickww).length > 0) {
-    for (let key = 0; key < Object.keys(clickww).length; key++) {
-      if (Number(clickww[key]?.uid) > 0) {
-        const reggResult = await paginate.data_reg.paginate({
-          limit: items_per_page ? items_per_page : 10,
-          page: page,
+    const l = 0;
+    const totalLeads = 0;
+    const totalDemo = 0;
+    const totalReal = 0;
+    const ftd = 0;
+    const ftd_amount = 0;
+    let real_ftd = 0;
+    const real_ftd_amount = 0;
+    const netRevenue = 0;
+    const cpaAmount = 0;
+    const lots = 0;
+    const depositsAmount = 0;
+    const totalCom = 0;
+    let leads = 0;
+    let demo = 0;
+    let real = 0;
+
+    for (const item of clickww) {
+      const id = item.id;
+      const row = item;
+
+      if (id) {
+        if (!clickArray[id]) {
+          clickArray[id] = {};
+        }
+
+        clickArray[id].id = row.id;
+        clickArray[id].admin_id = row.admin_id;
+        clickArray[id].affiliate = row.affiliate;
+        clickArray[id].affiliate_id = row.affiliate_id;
+        clickArray[id].alt = row.alt;
+        clickArray[id].bannerType = row.bannerType;
+        clickArray[id].banner_id = row.banner_id;
+        clickArray[id].broswerVersion = row.broswerVersion;
+        clickArray[id].browser = row.browser;
+        clickArray[id].clicks = row.clicks;
+        clickArray[id].views = row.views;
+        clickArray[id].country_id = row.country_id;
+        clickArray[id].ctag = row.ctag;
+        clickArray[id].file = row.file;
+        clickArray[id].group_id = row.group_id;
+        clickArray[id].height = row.height;
+        clickArray[id].width = row.width;
+        clickArray[id].ip = row.ip;
+        clickArray[id].language_id = row.language_id;
+        clickArray[id].merchant = row.merchant;
+        clickArray[id].merchant_id = row.merchant_id;
+        clickArray[id].os = row.os;
+        clickArray[id].osVersion = row.osVersion;
+        clickArray[id].param = row.param;
+        clickArray[id].param2 = row.param2;
+        clickArray[id].param3 = row.param3;
+        clickArray[id].param4 = row.param4;
+        clickArray[id].param5 = row.param5;
+        clickArray[id].platform = row.platform;
+        clickArray[id].product_id = row.product_id;
+        clickArray[id].profile_id = row.profile_id;
+        clickArray[id].promotion_id = row.promotion_id;
+        clickArray[id].rdate = row.rdate;
+        clickArray[id].unixRdate = row.unixRdate;
+        clickArray[id].refer_url = row.refer_url;
+        clickArray[id].title = row.title;
+        clickArray[id].type = row.type;
+        clickArray[id].uid = row.uid;
+        clickArray[id].url = row.url;
+        clickArray[id].userAgent = row.userAgent;
+        clickArray[id].valid = row.valid;
+      }
+
+      if (Number(item?.uid) > 0) {
+        const reggResult = await ctx.prisma.data_reg.findMany({
           where: {
             merchant_id: {
               gt: 0,
             },
             affiliate_id: affiliate_id,
             rdate: {
-              gte: clickww[key]?.rdate,
+              gte: item?.rdate,
             },
             // uid: clickww[key]?.uid,
           },
         });
-        let leads = 0;
-        let demo = 0;
-        let real = 0;
 
-        const regg = reggResult?.result;
-        for (let i = 0; i < Object.keys(regg).length; i++) {
-          regArr.push({
-            id: regg[i]?.id,
-            rdate: regg[i]?.rdate,
-            affiliate_id: regg[i]?.affiliate_id,
-            trader_id: regg[i]?.trader_id,
-            merchant_id: regg[i]?.merchant_id,
-            trader_alias: regg[i]?.trader_alias,
-            sales_status: regg[i]?.saleStatus,
-          });
+        const regg = reggResult;
 
-          if (regg[i]?.type === "lead") {
+        for (const reg_item of regg) {
+          clickArray[id].rdate = reg_item.rdate;
+          clickArray[id].trader_id = reg_item.trader_id;
+          clickArray[id].trader_name = reg_item.trader_alias;
+          clickArray[id].sales_status = reg_item.saleStatus;
+
+          if (reg_item.type === "lead") {
             leads += 1;
+            clickArray[id].leads = leads;
           }
-
-          if (regg[i]?.type === "demo") {
+          if (reg_item.type === "demo") {
             demo += 1;
+            clickArray[id].demo = demo;
           }
-
-          if (regg[i]?.type === "real") {
+          if (reg_item.type === "real") {
             real += 1;
+            clickArray[id].real = real;
           }
         }
-      }
-    }
-  }
 
-  /*
+        const arrFtds = await ctx.prisma.data_reg.findMany({
+          include: {
+            data_sales: {
+              select: {
+                amount: true,
+                rdate: true,
+                id: true,
+              },
+            },
+          },
+        });
+
+        for (const ftd_item of arrFtds) {
+          real_ftd++;
+          const real_ftd_amount = ftd_item.data_sales?.amount;
+          clickArray[id].real_ftd = real_ftd;
+          clickArray[id].real_ftd_amount = real_ftd_amount;
+          clickArray[id].ftd_amount = ftd_amount;
+          clickArray[id].ftd = ftd;
+        }
+      }
+
+      console.log("clicks array ----->", clickArray);
+
+      /*
               $sql = "SELECT data_reg.affiliate_id,data_reg.merchant_id,data_reg.initialftddate,tb1.rdate,data_reg.banner_id,data_reg.trader_id,data_reg.profile_id,tb1.amount, tb1.type AS data_sales_type  ,data_reg.country as country
               FROM data_sales as tb1 "
 
@@ -236,29 +301,29 @@ export const clicksReport = async ({
 
              */
 
-  interface SalesWWType {
-    affiliate_id: number;
-    merchant_id: number;
-    initialftddate: string;
-    rdate: Date;
-    banner_id: number;
-    trader_id: string;
-    profile_id: number;
-    amount: number;
-    type: data_sales_type;
-    country: string;
-  }
+      interface SalesWWType {
+        affiliate_id: number;
+        merchant_id: number;
+        initialftddate: string;
+        rdate: Date;
+        banner_id: number;
+        trader_id: string;
+        profile_id: number;
+        amount: number;
+        type: data_sales_type;
+        country: string;
+      }
 
-  const group_id = null;
-  const cond_group_id = group_id
-    ? Prisma.sql`AND tb1.group_id = ${group_id}`
-    : Prisma.empty;
+      const group_id = null;
+      const cond_group_id = group_id
+        ? Prisma.sql`AND tb1.group_id = ${group_id}`
+        : Prisma.empty;
 
-  const cond_unique_id = unique_id
-    ? Prisma.sql`AND data_reg.uid = ${unique_id}`
-    : Prisma.empty;
+      const cond_unique_id = unique_id
+        ? Prisma.sql`AND data_reg.uid = ${unique_id}`
+        : Prisma.empty;
 
-  const salesww = await paginate.$queryRaw<SalesWWType[]>`SELECT
+      const salesww = await ctx.prisma.$queryRaw<SalesWWType[]>`SELECT
            data_reg.affiliate_id,
            data_reg.merchant_id,
            data_reg.initialftddate,
@@ -279,181 +344,317 @@ AND        tb1.rdate >= ${from}
 AND        tb1.merchant_id >0
 ${cond_group_id}
 ${cond_unique_id}
-LIMIT ${offset}, ${items_per_page}
 `;
-  // (empty($group_id) ? '' : ' AND tb1.group_id = ' . $group_id . ' ')                 . (!empty($affiliate_id) ? ' and tb1.affiliate_id = ' . $affiliate_id :' ')                 . (isset($banner_id) && !empty($banner_id) ? ' AND data_reg.banner_id = "'.$banner_id.'"' :' ')
-  // .(!empty($unique_id) ? ' and data_reg.uid = ' . $unique_id :' ');`;
+      // (empty($group_id) ? '' : ' AND tb1.group_id = ' . $group_id . ' ')                 . (!empty($affiliate_id) ? ' and tb1.affiliate_id = ' . $affiliate_id :' ')                 . (isset($banner_id) && !empty($banner_id) ? ' AND data_reg.banner_id = "'.$banner_id.'"' :' ')
+      // .(!empty($unique_id) ? ' and data_reg.uid = ' . $unique_id :' ');`;
 
-  /**
-   * uncomment the include statement below to recreate the issue.
-   */
-  // const salesww = await ctx.prisma.data_sales.findMany({
-  //   include: {
-  //     data_reg: {
-  //       select: {
-  //         affiliate_id: true,
-  //         initialftdtranzid: true,
-  //         banner_id: true,
-  //         trader_id: true,
-  //         country: true,
-  //         profile_id: true,
-  //       },
-  //     },
-  //   },
-  //   where: {
-  //     affiliate_id: affiliate_id,
-  //     merchant_id: {
-  //       gt: 0,
-  //     },
-  //   },
-  //   take: 10,
-  // });
+      /**
+       * uncomment the include statement below to recreate the issue.
+       */
+      // const salesww = await ctx.prisma.data_sales.findMany({
+      //   include: {
+      //     data_reg: {
+      //       select: {
+      //         affiliate_id: true,
+      //         initialftdtranzid: true,
+      //         banner_id: true,
+      //         trader_id: true,
+      //         country: true,
+      //         profile_id: true,
+      //       },
+      //     },
+      //   },
+      //   where: {
+      //     affiliate_id: affiliate_id,
+      //     merchant_id: {
+      //       gt: 0,
+      //     },
+      //   },
+      //   take: 10,
+      // });
 
-  // 		const salesww = await ctx.prisma
-  // 			.$queryRaw(Prisma.sql`SELECT data_reg.affiliate_id,data_reg.merchant_id,data_reg.initialftddate,tb1.rdate,data_reg.banner_id,data_reg.trader_id,data_reg.profile_id,tb1.amount, tb1.type AS data_sales_type  ,data_reg.country as country FROM data_sales as tb1
+      // 		const salesww = await ctx.prisma
+      // 			.$queryRaw(Prisma.sql`SELECT data_reg.affiliate_id,data_reg.merchant_id,data_reg.initialftddate,tb1.rdate,data_reg.banner_id,data_reg.trader_id,data_reg.profile_id,tb1.amount, tb1.type AS data_sales_type  ,data_reg.country as country FROM data_sales as tb1
 
-  //   INNER JOIN data_reg AS data_reg ON tb1.merchant_id = data_reg.merchant_id AND tb1.trader_id = data_reg.trader_id AND data_reg.type = 'demo'
-  //   WHERE tb1.merchant_id > 0`);
-  let bonus = 0;
-  let volume = 0;
-  let chargeback = 0;
-  let withdrawal = 0;
-  let depositingAccounts = 0;
-  let sumDeposits = 0;
-  const balance_sheet = [];
+      //   INNER JOIN data_reg AS data_reg ON tb1.merchant_id = data_reg.merchant_id AND tb1.trader_id = data_reg.trader_id AND data_reg.type = 'demo'
+      //   WHERE tb1.merchant_id > 0`);
+      const bonus = 0;
+      const volume = 0;
+      const chargeback = 0;
+      const withdrawal = 0;
+      let depositingAccounts = 0;
+      const sumDeposits = 0;
+      const balance_sheet = [];
 
-  for (let i = 0; i < salesww.length; i++) {
-    if (salesww[i]?.type === "deposit") {
-      depositingAccounts += 1;
-      sumDeposits += salesww[i]?.amount || 0;
-    }
-    if (salesww[i]?.type === "bonus") {
-      bonus += salesww[i]?.amount || 0;
-    }
+      for (const sales_item of salesww) {
+        if (Number(sales_item?.type) === 1 || sales_item.type === "deposit") {
+          depositingAccounts++;
+          clickArray[id].depositingAccounts = depositingAccounts;
+          clickArray[id].sumDeposits += sales_item.amount;
+        }
+        if (sales_item.type === "bonus") {
+          clickArray[id].bonus += sales_item.amount;
+        }
+        if (sales_item.type === "withdrawal") {
+          clickArray[id].withdrawal += sales_item.amount;
+        }
+        if (sales_item.type === "chargeback") {
+          clickArray[id].chargeback += sales_item.amount;
+        }
+        if (sales_item.type === "volume") {
+          clickArray[id].volume += sales_item.amount;
+        }
+      }
 
-    if (salesww[i]?.type === "withdrawal") {
-      withdrawal += salesww[i]?.amount || 0;
-    }
+      // for (let i = 0; i < salesww.length; i++) {
+      //   if (salesww[i]?.type === "deposit") {
+      //     depositingAccounts += 1;
+      //     sumDeposits += salesww[i]?.amount || 0;
+      //   }
+      //   if (salesww[i]?.type === "bonus") {
+      //     bonus += salesww[i]?.amount || 0;
+      //   }
 
-    if (salesww[i]?.type === "volume") {
-      volume += salesww[i]?.amount || 0;
-    }
+      //   if (salesww[i]?.type === "withdrawal") {
+      //     withdrawal += salesww[i]?.amount || 0;
+      //   }
 
-    if (salesww[i]?.type === "chargeback") {
-      chargeback += salesww[i]?.amount || 0;
-    }
+      //   if (salesww[i]?.type === "volume") {
+      //     volume += salesww[i]?.amount || 0;
+      //   }
 
-    balance_sheet.push({
-      volume,
-      bonus,
-      chargeback,
-      withdrawal,
-    });
-  }
+      //   if (salesww[i]?.type === "chargeback") {
+      //     chargeback += salesww[i]?.amount || 0;
+      //   }
 
-  const revww = await paginate.data_stats.paginate({
-    limit: items_per_page ? items_per_page : 10,
-    page: page,
-    include: {
-      merchant: {
-        select: {
-          producttype: true,
+      //   balance_sheet.push({
+      //     volume,
+      //     bonus,
+      //     chargeback,
+      //     withdrawal,
+      //   });
+      // }
+
+      const revww = await ctx.prisma.data_stats.findMany({
+        include: {
+          merchant: {
+            select: {
+              producttype: true,
+            },
+          },
         },
-      },
-    },
+      });
+
+      const type_filter = {};
+      let intTotalRevenue = 0;
+
+      for (const item of revww) {
+        if (item.merchant.producttype === "casino") {
+          const getStatic = await ctx.prisma.data_stats.aggregate({
+            _sum: {
+              amount: true,
+            },
+            where: {
+              type: "static",
+            },
+          });
+
+          const bets = await ctx.prisma.data_stats.aggregate({
+            _sum: {
+              amount: true,
+            },
+            where: {
+              type: "bets",
+            },
+          });
+          const wins = await ctx.prisma.data_stats.aggregate({
+            _sum: {
+              amount: true,
+            },
+            where: {
+              type: "wins",
+            },
+          });
+          const jackpot = await ctx.prisma.data_stats.aggregate({
+            _sum: {
+              amount: true,
+            },
+            where: {
+              type: "jackpot",
+            },
+          });
+          const bonuses = await ctx.prisma.data_stats.aggregate({
+            _sum: {
+              amount: true,
+            },
+            where: {
+              type: "bonuses",
+            },
+          });
+          const removed_bonuses = await ctx.prisma.data_stats.aggregate({
+            _sum: {
+              amount: true,
+            },
+            where: {
+              type: "removed_bonuses",
+            },
+          });
+
+          if (!bets._sum.amount) bets._sum.amount = 0;
+          if (!wins._sum.amount) wins._sum.amount = 0;
+          if (!jackpot._sum.amount) jackpot._sum.amount = 0;
+          if (!bonuses._sum.amount) bonuses._sum.amount = 0;
+          if (!removed_bonuses._sum.amount) removed_bonuses._sum.amount = 0;
+
+          intTotalRevenue =
+            getStatic?._sum.amount ||
+            0 +
+              bets?._sum.amount -
+              wins?._sum.amount -
+              jackpot?._sum.amount -
+              bonuses?._sum.amount +
+              removed_bonuses?._sum.amount;
+        }
+
+        if (item.merchant.producttype === "sportsbetting") {
+          const netRevenue = await ctx.prisma
+            .$queryRaw(Prisma.sql`SELECT SUM(amount) FROM (SELECT trader_id, type, 
+									IF(
+									(type=10 OR type=12),
+									SUM(amount),
+									(IF((type=13 OR type=11 OR type=15),(SUM(amount)*-1),0))) as amount
+					FROM data_stats  GROUP BY trader_id,type 
+
+					UNION ALL 
+								   
+					SELECT trader_id, type, 
+								   IF((type = 10 OR type=12 OR type=6), (SUM(amount)*-1), 0) as amount
+					FROM data_sales  GROUP BY trader_id,type
+								  
+					)t1`);
+
+          intTotalRevenue = netRevenue;
+        }
+        let netRevenue = 0;
+        netRevenue += Number(intTotalRevenue);
+        clickArray[id].netRevenue += netRevenue;
+
+        // const merchantww = await ctx.prisma.merchants.findMany({
+        //   where: {
+        //     producttype: "Forex",
+        //     valid: 1,
+        //   },
+        // });
+
+        const ts = await ctx.prisma.data_stats.aggregate({
+          _sum: {
+            spread: true,
+            pnl: true,
+            turnover: true,
+          },
+          where: {
+            rdate: {
+              gte: item.rdate,
+            },
+            group_id: Number(group_id),
+            affiliate_id: affiliate_id,
+            merchant_id: row.merchant_id,
+          },
+        });
+
+        let volume = 0;
+        volume += ts?._sum?.turnover || 0;
+        clickArray[id].volume = volume;
+      }
+
+      // const merged: OutputType = [];
+
+      // for (let i = 0; i < clickww?.length; i++) {
+      //   merged.push({
+      //     ...clickww[i],
+      //     ...regArr[i],
+      //     // ...balance_sheet[i],
+      //   });
+      // }
+
+      // console.log("merged ------>", merged.length);
+    }
+    return Object.values(clickArray);
   });
 
-  debugSaveData("revww", revww);
-  debugSaveData("clickww", clickww);
-  debugSaveData("regArr", regArr);
-  debugSaveData("balance_sheet", balance_sheet);
+// export const getClicksReport = publicProcedure
+//   .input(paramsWithPage)
+//   .output(output)
+//   .query(clicksReport);
 
-  const merged: OutputType = [];
+// export const exportClicksReport = publicProcedure
+//   .input(paramsWithReport)
+//   .mutation(async function ({ ctx, input }) {
+//     const { exportType, ...params } = input;
 
-  for (let i = 0; i < clickww?.length; i++) {
-    merged.push({
-      ...clickww[i],
-      ...regArr[i],
-      // ...balance_sheet[i],
-    });
-  }
+//     const columns = [
+//       "ID",
+//       "UID",
+//       "Impression",
+//       "Click",
+//       "Date",
+//       "Type",
+//       "Merchant",
+//       "Banner ID",
+//       "Profile ID",
+//       "Param",
+//       "Param 2",
+//       "Refer URL",
+//       "Country",
+//       "IP",
+//       "Platform",
+//       "Operating System",
+//       "OS Version",
+//       "Browser",
+//       "Browser Version",
+//       "Trader ID",
+//       "Trader Alias",
+//       "Lead",
+//       "Demo",
+//       "Sales Status",
+//       "Accounts",
+//       "FTD",
+//       "Volume",
+//       "Withdrawal Amount",
+//       "ChargeBack Amount",
+//       "Active Traders",
+//     ];
 
-  return merged;
-};
+//     const file_date = new Date().toISOString();
+//     const generic_filename = `clicks-report${file_date}`;
 
-export const getClicksReport = publicProcedure
-  .input(paramsWithPage)
-  .output(output)
-  .query(clicksReport);
+//     console.log("export type ---->", exportType);
+//     const clicks_report = "clicks-report";
 
-export const exportClicksReport = publicProcedure
-  .input(paramsWithReport)
-  .mutation(async function ({ ctx, input }) {
-    const { exportType, ...params } = input;
+//     await exportReportLoop(
+//       exportType || "csv",
+//       columns,
+//       generic_filename,
+//       clicks_report,
+//       async (page, items_per_page) =>
+//         clicksReport({
+//           ctx,
+//           input: { ...params, page, items_per_page },
+//         })
+//     );
 
-    const columns = [
-      "ID",
-      "UID",
-      "Impression",
-      "Click",
-      "Date",
-      "Type",
-      "Merchant",
-      "Banner ID",
-      "Profile ID",
-      "Param",
-      "Param 2",
-      "Refer URL",
-      "Country",
-      "IP",
-      "Platform",
-      "Operating System",
-      "OS Version",
-      "Browser",
-      "Browser Version",
-      "Trader ID",
-      "Trader Alias",
-      "Lead",
-      "Demo",
-      "Sales Status",
-      "Accounts",
-      "FTD",
-      "Volume",
-      "Withdrawal Amount",
-      "ChargeBack Amount",
-      "Active Traders",
-    ];
+//     const bucketName = "reports-download-tmp";
+//     const serviceKey = path.join(
+//       __dirname,
+//       "../../../../../api-front-dashbord-a4ee8aec074c.json"
+//     );
 
-    const file_date = new Date().toISOString();
-    const generic_filename = `clicks-report${file_date}`;
-
-    console.log("export type ---->", exportType);
-    const clicks_report = "clicks-report";
-
-    await exportReportLoop(
-      exportType || "csv",
-      columns,
-      generic_filename,
-      clicks_report,
-      async (page, items_per_page) =>
-        clicksReport({
-          ctx,
-          input: { ...params, page, items_per_page },
-        })
-    );
-
-    const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
-
-    const public_url = uploadFile(
-      serviceKey,
-      "api-front-dashbord",
-      bucketName,
-      generic_filename,
-      exportType ? exportType : "json"
-    );
-    return public_url;
-  });
+//     const public_url = uploadFile(
+//       serviceKey,
+//       "api-front-dashbord",
+//       bucketName,
+//       generic_filename,
+//       exportType ? exportType : "json"
+//     );
+//     return public_url;
+//   });
