@@ -15,7 +15,7 @@ interface Props {
 export const FormControl = ({ children, showLabel }: Props) => {
   const { field, error, formContext } = useTsController<string>();
   const meta = useMetaEx();
-  const { label, className } = meta || {
+  const { label, className, optional } = meta || {
     label: "",
     placeholder: "",
   };
@@ -25,6 +25,7 @@ export const FormControl = ({ children, showLabel }: Props) => {
       {showLabel !== false && (
         <Label htmlFor={field.name} className="mb-8">
           {maybeConvertChild(label)}
+          {!optional && <span className="px-1 text-xl">*</span>}
         </Label>
       )}
       {children}

@@ -189,6 +189,7 @@ export function useMetaEx(): MetaEx {
   const disabled =
     typeof props?.disabled === "boolean" ? props.disabled : false;
 
+  console.log(`muly:useMetaEx ${meta.label}`, { meta });
   return { ...meta, disabled };
 }
 
