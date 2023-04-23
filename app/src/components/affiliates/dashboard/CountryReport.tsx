@@ -2,16 +2,8 @@ import { useState } from "react";
 import type { DashboardDeviceReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import CountryChart from "../../common/chart/CountryChart";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
-import { getDashboardCountryReport } from "@/server/api/routers/affiliates/dashboard-device-report";
 import { SelectInput } from "@/components/common/select-input";
+import { DashboardCountryReportType } from "../../../server/db-types";
 
 export const daysBackChoices = [
   { id: "90", title: "Last 90 Days" },
@@ -30,7 +22,7 @@ const AccountManager = () => {
     reportData?.map((item) => item?.CountryID ?? "") ?? [];
   const values: number[] =
     reportData?.map(
-      (item: DashboardDeviceReportType): number =>
+      (item: DashboardCountryReportType): number =>
         item?._sum[selectedReport as keyof typeof item._sum] as number
     ) ?? [];
   const reportDropDown = [

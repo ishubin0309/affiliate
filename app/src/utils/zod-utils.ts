@@ -68,7 +68,3 @@ export const zodRefineCheckArrayDuplicate = (
     }
   }
 };
-
-export const zodEnumFromNative = (nativeEnum: object) =>
-  // @ts-ignore
-  z.enum(Object.keys(nativeEnum));
