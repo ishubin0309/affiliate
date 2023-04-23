@@ -17,6 +17,7 @@ import {
   getTopMerchantCreative,
   upsertReportsField,
 } from "./dashboard";
+import { getDashboardCountryReport } from "./dashboard-country-report";
 import { getDashboardDeviceReport } from "./dashboard-device-report";
 import { deleteProfile, getProfiles, upsertProfile } from "./profile";
 import { getMerchantSubCreative, getMerchantSubCreativeMeta } from "./sub";
@@ -108,5 +109,6 @@ export const affiliatesRouter = createTRPCRouter({
 
   badQuerySample,
 
+  getDashboardCountryReport,
   getDashboardDeviceReport,
 });

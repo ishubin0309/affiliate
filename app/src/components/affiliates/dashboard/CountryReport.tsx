@@ -10,14 +10,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
+import { getDashboardCountryReport } from "@/server/api/routers/affiliates/dashboard-device-report";
+import { SelectInput } from "@/components/common/select-input";
+
+export const daysBackChoices = [
+  { id: "90", title: "Last 90 Days" },
+  { id: "30", title: "Last 30 Days" },
+  { id: "1", title: "Last 1 Day" },
+];
+
 const AccountManager = () => {
   const [selectedReport, setSelectedReport] = useState<string>("Clicks");
-  const [lastDays, setLastDays] = useState<number>(0);
-  const { data: reportData } = api.affiliates.getDashboardDeviceReport.useQuery(
-    {
-      lastDays,
-    }
-  );
+  const [lastDays, setLastDays] = useState<string>("90");
+  const { data: reportData } =
+    api.affiliates.getDashboardCountryReport.useQuery({
+      lastDays: Number(lastDays),
+    });
   const labels: string[] =
     reportData?.map((item) => item?.CountryID ?? "") ?? [];
   const values: number[] =
@@ -25,9 +33,11 @@ const AccountManager = () => {
       (item: DashboardDeviceReportType): number =>
         item?._sum[selectedReport as keyof typeof item._sum] as number
     ) ?? [];
-  const reportDropDown = reportData?.length
-    ? Object.keys(reportData[0]?._sum || {})
-    : [];
+  const reportDropDown = [
+    { id: "Clicks", title: "Clicks" },
+    { id: "BannerID", title: "Banner" },
+    { id: "Impressions", title: "Impressions" },
+  ];
 
   return (
     <div className="rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
@@ -35,23 +45,14 @@ const AccountManager = () => {
         Country Report
       </div>
       <div className="mb-7 flex justify-between">
-        <div className="text-base font-light">session by device</div>
+        <div className="text-base font-light">Session by country</div>
         <div className="flex items-center justify-center text-xs font-light">
-          <Select
-            defaultValue={"90"}
-            onValueChange={(e: string) => setLastDays(parseInt(e))}
-          >
-            <SelectTrigger className="pr-2 text-xs font-light text-black">
-              <SelectValue placeholder="Select days" />
-            </SelectTrigger>
-            <SelectContent className="pr-2 text-xs font-light text-black">
-              <SelectGroup>
-                <SelectItem value={"90"}>Last 90 Days</SelectItem>
-                <SelectItem value={"30"}>Last 30 Days</SelectItem>
-                <SelectItem value={"1"}>Last 1 Day</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <SelectInput
+            choices={daysBackChoices}
+            value={lastDays}
+            onChange={setLastDays}
+            placeholder="Select days"
+          />
         </div>
       </div>
       <div className="align-center mb-5 flex justify-center">
@@ -61,20 +62,11 @@ const AccountManager = () => {
       <div className="mb-3 flex justify-between">
         <div className="text-base font-medium text-[#2262C6]">Report</div>
         <div className="flex w-48 items-center justify-center text-xs">
-          <Select onValueChange={(e) => setSelectedReport(e)}>
-            <SelectTrigger className="w-full rounded-sm bg-[#EDF2F7] px-2 py-1">
-              <SelectValue placeholder="Clicks" />
-            </SelectTrigger>
-            <SelectContent className="">
-              <SelectGroup>
-                {reportDropDown.map((i: string) => (
-                  <>
-                    <SelectItem value={i}>{i}</SelectItem>
-                  </>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <SelectInput
+            value={selectedReport}
+            onChange={setSelectedReport}
+            choices={reportDropDown}
+          />
         </div>
       </div>
 

@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { affiliates_paymentMethod } from "@prisma/client";
+import { zodEnumFromNative } from "@/utils/zod-utils";
 
 export const schema = z
   .object({
-    paymentMethod: z
-      .nativeEnum(affiliates_paymentMethod)
+    paymentMethod: zodEnumFromNative(affiliates_paymentMethod)
       .describe("Payment Method")
       .meta({
         choices: [
