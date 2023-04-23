@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { DashboardDeviceReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import CountryChart from "../../common/chart/CountryChart";
 import { SelectInput } from "@/components/common/select-input";
@@ -11,7 +10,7 @@ export const daysBackChoices = [
   { id: "1", title: "Last 1 Day" },
 ];
 
-const AccountManager = () => {
+const CountryReport = () => {
   const [selectedReport, setSelectedReport] = useState<string>("Clicks");
   const [lastDays, setLastDays] = useState<string>("90");
   const { data: reportData } =
@@ -69,4 +68,4 @@ const AccountManager = () => {
   );
 };
 
-export default AccountManager;
+export default CountryReport;
