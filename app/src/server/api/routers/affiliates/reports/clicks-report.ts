@@ -87,9 +87,9 @@ export const getClicksReport = publicProcedure
   )
   .query(async ({ ctx, input: { from, to, unique_id, trader_id, type } }) => {
     const data: any = {};
-    let uid: any = [];
+    const uid: string[] = [];
     let type_filter = {};
-    let clickArray: any = {};
+    const clickArray: any = {};
     const MerchantsCreativeDataItems: any = {};
     const AffiliatesDataItems: any = {};
     const ReportTradersDataItems: any = {};
@@ -115,31 +115,65 @@ export const getClicksReport = publicProcedure
         ...type_filter,
         affiliate_id: affiliate_id,
         merchant_id: merchant_id,
+        uid: unique_id,
+        rdate: {
+          gte: from,
+          lte: to,
+        },
+      },
+      include: {
+        country: {
+          select: {
+            title: true,
+            code: true,
+            id: true,
+          },
+        },
       },
     });
 
+    // console.log("traffic full data ----->", traficDataFull);
+
     for (const item of traficDataFull) {
-      const id = item.id;
       uid.push(item.uid);
-      data[id] = item;
     }
 
     const totalRecords = await ctx.prisma.traffic.aggregate({
       _count: {
         id: true,
       },
+      where: {
+        ...type_filter,
+        affiliate_id: affiliate_id,
+        merchant_id: merchant_id,
+        uid: unique_id,
+        rdate: {
+          gte: from,
+          lte: to,
+        },
+      },
     });
 
-    const MerchantsData = await ctx.prisma.merchants.findMany();
+    const MerchantsData = await ctx.prisma.merchants.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
     for (const merchant of MerchantsData) {
-      let id = merchant.id;
+      const id = merchant.id;
       MerchantsDataItems[id] = {};
       MerchantsDataItems[id].id = merchant.id;
       MerchantsDataItems[id].name = merchant.name;
     }
 
-    const MerchantsCreativeData =
-      await ctx.prisma.merchants_creative.findMany();
+    const MerchantsCreativeData = await ctx.prisma.merchants_creative.findMany({
+      select: {
+        id: true,
+        title: true,
+        url: true,
+      },
+    });
     // console.log("merchant creative data ----->", MerchantsCreativeData);
 
     for (const item of MerchantsCreativeData) {
@@ -150,10 +184,15 @@ export const getClicksReport = publicProcedure
       MerchantsCreativeDataItems[id].url = item.url;
     }
 
-    const AffiliatesData = await ctx.prisma.affiliates.findMany();
+    const AffiliatesData = await ctx.prisma.affiliates.findMany({
+      select: {
+        id: true,
+        username: true,
+      },
+    });
 
     for (const item of AffiliatesData) {
-      let id = item?.id;
+      const id = item?.id;
       AffiliatesDataItems[id] = {};
       AffiliatesDataItems[id].id = item.id;
       AffiliatesDataItems[id].username = item.username;
@@ -164,9 +203,9 @@ export const getClicksReport = publicProcedure
         Date: {
           gte: from,
         },
-        // ClickDetails: {
-        //   in: uid,
-        // },
+        ClickDetails: {
+          in: uid,
+        },
       },
     });
     let lead = 0;
@@ -220,7 +259,7 @@ export const getClicksReport = publicProcedure
     }
 
     for (const item of traficDataFull) {
-      let id = item.id;
+      const id = item.id;
       clickArray[id] = {};
       clickArray[id].id = item.id;
       clickArray[id].uid = item.uid;
@@ -236,7 +275,7 @@ export const getClicksReport = publicProcedure
       clickArray[id].param4 = item.param4;
       clickArray[id].param5 = item.param5;
       clickArray[id].refer_url = item.refer_url;
-      clickArray[id].country = item.country_id;
+      clickArray[id].country = item.country.title;
       clickArray[id].ip = item.ip;
       clickArray[id].affiliate_id = item.affiliate_id;
       clickArray[id].platform = item.platform;
@@ -251,30 +290,34 @@ export const getClicksReport = publicProcedure
       clickArray[id].merchant_name = MerchantsDataItems[item.merchant_id].name;
       clickArray[id].affiliate_username =
         AffiliatesDataItems[item.affiliate_id].username;
-      clickArray[id].volume = ReportTradersDataItems[item.uid]?.volume;
-      clickArray[id].trader_id = ReportTradersDataItems[item.uid]?.trader_id;
+      clickArray[id].volume = ReportTradersDataItems[item?.uid]?.volume;
+      clickArray[id].trader_id = ReportTradersDataItems[item?.uid]?.trader_id;
       clickArray[id].trader_name =
-        ReportTradersDataItems[item.uid]?.trader_name;
-      clickArray[id].lead = ReportTradersDataItems[item.uid]?.lead;
-      clickArray[id].demo = ReportTradersDataItems[item.uid]?.demo;
-      clickArray[id].real = ReportTradersDataItems[item.uid]?.real;
+        ReportTradersDataItems[item?.uid]?.trader_name;
+      clickArray[id].lead = ReportTradersDataItems[item?.uid]?.lead;
+      clickArray[id].demo = ReportTradersDataItems[item?.uid]?.demo;
+      clickArray[id].real = ReportTradersDataItems[item?.uid]?.real;
       clickArray[id].sales_status =
-        ReportTradersDataItems[item.uid]?.sales_status;
-      clickArray[id].ftd_amount = ReportTradersDataItems[item.uid]?.ftd_amount;
-      clickArray[id].ftd = ReportTradersDataItems[item.uid]?.ftd;
+        ReportTradersDataItems[item?.uid]?.sales_status;
+      clickArray[id].ftd_amount = ReportTradersDataItems[item?.uid]?.ftd_amount;
+      clickArray[id].ftd = ReportTradersDataItems[item?.uid]?.ftd;
       clickArray[id].depositingAccounts =
-        ReportTradersDataItems[item.uid]?.depositingAccounts;
+        ReportTradersDataItems[item?.uid]?.depositingAccounts;
       clickArray[id].sumDeposits =
-        ReportTradersDataItems[item.uid]?.sumDeposits;
-      clickArray[id].bonus = ReportTradersDataItems[item.uid]?.bonus;
-      clickArray[id].withdrawal = ReportTradersDataItems[item.uid]?.withdrawal;
-      clickArray[id].chargeback = ReportTradersDataItems[item.uid]?.chargeback;
-      clickArray[id].netRevenue = ReportTradersDataItems[item.uid]?.netRevenue;
-      clickArray[id].pnl = ReportTradersDataItems[item.uid]?.pnl;
-      clickArray[id].QFTD = ReportTradersDataItems[item.uid]?.QFTD;
-      clickArray[id].totalCom = ReportTradersDataItems[item.uid]?.totalCom;
+        ReportTradersDataItems[item?.uid]?.sumDeposits;
+      clickArray[id].bonus = ReportTradersDataItems[item?.uid]?.bonus;
+      clickArray[id].withdrawal = ReportTradersDataItems[item?.uid]?.withdrawal;
+      clickArray[id].chargeback = ReportTradersDataItems[item?.uid]?.chargeback;
+      clickArray[id].netRevenue = ReportTradersDataItems[item?.uid]?.netRevenue;
+      clickArray[id].pnl = ReportTradersDataItems[item?.uid]?.pnl;
+      clickArray[id].QFTD = ReportTradersDataItems[item?.uid]?.QFTD;
+      clickArray[id].totalCom = ReportTradersDataItems[item?.uid]?.totalCom;
     }
-    console.log("merchant creative data items ---->", clickArray);
+
+    console.log(
+      "merchant creative data items ---->",
+      Object.values(clickArray)[0]
+    );
 
     return Object.values(clickArray);
   });

@@ -99,7 +99,7 @@ export const ClicksReport = () => {
       cell: (info) => info.getValue(),
       header: "Refer URL",
     }),
-    columnHelper.accessor("country_id", {
+    columnHelper.accessor("country", {
       cell: (info) => info.getValue(),
       header: "Country",
     }),
