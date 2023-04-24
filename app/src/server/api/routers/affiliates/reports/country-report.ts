@@ -3,11 +3,12 @@
  * @param userInfo - An object containing user information such as level and group ID.
  * @returns An object containing country data and report filename.
  */
-import { PrismaClient, Prisma } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
-import { Sql } from "@prisma/client/runtime";
+import type { Sql } from "@prisma/client/runtime";
 
 interface UserInfo {
   level: string;

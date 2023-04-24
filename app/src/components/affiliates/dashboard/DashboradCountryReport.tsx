@@ -2,7 +2,7 @@ import { useState } from "react";
 import { api } from "../../../utils/api";
 import CountryChart from "../../common/chart/CountryChart";
 import { SelectInput } from "@/components/common/select-input";
-import { DashboardCountryReportType } from "../../../server/db-types";
+import type { DashboardCountryReportType } from "../../../server/db-types";
 
 export const daysBackChoices = [
   { id: "90", title: "Last 90 Days" },

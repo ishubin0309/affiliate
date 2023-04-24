@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChoiceType } from "@/utils/zod-meta";
+import type { ChoiceType } from "@/utils/zod-meta";
 
 interface Props {
   value: string;
