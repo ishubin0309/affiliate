@@ -12,14 +12,14 @@ import Sidebar from "../components/affiliates/layout/Sidebar";
 
 const AffiliatesLayout = ({ children }: PropsWithChildren) => {
   const desktop = useMediaQuery("(min-width: 768px)");
-  const [collapseShow, setCollapseShow] = React.useState(false);
+  const [collapseShow, setCollapseShow] = React.useState(true);
   const [tempCollapseShow, setTempCollapseShow] =
     useState<boolean>(collapseShow);
 
   const handleChangeCollapseShow = () => {
-    if (desktop) {
-      setCollapseShow(!collapseShow);
-    }
+    //if (desktop) {
+    setCollapseShow(!collapseShow);
+    //}
     setTempCollapseShow(!collapseShow);
   };
 

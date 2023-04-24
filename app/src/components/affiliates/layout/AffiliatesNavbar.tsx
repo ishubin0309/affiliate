@@ -9,6 +9,7 @@ import { Facebook, Instagram, Twitter } from "lucide-react";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
+import { useProSidebar } from "react-pro-sidebar";
 import NotificationDropDown from "../../Dropdowns/NotificationDropdown";
 
 interface Props {
@@ -19,6 +20,7 @@ interface Props {
 const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
   const [selectLanguageItem, setSelectLanguageItem] =
     useState<LanguageOption | null>(null);
+  const { collapseSidebar, toggleSidebar } = useProSidebar();
 
   return (
     <>
@@ -30,13 +32,14 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
               <a
                 onClick={(e) => {
                   e.preventDefault();
+                  collapseSidebar();
+                  //toggleSidebar(); for mobile
                   setCollapseShow(!collapseShow);
                 }}
               >
                 <span
                   className={
-                    (collapseShow ? "-rotate-90 " : "rotate-0 ") +
-                    "bg-blueGray-200 inline-flex h-12 w-12 items-center justify-center text-sm text-white duration-300"
+                    "bg-blueGray-200 inline-flex h-12 w-12 -rotate-90 items-center justify-center text-sm text-white duration-300"
                   }
                 >
                   <SideMenuIcon />

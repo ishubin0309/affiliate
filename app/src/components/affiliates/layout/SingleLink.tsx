@@ -1,6 +1,8 @@
-import { Image } from "@chakra-ui/react";
+//import { Image } from "@chakra-ui/react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
+import { MenuItem } from "react-pro-sidebar";
 
 interface Props {
   activeName: string;
@@ -38,14 +40,14 @@ const SingleLink = ({
         setCollapseShow(false);
       }}
     >
-      <Link
-        className="text-white-600 hover:text-white-800 relative flex h-11 flex-row items-center pl-4 hover:bg-white focus:outline-none dark:hover:bg-gray-600"
-        href={"/affiliates/" + link}
-      >
-        <div>
+      <MenuItem
+        component={<Link href={"/affiliates/" + link} />}
+        icon={
           <Image
-            alt="..."
+            alt="dashboard"
             className="w-6 border-none pt-0.5 align-middle"
+            height={50}
+            width={50}
             src={
               "/img/icons/" +
               link +
@@ -53,20 +55,17 @@ const SingleLink = ({
               ".png"
             }
           />
-        </div>
-        {collapseShow ? (
-          <span
-            className={
-              "ml-4 truncate text-base font-medium tracking-wide " +
-              (activeName == link ? "text-[#2262C6]" : "")
-            }
-          >
-            {linkName}
-          </span>
-        ) : (
-          ""
-        )}
-      </Link>
+        }
+      >
+        <span
+          className={
+            "ml-4 truncate text-base font-medium tracking-wide " +
+            (activeName == link ? "text-[#2262C6]" : "")
+          }
+        >
+          {linkName}
+        </span>
+      </MenuItem>
     </div>
   );
 };
