@@ -34,7 +34,7 @@ const schema = z.object({
   type: z.enum(["lead", "account", "sale", "qftd"]).describe("Type"),
   all_creative: z
     .boolean()
-    .optional()
+    .nullish()
     .describe("All Creative")
     .meta({
       beforeElement: () => <div className="">Select Creative</div>,
@@ -45,7 +45,6 @@ const schema = z.object({
     .describe("Creative")
     .meta({
       condition: (wizardInfo: WizardInfo, data?: any): ZodMetaDataItem => {
-        console.log(`muly:banner_id:condition`, { wizardInfo, data });
         const merchant_id = data.merchant_id;
         const merchants: any[] =
           // @ts-ignore
@@ -56,9 +55,13 @@ const schema = z.object({
           ({ id }: ChoiceType) => id === Number(merchant_id)
         );
 
+        console.log(
+          `muly:banner_id:condition ${merchant?.merchants_creative.length}`,
+          { wizardInfo, data, merchant }
+        );
         return {
           choices: merchant?.merchants_creative,
-          props: { disabled: !!data.all_creative },
+          props: { disabled: !!data.all_creative || !merchant },
         };
       },
     }),

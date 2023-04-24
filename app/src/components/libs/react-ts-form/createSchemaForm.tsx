@@ -45,6 +45,7 @@ import {
   isSchemaWithHiddenProperties,
 } from "./createFieldSchema";
 import { ChoiceType, MetaInfo, ZodMetaDataItem } from "@/utils/zod-meta";
+import { cn } from "@/lib/utils";
 
 /**
  * @internal
@@ -572,7 +573,7 @@ export function createTsForm<
         if (!cond) {
           return null;
         } else if (typeof cond === "object") {
-          meta = { ...meta, ...cond };
+          meta = { ...meta, ...(cond as object) };
         }
       }
 
@@ -622,6 +623,7 @@ export function createTsForm<
     ) {
       type SchemaKey = keyof z.infer<UnwrapEffects<SchemaType>>;
       const _schema = unwrapEffects(schema);
+      // @ts-ignore
       const shape: Record<string, RTFSupportedZodTypes> = _schema._def.shape();
       return Object.entries(shape).reduce(
         (accum, [key, type]: [SchemaKey, RTFSupportedZodTypes]) => {
@@ -640,13 +642,16 @@ export function createTsForm<
       ) as RenderedFieldMap<SchemaType>;
     }
 
+    const propsDesc = formContext.formMeta.meta;
     const renderedFields = renderFields(schema, props);
     const renderedFieldNodes = flattenRenderedElements(renderedFields);
     return (
       <FormProvider {..._form}>
         {/* @ts-ignore */}
         <ActualFormComponent
+          {...propsDesc}
           {...formProps}
+          className={cn(formProps?.className, propsDesc?.className)}
           onSubmit={submitFn}
           formContext={formContext}
         >

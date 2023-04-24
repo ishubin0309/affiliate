@@ -8,6 +8,7 @@ import type { SubAffiliateReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
+import { creativeType } from "@/components/affiliates/reports/TraderReports";
 
 export const SubAffiliateReport = () => {
   const router = useRouter();
@@ -104,45 +105,6 @@ export const SubAffiliateReport = () => {
       cell: (info) => info.getValue() as number,
       header: "Your Commission",
     }),
-  ];
-
-  const creativeType = [
-    {
-      id: "",
-      title: "All",
-    },
-    {
-      id: "image",
-      title: "Image",
-    },
-    {
-      id: "mobileleader",
-      title: "Mobile Leader",
-    },
-    {
-      id: "mobilesplash",
-      title: "Mobile Splash",
-    },
-    {
-      id: "flash",
-      title: "Flash",
-    },
-    {
-      id: "widget",
-      title: "Widget",
-    },
-    {
-      id: "link",
-      title: "Text Link",
-    },
-    {
-      id: "mail",
-      title: "Email",
-    },
-    {
-      id: "coupon",
-      title: "Coupon",
-    },
   ];
 
   return (

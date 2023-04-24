@@ -13,6 +13,7 @@ export const SearchText = ({ varName, label }: Props) => {
 
   return (
     <Input
+      className="w-full md:w-40"
       id={varName}
       type="search"
       placeholder={label === undefined ? "Search..." : label}

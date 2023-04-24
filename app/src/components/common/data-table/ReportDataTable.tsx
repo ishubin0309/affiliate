@@ -30,6 +30,8 @@ export function ReportDataTable<Data extends object>({
     state: {
       sorting,
     },
+    // manualPagination: true,
+    // initialState: { pagination: { pageSize: 50, pageIndex: 0 } },
   });
 
   // console.log(

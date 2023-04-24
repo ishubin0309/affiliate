@@ -41,7 +41,7 @@ export const SearchSelect = ({
   console.log(`muly:SearchSelect`, { placeholder, label });
 
   return (
-    <div className="mb-4 md:w-1/6">
+    <div className="w-full min-w-fit md:w-40">
       <label className="mb-1 block text-sm font-bold text-gray-700">
         {label}
       </label>
