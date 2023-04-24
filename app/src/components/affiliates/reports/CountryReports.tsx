@@ -10,8 +10,12 @@ import type { ExportType } from "@/server/api/routers/affiliates/reports/reports
 import { creativeType } from "@/components/affiliates/reports/TraderReports";
 import { api } from "@/utils/api";
 import { ClicksReportType, CountryReportType } from "../../../server/db-types";
-import { useSearchContext } from "@/components/common/search/search-context";
-import { sub } from "date-fns";
+import {
+  getDateParam,
+  getNumberParam,
+  useSearchContext,
+} from "@/components/common/search/search-context";
+import { parse, sub } from "date-fns";
 
 const columnHelper = createColumnHelper<CountryReportType>();
 const createColumn = (id: keyof CountryReportType, header: string) =>
@@ -49,12 +53,26 @@ export const CountryReports = () => {
     values: { merchant_id, from, to },
   } = useSearchContext();
 
-  const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
-  const { data, isLoading } = api.affiliates.getCountryReport.useQuery({
-    from: new Date(from || sub(new Date(), { months: 6 })),
-    to: new Date(to || new Date()),
-    merchant_id: merchant_id ? Number(merchant_id) : undefined,
-  });
+  const params = {
+    from,
+    to,
+    merchant_id,
+  };
+
+  const { data: merchants } = api.affiliates.getAllMerchants.useQuery(
+    undefined,
+    { keepPreviousData: true, refetchOnWindowFocus: false }
+  );
+  const { data, isLoading } = api.affiliates.getCountryReport.useQuery(
+    {
+      from: getDateParam(from),
+      to: getDateParam(to),
+      merchant_id: getNumberParam(merchant_id),
+    },
+    { keepPreviousData: true, refetchOnWindowFocus: false }
+  );
+
+  console.log(`muly:CountryReports:render`, { data, params });
 
   return (
     <ReportControl

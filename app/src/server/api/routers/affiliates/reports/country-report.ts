@@ -3,10 +3,11 @@
  * @param userInfo - An object containing user information such as level and group ID.
  * @returns An object containing country data and report filename.
  */
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
+import { Sql } from "@prisma/client/runtime";
 
 interface UserInfo {
   level: string;
@@ -64,58 +65,44 @@ export const countryReport = async ({
   const userLevel: string = userInfo.level;
   const group_id = userLevel === "manager" ? userInfo.group_id : null;
 
-  let where = " 1 = 1 "; // Set a default where condition to retrieve all data
-  let whereDashboard = " 1 = 1 "; // Set a default where condition for dashboard data
-
-  const appendConditionS = (where: string, condition: string, value?: string) =>
-    value !== null && value !== undefined
-      ? `${where} AND ${condition} = '${value}' `
-      : where;
+  let where = Prisma.sql`1 = 1`; // Set a default where condition to retrieve all data
+  let whereDashboard = Prisma.sql`1 = 1`; // Set a default where condition for dashboard data
+  let install_main = Prisma.sql`1 = 1`;
+  let traders_main = Prisma.sql`1 = 1`;
 
   const appendCondition = (
-    where: string,
+    where: Sql,
     condition: string,
-    value?: number | null
-  ) =>
-    value !== null && value !== undefined
-      ? `${where} AND ${condition} = ${value} `
-      : where;
+    value?: string | number | null
+  ) => {
+    if (value !== null && value !== undefined) {
+      where = Prisma.sql`${where} AND ${condition} = ${value}`;
+    }
+    return where;
+  };
 
   where = appendCondition(where, "group_id", group_id);
-  where = appendCondition(where, "MerchantID", merchant_id);
-  whereDashboard = appendCondition(whereDashboard, "MerchantID", merchant_id);
-  where = appendCondition(where, "AffiliateID", affiliate_id);
-  whereDashboard = appendCondition(whereDashboard, "AffiliateID", affiliate_id);
+  install_main = appendCondition(install_main, "group_id", group_id);
+  traders_main = appendCondition(traders_main, "group_id", group_id);
 
-  where = appendConditionS(where, "country_id", country_id);
-  whereDashboard = appendConditionS(whereDashboard, "CountryID", country_id);
+  where = appendCondition(where, "merchant_id", merchant_id);
+  install_main = appendCondition(install_main, "merchant_id", merchant_id);
+  traders_main = appendCondition(traders_main, "merchant_id", merchant_id);
+  whereDashboard = appendCondition(whereDashboard, "merchant_id", merchant_id);
 
-  let where_main: string = where; // Copy the where clause to a variable for main data
-  where_main = where_main.replace("affiliate_id", "traffic.affiliate_id"); // Replace any instances of 'affiliate_id' with 'traffic.affiliate_id'
-  where_main = where_main.replace("merchant_id", "traffic.merchant_id"); // Replace any instances of 'merchant_id' with 'traffic.merchant_id'
-  where_main = where_main.replace("country_id", "traffic.country_id"); // Replace any instances of 'country_id' with 'traffic.country_id'
-
-  let install_main: string = where; // Copy the where clause to a variable for installation data
-  install_main = install_main.replace(
+  where = appendCondition(where, "affiliate_id", affiliate_id);
+  install_main = appendCondition(install_main, "affiliate_id", affiliate_id);
+  traders_main = appendCondition(traders_main, "AffiliateID", affiliate_id);
+  whereDashboard = appendCondition(
+    whereDashboard,
     "affiliate_id",
-    "data_install.affiliate_id"
-  ); // Replace any instances of 'affiliate_id' with 'data_install.affiliate_id'
-  install_main = install_main.replace(
-    "merchant_id",
-    "data_install.merchant_id"
-  ); // Replace any instances of 'merchant_id' with 'data_install.merchant_id'
-  install_main = install_main.replace("country_id", "data_install.country"); // Replace any instances of 'country_id' with 'data_install.country'
+    affiliate_id
+  );
 
-  let traders_main: string = where; // Copy the where clause to a variable for trader data
-  traders_main = traders_main.replace(
-    "affiliate_id",
-    "ReportTraders.AffiliateID"
-  ); // Replace any instances of 'affiliate_id' with 'ReportTraders.AffiliateID'
-  traders_main = install_main.replace(
-    "merchant_id",
-    "ReportTraders.merchant_id"
-  ); // Replace any instances of 'merchant_id' with 'data_install.merchant_id'
-  traders_main = install_main.replace("country_id", "ReportTraders.country"); // Replace any instances of 'country_id' with 'data_install.country'
+  where = appendCondition(where, "country_id", country_id);
+  install_main = appendCondition(install_main, "country_id", country_id);
+  traders_main = appendCondition(traders_main, "country_id", country_id);
+  whereDashboard = appendCondition(whereDashboard, "CountryID", country_id);
 
   // $sqlMerchants = "SELECT * from merchants";
   // $MerchantsData = function_mysql_query($sqlMerchants,__FILE__);
@@ -151,7 +138,7 @@ export const countryReport = async ({
   // }
 
   const getInstallationsData = async (
-    install_main: string,
+    install_main: Sql,
     from: Date,
     to: Date
   ): Promise<{ [key: string]: number }> => {
@@ -165,8 +152,8 @@ export const countryReport = async ({
         SELECT COUNT(affiliate_id) AS installations, country
         FROM data_install
         WHERE ${install_main}
-          AND data_install.rdate >= '${from}'
-          AND data_install.rdate <= '${to}'
+          AND data_install.rdate >= ${from}
+          AND data_install.rdate <= ${to}
         GROUP BY country
       `;
 
@@ -286,7 +273,10 @@ export const countryReport = async ({
         SUM(CASE WHEN (ReportTraders.PNL > 0 OR ReportTraders.NextDeposits > 0 OR ReportTraders.Volume > 0 ) THEN 1 ELSE 0 END) as Qftd,
         SUM(CASE ReportTraders.FirstDeposit WHEN ReportTraders.FirstDeposit > '0000-00-00 00:00:00' THEN 1 ELSE 0 END) as FirstDeposit
         FROM ReportTraders
-        WHERE ReportTraders.RegistrationDate >= '${from}' AND ReportTraders.RegistrationDate <= '${to}'  AND ${traders_main} GROUP BY Country`;
+        WHERE ReportTraders.RegistrationDate >= ${from} AND
+        ReportTraders.RegistrationDate <= ${to} AND
+        ${traders_main}
+        GROUP BY Country`;
 
   const countryArray: Record<string, CountryDataType> = {};
 
