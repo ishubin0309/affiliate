@@ -280,35 +280,6 @@ export const getConversionChart = publicProcedure
     );
   });
 
-export const getCountryReport = publicProcedure.query(async ({ ctx }) => {
-  const data = await ctx.prisma.commissions.groupBy({
-    by: ["merchant_id", "affiliate_id"],
-    where: {
-      affiliate_id,
-      merchant_id: merchant_id ? merchant_id : 1,
-    },
-    _sum: {
-      Commission: true,
-    },
-  });
-
-  const merchants = await ctx.prisma.merchants.findMany({
-    where: {
-      id: {
-        in: data.map(({ merchant_id }) => merchant_id),
-      },
-    },
-  });
-
-  return data.map((item) => {
-    const merchant = merchants.find((d) => d.id === item.merchant_id);
-    return {
-      ...item,
-      country: merchant?.country,
-    };
-  });
-});
-
 export const getReportsHiddenCols = publicProcedure.query(async ({ ctx }) => {
   const level = "affiliate";
   const location = level + "->dashStatCols";

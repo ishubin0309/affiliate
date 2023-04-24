@@ -2,7 +2,7 @@ import { useState } from "react";
 import { api } from "../../../utils/api";
 import CountryChart from "../../common/chart/CountryChart";
 import { SelectInput } from "@/components/common/select-input";
-import { DashboardCountryReportType } from "../../../server/db-types";
+import type { DashboardCountryReportType } from "../../../server/db-types";
 
 export const daysBackChoices = [
   { id: "90", title: "Last 90 Days" },
@@ -10,7 +10,7 @@ export const daysBackChoices = [
   { id: "1", title: "Last 1 Day" },
 ];
 
-const CountryReport = () => {
+const DashboardCountryReport = () => {
   const [selectedReport, setSelectedReport] = useState<string>("Clicks");
   const [lastDays, setLastDays] = useState<string>("90");
   const { data: reportData } =
@@ -68,4 +68,4 @@ const CountryReport = () => {
   );
 };
 
-export default CountryReport;
+export default DashboardCountryReport;

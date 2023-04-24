@@ -10,7 +10,6 @@ import { getMerchantCreative, getMerchantCreativeMeta } from "./creative";
 import {
   getAllPerformanceChart,
   getConversionChart,
-  getCountryReport,
   getDashboard,
   getPerformanceChart,
   getReportsHiddenCols,
@@ -49,6 +48,7 @@ import {
   getPixelMonitorMeta,
   upsertPixelMonitor,
 } from "./pixel";
+import { getCountryReport } from "@/server/api/routers/affiliates/reports/country-report";
 
 export const affiliatesRouter = createTRPCRouter({
   getDashboard,
@@ -56,7 +56,6 @@ export const affiliatesRouter = createTRPCRouter({
   getPerformanceChart,
   getAllPerformanceChart,
   getConversionChart,
-  getCountryReport,
   getReportsHiddenCols,
   upsertReportsField,
 
@@ -89,6 +88,7 @@ export const affiliatesRouter = createTRPCRouter({
 
   getCommissionReport,
   getClicksReport,
+  getCountryReport,
   getDocuments,
 
   getCommissions,
