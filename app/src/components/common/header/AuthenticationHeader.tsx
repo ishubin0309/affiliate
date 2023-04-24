@@ -1,4 +1,4 @@
-import { Image } from "@chakra-ui/react";
+import Image from "next/image";
 interface Props {
   children?: React.ReactNode;
 }
@@ -11,6 +11,7 @@ const AuthenticationHeader = ({ children }: Props) => {
           className="ml-1 mr-2 inline-block h-auto w-[115px]"
           src="/img/logo.png"
           width="115"
+          height={115}
           alt="logo"
         />
       </div>
