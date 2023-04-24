@@ -63,6 +63,8 @@ export type CommissionReportType =
   RouterOutput["affiliates"]["getCommissionReport"][0];
 
 export type ClicksReportType = RouterOutput["affiliates"]["getClicksReport"][0];
+export type CountryReportType =
+  RouterOutput["affiliates"]["getCountryReport"][0];
 
 export type InstallReportType =
   RouterOutput["affiliates"]["getInstallReport"][0];

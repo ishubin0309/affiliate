@@ -10,7 +10,7 @@ export const daysBackChoices = [
   { id: "1", title: "Last 1 Day" },
 ];
 
-const CountryReport = () => {
+const DashboardCountryReport = () => {
   const [selectedReport, setSelectedReport] = useState<string>("Clicks");
   const [lastDays, setLastDays] = useState<string>("90");
   const { data: reportData } =
@@ -68,4 +68,4 @@ const CountryReport = () => {
   );
 };
 
-export default CountryReport;
+export default DashboardCountryReport;
