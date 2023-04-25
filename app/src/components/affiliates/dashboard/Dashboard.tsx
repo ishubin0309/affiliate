@@ -156,9 +156,9 @@ export const Dashboard = () => {
     setSelectColumnsMode(!selectColumnsMode);
     console.log(selectColumnsMode, "selectColumnsMode");
     if (selectColumnsMode) {
-      setReportFields([...selectedCards, ...unSelectedCards]);
-      setSelectedCards([]);
-      setUnSelectedCards([]);
+      setReportFields(selectedCards);
+      // setSelectedCards([]);
+      // setUnSelectedCards([]);
     }
   };
 
