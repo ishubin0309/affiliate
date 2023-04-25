@@ -1,14 +1,9 @@
 import { ChevronUp } from "lucide-react";
 import DeviceReportChart from "../../common/chart/DeviceReportChart";
 import DoughnutChart from "../../common/chart/DoughnutChart";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
+import { SelectInput } from "@/components/common/select-input";
+import { daysBackChoices } from "@/components/affiliates/dashboard/DashboradCountryReport";
+import { useState } from "react";
 
 const reportInfo = [
   {
@@ -34,25 +29,32 @@ const reportInfo = [
   },
 ];
 
+const reportDropDown = [
+  { id: "SignUp", title: "SignUp" },
+  { id: "Acquisition", title: "Acquisition" },
+  { id: "Demo", title: "Demo" },
+  { id: "FTD", title: "FTD" },
+  { id: "Account", title: "Account" },
+  { id: "FTDAccount", title: "FTD Account" },
+  { id: "Withdrawal", title: "Withdrawal" },
+];
+
 const DeviceReport = () => {
+  const [selectedReport, setSelectedReport] = useState<string>("Clicks");
+  const [lastDays, setLastDays] = useState<string>("90");
+
   return (
     <div className="rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
       <div className="mb-3 text-xl font-bold text-primary">Device Report</div>
       <div className="mb-5 flex justify-between">
-        <div className="text-base font-light">session by device</div>
+        <div className="text-base font-light">Session by device</div>
         <div className="flex items-center justify-center text-xs font-light">
-          <Select defaultValue={"90"}>
-            <SelectTrigger className="pr-2 text-xs font-light text-black">
-              <SelectValue placeholder="Select days" />
-            </SelectTrigger>
-            <SelectContent className="pr-2 text-xs font-light text-black">
-              <SelectGroup>
-                <SelectItem value={"90"}>Last 90 Days</SelectItem>
-                <SelectItem value={"30"}>Last 30 Days</SelectItem>
-                <SelectItem value={"1"}>Last 1 Day</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <SelectInput
+            choices={daysBackChoices}
+            value={lastDays}
+            onChange={setLastDays}
+            placeholder="Select days"
+          />
         </div>
       </div>
       <div className="align-center mb-5">
@@ -61,22 +63,11 @@ const DeviceReport = () => {
       <div className="mb-3 flex justify-between">
         <div className="text-base font-medium text-[#2262C6]">Report</div>
         <div className="flex w-48 items-center justify-center text-xs">
-          <Select>
-            <SelectTrigger className="w-full rounded-sm bg-[#EDF2F7] px-2 py-1">
-              <SelectValue placeholder="Clicks" />
-            </SelectTrigger>
-            <SelectContent className="">
-              <SelectGroup>
-                <SelectItem value={"SignUp"}>SignUp</SelectItem>
-                <SelectItem value={"Acquisition"}>Acquisition</SelectItem>
-                <SelectItem value={"Demo"}>Demo</SelectItem>
-                <SelectItem value={"FTD"}>FTD</SelectItem>
-                <SelectItem value={"Account"}>Account</SelectItem>
-                <SelectItem value={"FTD"}>FTD Account</SelectItem>
-                <SelectItem value={"Withdrawal"}>Withdrawal</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <SelectInput
+            value={selectedReport}
+            onChange={setSelectedReport}
+            choices={reportDropDown}
+          />
         </div>
       </div>
 

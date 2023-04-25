@@ -3,7 +3,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { Button } from "../../ui/button";
 import AccountManager from "./AccountManager";
-import CountryReport from "./CountryReport";
+import DashboradCountryReport from "./DashboradCountryReport";
 import DeviceReport from "./DeviceReport";
 
 import type { TopMerchantCreativeType } from "../../../server/db-types";
@@ -75,7 +75,7 @@ export const Dashboard = () => {
   });
 
   const { data: creative } = api.affiliates.getTopMerchantCreative.useQuery();
-  const { data: report } = api.affiliates.getCountryReport.useQuery();
+  // const { data: report } = api.affiliates.getDashboardCountryReport.useQuery();
   const { data: reportsHiddenCols } =
     api.affiliates.getReportsHiddenCols.useQuery();
   const { data: account, refetch } = api.affiliates.getAccount.useQuery();
@@ -106,7 +106,7 @@ export const Dashboard = () => {
   if (
     !data ||
     !creative ||
-    !report ||
+    // !report ||
     !performanceChart ||
     !allPerformanceChart ||
     !conversionChart ||
@@ -230,8 +230,8 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-        {reportFields
+      <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+\        {reportFields
 
           .filter((item) => item.isChecked)
           .map((item, idx) => {
@@ -275,7 +275,7 @@ export const Dashboard = () => {
 
       <div className="my-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
         <DeviceReport />
-        <CountryReport />
+        <DashboradCountryReport />
         <AccountManager
           first_name={account?.first_name}
           last_name={account?.last_name}

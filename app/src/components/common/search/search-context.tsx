@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
+import { format, parse, startOfDay, sub } from "date-fns";
 
 interface SearchContextInterface {
   values: Record<string, string>;
@@ -17,7 +18,17 @@ export const SearchContext = React.createContext<SearchContextInterface>({
 });
 
 export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
-  const [values, setValues] = useState<SearchContextInterface["values"]>({});
+  const { from, to } = useMemo(() => {
+    const now = startOfDay(new Date());
+    const from = format(sub(now, { months: 6 }), "yyyyMMdd");
+    const to = format(now, "yyyyMMdd");
+    return { from, to };
+  }, []);
+
+  const [values, setValues] = useState<SearchContextInterface["values"]>({
+    from,
+    to,
+  });
   const valueRef = useRef<SearchContextInterface["values"]>({});
 
   const setControlValue = (key: string, value: string) => {
@@ -28,6 +39,7 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
     setValues({ ...valueRef.current });
   };
 
+  console.log(`muly:SearchProvider`, { from, to });
   return (
     <SearchContext.Provider
       value={{ values, controlValue: valueRef.current, setControlValue, apply }}
@@ -44,3 +56,9 @@ export const useSearchContext = () => {
   }
   return context;
 };
+
+export const getDateParam = (value?: string) =>
+  parse(value || "", "yyyyMMdd", new Date());
+
+export const getNumberParam = (value?: string) =>
+  value ? Number(value) : undefined;

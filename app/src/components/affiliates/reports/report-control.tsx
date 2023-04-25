@@ -1,26 +1,23 @@
-import { PageHeader } from "@/components/common/page/page-header";
-import { SearchText } from "@/components/common/search/search-text";
-import { SearchApply } from "@/components/common/search/saerch-apply-button";
-import { DataTable } from "@/components/common/data-table/DataTable";
-import { Loading } from "@/components/common/Loading";
-import React from "react";
-import type { ReportDataTableProps } from "@/components/common/data-table/ReportDataTable";
-import { ReportDataTable } from "@/components/common/data-table/ReportDataTable";
-import { ColumnDef } from "@tanstack/react-table";
-import { SearchDateRange } from "@/components/common/search/search-date-range";
-import { Pagination } from "@/components/ui/pagination";
-import { SearchSelect } from "@/components/common/search/search-select";
 import { ExportButton } from "@/components/affiliates/reports/export-button";
 import type { OnExport } from "@/components/affiliates/reports/utils";
+import { Loading } from "@/components/common/Loading";
+import type { ReportDataTableProps } from "@/components/common/data-table/ReportDataTable";
+import { ReportDataTable } from "@/components/common/data-table/ReportDataTable";
+import { PageHeader } from "@/components/common/page/page-header";
+import { SearchApply } from "@/components/common/search/saerch-apply-button";
+import { SearchDateRange } from "@/components/common/search/search-date-range";
+import { CSVIcon, ExcelIcon, JSONIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
+import { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { SettingsIcon } from "lucide-react";
+import React from "react";
 
 interface Props<Data extends object> extends ReportDataTableProps<Data> {
   reportName: string;
   isRefetching: boolean;
   totalItems: number;
   children: React.ReactNode;
-
   handleExport: OnExport;
 }
 
@@ -40,18 +37,19 @@ export const ReportControl = <Data extends object>({
   return data ? (
     <div className="flex w-full flex-col gap-2">
       <PageHeader title="Reports" subTitle={reportName}>
-        <SearchDateRange varName="dateRange" />
-        <SearchApply isLoading={isRefetching} />
-      </PageHeader>
-
-      <div className="w-full flex-row flex-wrap justify-between gap-2 pb-3 md:flex">
-        <div className="flex flex-row gap-2">{children}</div>
         <div className="flex flex-row gap-2">
           <ExportButton onExport={handleExport} />
           <Button variant="primary" size="rec">
             <SettingsIcon />
           </Button>
         </div>
+      </PageHeader>
+
+      <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
+        <SearchDateRange varName="dateRange" />
+        {children}
+        <div className="flex-grow" />
+        <SearchApply isLoading={isRefetching} />
       </div>
 
       <ReportDataTable data={data} columns={columns} footerData={footerData} />

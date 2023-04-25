@@ -1,5 +1,5 @@
 import AccountManager from "./AccountManager";
-import CountryReport from "./CountryReport";
+import DashboardCountryReport from "./DashboradCountryReport";
 import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
 import DeviceReport from "./DeviceReport";
@@ -68,8 +68,8 @@ export const DeviceReports = {
   },
 };
 
-export const CountryReports = {
-  render: () => <CountryReport />,
+export const CountryReport = {
+  render: () => <DashboardCountryReport />,
   parameters: {
     design: {
       type: "figma",
@@ -107,7 +107,8 @@ export const Charts = {
     },
   },
 };
-export const Impression = {
+
+export const Card = {
   render: () => (
     <>
       <DashboardCards

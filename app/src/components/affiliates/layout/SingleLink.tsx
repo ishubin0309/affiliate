@@ -1,4 +1,4 @@
-import { Image } from "@chakra-ui/react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 
@@ -44,6 +44,8 @@ const SingleLink = ({
       >
         <div>
           <Image
+            width={25}
+            height={25}
             alt="..."
             className="w-6 border-none pt-0.5 align-middle"
             src={

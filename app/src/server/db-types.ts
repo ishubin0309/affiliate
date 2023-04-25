@@ -50,6 +50,9 @@ export type TopMerchantCreativeType =
 export type CountryReportType =
   RouterOutput["affiliates"]["getCountryReport"][0];
 
+export type TranslateReportFakeType =
+  RouterOutput["affiliates"]["getTranslateReportFake"][0];
+
 export type PixelMonitorType = RouterOutput["affiliates"]["getPixelMonitor"][0];
 export type PixelMonitorUpsertType =
   RouterInput["affiliates"]["upsertPixelMonitor"];
@@ -89,3 +92,6 @@ export type AffiliateCommissionType =
 
 export type DashboardDeviceReportType =
   RouterOutput["affiliates"]["getDashboardDeviceReport"][0];
+
+export type DashboardCountryReportType =
+  RouterOutput["affiliates"]["getDashboardCountryReport"][0];

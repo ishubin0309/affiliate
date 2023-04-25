@@ -1,229 +1,115 @@
-import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { QuerySelect } from "../../../components/common/QuerySelect";
-import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { ClicksReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
-import { Loading } from "../../common/Loading";
+import { ReportControl } from "@/components/affiliates/reports/report-control";
+import { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { SearchSelect } from "@/components/common/search/search-select";
+import { SearchText } from "@/components/common/search/search-text";
+import {
+  getDateParam,
+  getNumberParam,
+  useSearchContext,
+} from "@/components/common/search/search-context";
+import { DateColumn } from "@/components/common/data-table/available-column";
+
+const columnHelper = createColumnHelper<ClicksReportType>();
+const createColumn = (id: keyof ClicksReportType, header: string) =>
+  columnHelper.accessor(id, {
+    cell: (info) => info.getValue(),
+    header,
+  });
+
+const columns = [
+  createColumn("id", "ID"),
+  createColumn("uid", "UID"),
+  createColumn("views", "Impression"),
+  createColumn("clicks", "Click"),
+  columnHelper.accessor("rdate", {
+    cell: (info) => DateColumn(info.getValue()),
+    header: "Date",
+  }),
+  createColumn("type", "Type"),
+  createColumn("merchant_name", "Merchant"),
+  createColumn("banner_id", "Banner ID"),
+  createColumn("profile_id", "Profile ID"),
+  createColumn("profile_name", "Profile Name"),
+  createColumn("param", "Param"),
+  createColumn("param2", "Param 2"),
+  createColumn("refer_url", "Refer URL"),
+  createColumn("country", "Country"),
+  createColumn("ip", "IP"),
+  createColumn("platform", "Platform"),
+  createColumn("os", "Operating System"),
+  createColumn("osVersion", "OS Version"),
+  createColumn("browser", "Browser"),
+  createColumn("broswerVersion", "Browser Version"),
+  createColumn("trader_id", "Trader ID"),
+  createColumn("trader_name", "Trader Alias"),
+  createColumn("leads", "Lead"),
+  createColumn("demo", "Demo"),
+  createColumn("sale_status", "Sales Status"),
+  createColumn("real", "Accounts"),
+  createColumn("ftd", "FTD"),
+  createColumn("volume", "Volume"),
+  createColumn("withdrawal", "Withdrawal Amount"),
+  createColumn("chargeback", "ChargeBack Amount"),
+  createColumn("Qftd", "Active Traders"),
+];
+
+const typeOptions = [
+  {
+    id: "clicks",
+    title: "Clicks",
+  },
+  {
+    id: "views",
+    title: "Views",
+  },
+];
 
 export const ClicksReport = () => {
-  const router = useRouter();
-  const { merchant_id } = router.query;
-  const { from, to } = useDateRange();
-  const [traderID, setTraderID] = useState<string>("");
+  const {
+    values: { merchant_id, from, to, trader_id, unique_id, type },
+  } = useSearchContext();
 
-  const { data, isLoading } = api.affiliates.getClicksReport.useQuery({
-    from,
-    to,
-    trader_id: traderID,
-  });
-  const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
-  const columnHelper = createColumnHelper<ClicksReportType>();
-
-  // console.log("Clicks render", {
-  // 	data,
-  // 	merchants,
-  // 	isLoading,
-  // 	from,
-  // 	to,
-  // 	merchant_id,
-  // });
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  const divCol = (rdate: Date | null | undefined) => {
-    return rdate ? (
-      <span>{format(rdate, "yyyy-MM-dd kk:mm:ss")}</span>
-    ) : (
-      <span></span>
-    );
-  };
-
-  const columns = [
-    columnHelper.accessor("id", {
-      cell: (info) => info.getValue(),
-      header: "ID",
-    }),
-    columnHelper.accessor("uid", {
-      cell: (info) => info.getValue(),
-      header: "UID",
-    }),
-    columnHelper.accessor("views", {
-      cell: (info) => info.getValue(),
-      header: "Impression",
-    }),
-    columnHelper.accessor("clicks", {
-      cell: (info) => info.getValue(),
-      header: "Click",
-    }),
-    columnHelper.accessor("rdate", {
-      cell: ({ row }) => divCol(row?.original?.rdate),
-      header: "Date",
-    }),
-    columnHelper.accessor("type", {
-      cell: (info) => info.getValue(),
-      header: "Type",
-    }),
-    columnHelper.accessor("merchant.name", {
-      cell: (info) => info.getValue(),
-      header: "Merchant",
-    }),
-    columnHelper.accessor("banner_id", {
-      cell: (info) => info.getValue(),
-      header: "Banner ID",
-    }),
-    columnHelper.accessor("profile_id", {
-      cell: (info) => info.getValue(),
-      header: "Profile ID",
-    }),
-    // columnHelper.accessor("profile_name" as any, {
-    //   cell: (info) => info.getValue(),
-    //   header: "Profile Name",
-    // }),
-    columnHelper.accessor("param", {
-      cell: (info) => info.getValue(),
-      header: "Param",
-    }),
-    columnHelper.accessor("param2", {
-      cell: (info) => info.getValue(),
-      header: "Param 2",
-    }),
-    columnHelper.accessor("refer_url", {
-      cell: (info) => info.getValue(),
-      header: "Refer URL",
-    }),
-    columnHelper.accessor("country_id", {
-      cell: (info) => info.getValue(),
-      header: "Country",
-    }),
-    columnHelper.accessor("ip", {
-      cell: (info) => info.getValue(),
-      header: "IP",
-    }),
-    columnHelper.accessor("platform", {
-      cell: (info) => info.getValue(),
-      header: "Platform",
-    }),
-    columnHelper.accessor("os", {
-      cell: (info) => info.getValue(),
-      header: "Operating System",
-    }),
-    columnHelper.accessor("osVersion", {
-      cell: (info) => info.getValue(),
-      header: "OS Version",
-    }),
-    columnHelper.accessor("browser", {
-      cell: (info) => info.getValue(),
-      header: "Browser",
-    }),
-    columnHelper.accessor("broswerVersion", {
-      cell: (info) => info.getValue(),
-      header: "Browser Version",
-    }),
-    columnHelper.accessor("trader_id", {
-      cell: (info) => info.getValue(),
-      header: "Trader ID",
-    }),
-    columnHelper.accessor("trader_alias", {
-      cell: (info) => info.getValue(),
-      header: "Trader Alias",
-    }),
-    columnHelper.accessor("lead", {
-      cell: (info) => info.getValue(),
-      header: "Lead",
-    }),
-    columnHelper.accessor("demo", {
-      cell: (info) => info.getValue(),
-      header: "Demo",
-    }),
-    columnHelper.accessor("sales_status", {
-      cell: (info) => info.getValue(),
-      header: "Sales Status",
-    }),
-    columnHelper.accessor("accounts", {
-      cell: (info) => info.getValue(),
-      header: "Accounts",
-    }),
-    columnHelper.accessor("ftd", {
-      cell: (info) => info.getValue(),
-      header: "FTD",
-    }),
-    columnHelper.accessor("volume", {
-      cell: (info) => info.getValue(),
-      header: "Volume",
-    }),
-    columnHelper.accessor("withdrawal", {
-      cell: (info) => info.getValue(),
-      header: "Withdrawal Amount",
-    }),
-    columnHelper.accessor("chargeback", {
-      cell: (info) => info.getValue(),
-      header: "ChargeBack Amount",
-    }),
-    columnHelper.accessor("traders", {
-      cell: (info) => info.getValue(),
-      header: "Active Traders",
-    }),
-  ];
-
-  const commissionOption = [
+  const { data, isLoading } = api.affiliates.getClicksReport.useQuery(
     {
-      id: "CPA",
-      title: "CPA / TierCPA / DCPA",
+      from: getDateParam(from),
+      to: getDateParam(to),
+      type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
+      merchant_id: getNumberParam(merchant_id),
+      trader_id,
+      unique_id,
     },
-  ];
+    { keepPreviousData: true, refetchOnWindowFocus: false }
+  );
+
+  const { data: merchants } = api.affiliates.getAllMerchants.useQuery(
+    undefined,
+    { keepPreviousData: true, refetchOnWindowFocus: false }
+  );
 
   return (
-    <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        width="90%"
-        alignItems={"center"}
-        alignSelf="center"
-      >
-        <GridItem>
-          <DateRangeSelect />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Merchant"
-            choices={merchants}
-            varName="merchant_id"
-          />
-        </GridItem>
-        <GridItem>
-          <FormLabel>Trader ID</FormLabel>
-          <Input
-            value={traderID}
-            onChange={(event) => setTraderID(event.target.value)}
-          />
-        </GridItem>
-
-        <GridItem>
-          <QuerySelect
-            label="Commission"
-            choices={commissionOption}
-            varName="commission"
-          />
-        </GridItem>
-      </Grid>
-      <h2>Clicks Report</h2>
-      <Grid
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-        alignSelf="center"
-      >
-        <DataTable data={data ? data : []} columns={columns} footerData={[]} />
-      </Grid>
-    </>
+    <ReportControl
+      reportName="Clicks Report"
+      totalItems={data?.length || 0}
+      data={data}
+      columns={columns}
+      isRefetching={isLoading}
+      handleExport={(exportType: ExportType) => Promise.resolve("ok")}
+    >
+      <SearchSelect
+        label="Merchant"
+        choices={merchants}
+        varName="merchant_id"
+      />
+      <SearchText varName="unique_id" label="Unique ID" />
+      <SearchText varName="trader_id" label="Trader ID" />
+      <SearchSelect varName="type" label={"Type"} choices={typeOptions} />
+    </ReportControl>
   );
 };

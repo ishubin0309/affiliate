@@ -1,11 +1,9 @@
-import { Box, Flex, Image, Link, Stack, Text } from "@chakra-ui/react";
-import { api } from "../../../utils/api";
+import { Form } from "@/components/common/forms/Form";
+import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
+import { useTranslation } from "next-i18next";
 import type { z } from "zod";
 import { schema } from "../../../shared-types/forms/lost-password";
-import { useTranslation } from "next-i18next";
-import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
-import React from "react";
-import { Form } from "@/components/common/forms/Form";
+import { api } from "../../../utils/api";
 
 interface IProps {
   setIsSent: (open: boolean) => void;

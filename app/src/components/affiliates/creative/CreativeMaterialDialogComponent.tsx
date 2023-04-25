@@ -15,6 +15,7 @@ import {
 
 import { Code2Icon, Copy, Image as ImageIcon, Plus } from "lucide-react";
 import { Button } from "../../ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Props {
   values: valueProps[];
@@ -36,6 +37,19 @@ export const CreativeMaterialDialogComponent = ({
   url,
   isOpen,
 }: Props) => {
+  const { toast } = useToast();
+
+  const onCopyClickUrl = async () => {
+    await window.navigator.clipboard.writeText(url ?? "");
+    toast({
+      title: "URL Copied to Clipboard",
+      // description: "URL Copied to Clipboard! 📋",
+      // status: "success",
+      duration: 5000,
+      // isClosable: true,
+    });
+  };
+
   return (
     <Dialog open={isOpen}>
       <div className="w-full rounded-xl lg:ml-5">
@@ -125,7 +139,7 @@ export const CreativeMaterialDialogComponent = ({
               <Button
                 className="md:px-4"
                 variant="primary"
-                onClick={() => window.navigator.clipboard.writeText(url ?? "")}
+                onClick={onCopyClickUrl}
               >
                 <div>Copy Click Url</div>
                 <div className="ml-2 items-center">

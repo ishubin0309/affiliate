@@ -15,6 +15,8 @@ import {
   ZodString,
   ZodTuple,
   ZodEffects,
+  ZodNativeEnum,
+  ZodAny,
 } from "zod";
 
 /**
@@ -33,6 +35,8 @@ export type RTFBaseZodType =
   | ZodMap<any>
   | ZodSet<any>
   | ZodEnum<any>
+  | ZodNativeEnum<any>
+  | ZodAny
   | ZodBranded<any, any>
   | ZodEffects<any, any>;
 
