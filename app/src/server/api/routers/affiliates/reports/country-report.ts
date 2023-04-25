@@ -9,6 +9,9 @@ import { publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import type { Sql } from "@prisma/client/runtime";
+import { sub } from "date-fns";
+import { debugSaveData } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
 
 interface UserInfo {
   level: string;
@@ -143,7 +146,6 @@ export const countryReport = async ({
     from: Date,
     to: Date
   ): Promise<{ [key: string]: number }> => {
-    console.log(`muly:getInstallationsData ${install_main}`, {});
     const installationsData = await prisma.$queryRaw<
       {
         installations: number;
@@ -158,7 +160,6 @@ export const countryReport = async ({
         GROUP BY country
       `;
 
-    console.log(`muly:getInstallationsData`, { installationsData });
     const installationsDataItems: { [key: string]: number } = {};
 
     installationsData.forEach((item: any) => {
@@ -181,15 +182,10 @@ export const countryReport = async ({
     CountryID: string | null;
   };
 
-  console.log(`muly:countryReport:merchants_creative_stats:A`, {
-    from,
-    to,
-    whereDashboard,
-  });
   const StatsData = await prisma.$queryRaw<
     StatsDataItem[]
   >`SELECT SUM(Clicks) as clicks,
-            SUM(Impressions) as impressions,
+           SUM(Impressions) as impressions,
             AffiliateID, MerchantID, CountryID
             FROM merchants_creative_stats
             WHERE Date >= ${from} AND
@@ -218,12 +214,13 @@ export const countryReport = async ({
   // }
 
   // TypeScript code:
+
   const baseCountryArray: Record<
     string,
     z.infer<typeof BaseCountryArrayItem>
   > = {};
-  StatsData.forEach((item) => {
-    const countryID = item.CountryID === null ? "-" : item.CountryID;
+  StatsData.map(convertPrismaResultsToNumbers).forEach((item) => {
+    const countryID = item.CountryID || "-";
 
     baseCountryArray[countryID] = {
       clicks: item.clicks,
@@ -254,7 +251,6 @@ export const countryReport = async ({
   };
 
   // Define the SQL query
-  console.log(`muly:countryReport:ReportTraders:A`, {});
   const ReportTradersDataItems = await prisma.$queryRaw<
     ReportTradersSummary[]
   >`SELECT AffiliateID, MerchantID, country,
@@ -281,9 +277,16 @@ export const countryReport = async ({
 
   const countryArray: Record<string, CountryDataType> = {};
 
-  ReportTradersDataItems.forEach((item) => {
-    const country = !item["country"] ? "-" : item["country"];
+  debugSaveData("ReportTradersDataItems", ReportTradersDataItems);
+  debugSaveData("baseCountryArray", baseCountryArray);
+  debugSaveData("StatsData", StatsData);
 
+  console.log(
+    `muly:countryReport:ReportTradersDataItems:v5 ${ReportTradersDataItems.length}`,
+    {}
+  );
+  ReportTradersDataItems.map(convertPrismaResultsToNumbers).forEach((item) => {
+    const country = item["country"] || "-";
     const base = baseCountryArray[country];
     if (base) {
       countryArray[country] = {
@@ -312,7 +315,7 @@ export const countryReport = async ({
     }
   });
 
-  console.log(ReportTradersDataItems);
+  debugSaveData("countryArray", countryArray);
   return Object.values(countryArray);
 };
 
@@ -330,15 +333,15 @@ export const getCountryReport = publicProcedure
 
     const userInfo = { level: "all" };
 
-    console.log(`muly:countryReport A`, {});
     const countryData = await countryReport({
       prisma,
-      from,
+      from: sub(new Date(from), { years: 2 }),
       to,
       userInfo,
-      affiliate_id,
+      affiliate_id: 557,
       merchant_id,
     });
 
+    debugSaveData("countryData", countryData);
     return countryData;
   });
