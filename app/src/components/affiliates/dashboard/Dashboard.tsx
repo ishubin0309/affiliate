@@ -2,21 +2,12 @@ import { SettingsIcon } from "@chakra-ui/icons";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { Button } from "../../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../../ui/dialog";
 import AccountManager from "./AccountManager";
 import CountryReport from "./CountryReport";
 import DeviceReport from "./DeviceReport";
 
 import type { TopMerchantCreativeType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-
-import type { ChangeEvent } from "react";
 
 import {
   DateRangeSelect,
@@ -25,7 +16,7 @@ import {
 } from "../../common/DateRangeSelect";
 
 import { Loading } from "@/components/common/Loading";
-import { Home } from "lucide-react";
+import { Home, SaveIcon } from "lucide-react";
 import Affiliates from "../../../layouts/AffiliatesLayout";
 import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
@@ -43,13 +34,21 @@ const fields = [
   "Commission",
 ];
 const columnHelper = createColumnHelper<TopMerchantCreativeType>();
-
+export interface ItemType {
+  id: number;
+  title: string;
+  value: string;
+  isChecked: boolean;
+}
 export const Dashboard = () => {
   const { from, to } = useDateRange();
-
-  const [reportFields, setReportFields] = useState<
-    { id: number; title: string; value: string; isChecked: boolean }[]
-  >([]);
+  const [isChecked, setIsChecked] = useState(false);
+  const [selectColumnsMode, setSelectColumnsMode] = useState<boolean>(false);
+  const [showSelectedCheckbox, setShowSelectedCheckbox] = useState(false);
+  const [selectedCards, setSelectedCards] = useState<ItemType[]>([]);
+  const [unSelectedCards, setUnSelectedCards] = useState<ItemType[]>([]);
+  const [reportFields, setReportFields] = useState<ItemType[]>([]);
+  const [reportOldFields, setReportOldFields] = useState<ItemType[]>([]);
 
   const { data } = api.affiliates.getDashboard.useQuery({
     from,
@@ -82,7 +81,7 @@ export const Dashboard = () => {
   const { data: account, refetch } = api.affiliates.getAccount.useQuery();
 
   const upsertReportsField = api.affiliates.upsertReportsField.useMutation();
-
+  useEffect(() => {}, [selectedCards]);
   useEffect(() => {
     const fieldsArray = fields.map((field, i) => {
       return {
@@ -93,8 +92,15 @@ export const Dashboard = () => {
       };
     });
     setReportFields(fieldsArray);
+    setReportOldFields(fieldsArray);
   }, [reportsHiddenCols]);
-
+  useEffect(() => {
+    if (showSelectedCheckbox) {
+      setReportFields([...selectedCards, ...unSelectedCards]);
+    } else {
+      setReportFields(reportOldFields);
+    }
+  }, [showSelectedCheckbox, reportOldFields]);
   if (
     !data ||
     !creative ||
@@ -144,138 +150,88 @@ export const Dashboard = () => {
       header: "LP Preview",
     }),
   ];
+  const handleSelectMode = () => {
+    setSelectColumnsMode(!selectColumnsMode);
+    console.log(selectColumnsMode, "selectColumnsMode");
+    if (selectColumnsMode) {
+      setSelectedCards([]);
+      setUnSelectedCards([]);
 
-  const handleSelectAll = async () => {
-    const value = reportFields.map((item) => {
-      const temp = Object.assign({}, item);
-      temp.isChecked = true;
-      return temp;
-    });
-    setReportFields(value);
-    const hiddenCols = value.filter((item) => item.isChecked === false);
-    const remove_fields = hiddenCols
-      .map((item) => {
-        return item.value;
-      })
-      .join("|");
-    await upsertReportsField.mutateAsync({
-      remove_fields,
-    });
+      setReportFields([...selectedCards, ...unSelectedCards]);
+    }
   };
 
-  const handleUnSelectAll = async () => {
-    const value = reportFields.map((item) => {
-      const temp = Object.assign({}, item);
-      temp.isChecked = false;
-      return temp;
-    });
-    setReportFields(value);
-    const hiddenCols = value.filter((item) => item.isChecked === false);
-    const remove_fields = hiddenCols
-      .map((item) => {
-        return item.value;
-      })
-      .join("|");
-    await upsertReportsField.mutateAsync({
-      remove_fields,
-    });
-  };
-
-  const handleReportField = async (event: ChangeEvent<HTMLInputElement>) => {
-    const value = reportFields.map((item) => {
-      const temp = Object.assign({}, item);
-      if (temp.id === parseInt(event.target.value)) {
-        temp.isChecked = event.target.checked;
-      }
-      return temp;
-    });
-    setReportFields(value);
-    const hiddenCols = value.filter((item) => !item.isChecked);
-    const remove_fields = hiddenCols
-      .map((item) => {
-        return item.value;
-      })
-      .join("|");
-    await upsertReportsField.mutateAsync({
-      remove_fields,
-    });
+  const handleCheckboxChange = (item: any, checkedStatus: boolean) => {
+    if (checkedStatus) {
+      setSelectedCards((prevSelectedCards) => [...prevSelectedCards, item]);
+      setUnSelectedCards((prevUnSelectedCards) =>
+        prevUnSelectedCards.filter(
+          (selectedItem) => selectedItem.id !== item.id
+        )
+      );
+    } else {
+      setSelectedCards((prevSelectedCards) =>
+        prevSelectedCards.filter((selectedItem) => selectedItem.id !== item.id)
+      );
+      setUnSelectedCards((prevUnSelectedCards) => [
+        ...prevUnSelectedCards,
+        item,
+      ]);
+    }
   };
 
   return (
     <div className="pt-3.5">
-      <Dialog>
-        <div className="block text-base font-medium md:justify-between lg:flex">
-          <div className="mb-2.5 flex items-center md:mb-5 lg:mb-5">
-            <Home className="text-[#2262C6]" />
-            &nbsp;/&nbsp;Dashboard
-          </div>
-          <div className="mb-2.5 flex">
-            <DateRangeSelect />
-            <Button className="ml-2 hidden lg:block" variant="primary">
-              Update
-            </Button>
-            <DialogTrigger>
-              <button className="ml-2 rounded-md bg-white px-2 drop-shadow md:px-3 md:pb-2 md:pt-1.5">
-                <SettingsIcon />
-              </button>
-            </DialogTrigger>
-          </div>
-          <div className="grid justify-items-stretch lg:hidden">
-            <Button className="mb-2 justify-self-end" variant="primary">
-              Update
-            </Button>
+      <div className="block text-base font-medium md:justify-between lg:flex">
+        <div className="mb-2.5 flex items-center md:mb-5 lg:mb-5">
+          <Home className="text-[#2262C6]" />
+          &nbsp;/&nbsp;Dashboard
+        </div>
+        <div className="mb-2.5 flex">
+          <DateRangeSelect />
+          <Button className="ml-2 hidden lg:block" variant="primary">
+            Update
+          </Button>
+
+          <button
+            className="ml-2 rounded-md bg-white px-2 outline-0 drop-shadow md:px-3 md:pb-2 md:pt-1.5"
+            onClick={handleSelectMode}
+          >
+            {selectColumnsMode ? (
+              <SaveIcon className="w-4" />
+            ) : (
+              <SettingsIcon className="w-4" />
+            )}
+          </button>
+        </div>
+        <div className="grid justify-items-stretch lg:hidden">
+          <Button className="mb-2 justify-self-end" variant="primary">
+            Update
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex items-center">
+        <div className="mb-6 flex items-center md:mb-10">
+          <input
+            type="checkbox"
+            disabled={
+              selectedCards.length > 0 || unSelectedCards.length > 0
+                ? false
+                : true
+            }
+            className="form-checkbox text-blueGray-700 h-4 w-4 rounded border-0 transition-all duration-150 ease-linear"
+            onChange={() => setShowSelectedCheckbox(!showSelectedCheckbox)}
+          />
+          <div className="ml-5 items-center text-sm font-normal text-black md:ml-5">
+            selected show checkmark or X
           </div>
         </div>
+      </div>
 
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader className="text-left text-sm font-medium text-primary">
-            Manage Field On Report - Quick Summary
-          </DialogHeader>
-          <DialogTitle className="text-disabled text-sm font-normal md:mb-6 md:pt-2">
-            Please activate the fields you want to display on the report:
-          </DialogTitle>
-          <div className="grid grid-cols-1 md:mt-10 md:grid-cols-2">
-            {reportFields.map((field) => {
-              return (
-                <div key={field.id}>
-                  <div className="mb-6 flex items-center md:mb-10">
-                    <input
-                      type="checkbox"
-                      id={`report-field-${field.id}`}
-                      checked={field.isChecked}
-                      value={field.id}
-                      onChange={(e) => void handleReportField(e)}
-                      className="form-checkbox text-blueGray-700 h-4 w-4 rounded border-0 transition-all duration-150 ease-linear"
-                    />
-                    <div className="ml-5 items-center text-lg font-medium text-black md:ml-10">
-                      {field.title}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="flex justify-between pb-5 font-medium md:pb-8 md:pt-12">
-            <div className="flex">
-              <button
-                className="mr-3 rounded-md bg-[#2262C6] p-3 text-white md:px-14"
-                onClick={handleSelectAll}
-              >
-                Select All
-              </button>
-              <button
-                className="rounded-md border border-[#1B48BB] bg-[#EFEEFF] p-3 text-[#1B48BB] md:px-12"
-                onClick={handleUnSelectAll}
-              >
-                Unselect All
-              </button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
         {reportFields
+
           .filter((item) => item.isChecked)
           .map((item, idx) => {
             interface Sum {
@@ -289,15 +245,22 @@ export const Dashboard = () => {
             const thisMonth = thisMonthObject ? thisMonthObject[item.value] : 0;
 
             return (
-              <DashboardCards
-                key={idx}
-                idx={idx}
-                item={item}
-                lastMonth={lastMonth}
-                thisMonth={thisMonth}
-                value={value}
-                performanceChartData={allPerformanceChart}
-              />
+              <>
+                <DashboardCards
+                  key={idx}
+                  idx={idx}
+                  item={item}
+                  lastMonth={lastMonth}
+                  thisMonth={thisMonth}
+                  value={value}
+                  performanceChartData={allPerformanceChart}
+                  selectColumnsMode={selectColumnsMode}
+                  handleCheckboxChange={handleCheckboxChange}
+                  selectedCards={selectedCards}
+                  unSelectedCards={unSelectedCards}
+                  isChecked={isChecked}
+                />
+              </>
             );
           })}
       </div>

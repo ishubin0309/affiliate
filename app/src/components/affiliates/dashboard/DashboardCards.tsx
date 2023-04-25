@@ -1,15 +1,28 @@
 import DashboardChart from "@/components/common/chart/DashboardChart";
 import { UpwardArrowIcon } from "@/components/icons";
+
 import { format } from "d3-format";
+import { CheckIcon, XIcon } from "lucide-react";
 import { Bar } from "react-chartjs-2";
 
 interface Props {
   idx: number | undefined;
-  item: { id: number; title: string; value: string; isChecked: boolean };
+  item: {
+    id: number;
+    title: string;
+    value: string;
+    isChecked: boolean;
+  };
   thisMonth: number | undefined;
   lastMonth: number | undefined;
   value: number;
   performanceChartData: any;
+  selectColumnsMode: boolean;
+  handleCheckboxChange: (id: any, checkedStatus: boolean) => void;
+
+  selectedCards: any;
+  unSelectedCards: any;
+  isChecked: boolean;
 }
 
 const DashboardCards = ({
@@ -19,6 +32,11 @@ const DashboardCards = ({
   lastMonth,
   value,
   performanceChartData,
+  selectColumnsMode,
+  handleCheckboxChange,
+  selectedCards,
+  unSelectedCards,
+  isChecked,
 }: Props) => {
   const options = {
     responsive: false,
@@ -62,11 +80,42 @@ const DashboardCards = ({
       },
     ],
   };
+
+  // useEffect(() => {
+  //   // console.log(selectedCards, "22selectedCards", unSelectedCards);
+  // }, [selectedCards, unSelectedCards]);
+
   return (
     <div
-      className="mb-1 w-60 rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
+      className="ounded-2xl relative mb-1 bg-white px-2 pt-3 shadow-sm md:px-6"
       key={idx}
     >
+      {selectColumnsMode &&
+      !selectedCards.includes(item) &&
+      !unSelectedCards.includes(item) ? (
+        <div className="absolute inset-0 bg-gray-300  opacity-75"></div>
+      ) : null}
+      {selectColumnsMode && selectedCards.includes(item) ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-transparent">
+          <CheckIcon className="h-12 w-auto text-green-600" />
+        </div>
+      ) : selectColumnsMode && unSelectedCards.includes(item) ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-transparent">
+          <XIcon className="h-10 w-auto text-red-600" />
+        </div>
+      ) : null}
+      {selectColumnsMode && (
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+          <input
+            className="scale-[25] opacity-0"
+            type="checkbox"
+            onChange={(e) => {
+              handleCheckboxChange(item, e.target.checked);
+            }}
+          />
+        </div>
+      )}
+
       <div className="text-sm font-semibold text-[#2262C6] md:text-base">
         {item?.title}{" "}
         <span className="hidden text-xs font-normal text-[#B9B9B9] md:inline-flex md:text-sm">
