@@ -67,15 +67,10 @@ export function unwrap(
 }
 
 export function unwrapEffects(effects: RTFSupportedZodTypes) {
-  let r = effects;
-  while (r._def.typeName === ZodFirstPartyTypeKind.ZodEffects) {
-    r = r._def.schema;
+  if (effects._def.typeName === ZodFirstPartyTypeKind.ZodEffects) {
+    return effects._def.schema;
   }
-  return r;
-  // if (effects._def.typeName === ZodFirstPartyTypeKind.ZodEffects) {
-  //   return effects._def.schema;
-  // }
-  // return effects;
+  return effects;
 }
 
 /**

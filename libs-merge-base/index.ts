@@ -1,12 +1,12 @@
 export { createUniqueFieldSchema } from "./createFieldSchema";
 export { createTsForm } from "./createSchemaForm";
 export {
-  useMetaEx,
+  useDescription,
   useReqDescription,
   useEnumValues,
   useTsController,
   useFieldInfo,
   useStringFieldInfo,
-  useNumberFieldInfo,
+  useNumberFieldInfo
 } from "./FieldContext";
 export type { RTFSupportedZodTypes } from "./supportedZodTypes";

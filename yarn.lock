@@ -11166,10 +11166,10 @@ lru_map@^0.3.3:
   resolved "https://registry.yarnpkg.com/lru_map/-/lru_map-0.3.3.tgz#b5c8351b9464cbd750335a79650a0ec0e56118dd"
   integrity sha512-Pn9cox5CsMYngeDbmChANltQl+5pi6XmTrraMSzhPmMBbmgcxmqWry0U3PGapCU1yB4/LqCcom7qhHZiF/jGfQ==
 
-lucide-react@^0.127.0:
-  version "0.127.0"
-  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.127.0.tgz#859d7c77cc0499abe7e0ddc934932a9520c0808d"
-  integrity sha512-9xxwl2FbdwWDjB0L6FEsOSbeOVp7Pj+L3urz+xDJNx1xggmQgGjeKDJQ28i/9ON8rV9HaqwQveBtsYnHqtWLqg==
+lucide-react@^0.171.0:
+  version "0.171.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.171.0.tgz#fa1c54709a497d7f972326f216eecdaccda6ffb6"
+  integrity sha512-iCcpl4wfilDMeG1WtTkYTf47RMOx5KO5Kn5N8SSWq5KBxUELkHT7+p8+6wRz7GETxScA8fvjz22tFBmODnlYRg==
 
 lz-string@^1.4.4:
   version "1.5.0"
@@ -12934,7 +12934,7 @@ prettier-plugin-tailwindcss@^0.2.5:
   resolved "https://registry.yarnpkg.com/prettier-plugin-tailwindcss/-/prettier-plugin-tailwindcss-0.2.5.tgz#fb9f07f22d0658fdedbf4d83254bf907656f7500"
   integrity sha512-vZ/iKieyCx0WTxHbkf5E1rBlv/ybFk8WTT4hL5W2jlVxum2Zbe0jMUpuQdDrpa4z2vnPiJ5KIWCqL/kd16fKYg==
 
-prettier@2.8.6, prettier@^2.8.0, prettier@^2.8.6:
+prettier@^2.8.0, prettier@^2.8.6:
   version "2.8.6"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.6.tgz#5c174b29befd507f14b83e3c19f83fdc0e974b71"
   integrity sha512-mtuzdiBbHwPEgl7NxWlqOkithPyp4VN93V7VeHVWBF+ad3I5avc0RVDT4oImXQy9H/AqxA2NSQH8pSxHW6FYbQ==
@@ -13276,11 +13276,6 @@ react-datepicker@^4.11.0:
     prop-types "^15.7.2"
     react-onclickoutside "^6.12.2"
     react-popper "^2.3.0"
-
-react-day-picker@^8.7.1:
-  version "8.7.1"
-  resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-8.7.1.tgz#b8388c2afa69d4a6da4c5fde5323fae884acfe2f"
-  integrity sha512-Gv426AW8b151CZfh3aP5RUGztLwHB/EyJgWZ5iMgtzbFBkjHfG6Y66CIQFMWGLnYjsQ9DYSJRmJ5S0Pg5HWKjA==
 
 react-docgen-typescript@^2.2.2:
   version "2.2.2"

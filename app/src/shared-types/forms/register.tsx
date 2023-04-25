@@ -37,7 +37,7 @@ export const schema = z
         label: () => (
           <>
             I have read and accepted the{" "}
-            <Link href="/auth/terms">
+            <Link href="/auth/terms" target="_blank">
               <span className="text-primary">Terms of Service</span>
             </Link>
           </>

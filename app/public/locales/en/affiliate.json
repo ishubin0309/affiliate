@@ -211,5 +211,6 @@
   "Expected 'post' | 'get' | 'client', received null": "Expected 'post' | 'get' | 'client', received null",
   "This e-mail already exist in our records": "This e-mail already exist in our records",
   "Failed to send email": "Failed to send email",
-  "You must accept the terms of service": "You must accept the terms of service"
+  "You must accept the terms of service": "You must accept the terms of service",
+  "Expected 'lead' | 'account' | 'sale' | 'qftd', received null": "Expected 'lead' | 'account' | 'sale' | 'qftd', received null"
 }

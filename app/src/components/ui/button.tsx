@@ -1,6 +1,6 @@
-import * as React from "react";
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
@@ -24,9 +24,9 @@ const buttonVariants = cva(
         link: "underline-offset-4 hover:underline text-primary",
       },
       size: {
-        default: "h-10 py-2 px-4",
-        sm: "h-9 px-3 rounded-md",
-        lg: "h-11 px-8 rounded-md",
+        default: "h-10 py-2 px-4 w-36 min-w-max",
+        sm: "h-9 px-3 rounded-md min-w-max",
+        lg: "h-11 px-8 rounded-md w-48 min-w-max",
         rec: "p-3.5",
       },
     },
@@ -45,7 +45,10 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, disabled, variant, size, isLoading, ...props }, ref) => {
+  (
+    { className, disabled, variant, size, isLoading, children, ...props },
+    ref
+  ) => {
     //TODO: isLoading
     return (
       <>
@@ -57,9 +60,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {...props}
         >
           {isLoading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <div className="relative">
+              <Loader2 className="absolute left-0 right-0 top-1 mx-auto my-0	h-4 w-4 animate-spin" />
+              <span className="flex opacity-0	">{children}</span>
+            </div>
           ) : (
-            props.children
+            children
           )}
         </button>
       </>

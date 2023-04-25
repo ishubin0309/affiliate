@@ -98,6 +98,8 @@ export const Dashboard = () => {
     if (showSelectedCheckbox) {
       setReportFields([...selectedCards, ...unSelectedCards]);
     } else {
+      console.log(reportOldFields, "reportOldFields");
+
       setReportFields(reportOldFields);
     }
   }, [showSelectedCheckbox, reportOldFields]);
@@ -154,10 +156,9 @@ export const Dashboard = () => {
     setSelectColumnsMode(!selectColumnsMode);
     console.log(selectColumnsMode, "selectColumnsMode");
     if (selectColumnsMode) {
+      setReportFields([...selectedCards, ...unSelectedCards]);
       setSelectedCards([]);
       setUnSelectedCards([]);
-
-      setReportFields([...selectedCards, ...unSelectedCards]);
     }
   };
 

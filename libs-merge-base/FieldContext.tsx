@@ -23,25 +23,11 @@ import {
 } from "./utilities";
 import { ZodDefaultDef } from "zod";
 
-import { ChoiceType, MetaInfo, ZodMetaDataItem } from "../../../utils/zod-meta";
-import { TranslationFn } from "../../../utils/i18n-utils";
-import { WizardControlProps } from "@/components/common/wizard/useWizardFlow";
-
-export interface FormContext {
-  t: TranslationFn;
-
-  formMeta: MetaInfo;
-
-  flowContext?: WizardControlProps;
-}
-
 export const FieldContext = createContext<null | {
   control: Control<any>;
   name: string;
-  // label?: string;
-  // placeholder?: string;
-  formContext: FormContext;
-  meta: ZodMetaDataItem;
+  label?: string;
+  placeholder?: string;
   enumValues?: string[];
   zodType: RTFSupportedZodTypes;
   addToCoerceUndefined: (v: string) => void;
@@ -52,10 +38,8 @@ export function FieldContextProvider({
   name,
   control,
   children,
-  formContext,
-  meta,
-  // label,
-  // placeholder,
+  label,
+  placeholder,
   enumValues,
   zodType,
   addToCoerceUndefined,
@@ -63,10 +47,8 @@ export function FieldContextProvider({
 }: {
   name: string;
   control: Control<any>;
-  formContext: FormContext;
-  meta: ZodMetaDataItem;
-  // label?: string;
-  // placeholder?: string;
+  label?: string;
+  placeholder?: string;
   enumValues?: string[];
   children: ReactNode;
   zodType: RTFSupportedZodTypes;
@@ -78,10 +60,8 @@ export function FieldContextProvider({
       value={{
         control,
         name,
-        // label,
-        // placeholder,
-        formContext,
-        meta,
+        label,
+        placeholder,
         enumValues,
         zodType,
         addToCoerceUndefined,
@@ -160,7 +140,6 @@ export function useTsController<FieldType extends any>() {
   }, [value]);
 
   return {
-    formContext: context.formContext,
     ...controller,
     error: errorFromRhfErrorObject<FieldType>(fieldState.error),
     field: {
@@ -178,18 +157,32 @@ export function requiredDescriptionDataNotPassedError(
   return `No ${name} found when calling ${hookName}. Either pass it as a prop or pass it using the zod .describe() syntax.`;
 }
 
-interface MetaEx extends ZodMetaDataItem {
-  disabled: boolean;
-}
-
-export function useMetaEx(): MetaEx {
-  const { meta } = useContextProt("useReqDescription");
-  const { props } = meta;
-
-  const disabled =
-    typeof props?.disabled === "boolean" ? props.disabled : false;
-
-  return { ...meta, disabled };
+/**
+ * Gets the description `{label: string, placeholder: string}` for the field. Will return the description created via the zod .describe syntax.
+ * description properties are optional, if you want to them to be required and throw an error when not passed, you may enjoy `useReqDescription()`;
+ * @example
+ * ```tsx
+ * const {label, placeholder} = useDescription();
+ *
+ * return (
+ *  <>
+ *    <label>{label?label:'No label'}</label>}
+ *    <input
+ *      //...
+ *
+ *      placeholder={placeholder?placeholder:'No placeholder passed'}
+ *    />
+ *  </>
+ * )
+ * ```
+ * @returns `{label: string, placeholder: string}`
+ */
+export function useDescription() {
+  const { label, placeholder } = useContextProt("useReqDescription");
+  return {
+    label,
+    placeholder,
+  };
 }
 
 /**
@@ -213,18 +206,21 @@ export function useMetaEx(): MetaEx {
  * @returns `{label: string, placeholder: string}`
  */
 export function useReqDescription() {
-  const { meta } = useContextProt("useReqDescription");
-  if (!meta) {
+  const { label, placeholder } = useContextProt("useReqDescription");
+  if (!label) {
     throw new Error(
       requiredDescriptionDataNotPassedError("label", "useReqDescription")
     );
   }
-  // if (!placeholder) {
-  //   throw new Error(
-  //     requiredDescriptionDataNotPassedError("placeholder", "useReqDescription")
-  //   );
-  // }
-  return meta;
+  if (!placeholder) {
+    throw new Error(
+      requiredDescriptionDataNotPassedError("placeholder", "useReqDescription")
+    );
+  }
+  return {
+    label,
+    placeholder,
+  };
 }
 
 export function enumValuesNotPassedError() {
@@ -298,13 +294,13 @@ export function internal_useFieldInfo<
   TZodType extends RTFSupportedZodTypes = RTFSupportedZodTypes,
   TUnwrappedZodType extends UnwrapZodType<TZodType> = UnwrapZodType<TZodType>
 >(hookName: string) {
-  const { zodType, meta } = useContextProt(hookName);
+  const { zodType, label, placeholder } = useContextProt(hookName);
 
   const fieldInfo = getFieldInfo<TZodType, TUnwrappedZodType>(
     zodType as TZodType
   );
 
-  return { ...fieldInfo, meta };
+  return { ...fieldInfo, label, placeholder };
 }
 
 /**

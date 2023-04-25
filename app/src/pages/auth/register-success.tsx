@@ -4,7 +4,8 @@ import type { MyPage } from "@/components/common/types";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
 import AuthenticationFooter from "../../components/common/footer/AuthenticationFooter";
-import RegisterSuccess from "../affiliates/registersuccess";
+import { RegisterSuccess } from "../../components/affiliates/account/register-success";
+
 const Page: MyPage = () => {
   const redirected = useAuth();
 

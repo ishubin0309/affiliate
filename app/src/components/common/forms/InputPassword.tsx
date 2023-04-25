@@ -1,4 +1,4 @@
-import { useMeta, useTsController } from "@/components/libs/react-ts-form";
+import { useMetaEx, useTsController } from "@/components/libs/react-ts-form";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
@@ -10,16 +10,7 @@ interface Props {
 export const InputPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { field, error, formContext } = useTsController<string>();
-  const meta = useMeta();
-  const {
-    label,
-    placeholder,
-    choices: choicesDescription,
-    className,
-  } = meta || {
-    label: "",
-    placeholder: "",
-  };
+  const { placeholder } = useMetaEx();
 
   return (
     <div className="flex flex-row items-center">

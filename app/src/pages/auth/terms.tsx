@@ -22,7 +22,7 @@ const Page: MyPage = () => {
         <meta name="description" content="Affiliates Creative Materials" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center px-5">
+      <main className="m-auto flex min-h-screen max-w-4xl flex-col items-center px-5">
         <AuthenticationHeader></AuthenticationHeader>
 
         <Terms isSignUpTerms={isSignUpTerms} />
