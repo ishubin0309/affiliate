@@ -1,3 +1,4 @@
+import { writeFileSync } from "fs";
 import { z } from "zod";
 import { exportCSVReport } from "../config/exportCSV";
 import { exportJSON } from "../config/exportJson";
@@ -63,4 +64,8 @@ export const exportReportLoop = async (
     hasMoreData = data.length > items_per_page;
     page++;
   }
+};
+
+export const debugSaveData = (name: string, data: any) => {
+  writeFileSync(`./tmp/${name}.json`, JSON.stringify(data, null, 2));
 };
