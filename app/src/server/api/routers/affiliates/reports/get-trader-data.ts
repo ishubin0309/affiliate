@@ -1,24 +1,27 @@
 import type { PrismaClient } from "@prisma/client";
+import { z } from "zod";
 
-interface ReportTraderDataItem {
-  volume: number;
-  trader_id: string;
-  trader_name: string;
-  leads: number;
-  demo: number;
-  real: number;
-  sale_status: number;
-  ftd: number;
-  depositingAccounts: number;
-  sumDeposits: number;
-  bonus: number;
-  withdrawal: number;
-  chargeback: number;
-  netRevenue: number;
-  pnl: number;
-  Qftd: number;
-  totalCom: number;
-}
+export const ReportTraderDataItemSchema = z.object({
+  volume: z.number(),
+  trader_id: z.string(),
+  trader_name: z.string(),
+  leads: z.number(),
+  demo: z.number(),
+  real: z.number(),
+  sale_status: z.number(),
+  ftd: z.number(),
+  depositingAccounts: z.number(),
+  sumDeposits: z.number(),
+  bonus: z.number(),
+  withdrawal: z.number(),
+  chargeback: z.number(),
+  netRevenue: z.number(),
+  pnl: z.number(),
+  Qftd: z.number(),
+  totalCom: z.number(),
+});
+
+type ReportTraderDataItem = z.infer<typeof ReportTraderDataItemSchema>;
 
 export const getReportTraderData = async (
   prisma: PrismaClient,
