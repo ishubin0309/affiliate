@@ -14,6 +14,7 @@ import {
   getNumberParam,
   useSearchContext,
 } from "@/components/common/search/search-context";
+import { DateColumn } from "@/components/common/data-table/available-column";
 
 const columnHelper = createColumnHelper<ClicksReportType>();
 const createColumn = (id: keyof ClicksReportType, header: string) =>
@@ -22,21 +23,13 @@ const createColumn = (id: keyof ClicksReportType, header: string) =>
     header,
   });
 
-const divCol = (rdate: Date | null | undefined) => {
-  return rdate ? (
-    <span>{format(rdate, "yyyy-MM-dd kk:mm:ss")}</span>
-  ) : (
-    <span></span>
-  );
-};
-
 const columns = [
   createColumn("id", "ID"),
   createColumn("uid", "UID"),
   createColumn("views", "Impression"),
   createColumn("clicks", "Click"),
   columnHelper.accessor("rdate", {
-    cell: (info) => divCol(info.getValue()),
+    cell: (info) => DateColumn(info.getValue()),
     header: "Date",
   }),
   createColumn("type", "Type"),

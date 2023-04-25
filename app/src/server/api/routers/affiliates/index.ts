@@ -58,6 +58,7 @@ import {
   upsertPixelMonitor,
 } from "./pixel";
 import { getCountryReport } from "@/server/api/routers/affiliates/reports/country-report";
+import { getTranslateReportFake } from "@/server/api/routers/affiliates/reports/translate-report-fake";
 
 export const affiliatesRouter = createTRPCRouter({
   getDashboard,
@@ -99,6 +100,7 @@ export const affiliatesRouter = createTRPCRouter({
   getCommissionReport,
   exportCommissionReport,
   getClicksReport,
+  getTranslateReportFake,
   // exportClicksReport,
   getCountryReport,
   getDocuments,
