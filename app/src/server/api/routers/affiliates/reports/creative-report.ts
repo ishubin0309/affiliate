@@ -1,8 +1,8 @@
-import { publicProcedure } from "@/server/api/trpc";
-import { z } from "zod";
-import { Prisma } from "@prisma/client";
 import { merchant_id } from "@/server/api/routers/affiliates/const";
 import type { CreativeReportSchema } from "@/server/api/routers/affiliates/reports";
+import { publicProcedure } from "@/server/api/trpc";
+import { Prisma } from "@prisma/client";
+import { z } from "zod";
 
 type RegType = {
   totalDemo: number;
@@ -41,7 +41,7 @@ export const getCreativeReport = publicProcedure
       z.infer<typeof CreativeReportSchema>[]
     >(
       Prisma.sql`SELECT CONCAT(Date,MerchantID,AffiliateID,BannerID) as id, MerchantID as merchant_id, AffiliateID as affiliate_id, SUM(Impressions) AS totalViews, SUM(Clicks) AS totalClicks, BannerID as banner_id 
-                        FROM merchants_creative_stats WHERE (Date BETWEEN  ${from}  AND ${to} ) ${creatives_stats_where} GROUP BY BannerID limit 10`
+                        FROM merchants_creative_stats WHERE (Date BETWEEN  ${from}  AND ${to} ) ${creatives_stats_where} GROUP BY BannerID`
     );
 
     const merchants = await ctx.prisma.merchants.findMany({
@@ -166,6 +166,8 @@ export const getCreativeReport = publicProcedure
         ...bannerInfo[0],
       });
     }
+
+    console.log("merged ----->", bannerInfo);
 
     return merged as Array<Record<string, any>>;
   });

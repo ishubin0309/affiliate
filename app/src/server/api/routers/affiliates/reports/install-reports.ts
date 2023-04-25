@@ -3,7 +3,6 @@ import {
   merchant_id,
 } from "@/server/api/routers/affiliates/const";
 import {
-  exportReportLoop,
   pageParams,
   reportParams,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
@@ -11,10 +10,7 @@ import { publicProcedure } from "@/server/api/trpc";
 import type { data_install_type } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import type { Simplify } from "@trpc/server";
-import path from "path";
-import paginator from "prisma-paginate";
 import { z } from "zod";
-import { uploadFile } from "../config";
 
 const params = z.object({
   from: z.date().optional(),
@@ -51,7 +47,7 @@ export const installReport = async ({
   input: InputType;
 }) => {
   const prismaClient = new PrismaClient();
-  const paginate = paginator(prismaClient);
+  // const paginate = paginator(prismaClient);
 
   let offset;
   if (page && items_per_page) {
@@ -94,9 +90,7 @@ export const installReport = async ({
       Param2: param2,
     };
   }
-  const data = await paginate.data_install.paginate({
-    limit: items_per_page ? items_per_page : 10,
-    page: page,
+  const data = await prismaClient.data_install.findMany({
     orderBy: {
       rdate: "asc",
     },
@@ -119,9 +113,7 @@ export const installReport = async ({
   let banner_info = [] as any;
   let aff_info = [] as any;
   for (let i = 0; i < Object.keys(data).length; i++) {
-    const bannerInfo = await paginate.merchants_creative.paginate({
-      limit: items_per_page ? items_per_page : 10,
-      page: page,
+    const bannerInfo = await prismaClient.merchants_creative.findMany({
       include: {
         language: {
           select: {
@@ -130,14 +122,12 @@ export const installReport = async ({
         },
       },
       where: {
-        id: data.result[i]?.banner_id,
+        id: data[i]?.banner_id,
       },
     });
     banner_info = bannerInfo;
 
-    const affInfo = await paginate.affiliates.paginate({
-      limit: items_per_page ? items_per_page : 10,
-      page: page,
+    const affInfo = await prismaClient.affiliates.findMany({
       where: {
         valid: 1,
         id: affiliate_id,
@@ -146,27 +136,39 @@ export const installReport = async ({
     aff_info = affInfo;
   }
 
-  const merchants = await paginate.merchants.paginate({
-    limit: items_per_page ? items_per_page : 10,
-    page: page,
+  const merchants = await prismaClient.merchants.findMany({
     where: {
       valid: 1,
       id: merchant_id,
     },
   });
 
-  const merged = [];
+  const merged: any = {};
 
-  for (let i = 0; i < data.result.length; i++) {
-    merged.push({
-      ...data.result[i],
-      ...aff_info[i],
-      ...banner_info[i],
-      ...merchants.result[i],
-    });
+  for (const item of data) {
+    merged["country"] = item?.country;
+    merged["rdate"] = item?.rdate;
+    merged["trader_id"] = item?.trader_id;
+    merged["trader_alias"] = item?.trader_alias;
+    merged["type"] = item?.type;
+    merged["status"] = item?.status;
+    merged["freeParam"] = item?.freeParam;
+    merged["freeParam2"] = item?.freeParam2;
+    merged["email"] = item?.email;
   }
 
-  console.log("merged ------>", merged);
+  for (const item of banner_info) {
+    merged["id"] = item?.id;
+    merged["title"] = item?.title;
+    merged["type"] = item?.type;
+    merged["language_name"] = item?.language_name;
+  }
+
+  for (const item of merchants) {
+    merged["id"] = item.id;
+    merged["name"] = item.name;
+  }
+
   return merged as Array<Record<string, any>>;
 };
 
@@ -174,56 +176,56 @@ export const getInstallReport = publicProcedure
   .input(paramsWithPage)
   .query(installReport);
 
-export const exportInstallReport = publicProcedure
-  .input(paramsWithReport)
-  .mutation(async function ({ ctx, input }) {
-    const items_per_page = 5000;
-    const { exportType, ...params } = input;
+// export const exportInstallReport = publicProcedure
+//   .input(paramsWithReport)
+//   .mutation(async function ({ ctx, input }) {
+//     const items_per_page = 5000;
+//     const { exportType, ...params } = input;
 
-    const columns = [
-      "Event Type",
-      "Event Date",
-      "Trader ID",
-      "Trader Alias",
-      "Trader Status",
-      "Country",
-      "Affiliate ID",
-      "Affiliate Username",
-      "Merchant ID",
-      "Merchant Name",
-      "Creative ID",
-      "Creative Name",
-    ];
-    const file_date = new Date().toISOString();
-    const generic_filename = `install-report${file_date}`;
+//     const columns = [
+//       "Event Type",
+//       "Event Date",
+//       "Trader ID",
+//       "Trader Alias",
+//       "Trader Status",
+//       "Country",
+//       "Affiliate ID",
+//       "Affiliate Username",
+//       "Merchant ID",
+//       "Merchant Name",
+//       "Creative ID",
+//       "Creative Name",
+//     ];
+//     const file_date = new Date().toISOString();
+//     const generic_filename = `install-report${file_date}`;
 
-    console.log("export type ---->", exportType);
-    const install_report = "install-report";
+//     console.log("export type ---->", exportType);
+//     const install_report = "install-report";
 
-    await exportReportLoop(
-      exportType || "csv",
-      columns,
-      generic_filename,
-      install_report,
-      async (page, items_per_page) =>
-        installReport({
-          ctx,
-          input: { ...params, page, items_per_page },
-        })
-    );
+//     await exportReportLoop(
+//       exportType || "csv",
+//       columns,
+//       generic_filename,
+//       install_report,
+//       async (page, items_per_page) =>
+//         installReport({
+//           ctx,
+//           input: { ...params, page, items_per_page },
+//         })
+//     );
 
-    const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
+//     const bucketName = "reports-download-tmp";
+//     const serviceKey = path.join(
+//       __dirname,
+//       "../../../../../api-front-dashbord-a4ee8aec074c.json"
+//     );
 
-    const public_url = uploadFile(
-      serviceKey,
-      "api-front-dashbord",
-      bucketName,
-      generic_filename,
-      exportType ? exportType : "json"
-    );
-    return public_url;
-  });
+//     const public_url = uploadFile(
+//       serviceKey,
+//       "api-front-dashbord",
+//       bucketName,
+//       generic_filename,
+//       exportType ? exportType : "json"
+//     );
+//     return public_url;
+//   });

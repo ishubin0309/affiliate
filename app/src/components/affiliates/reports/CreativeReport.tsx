@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { QuerySelect } from "../../../components/common/QuerySelect";
 import { DataTable } from "../../../components/common/data-table/DataTable";
-import type { InstallReportType } from "../../../server/db-types";
+import type { CreativeReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
@@ -20,7 +20,7 @@ export const CreativeReport = () => {
     to,
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
-  const columnHelper = createColumnHelper<InstallReportType>();
+  const columnHelper = createColumnHelper<CreativeReportType>();
 
   console.log("Install render", {
     data,
