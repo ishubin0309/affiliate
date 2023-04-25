@@ -2,7 +2,7 @@ import { ChevronUp } from "lucide-react";
 import DeviceReportChart from "../../common/chart/DeviceReportChart";
 import DoughnutChart from "../../common/chart/DoughnutChart";
 import { SelectInput } from "@/components/common/select-input";
-import { daysBackChoices } from "@/components/affiliates/dashboard/CountryReport";
+import { daysBackChoices } from "@/components/affiliates/dashboard/DashboradCountryReport";
 import { useState } from "react";
 
 const reportInfo = [

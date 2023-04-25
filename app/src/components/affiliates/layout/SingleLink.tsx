@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 //import { Image } from "@chakra-ui/react";
+=======
+>>>>>>> 71b57f8f0109fe5d5634328c31ec19ddfd574e6c
 import Image from "next/image";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
@@ -45,6 +48,8 @@ const SingleLink = ({
         icon={
           <Image
             alt="dashboard"
+            width={25}
+            height={25}
             className="w-6 border-none pt-0.5 align-middle"
             height={50}
             width={50}

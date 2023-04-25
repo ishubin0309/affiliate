@@ -10,7 +10,7 @@ import * as React from "react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { cn } from "@/lib/utils";
-import { FormContext } from "@/components/libs/react-ts-form/FieldContext";
+import type { FormContext } from "@/components/libs/react-ts-form/FieldContext";
 
 interface Props extends Omit<DialogProps, "isOpen" | "setIsOpen"> {
   onSubmit: (values: unknown) => Promise<void>;

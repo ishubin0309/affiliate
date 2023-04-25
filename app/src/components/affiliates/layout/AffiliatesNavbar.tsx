@@ -4,8 +4,8 @@ import SelectUserDropdown from "@/components/Dropdowns/SelectUserDropdown";
 import { languageDropDown } from "@/components/Dropdowns/languages-list";
 import { SideMenuIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { Image } from "@chakra-ui/react";
 import { Facebook, Instagram, Twitter } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
@@ -48,7 +48,7 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
 
               <Link href="/">
                 <span className="bg-blueGray-200 inline-flex h-10 w-20 items-center justify-center text-sm text-white md:h-12 md:w-32">
-                  <Image src="/img/logo.png" htmlWidth="90" alt="logo" />
+                  <Image src={"/img/logo.png"} width="90" height="90" alt="logo" />
                 </span>
               </Link>
 
