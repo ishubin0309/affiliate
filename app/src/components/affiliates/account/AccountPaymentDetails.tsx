@@ -1,6 +1,5 @@
 import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
 import { PageHeader } from "@/components/common/page/page-header";
-import { Flex } from "@chakra-ui/react";
 import { useTranslation } from "next-i18next";
 import type { z } from "zod";
 import { schema } from "../../../shared-types/forms/payment-details";
@@ -26,7 +25,7 @@ export const AccountPaymentDetails = () => {
   return (
     <div className="w-full">
       <PageHeader title="My Account" subTitle="Payment"></PageHeader>
-      <Flex direction="column" gap={2} maxW="4xl" width="100%" m="auto">
+      <div className="h-auto rounded-2xl bg-white px-4 pb-20 pt-4 shadow-[4px_3px_33px_0_rgba(0,0,0,0.05)] md:mb-10">
         <Form
           formContext={formContext}
           schema={schema}
@@ -35,7 +34,7 @@ export const AccountPaymentDetails = () => {
           defaultValues={account}
           formProps={{}}
         ></Form>
-      </Flex>
+      </div>
     </div>
   );
 };

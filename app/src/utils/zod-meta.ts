@@ -82,6 +82,8 @@ export interface ZodMetaDataItem {
   condition?: ConditionCallback;
 
   showBack?: boolean;
+
+  optional?: boolean;
 }
 
 declare module "zod" {
@@ -173,6 +175,7 @@ export const getZodMetaInfo = <T extends ZodTypeAny>(
       name,
       ...type.metadata(),
       ...desc,
+      optional,
     };
   };
 
@@ -188,16 +191,26 @@ export const getZodMetaInfo = <T extends ZodTypeAny>(
   };
 
   let r = type;
+  let optional = false;
 
   // @ts-ignore
   while (r.unwrap) {
+    if (r._def.typeName === "ZodOptional") {
+      optional = true;
+    }
     // @ts-ignore
     r = r.unwrap();
   }
   while (r._def.innerType) {
+    if (r._def.typeName === "ZodOptional") {
+      optional = true;
+    }
     r = r._def.innerType;
   }
   while (r._def.schema) {
+    if (r._def.typeName === "ZodOptional") {
+      optional = true;
+    }
     r = r._def.schema;
   }
 

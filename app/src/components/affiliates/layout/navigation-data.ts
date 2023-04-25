@@ -42,6 +42,7 @@ export const navigationData: NavigationLinkData[] = [
       { name: "Commission Report", link: "commission-report" },
       { name: "Clicks Report", link: "clicks-report" },
       { name: "Creative Report", link: "creative-report" },
+      { name: "Country Report", link: "country-report" },
       { name: "Landing Page Report", link: "landing-page" },
       { name: "Users Report", link: "trader-report" },
       { name: "Pixels Logs Report", link: "pixel-log-report" },

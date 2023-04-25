@@ -1,7 +1,7 @@
-import React from "react";
 import { createPopper } from "@popperjs/core";
-import { Image } from "@chakra-ui/react";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
+import React from "react";
 
 const UserDropdown = () => {
   const { data: session } = useSession();

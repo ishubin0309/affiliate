@@ -10,13 +10,13 @@ import { getMerchantCreative, getMerchantCreativeMeta } from "./creative";
 import {
   getAllPerformanceChart,
   getConversionChart,
-  getCountryReport,
   getDashboard,
   getPerformanceChart,
   getReportsHiddenCols,
   getTopMerchantCreative,
   upsertReportsField,
 } from "./dashboard";
+import { getDashboardCountryReport } from "./dashboard-country-report";
 import { getDashboardDeviceReport } from "./dashboard-device-report";
 import { deleteProfile, getProfiles, upsertProfile } from "./profile";
 import { getMerchantSubCreative, getMerchantSubCreativeMeta } from "./sub";
@@ -57,6 +57,7 @@ import {
   getPixelMonitorMeta,
   upsertPixelMonitor,
 } from "./pixel";
+import { getCountryReport } from "@/server/api/routers/affiliates/reports/country-report";
 
 export const affiliatesRouter = createTRPCRouter({
   getDashboard,
@@ -64,7 +65,6 @@ export const affiliatesRouter = createTRPCRouter({
   getPerformanceChart,
   getAllPerformanceChart,
   getConversionChart,
-  getCountryReport,
   getReportsHiddenCols,
   upsertReportsField,
 
@@ -100,6 +100,7 @@ export const affiliatesRouter = createTRPCRouter({
   exportCommissionReport,
   getClicksReport,
   exportClicksReport,
+  getCountryReport,
   getDocuments,
 
   getCommissions,
@@ -120,5 +121,6 @@ export const affiliatesRouter = createTRPCRouter({
 
   badQuerySample,
 
+  getDashboardCountryReport,
   getDashboardDeviceReport,
 });
