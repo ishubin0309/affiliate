@@ -10,6 +10,7 @@ import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import { useProSidebar } from "react-pro-sidebar";
+import { useMediaQuery } from "usehooks-ts";
 import NotificationDropDown from "../../Dropdowns/NotificationDropdown";
 
 interface Props {
@@ -21,6 +22,7 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
   const [selectLanguageItem, setSelectLanguageItem] =
     useState<LanguageOption | null>(null);
   const { collapseSidebar, toggleSidebar } = useProSidebar();
+  const desktop = useMediaQuery("(min-width: 768px)");
 
   return (
     <>
@@ -32,8 +34,7 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
               <a
                 onClick={(e) => {
                   e.preventDefault();
-                  collapseSidebar();
-                  //toggleSidebar(); for mobile
+                  desktop ? collapseSidebar() : toggleSidebar();
                   setCollapseShow(!collapseShow);
                 }}
               >
@@ -47,8 +48,13 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
               </a>
 
               <Link href="/">
-                <span className="bg-blueGray-200 inline-flex h-10 w-20 items-center justify-center text-sm text-white md:h-12 md:w-32">
-                  <Image src={"/img/logo.png"} width="90" height="90" alt="logo" />
+                <span className="bg-blueGray-200 inline-flex h-10 w-16 items-center justify-center text-sm text-white md:h-12 md:w-32">
+                  <Image
+                    src={"/img/logo.png"}
+                    width="90"
+                    height="90"
+                    alt="logo"
+                  />
                 </span>
               </Link>
 

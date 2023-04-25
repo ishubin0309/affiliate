@@ -43,7 +43,7 @@ const SingleLink = ({
         component={<Link href={"/affiliates/" + link} />}
         icon={
           <Image
-            alt="dashboard"
+            alt="..."
             width={25}
             height={25}
             className="w-6 border-none pt-0.5 align-middle"
@@ -58,7 +58,7 @@ const SingleLink = ({
       >
         <span
           className={
-            "ml-4 truncate text-base font-medium tracking-wide " +
+            "truncate text-base font-medium tracking-wide " +
             (activeName == link ? "text-[#2262C6]" : "")
           }
         >

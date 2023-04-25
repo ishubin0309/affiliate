@@ -67,7 +67,7 @@ const DropdownLink = ({
         label={navbarName}
         icon={
           <Image
-            alt="dashboard"
+            alt="..."
             className="w-6 border-none pt-0.5 align-middle"
             height={50}
             width={50}
@@ -103,7 +103,7 @@ const DropdownLink = ({
             >
               <span
                 className={
-                  "ml-4 truncate text-base font-medium tracking-wide " +
+                  "ml-12 truncate text-base font-medium tracking-wide " +
                   (activeName == value.link ? "text-[#2262C6]" : "")
                 }
               >

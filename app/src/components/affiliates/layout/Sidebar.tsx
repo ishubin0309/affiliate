@@ -4,7 +4,7 @@ import {
 } from "@/components/affiliates/layout/navigation-data";
 import { cn } from "@/lib/utils";
 import React from "react";
-import { Menu, Sidebar as SideMenu } from "react-pro-sidebar";
+import { Menu, sidebarClasses, Sidebar as SideMenu } from "react-pro-sidebar";
 import DropdownLink from "./DropdownLink";
 import SingleLink from "./SingleLink";
 
@@ -71,8 +71,16 @@ const Sidebar: React.FC<Props> = ({
   return (
     <div className={sidebarClassName}>
       <div className="flex grow flex-col justify-between overflow-y-auto overflow-x-hidden">
-        <div className="scrollbar-thin relative min-h-full space-y-1 overflow-y-auto py-5 md:py-16">
-          <SideMenu>
+        <div className="scrollbar-thin relative min-h-full space-y-1 overflow-y-auto">
+          <SideMenu
+            breakPoint="md"
+            className="pt-16"
+            rootStyles={{
+              [`.${sidebarClasses.container}`]: {
+                backgroundColor: "#fff",
+              },
+            }}
+          >
             <Menu>
               {navigationData.map((item, index) =>
                 renderLink(
