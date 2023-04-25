@@ -7,23 +7,40 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import JsFileDownloader from "js-file-downloader";
-import { useState } from "react";
+import React, { useState } from "react";
+import { CSVIcon, ExcelIcon, JSONIcon } from "@/components/icons";
 
-export interface ExportOption {
+interface ExportOption {
   id: ExportType;
   title: string;
   icon?: any;
 }
+
 interface Props {
-  options: ExportOption[];
-  selectedOption?: ExportOption | null;
   onExport: OnExport;
 }
 
-export const ExportButton = ({ options, selectedOption, onExport }: Props) => {
-  const [selectedValue, setSelectedItem] = useState<ItemProps>({});
+const exportOptions: { id: ExportType; title: string; icon: any }[] = [
+  {
+    id: "csv",
+    title: "CSV",
+    icon: <CSVIcon />,
+  },
+  {
+    id: "xlsx",
+    title: "Excel",
+    icon: <ExcelIcon />,
+  },
+  {
+    id: "json",
+    title: "JSON",
+    icon: <JSONIcon />,
+  },
+];
+
+export const ExportButton = ({ onExport }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleExport = async (id: ExportType) => {
@@ -66,7 +83,7 @@ export const ExportButton = ({ options, selectedOption, onExport }: Props) => {
           <Button isLoading={isLoading}>Export</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-36">
-          {renderDropdownMenu(options, onExport)}
+          {renderDropdownMenu(exportOptions, onExport)}
         </DropdownMenuContent>
       </DropdownMenu>
       <div className="text-red-500">TBD</div>

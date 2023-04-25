@@ -1,5 +1,5 @@
 import { ExportButton } from "@/components/affiliates/reports/export-button";
-import { OnExport } from "@/components/affiliates/reports/utils";
+import type { OnExport } from "@/components/affiliates/reports/utils";
 import { Loading } from "@/components/common/Loading";
 import type { ReportDataTableProps } from "@/components/common/data-table/ReportDataTable";
 import { ReportDataTable } from "@/components/common/data-table/ReportDataTable";
@@ -21,24 +21,6 @@ interface Props<Data extends object> extends ReportDataTableProps<Data> {
   handleExport: OnExport;
 }
 
-const exportOptions: { id: ExportType; title: string; icon: any }[] = [
-  {
-    id: "csv",
-    title: "CSV",
-    icon: <CSVIcon />,
-  },
-  {
-    id: "xlsx",
-    title: "Excel",
-    icon: <ExcelIcon />,
-  },
-  {
-    id: "json",
-    title: "JSON",
-    icon: <JSONIcon />,
-  },
-];
-
 export const ReportControl = <Data extends object>({
   children,
   totalItems,
@@ -56,7 +38,7 @@ export const ReportControl = <Data extends object>({
     <div className="flex w-full flex-col gap-2">
       <PageHeader title="Reports" subTitle={reportName}>
         <div className="flex flex-row gap-2">
-          <ExportButton options={exportOptions} onExport={handleExport} />
+          <ExportButton onExport={handleExport} />
           <Button variant="primary" size="rec">
             <SettingsIcon />
           </Button>
