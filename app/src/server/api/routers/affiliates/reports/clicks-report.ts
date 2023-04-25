@@ -85,6 +85,7 @@ export const getClicksReport = publicProcedure
       type: z.enum(["clicks", "views"]).optional(),
     })
   )
+  .output(output)
   .query(async ({ ctx, input: { from, to, unique_id, trader_id, type } }) => {
     const data: any = {};
     const uid: string[] = [];

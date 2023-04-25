@@ -276,10 +276,7 @@ export const CommissionReport = () => {
               <button className="hidden rounded-md border border-[#2262C6] px-8 py-2 text-base font-semibold text-[#2262C6] lg:block">
                 Reset Search
               </button>
-              <ExportButton
-                onExport={handleExport}
-                report_name="commission-report"
-              />
+              <ExportButton onExport={handleExport} />
             </div>
           </div>
 
