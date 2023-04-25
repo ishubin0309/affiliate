@@ -1,28 +1,43 @@
-import { PageHeader } from "@/components/common/page/page-header";
-import { SearchText } from "@/components/common/search/search-text";
-import { SearchApply } from "@/components/common/search/saerch-apply-button";
-import { DataTable } from "@/components/common/data-table/DataTable";
+import { ExportButton } from "@/components/affiliates/reports/export-button";
+import { OnExport } from "@/components/affiliates/reports/utils";
 import { Loading } from "@/components/common/Loading";
-import React from "react";
 import type { ReportDataTableProps } from "@/components/common/data-table/ReportDataTable";
 import { ReportDataTable } from "@/components/common/data-table/ReportDataTable";
-import { ColumnDef } from "@tanstack/react-table";
+import { PageHeader } from "@/components/common/page/page-header";
+import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { SearchDateRange } from "@/components/common/search/search-date-range";
-import { Pagination } from "@/components/ui/pagination";
-import { SearchSelect } from "@/components/common/search/search-select";
-import { ExportButton } from "@/components/affiliates/reports/export-button";
-import type { OnExport } from "@/components/affiliates/reports/utils";
+import { CSVIcon, ExcelIcon, JSONIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
+import { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { SettingsIcon } from "lucide-react";
+import React from "react";
 
 interface Props<Data extends object> extends ReportDataTableProps<Data> {
   reportName: string;
   isRefetching: boolean;
   totalItems: number;
   children: React.ReactNode;
-
   handleExport: OnExport;
 }
+
+const exportOptions: { id: ExportType; title: string; icon: any }[] = [
+  {
+    id: "csv",
+    title: "CSV",
+    icon: <CSVIcon />,
+  },
+  {
+    id: "xlsx",
+    title: "Excel",
+    icon: <ExcelIcon />,
+  },
+  {
+    id: "json",
+    title: "JSON",
+    icon: <JSONIcon />,
+  },
+];
 
 export const ReportControl = <Data extends object>({
   children,
@@ -41,7 +56,7 @@ export const ReportControl = <Data extends object>({
     <div className="flex w-full flex-col gap-2">
       <PageHeader title="Reports" subTitle={reportName}>
         <div className="flex flex-row gap-2">
-          <ExportButton onExport={handleExport} />
+          <ExportButton options={exportOptions} onExport={handleExport} />
           <Button variant="primary" size="rec">
             <SettingsIcon />
           </Button>
