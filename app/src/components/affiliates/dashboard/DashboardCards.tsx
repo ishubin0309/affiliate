@@ -64,7 +64,7 @@ const DashboardCards = ({
   };
   return (
     <div
-      className="mb-1 w-60 rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
+      className="mb-1 w-full rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
       key={idx}
     >
       <div className="text-sm font-semibold text-[#2262C6] md:text-base">

@@ -1,7 +1,7 @@
-import { Box, Button, Link, Stack, Text } from "@chakra-ui/react";
+import { Button } from "@/components/ui/button";
 import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import NextLink from "next/link";
+import Link from "next/link";
 import type { MyPage } from "../components/common/types";
 
 const Home: MyPage = () => {
@@ -11,6 +11,7 @@ const Home: MyPage = () => {
     { href: "/auth/signup", title: "Auth -> Sign Up" },
     { href: "/auth/signin", title: "Auth -> Sign In" },
     { href: "/auth/terms", title: "Auth -> Terms" },
+    { href: "/auth/register-success", title: "Auth -> Register Success" },
 
     { href: "/auth/lost-password", title: "Auth -> Lost Password" },
     { href: "/affiliates/dashboard", title: "Dashboard" },
@@ -77,26 +78,28 @@ const Home: MyPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Stack gap={2} m={12}>
+        <div className="m-3">
           {!session?.user && <p>Not login</p>}
           {!!session?.user && (
-            <Box>
+            <div>
               <p>Welcome {session.user.name}</p>
               <Button
+                variant="link"
+                className="justify-start p-0	text-base"
                 onClick={() => {
                   void signOut();
                 }}
               >
                 Logout
               </Button>
-            </Box>
+            </div>
           )}
           {links.map(({ href, title }) => (
-            <Link key={href} as={NextLink} href={href}>
-              <Text as="b">{title}</Text>
+            <Link key={href} href={href}>
+              <p className="mb-2 font-bold">{title}</p>
             </Link>
           ))}
-        </Stack>
+        </div>
       </main>
     </>
   );

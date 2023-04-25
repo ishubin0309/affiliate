@@ -1,10 +1,8 @@
-import type { AffiliateAccountType } from "../../../server/db-types";
-import { Flex } from "@chakra-ui/react";
-import { z } from "zod";
-import { Form } from "../../common/forms/Form";
-import { useTranslation } from "next-i18next";
 import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
-import { Button } from "../../ui/button";
+import { useTranslation } from "next-i18next";
+import { z } from "zod";
+import type { AffiliateAccountType } from "../../../server/db-types";
+import { Form } from "../../common/forms/Form";
 
 const Schema = z.object({
   website: z.string().url().optional().describe("WebSite 1"),

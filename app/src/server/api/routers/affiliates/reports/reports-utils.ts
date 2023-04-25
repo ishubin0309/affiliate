@@ -1,4 +1,5 @@
 import type { CommissionReportType } from "@/server/db-types";
+import { writeFileSync } from "fs";
 import { z } from "zod";
 import { exportCSVReport } from "../config/exportCSV";
 import { exportJSON } from "../config/exportJson";
@@ -82,7 +83,7 @@ export const filterData = (data: any[], report_type: string) => {
           Number(item?.transactionID),
           Number(item?.Type),
           item?.Amount,
-          item?.Country || "",
+          // item?.Country || "",
           item?.Commission
         );
       });
@@ -110,4 +111,8 @@ export const filterData = (data: any[], report_type: string) => {
       break;
   }
   return data_rows;
+};
+
+export const debugSaveData = (name: string, data: any) => {
+  writeFileSync(`./tmp/${name}.json`, JSON.stringify(data, null, 2));
 };

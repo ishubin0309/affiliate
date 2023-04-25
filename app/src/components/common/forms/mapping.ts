@@ -12,8 +12,8 @@ export const mapping = [
   [z.boolean(), CheckboxField],
   [z.date(), DateField],
   [z.enum([""]), TextField],
+  [z.any(), TextField],
   [z.number(), TextField],
-  // [z.any(), TextField],
-  // [z.nativeEnum(enum_like), TextField],
+  [z.nativeEnum(enum_like), TextField],
   // [z.effect(), TextField],
 ] as const;

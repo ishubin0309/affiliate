@@ -1,13 +1,9 @@
-import type { AffiliateAccountType } from "../../../server/db-types";
-import { Flex } from "@chakra-ui/react";
-import type { z } from "zod";
-import { Form } from "../../common/forms/Form";
-import { schema } from "../../../shared-types/forms/contact";
-import { imUserTypes } from "../../../shared-types/forms/common";
-import { useTranslation } from "next-i18next";
 import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
-import { useState } from "react";
-import { Button } from "../../ui/button";
+import { useTranslation } from "next-i18next";
+import type { z } from "zod";
+import type { AffiliateAccountType } from "../../../server/db-types";
+import { schema } from "../../../shared-types/forms/contact";
+import { Form } from "../../common/forms/Form";
 
 interface Props {
   onSubmit: (values: z.infer<typeof schema>) => Promise<void>;

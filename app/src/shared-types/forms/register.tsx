@@ -15,15 +15,16 @@ export const schema = z
     phone: z.string().describe("Phone Number"),
     IMUserType: z
       .string()
+      .optional()
       .describe("Instant Message Type // Choose IM Type")
       .default("")
       .meta({ choices: imUserTypes }),
-    IMUser: z.string().describe("IM Account").default(""),
+    IMUser: z.string().optional().describe("IM Account").default(""),
     lang: z
       .string()
       .describe("Language")
       .meta({ control: () => <LanguageSelectList /> }),
-    company: z.string().describe("Company Name").default(""),
+    company: z.string().optional().describe("Company Name").default(""),
     website: z.string().url().describe("Website"),
     approvedTerms: z.coerce
       .number()
@@ -37,7 +38,7 @@ export const schema = z
         label: () => (
           <>
             I have read and accepted the{" "}
-            <Link href="/auth/terms">
+            <Link href="/auth/terms" target="_blank">
               <span className="text-primary">Terms of Service</span>
             </Link>
           </>
