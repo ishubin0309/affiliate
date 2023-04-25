@@ -2,6 +2,7 @@ import { publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { affiliate_id, merchant_id } from "../const";
 import { pageParams, reportParams } from "./reports-utils";
+import { getReportTraderData } from "@/server/api/routers/affiliates/reports/get-trader-data";
 
 const params = z.object({
   from: z.date(),
@@ -87,14 +88,8 @@ export const getClicksReport = publicProcedure
   )
   .output(output)
   .query(async ({ ctx, input: { from, to, unique_id, trader_id, type } }) => {
-    const data: any = {};
     const uid: string[] = [];
     let type_filter = {};
-    const clickArray: any = {};
-    const MerchantsCreativeDataItems: any = {};
-    const AffiliatesDataItems: any = {};
-    const ReportTradersDataItems: any = {};
-    const MerchantsDataItems: any = {};
 
     if (type === "views") {
       type_filter = {
@@ -111,6 +106,16 @@ export const getClicksReport = publicProcedure
         },
       };
     }
+
+    // "SELECT * from traffic
+    // WHERE ".$where . $type_filter ." AND
+    // traffic.merchant_id > 0".
+    // (!empty($unique_id) ? ' and traffic.uid = ' . $unique_id :'')." and
+    // traffic.rdate >= '".$from."' AND
+    // traffic.rdate <='".$to. "' ".
+    // $orderBy ."
+    // limit " . $start_limit. ", " . $end_limit;
+
     const traficDataFull = await ctx.prisma.traffic.findMany({
       where: {
         ...type_filter,
@@ -122,7 +127,29 @@ export const getClicksReport = publicProcedure
           lte: to,
         },
       },
-      include: {
+      select: {
+        id: true,
+        uid: true,
+        clicks: true,
+        views: true,
+        rdate: true,
+        profile_id: true,
+        type: true,
+        banner_id: true,
+        param: true,
+        param2: true,
+        param3: true,
+        param4: true,
+        param5: true,
+        refer_url: true,
+        ip: true,
+        affiliate_id: true,
+        platform: true,
+        os: true,
+        osVersion: true,
+        browser: true,
+        broswerVersion: true,
+        merchant_id: true,
         country: {
           select: {
             title: true,
@@ -130,10 +157,27 @@ export const getClicksReport = publicProcedure
             id: true,
           },
         },
+        merchant: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        affiliate: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        merchant_creative: {
+          select: {
+            id: true,
+            title: true,
+            url: true,
+          },
+        },
       },
     });
-
-    // console.log("traffic full data ----->", traficDataFull);
 
     for (const item of traficDataFull) {
       uid.push(item.uid);
@@ -155,172 +199,40 @@ export const getClicksReport = publicProcedure
       },
     });
 
-    const MerchantsData = await ctx.prisma.merchants.findMany({
-      select: {
-        id: true,
-        name: true,
-      },
-    });
-    for (const merchant of MerchantsData) {
-      const id = merchant.id;
-      MerchantsDataItems[id] = {};
-      MerchantsDataItems[id].id = merchant.id;
-      MerchantsDataItems[id].name = merchant.name;
-    }
-
-    const MerchantsCreativeData = await ctx.prisma.merchants_creative.findMany({
-      select: {
-        id: true,
-        title: true,
-        url: true,
-      },
-    });
-    // console.log("merchant creative data ----->", MerchantsCreativeData);
-
-    for (const item of MerchantsCreativeData) {
-      const id = item?.id;
-      MerchantsCreativeDataItems[id] = {};
-      MerchantsCreativeDataItems[id].id = item.id;
-      MerchantsCreativeDataItems[id].title = item.title;
-      MerchantsCreativeDataItems[id].url = item.url;
-    }
-
-    const AffiliatesData = await ctx.prisma.affiliates.findMany({
-      select: {
-        id: true,
-        username: true,
-      },
-    });
-
-    for (const item of AffiliatesData) {
-      const id = item?.id;
-      AffiliatesDataItems[id] = {};
-      AffiliatesDataItems[id].id = item.id;
-      AffiliatesDataItems[id].username = item.username;
-    }
-
-    const ReportTradersData = await ctx.prisma.reporttraders.findMany({
-      where: {
-        Date: {
-          gte: from,
-        },
-        ClickDetails: {
-          in: uid,
-        },
-      },
-    });
-    let lead = 0;
-    let demo = 0;
-    let real = 0;
-
-    for (const row of ReportTradersData) {
-      ReportTradersDataItems[row.ClickDetails] = {};
-      ReportTradersDataItems[row.ClickDetails].volume = row.Volume;
-      ReportTradersDataItems[row.ClickDetails].trader_id = row.TraderID;
-      ReportTradersDataItems[row.ClickDetails].trader_name = row.TraderAlias;
-      ReportTradersDataItems[row.ClickDetails].FirstDeposit = row.FirstDeposit;
-      ReportTradersDataItems[row.ClickDetails].TotalDeposits =
-        row.TotalDeposits;
-      ReportTradersDataItems[row.ClickDetails].DepositAmount =
-        row.DepositAmount;
-      ReportTradersDataItems[row.ClickDetails].BonusAmount = row.BonusAmount;
-      ReportTradersDataItems[row.ClickDetails].WithdrawalAmount =
-        row.WithdrawalAmount;
-      ReportTradersDataItems[row.ClickDetails].ChargeBackAmount =
-        row.ChargeBackAmount;
-      ReportTradersDataItems[row.ClickDetails].NetDeposit = row.NetDeposit;
-      ReportTradersDataItems[row.ClickDetails].PNL = row.PNL;
-      ReportTradersDataItems[row.ClickDetails].Commission = row.Commission;
-      switch (row.Type) {
-        case "lead":
-          lead += 1;
-          ReportTradersDataItems[row.ClickDetails].lead = lead;
-          break;
-
-        case "demo":
-          demo += 1;
-          ReportTradersDataItems[row.ClickDetails].demo = demo;
-          break;
-
-        case "real":
-          real += 1;
-          ReportTradersDataItems[row.ClickDetails].real = real;
-          break;
-      }
-
-      if (
-        Number(row.TotalDeposits) > 0 ||
-        Number(row.Volume) > 0 ||
-        Number(row.PNL) > 0
-      ) {
-        let QFTD = 0;
-        QFTD += 1;
-        ReportTradersDataItems[row.ClickDetails].QFTD = QFTD;
-      }
-    }
-
-    for (const item of traficDataFull) {
-      const id = item.id;
-      clickArray[id] = {};
-      clickArray[id].id = item.id;
-      clickArray[id].uid = item.uid;
-      clickArray[id].clicks = item.clicks;
-      clickArray[id].views = item.views;
-      clickArray[id].traffic_date = item.rdate;
-      clickArray[id].profile_id = item.profile_id;
-      clickArray[id].type = item.type;
-      clickArray[id].banner_id = item.banner_id;
-      clickArray[id].param = item.param;
-      clickArray[id].param2 = item.param2;
-      clickArray[id].param3 = item.param3;
-      clickArray[id].param4 = item.param4;
-      clickArray[id].param5 = item.param5;
-      clickArray[id].refer_url = item.refer_url;
-      clickArray[id].country = item.country.title;
-      clickArray[id].ip = item.ip;
-      clickArray[id].affiliate_id = item.affiliate_id;
-      clickArray[id].platform = item.platform;
-      clickArray[id].os = item.os;
-      clickArray[id].osVersion = item.osVersion;
-      clickArray[id].browser = item.browser;
-      clickArray[id].broswerVersion = item.broswerVersion;
-      clickArray[id].banner_title =
-        MerchantsCreativeDataItems[item.banner_id].title;
-      clickArray[id].banner_url =
-        MerchantsCreativeDataItems[item.banner_id].url;
-      clickArray[id].merchant_name = MerchantsDataItems[item.merchant_id].name;
-      clickArray[id].affiliate_username =
-        AffiliatesDataItems[item.affiliate_id].username;
-      clickArray[id].volume = ReportTradersDataItems[item?.uid]?.volume;
-      clickArray[id].trader_id = ReportTradersDataItems[item?.uid]?.trader_id;
-      clickArray[id].trader_name =
-        ReportTradersDataItems[item?.uid]?.trader_name;
-      clickArray[id].lead = ReportTradersDataItems[item?.uid]?.lead;
-      clickArray[id].demo = ReportTradersDataItems[item?.uid]?.demo;
-      clickArray[id].real = ReportTradersDataItems[item?.uid]?.real;
-      clickArray[id].sales_status =
-        ReportTradersDataItems[item?.uid]?.sales_status;
-      clickArray[id].ftd_amount = ReportTradersDataItems[item?.uid]?.ftd_amount;
-      clickArray[id].ftd = ReportTradersDataItems[item?.uid]?.ftd;
-      clickArray[id].depositingAccounts =
-        ReportTradersDataItems[item?.uid]?.depositingAccounts;
-      clickArray[id].sumDeposits =
-        ReportTradersDataItems[item?.uid]?.sumDeposits;
-      clickArray[id].bonus = ReportTradersDataItems[item?.uid]?.bonus;
-      clickArray[id].withdrawal = ReportTradersDataItems[item?.uid]?.withdrawal;
-      clickArray[id].chargeback = ReportTradersDataItems[item?.uid]?.chargeback;
-      clickArray[id].netRevenue = ReportTradersDataItems[item?.uid]?.netRevenue;
-      clickArray[id].pnl = ReportTradersDataItems[item?.uid]?.pnl;
-      clickArray[id].QFTD = ReportTradersDataItems[item?.uid]?.QFTD;
-      clickArray[id].totalCom = ReportTradersDataItems[item?.uid]?.totalCom;
-    }
-
-    console.log(
-      "merchant creative data items ---->",
-      Object.values(clickArray)[0]
+    const ReportTradersDataItems = await getReportTraderData(
+      ctx.prisma,
+      from,
+      uid
     );
 
-    return Object.values(clickArray);
+    const clickArray = traficDataFull.map((item) => {
+      const {
+        uid,
+        banner_id,
+        merchant_id,
+        affiliate_id,
+        rdate,
+        country,
+        merchant,
+        affiliate,
+        merchant_creative,
+        ...restItem
+      } = item;
+      const traderData = ReportTradersDataItems[uid] || {};
+
+      return {
+        ...restItem,
+        traffic_date: rdate,
+        country: country.title,
+        banner_title: merchant_creative.title,
+        banner_url: merchant_creative.url,
+        merchant_name: merchant.name,
+        affiliate_username: affiliate.username,
+        ...traderData,
+      };
+    });
+
+    return clickArray;
   });
 
 // export const getClicksReport = publicProcedure
