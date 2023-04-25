@@ -4,7 +4,12 @@ import {
 } from "@/components/affiliates/layout/navigation-data";
 import { cn } from "@/lib/utils";
 import React from "react";
-import { Menu, sidebarClasses, Sidebar as SideMenu } from "react-pro-sidebar";
+import {
+  Menu,
+  menuClasses,
+  sidebarClasses,
+  Sidebar as SideMenu,
+} from "react-pro-sidebar";
 import DropdownLink from "./DropdownLink";
 import SingleLink from "./SingleLink";
 
@@ -74,12 +79,16 @@ const Sidebar: React.FC<Props> = ({
         <div className="scrollbar-thin relative min-h-full space-y-1 overflow-y-auto">
           <SideMenu
             breakPoint="md"
-            className="pt-16"
+            className="scrollbar-thin pt-16 md:pt-0"
             rootStyles={{
               [`.${sidebarClasses.container}`]: {
                 backgroundColor: "#fff",
               },
+              ["." + menuClasses.subMenuContent]: {
+                width: "280px",
+              },
             }}
+            width="280px"
           >
             <Menu>
               {navigationData.map((item, index) =>

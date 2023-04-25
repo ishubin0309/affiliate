@@ -103,7 +103,7 @@ const DropdownLink = ({
             >
               <span
                 className={
-                  "ml-12 truncate text-base font-medium tracking-wide " +
+                  "ml-11 truncate text-base font-medium tracking-wide " +
                   (activeName == value.link ? "text-[#2262C6]" : "")
                 }
               >
