@@ -1,294 +1,313 @@
 import { publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
-import { getUnixTime } from "date-fns";
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
-import { type data_sales_type, Prisma } from "@prisma/client";
+import { affiliate_id, merchant_id } from "../const";
+import { pageParams, reportParams } from "./reports-utils";
+import { getReportTraderData } from "@/server/api/routers/affiliates/reports/get-trader-data";
+
+const params = z.object({
+  from: z.date(),
+  to: z.date(),
+  merchant_id: z.number().optional(),
+  unique_id: z.string().optional(),
+  trader_id: z.string().optional(),
+  type: z.enum(["clicks", "views"]).optional(),
+});
+
+const Merchant = z.object({
+  name: z.string(),
+});
+
+const Affiliate = z.object({
+  username: z.string(),
+});
+
+const output = z.array(
+  z.object({
+    id: z.number().optional(),
+    rdate: z.date().optional(),
+    unixRdate: z.number().optional(),
+    ctag: z.string().optional(),
+    uid: z.string().optional(),
+    ip: z.string().optional(),
+    admin_id: z.number().optional(),
+    affiliate_id: z.number().optional(),
+    group_id: z.number().optional(),
+    banner_id: z.number().optional(),
+    merchant_id: z.number().optional(),
+    profile_id: z.number().optional(),
+    language_id: z.number().optional(),
+    promotion_id: z.number().optional(),
+    valid: z.boolean().optional(),
+    title: z.string().optional(),
+    bannerType: z.string().optional(),
+    type: z.string().optional(),
+    width: z.number().optional(),
+    height: z.number().optional(),
+    file: z.string().optional(),
+    url: z.string().optional(),
+    alt: z.string().optional(),
+    platform: z.string().optional(),
+    os: z.string().optional(),
+    osVersion: z.string().optional(),
+    browser: z.string().optional(),
+    broswerVersion: z.string().optional(),
+    userAgent: z.string().optional(),
+    country_id: z.string().optional(),
+    refer_url: z.string().optional(),
+    param: z.string().optional(),
+    param2: z.string().optional(),
+    param3: z.string().optional(),
+    param4: z.string().optional(),
+    param5: z.string().optional(),
+    views: z.number().optional(),
+    clicks: z.number().optional(),
+    product_id: z.number().optional(),
+    merchant: Merchant.optional(),
+    affiliate: Affiliate.optional(),
+    trader_id2: z.string().optional(),
+    trader_alias: z.string().optional(),
+    sales_status: z.string().optional(),
+  })
+);
+
+const paramsWithPage = params.extend(pageParams);
+const paramsWithReport = params.extend(reportParams);
+
+type InputType = z.infer<typeof paramsWithPage>;
+type OutputType = z.infer<typeof output>;
 
 export const getClicksReport = publicProcedure
   .input(
     z.object({
       from: z.date(),
       to: z.date(),
-      merchant_id: z.number().optional(),
       unique_id: z.string().optional(),
       trader_id: z.string().optional(),
       type: z.enum(["clicks", "views"]).optional(),
     })
   )
-  .query(
-    async ({
-      ctx,
-      input: { from, to, merchant_id, unique_id, trader_id, type },
-    }) => {
-      type TypeFilter = {
-        clicks?: {
-          gt: number;
-        };
-        views?: {
-          gt: number;
-        };
+  .output(output)
+  .query(async ({ ctx, input: { from, to, unique_id, trader_id, type } }) => {
+    const uid: string[] = [];
+    let type_filter = {};
+
+    if (type === "views") {
+      type_filter = {
+        views: {
+          gt: 0,
+        },
       };
+    }
 
-      const getTypeFilter = (type?: "clicks" | "views"): TypeFilter => {
-        if (type === "clicks" || type === "views") {
-          return { [type]: { gt: 0 } };
-        }
-        return {};
+    if (type === "clicks") {
+      type_filter = {
+        clicks: {
+          gt: 0,
+        },
       };
+    }
 
-      const listProfiles = async () =>
-        ctx.prisma.affiliates_profiles.findMany({
-          where: { valid: 1 },
-          select: { name: true, id: true },
-        });
+    // "SELECT * from traffic
+    // WHERE ".$where . $type_filter ." AND
+    // traffic.merchant_id > 0".
+    // (!empty($unique_id) ? ' and traffic.uid = ' . $unique_id :'')." and
+    // traffic.rdate >= '".$from."' AND
+    // traffic.rdate <='".$to. "' ".
+    // $orderBy ."
+    // limit " . $start_limit. ", " . $end_limit;
 
-      const getTotalRecords = async (
-        type_filter: TypeFilter,
-        unique_id: string | undefined,
-        from: Date,
-        to: Date
-      ) =>
-        ctx.prisma.traffic.aggregate({
-          where: {
-            ...type_filter,
-            AND: { uid: unique_id || "" },
-            merchant_id: { gt: 0 },
-            unixRdate: {
-              gte: getUnixTime(from),
-              lt: getUnixTime(to),
-            },
-          },
-          _sum: { id: true },
-        });
-
-      const getClickWW = async (from: Date, to: Date) =>
-        ctx.prisma.traffic.findMany({
-          where: {
-            unixRdate: {
-              gte: getUnixTime(from),
-              lt: getUnixTime(to),
-            },
-          },
-          include: {
-            merchant: { select: { name: true } },
-            affiliate: { select: { username: true } },
-          },
-          take: 10,
-        });
-
-      const type_filter = getTypeFilter(type);
-      const list_profiles = await listProfiles();
-      const totalRecords = await getTotalRecords(
-        type_filter,
-        unique_id,
-        from,
-        to
-      );
-      const clickww = await getClickWW(from, to);
-      const regArr = [];
-
-      if (Object.keys(clickww).length > 0) {
-        for (let key = 0; key < Object.keys(clickww).length; key++) {
-          if (Number(clickww[key]?.uid) > 0) {
-            const regg = await ctx.prisma.data_reg.findMany({
-              where: {
-                merchant_id: {
-                  gt: 0,
-                },
-                affiliate_id: affiliate_id,
-                rdate: {
-                  gte: clickww[key]?.rdate,
-                },
-                // uid: clickww[key]?.uid,
-              },
-              take: 1,
-            });
-            let leads = 0;
-            let demo = 0;
-            let real = 0;
-
-            for (let i = 0; i < Object.keys(regg).length; i++) {
-              regArr.push({
-                id: regg[i]?.id,
-                rdate: regg[i]?.rdate,
-                affiliate_id: regg[i]?.affiliate_id,
-                trader_id: regg[i]?.trader_id,
-                merchant_id: regg[i]?.merchant_id,
-                trader_alias: regg[i]?.trader_alias,
-                sales_status: regg[i]?.saleStatus,
-              });
-
-              if (regg[i]?.type === "lead") {
-                leads += 1;
-              }
-
-              if (regg[i]?.type === "demo") {
-                demo += 1;
-              }
-
-              if (regg[i]?.type === "real") {
-                real += 1;
-              }
-            }
-          }
-        }
-      }
-
-      /*
-              $sql = "SELECT data_reg.affiliate_id,data_reg.merchant_id,data_reg.initialftddate,tb1.rdate,data_reg.banner_id,data_reg.trader_id,data_reg.profile_id,tb1.amount, tb1.type AS data_sales_type  ,data_reg.country as country
-              FROM data_sales as tb1 "
-      
-                       . "INNER JOIN data_reg AS data_reg ON
-                       tb1.merchant_id = data_reg.merchant_id AND
-                       tb1.trader_id = data_reg.trader_id AND
-                       data_reg.type <> 'demo'  "
-                       . "WHERE  tb1.trader_id = " .  $looped_trader_id
-                      . " and tb1.rdate >= '" . $regDate . "'"
-                      . " and tb1.merchant_id >0 "
-                      . (empty($group_id) ? '' : ' AND tb1.group_id = ' . $group_id . ' ')
-                       . (!empty($affiliate_id) ? ' and tb1.affiliate_id = ' . $affiliate_id :' ')
-                       . (isset($banner_id) && !empty($banner_id) ? ' AND data_reg.banner_id = "'.$banner_id.'"' :' ')
-                       .(!empty($unique_id) ? ' and data_reg.uid = ' . $unique_id :' ');
-      
-             */
-
-      interface SalesWWType {
-        affiliate_id: number;
-        merchant_id: number;
-        initialftddate: string;
-        rdate: Date;
-        banner_id: number;
-        trader_id: string;
-        profile_id: number;
-        amount: number;
-        type: data_sales_type;
-        country: string;
-      }
-
-      const group_id = null;
-      const cond_group_id = group_id
-        ? Prisma.sql`AND tb1.group_id = ${group_id}`
-        : Prisma.empty;
-
-      const cond_unique_id = unique_id
-        ? Prisma.sql`AND data_reg.uid = ${unique_id}`
-        : Prisma.empty;
-
-      const salesww = await ctx.prisma.$queryRaw<SalesWWType[]>`SELECT     
-           data_reg.affiliate_id,
-           data_reg.merchant_id,
-           data_reg.initialftddate,
-           tb1.rdate,
-           data_reg.banner_id,
-           data_reg.trader_id,
-           data_reg.profile_id,
-           tb1.amount,
-           tb1.type         AS data_sales_type ,
-           data_reg.country AS country
-FROM       data_sales       AS tb1
-INNER JOIN data_reg         AS data_reg
-ON         tb1.merchant_id = data_reg.merchant_id
-AND        tb1.trader_id = data_reg.trader_id
-AND        data_reg.type <> 'demo'
-WHERE      tb1.trader_id = ${trader_id}
-AND        tb1.rdate >= ${from}
-AND        tb1.merchant_id >0
-${cond_group_id}
-${cond_unique_id}
-`;
-      // (empty($group_id) ? '' : ' AND tb1.group_id = ' . $group_id . ' ')                 . (!empty($affiliate_id) ? ' and tb1.affiliate_id = ' . $affiliate_id :' ')                 . (isset($banner_id) && !empty($banner_id) ? ' AND data_reg.banner_id = "'.$banner_id.'"' :' ')
-      // .(!empty($unique_id) ? ' and data_reg.uid = ' . $unique_id :' ');`;
-
-      /**
-       * uncomment the include statement below to recreate the issue.
-       */
-      // const salesww = await ctx.prisma.data_sales.findMany({
-      //   include: {
-      //     data_reg: {
-      //       select: {
-      //         affiliate_id: true,
-      //         initialftdtranzid: true,
-      //         banner_id: true,
-      //         trader_id: true,
-      //         country: true,
-      //         profile_id: true,
-      //       },
-      //     },
-      //   },
-      //   where: {
-      //     affiliate_id: affiliate_id,
-      //     merchant_id: {
-      //       gt: 0,
-      //     },
-      //   },
-      //   take: 10,
-      // });
-
-      // 		const salesww = await ctx.prisma
-      // 			.$queryRaw(Prisma.sql`SELECT data_reg.affiliate_id,data_reg.merchant_id,data_reg.initialftddate,tb1.rdate,data_reg.banner_id,data_reg.trader_id,data_reg.profile_id,tb1.amount, tb1.type AS data_sales_type  ,data_reg.country as country FROM data_sales as tb1
-
-      //   INNER JOIN data_reg AS data_reg ON tb1.merchant_id = data_reg.merchant_id AND tb1.trader_id = data_reg.trader_id AND data_reg.type = 'demo'
-      //   WHERE tb1.merchant_id > 0`);
-      console.log("sales ww ------>", salesww);
-      let bonus = 0;
-      let volume = 0;
-      let chargeback = 0;
-      let withdrawal = 0;
-      let depositingAccounts = 0;
-      let sumDeposits = 0;
-      const balance_sheet = [];
-
-      for (let i = 0; i < salesww.length; i++) {
-        if (salesww[i]?.type === "deposit") {
-          depositingAccounts += 1;
-          sumDeposits += salesww[i]?.amount || 0;
-        }
-        if (salesww[i]?.type === "bonus") {
-          bonus += salesww[i]?.amount || 0;
-        }
-
-        if (salesww[i]?.type === "withdrawal") {
-          withdrawal += salesww[i]?.amount || 0;
-        }
-
-        if (salesww[i]?.type === "volume") {
-          volume += salesww[i]?.amount || 0;
-        }
-
-        if (salesww[i]?.type === "chargeback") {
-          chargeback += salesww[i]?.amount || 0;
-        }
-
-        balance_sheet.push({
-          volume,
-          bonus,
-          chargeback,
-          withdrawal,
-        });
-      }
-
-      const revww = await ctx.prisma.data_stats.findMany({
-        include: {
-          merchant: {
-            select: {
-              producttype: true,
-            },
+    const traficDataFull = await ctx.prisma.traffic.findMany({
+      where: {
+        ...type_filter,
+        affiliate_id: affiliate_id,
+        merchant_id: merchant_id,
+        uid: unique_id,
+        rdate: {
+          gte: from,
+          lte: to,
+        },
+      },
+      select: {
+        id: true,
+        uid: true,
+        clicks: true,
+        views: true,
+        rdate: true,
+        profile_id: true,
+        type: true,
+        banner_id: true,
+        param: true,
+        param2: true,
+        param3: true,
+        param4: true,
+        param5: true,
+        refer_url: true,
+        ip: true,
+        affiliate_id: true,
+        platform: true,
+        os: true,
+        osVersion: true,
+        browser: true,
+        broswerVersion: true,
+        merchant_id: true,
+        country: {
+          select: {
+            title: true,
+            code: true,
+            id: true,
           },
         },
-      });
+        merchant: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        affiliate: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        merchant_creative: {
+          select: {
+            id: true,
+            title: true,
+            url: true,
+          },
+        },
+      },
+    });
 
-      const merged = [];
-
-      for (let i = 0; i < clickww.length; i++) {
-        merged.push({
-          ...clickww[i],
-          ...regArr[i],
-          ...balance_sheet[i],
-        });
-      }
-      // console.log(regArr);
-      // console.log(balance_sheet);
-
-      return merged;
+    for (const item of traficDataFull) {
+      uid.push(item.uid);
     }
-  );
+
+    const totalRecords = await ctx.prisma.traffic.aggregate({
+      _count: {
+        id: true,
+      },
+      where: {
+        ...type_filter,
+        affiliate_id: affiliate_id,
+        merchant_id: merchant_id,
+        uid: unique_id,
+        rdate: {
+          gte: from,
+          lte: to,
+        },
+      },
+    });
+
+    const ReportTradersDataItems = await getReportTraderData(
+      ctx.prisma,
+      from,
+      uid
+    );
+
+    const clickArray = traficDataFull.map((item) => {
+      const {
+        uid,
+        banner_id,
+        merchant_id,
+        affiliate_id,
+        rdate,
+        country,
+        merchant,
+        affiliate,
+        merchant_creative,
+        ...restItem
+      } = item;
+      const traderData = ReportTradersDataItems[uid] || {};
+
+      return {
+        ...restItem,
+        traffic_date: rdate,
+        country: country.title,
+        banner_title: merchant_creative.title,
+        banner_url: merchant_creative.url,
+        merchant_name: merchant.name,
+        affiliate_username: affiliate.username,
+        ...traderData,
+      };
+    });
+
+    return clickArray;
+  });
+
+// export const getClicksReport = publicProcedure
+//   .input(paramsWithPage)
+//   .output(output)
+//   .query(clicksReport);
+
+// export const exportClicksReport = publicProcedure
+//   .input(paramsWithReport)
+//   .mutation(async function ({ ctx, input }) {
+//     const { exportType, ...params } = input;
+
+//     const columns = [
+//       "ID",
+//       "UID",
+//       "Impression",
+//       "Click",
+//       "Date",
+//       "Type",
+//       "Merchant",
+//       "Banner ID",
+//       "Profile ID",
+//       "Param",
+//       "Param 2",
+//       "Refer URL",
+//       "Country",
+//       "IP",
+//       "Platform",
+//       "Operating System",
+//       "OS Version",
+//       "Browser",
+//       "Browser Version",
+//       "Trader ID",
+//       "Trader Alias",
+//       "Lead",
+//       "Demo",
+//       "Sales Status",
+//       "Accounts",
+//       "FTD",
+//       "Volume",
+//       "Withdrawal Amount",
+//       "ChargeBack Amount",
+//       "Active Traders",
+//     ];
+
+//     const file_date = new Date().toISOString();
+//     const generic_filename = `clicks-report${file_date}`;
+
+//     console.log("export type ---->", exportType);
+//     const clicks_report = "clicks-report";
+
+//     await exportReportLoop(
+//       exportType || "csv",
+//       columns,
+//       generic_filename,
+//       clicks_report,
+//       async (page, items_per_page) =>
+//         clicksReport({
+//           ctx,
+//           input: { ...params, page, items_per_page },
+//         })
+//     );
+
+//     const bucketName = "reports-download-tmp";
+//     const serviceKey = path.join(
+//       __dirname,
+//       "../../../../../api-front-dashbord-a4ee8aec074c.json"
+//     );
+
+//     const public_url = uploadFile(
+//       serviceKey,
+//       "api-front-dashbord",
+//       bucketName,
+//       generic_filename,
+//       exportType ? exportType : "json"
+//     );
+//     return public_url;
+//   });
