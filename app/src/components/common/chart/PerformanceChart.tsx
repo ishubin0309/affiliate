@@ -95,7 +95,7 @@ const PerformanceChart = ({ performanceChartData }: Props) => {
         backgroundColor: "#FF8549",
         borderRadius: 10,
         yAxisID: "y1",
-        // maxBarThickness: 30
+        maxBarThickness: 50,
       },
       {
         label: "Account",
@@ -103,7 +103,7 @@ const PerformanceChart = ({ performanceChartData }: Props) => {
         backgroundColor: "#2262C6",
         borderRadius: 10,
         yAxisID: "y",
-        // maxBarThickness: 30,
+        maxBarThickness: 50,
       },
     ],
   };
