@@ -56,12 +56,6 @@ export const CountryReports = () => {
     values: { merchant_id, from, to },
   } = useSearchContext();
 
-  const params = {
-    from,
-    to,
-    merchant_id,
-  };
-
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery(
     undefined,
     { keepPreviousData: true, refetchOnWindowFocus: false }
@@ -75,7 +69,7 @@ export const CountryReports = () => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
-  console.log(`muly:CountryReports:render`, { data, params });
+  console.log(`muly:CountryReports:render`, { data });
 
   return (
     <ReportControl

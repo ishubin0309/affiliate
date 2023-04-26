@@ -141,23 +141,22 @@ export const exportQuickSummaryReport = publicProcedure
       "Active Trader",
       "Commission",
     ];
-    const generic_filename = "quick-summary-report";
+    const file_date = new Date().toISOString();
+    const generic_filename = `quick-summary${file_date}`;
 
     console.log("export type ---->", exportType);
+    const quick_summary = "quick-summary";
+
     await exportReportLoop(
       exportType || "csv",
       columns,
       generic_filename,
+      quick_summary,
       async (page, items_per_page) =>
         quickReportSummary({
           ctx,
           input: { ...params, page, items_per_page },
         })
-    );
-
-    const localFileName = path.join(
-      __dirname,
-      `../../../../../${generic_filename}.${exportType}`
     );
 
     const bucketName = "reports-download-tmp";
@@ -166,13 +165,12 @@ export const exportQuickSummaryReport = publicProcedure
       "../../../../../api-front-dashbord-a4ee8aec074c.json"
     );
 
-    console.log("export type ---->", exportType);
     const public_url = uploadFile(
       serviceKey,
       "api-front-dashbord",
       bucketName,
-      localFileName,
-      exportType ? exportType : "xlsx"
+      generic_filename,
+      exportType ? exportType : "json"
     );
     return public_url;
   });
