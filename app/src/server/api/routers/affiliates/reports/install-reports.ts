@@ -94,6 +94,26 @@ export const installReport = async ({
     orderBy: {
       rdate: "asc",
     },
+    include: {
+      merchant_creative: {
+        select: {
+          id: true,
+          title: true,
+          url: true,
+          language: {
+            select: {
+              title: true,
+            },
+          },
+        },
+      },
+      merchant: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
     where: {
       rdate: {
         gte: from,
@@ -110,66 +130,8 @@ export const installReport = async ({
           : (filter as data_install_type),
     },
   });
-  let banner_info = [] as any;
-  let aff_info = [] as any;
-  for (let i = 0; i < Object.keys(data).length; i++) {
-    const bannerInfo = await prismaClient.merchants_creative.findMany({
-      include: {
-        language: {
-          select: {
-            title: true,
-          },
-        },
-      },
-      where: {
-        id: data[i]?.banner_id,
-      },
-    });
-    banner_info = bannerInfo;
 
-    const affInfo = await prismaClient.affiliates.findMany({
-      where: {
-        valid: 1,
-        id: affiliate_id,
-      },
-    });
-    aff_info = affInfo;
-  }
-
-  const merchants = await prismaClient.merchants.findMany({
-    where: {
-      valid: 1,
-      id: merchant_id,
-    },
-  });
-
-  const merged: any = {};
-
-  for (const item of data) {
-    merged["country"] = item?.country;
-    merged["rdate"] = item?.rdate;
-    merged["trader_id"] = item?.trader_id;
-    merged["trader_alias"] = item?.trader_alias;
-    merged["type"] = item?.type;
-    merged["status"] = item?.status;
-    merged["freeParam"] = item?.freeParam;
-    merged["freeParam2"] = item?.freeParam2;
-    merged["email"] = item?.email;
-  }
-
-  for (const item of banner_info) {
-    merged["id"] = item?.id;
-    merged["title"] = item?.title;
-    merged["type"] = item?.type;
-    merged["language_name"] = item?.language_name;
-  }
-
-  for (const item of merchants) {
-    merged["id"] = item.id;
-    merged["name"] = item.name;
-  }
-
-  return merged as Array<Record<string, any>>;
+  return data as Array<Record<string, any>>;
 };
 
 export const getInstallReport = publicProcedure
