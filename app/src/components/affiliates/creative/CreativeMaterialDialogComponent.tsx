@@ -13,9 +13,10 @@ import {
   SelectValue,
 } from "../../ui/select";
 
-import { Code2Icon, Copy, Image as ImageIcon, Plus } from "lucide-react";
+import { Code2Icon, Copy, Image as ImageIcon } from "lucide-react";
 import { Button } from "../../ui/button";
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
+import DynamicPerameter from "./dynamicPerameter";
 interface Props {
   values: valueProps[];
   file?: string;
@@ -179,9 +180,9 @@ export const CreativeMaterialDialogComponent = ({
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                  <Button variant="primary" className="ml-2" size="rec">
+                  {/* <Button variant="primary" className="ml-2" size="rec">
                     <Plus className="h-4 w-4" />
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>
@@ -207,12 +208,37 @@ export const CreativeMaterialDialogComponent = ({
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                  <Button variant="primary" className="ml-2" size="rec">
+                  <DynamicPerameter />
+                  {/* <Button variant="primary" className="ml-2" size="rec">
                     <Plus className="h-4 w-4" />
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>
+          </div>
+          <div>
+            <Tabs defaultValue="HtmlCode">
+              <TabsList>
+                <TabsTrigger value="HtmlCode">HTML Code</TabsTrigger>
+                <TabsTrigger value="JSCode">JS Code</TabsTrigger>
+                <TabsTrigger value="QrCode">QR Code</TabsTrigger>
+                <TabsTrigger value="DirectLinkCode">
+                  Direct Link Code
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent className="border-0" value="HtmlCode">
+                <div className="mt-5 h-80 pb-5">HtmlCode</div>
+              </TabsContent>
+              <TabsContent className="border-0" value="JSCode">
+                <div className="mt-5 h-80  pb-5">JSCode</div>
+              </TabsContent>
+              <TabsContent className="border-0" value="QrCode">
+                <div className="mt-5 h-80 pb-5">QrCode</div>
+              </TabsContent>
+              <TabsContent className="border-0" value="DirectLinkCode">
+                <div className="mt-5 h-80  pb-5">DirectLinkCode</div>
+              </TabsContent>
+            </Tabs>
           </div>
           <div className="-mx-3 mb-6 flex flex-wrap">
             <div className="w-full px-3">
