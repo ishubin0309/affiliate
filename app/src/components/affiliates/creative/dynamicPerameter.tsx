@@ -17,7 +17,7 @@ const DynamicPerameter = () => {
     if (elements.length < 10) {
       setElements((prevElements) => [
         ...prevElements,
-        <div key={prevElements.length}>
+        <div key={prevElements.length} className="mt-4 w-full">
           <Select defaultValue={"1"}>
             <SelectTrigger className="border px-4 py-3  text-xs ">
               <SelectValue placeholder="Select days" />
@@ -37,18 +37,19 @@ const DynamicPerameter = () => {
   };
 
   return (
-    <div>
-      {/* <button onClick={handleAddElement}>Add Element</button> */}
-      {elements}
+    <>
       <Button
         variant="primary"
-        className="ml-2"
+        className="ml-2 h-10 w-10"
         size="rec"
         onClick={handleAddElement}
       >
         <Plus className="h-4 w-4" />
       </Button>
-    </div>
+      <div className="flex w-full">
+        <div className="w-full">{elements}</div>
+      </div>
+    </>
   );
 };
 

@@ -208,21 +208,24 @@ export const CreativeMaterialDialogComponent = ({
               >
                 Dynamic Parameter
               </label>
-              <div className="flex">
-                <div className=" relative flex w-full items-center ">
-                  <Select defaultValue={"1"}>
-                    <SelectTrigger className="border px-4 py-3  text-xs ">
-                      <SelectValue placeholder="Select days" />
-                    </SelectTrigger>
-                    <SelectContent className="border text-xs">
-                      <SelectGroup>
-                        <SelectItem value={"1"}>Account 1</SelectItem>
-                        <SelectItem value={"2"}>Account 2</SelectItem>
-                        <SelectItem value={"3"}>Account 3</SelectItem>
-                        <SelectItem value={"4"}>Account 4</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+              <div className="flex flex-wrap">
+                <div className="relative flex w-full flex-wrap items-center justify-between ">
+                  <div className="w-[calc(100%-56px)]">
+                    <Select defaultValue={"1"}>
+                      <SelectTrigger className="border px-4 py-3  text-xs ">
+                        <SelectValue placeholder="Select days" />
+                      </SelectTrigger>
+                      <SelectContent className="border text-xs">
+                        <SelectGroup>
+                          <SelectItem value={"1"}>Account 1</SelectItem>
+                          <SelectItem value={"2"}>Account 2</SelectItem>
+                          <SelectItem value={"3"}>Account 3</SelectItem>
+                          <SelectItem value={"4"}>Account 4</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <DynamicPerameter />
                   {/* <Button variant="primary" className="ml-2" size="rec">
                     <Plus className="h-4 w-4" />
@@ -233,7 +236,7 @@ export const CreativeMaterialDialogComponent = ({
           </div>
           <div>
             <Tabs defaultValue="HtmlCode">
-              <TabsList>
+              <TabsList className="">
                 <TabsTrigger value="HtmlCode">HTML Code</TabsTrigger>
                 <TabsTrigger value="JSCode">JS Code</TabsTrigger>
                 <TabsTrigger value="QrCode">QR Code</TabsTrigger>
@@ -241,31 +244,65 @@ export const CreativeMaterialDialogComponent = ({
                   Direct Link Code
                 </TabsTrigger>
               </TabsList>
-              <TabsContent className="border-0" value="HtmlCode">
-                <div className="mt-5 h-80 pb-5">HtmlCode</div>
-              </TabsContent>
-              <TabsContent className="border-0" value="JSCode">
-                <div className="mt-5 h-80  pb-5">JSCode</div>
-              </TabsContent>
-              <TabsContent className="border-0" value="QrCode">
-                <div className="mt-5 h-80 pb-5">QrCode</div>
-              </TabsContent>
-              <TabsContent className="border-0" value="DirectLinkCode">
-                <div className="mt-5 h-80  pb-5">DirectLinkCode</div>
-              </TabsContent>
-            </Tabs>
-          </div>
-          <div className="-mx-3 mb-6 flex flex-wrap">
-            <div className="w-full px-3">
-              <textarea
-                className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
-                value='<div class="container">
+              <TabsContent className="border-0 p-0" value="HtmlCode">
+                <div className="-mx-3 mb-6 flex flex-wrap">
+                  <div className="w-full px-3">
+                    <textarea
+                      className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
+                      value='<div class="container">
                                                         <img src="img_5terre_wide.jpg" alt="Cinque Terre" width="1000" height="300">
                                                         <div class="topleft">Top Left</div>
                                                       </div>'
-                id="grid-textarea"
-              />
-            </div>
+                      id="grid-textarea"
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+              <TabsContent className="border-0 p-0" value="JSCode">
+                <div className="-mx-3 mb-6 flex flex-wrap">
+                  <div className="w-full px-3">
+                    <textarea
+                      className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
+                      value='<div class="container">
+                                                       
+                                                        <div class="topleft">JSCode</div>
+                                                      </div>'
+                      id="grid-textarea"
+                    />
+                  </div>
+                </div>
+                {/* <div className="mt-5 h-80  pb-5">JSCode</div> */}
+              </TabsContent>
+              <TabsContent className="border-0 p-0" value="QrCode">
+                <div className="-mx-3 mb-6 flex flex-wrap">
+                  <div className="w-full px-3">
+                    <textarea
+                      className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
+                      value='<div class="container">
+                                                       
+                                                        <div class="topleft">QrCode</div>
+                                                      </div>'
+                      id="grid-textarea"
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+              <TabsContent className="border-0 p-0" value="DirectLinkCode">
+                <div className="-mx-3 mb-6 flex flex-wrap">
+                  <div className="w-full px-3">
+                    <textarea
+                      className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
+                      value='<div class="container">
+                                                       
+                                                        <div class="topleft">DirectLinkCode</div>
+                                                      </div>'
+                      id="grid-textarea"
+                    />
+                  </div>
+                </div>
+                <div className="mt-5 h-80  pb-5"></div>
+              </TabsContent>
+            </Tabs>
           </div>
         </form>
         <div className="justify-between md:flex">
@@ -283,7 +320,7 @@ export const CreativeMaterialDialogComponent = ({
             </div>
           </div>
           <div className="flex justify-between md:justify-center md:space-x-2">
-            <div className="hidden rounded md:block">
+            {/* <div className="hidden rounded md:block">
               <div className="rounded">
                 <Button
                   variant="primary"
@@ -309,7 +346,7 @@ export const CreativeMaterialDialogComponent = ({
                   </div>
                 </Button>
               </div>
-            </div>
+            </div> */}
 
             <div className="rounded">
               <div className="">
