@@ -12,19 +12,18 @@ export const getDashboardDeviceReport = publicProcedure
   .query(async ({ ctx, input }) => {
     const { lastDays } = input;
     const dateQuery = sub(new Date(), { days: lastDays ? lastDays : 0 });
-    const data = await ctx.prisma.merchants_creative_stats.groupBy({
-      by: ["merchant_id", "CountryID"],
+    const data = await ctx.prisma.traffic.groupBy({
+      by: ["platform"],
       where: {
         merchant_id: merchant_id ? merchant_id : 1,
         affiliate_id,
-        Date: {
+        rdate: {
           gte: dateQuery,
         },
       },
       _sum: {
-        Clicks: true,
-        BannerID: true,
-        Impressions: true,
+        views: true,
+        clicks: true,
       },
     });
 

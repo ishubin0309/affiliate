@@ -10,13 +10,17 @@ import { getMerchantCreative, getMerchantCreativeMeta } from "./creative";
 import {
   getAllPerformanceChart,
   getConversionChart,
-  getCountryReport,
   getDashboard,
   getPerformanceChart,
-  getReportsHiddenCols,
   getTopMerchantCreative,
-  upsertReportsField,
 } from "./dashboard";
+
+import {
+  getReportsColumns,
+  upsertReportsColumns,
+} from "./reports/columns-setup";
+
+import { getDashboardCountryReport } from "./dashboard-country-report";
 import { getDashboardDeviceReport } from "./dashboard-device-report";
 import { deleteProfile, getProfiles, upsertProfile } from "./profile";
 import { getMerchantSubCreative, getMerchantSubCreativeMeta } from "./sub";
@@ -27,10 +31,19 @@ import {
   getAllMerchants,
   getLongCountries,
 } from "@/server/api/routers/affiliates/reports";
-import { getClicksReport } from "@/server/api/routers/affiliates/reports/clicks-report";
-import { getCommissionReport } from "@/server/api/routers/affiliates/reports/commission-report";
+import {
+  // exportClicksReport,
+  getClicksReport,
+} from "@/server/api/routers/affiliates/reports/clicks-report";
+import {
+  exportCommissionReport,
+  getCommissionReport,
+} from "@/server/api/routers/affiliates/reports/commission-report";
 import { getCreativeReport } from "@/server/api/routers/affiliates/reports/creative-report";
-import { getInstallReport } from "@/server/api/routers/affiliates/reports/install-reports";
+import {
+  exportInstallReport,
+  getInstallReport,
+} from "@/server/api/routers/affiliates/reports/install-reports";
 import { getLandingPageData } from "@/server/api/routers/affiliates/reports/landing-page";
 import { getPixelLogReport } from "@/server/api/routers/affiliates/reports/pixel-log-report";
 import { getProfileReportData } from "@/server/api/routers/affiliates/reports/profile-report";
@@ -48,6 +61,8 @@ import {
   getPixelMonitorMeta,
   upsertPixelMonitor,
 } from "./pixel";
+import { getCountryReport } from "@/server/api/routers/affiliates/reports/country-report";
+import { getTranslateReportFake } from "@/server/api/routers/affiliates/reports/translate-report-fake";
 
 export const affiliatesRouter = createTRPCRouter({
   getDashboard,
@@ -55,9 +70,8 @@ export const affiliatesRouter = createTRPCRouter({
   getPerformanceChart,
   getAllPerformanceChart,
   getConversionChart,
-  getCountryReport,
-  getReportsHiddenCols,
-  upsertReportsField,
+  getReportsColumns,
+  upsertReportsColumns,
 
   getMerchantCreativeMeta,
   getMerchantCreative,
@@ -84,10 +98,15 @@ export const affiliatesRouter = createTRPCRouter({
   getQuickReportSummary,
   exportQuickSummaryReport,
   getInstallReport,
+  exportInstallReport,
   getAllMerchants,
 
   getCommissionReport,
+  exportCommissionReport,
   getClicksReport,
+  getTranslateReportFake,
+  // exportClicksReport,
+  getCountryReport,
   getDocuments,
 
   getCommissions,
@@ -108,5 +127,6 @@ export const affiliatesRouter = createTRPCRouter({
 
   badQuerySample,
 
+  getDashboardCountryReport,
   getDashboardDeviceReport,
 });

@@ -1,4 +1,4 @@
-import { Image } from "@chakra-ui/react";
+import Image from "next/image";
 
 const AuthenticationFooter = () => {
   return (
@@ -9,7 +9,8 @@ const AuthenticationFooter = () => {
           <Image
             className="ml-1 h-auto w-[64px]"
             src="/img/logo.png"
-            width="15"
+            width={100}
+            height={100}
             alt="logo"
           />
         </a>

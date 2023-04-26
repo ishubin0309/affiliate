@@ -43,6 +43,8 @@ export const CommissionReport = () => {
     page: currentPage ? Number(currentPage) : 1,
     items_per_page: itemsPerPage ? Number(itemsPerPage) : 10,
   });
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportCommissionReport.useMutation();
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<CommissionReportType>();
 
@@ -197,10 +199,12 @@ export const CommissionReport = () => {
   ];
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  const handleExport = async (exportType: ExportType) => {
-    // TODO
-    return undefined;
-  };
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      from: new Date("2022-01-03"),
+      to: new Date("2023-01-03"),
+      exportType,
+    });
 
   if (!data) {
     return <Loading />;

@@ -34,13 +34,7 @@ export function ReportDataTable<Data extends object>({
     // initialState: { pagination: { pageSize: 50, pageIndex: 0 } },
   });
 
-  // console.log(
-  //   "header groups",
-  //   getHeaderGroups(),
-  //   "row data ---->",
-  //   getRowModel()
-  // );
-
+  const headers = [];
   return (
     <div className="scrollbar-thin relative overflow-x-auto shadow-md sm:rounded-lg">
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -53,6 +47,7 @@ export function ReportDataTable<Data extends object>({
               {headerGroup.headers.map((header) => {
                 // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
                 const meta = header.column.columnDef.meta;
+                headers.push(header.column.columnDef.header);
                 return (
                   <th
                     key={header.id}
