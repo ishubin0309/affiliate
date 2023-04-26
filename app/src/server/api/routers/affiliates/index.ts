@@ -12,10 +12,14 @@ import {
   getConversionChart,
   getDashboard,
   getPerformanceChart,
-  getReportsHiddenCols,
   getTopMerchantCreative,
-  upsertReportsField,
 } from "./dashboard";
+
+import {
+  getReportsColumns,
+  upsertReportsColumns,
+} from "./reports/columns-setup";
+
 import { getDashboardCountryReport } from "./dashboard-country-report";
 import { getDashboardDeviceReport } from "./dashboard-device-report";
 import { deleteProfile, getProfiles, upsertProfile } from "./profile";
@@ -66,8 +70,8 @@ export const affiliatesRouter = createTRPCRouter({
   getPerformanceChart,
   getAllPerformanceChart,
   getConversionChart,
-  getReportsHiddenCols,
-  upsertReportsField,
+  getReportsColumns,
+  upsertReportsColumns,
 
   getMerchantCreativeMeta,
   getMerchantCreative,

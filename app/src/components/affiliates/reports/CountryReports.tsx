@@ -1,24 +1,15 @@
-import { fakeTraderReportData } from "@/components/affiliates/reports/fake-trader-report-data";
 import { createColumnHelper } from "@tanstack/react-table";
-import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import type {
-  TraderReportType,
-  CountryReportType,
-} from "../../../server/db-types";
+import type { CountryReportType } from "../../../server/db-types";
 import { ReportControl } from "@/components/affiliates/reports/report-control";
 import { SearchSelect } from "@/components/common/search/search-select";
-import { SearchText } from "@/components/common/search/search-text";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { creativeType } from "@/components/affiliates/reports/TraderReports";
 import { api } from "@/utils/api";
-import { ClicksReportType } from "../../../server/db-types";
 import {
   getDateParam,
   getNumberParam,
   useSearchContext,
 } from "@/components/common/search/search-context";
-import { parse, sub } from "date-fns";
 
 const columnHelper = createColumnHelper<CountryReportType>();
 const createColumn = (id: keyof CountryReportType, header: string) =>

@@ -20,19 +20,22 @@ import { Home, SaveIcon } from "lucide-react";
 import Affiliates from "../../../layouts/AffiliatesLayout";
 import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
-const fields = [
-  "Impressions",
-  "Clicks",
-  "Install",
-  "Leads",
-  "Demo",
-  "Real Account",
-  "FTD",
-  "Withdrawal",
-  "ChargeBack",
-  "Active Trader",
-  "Commission",
+import { useToast } from "@/components/ui/use-toast";
+
+const allColumns = [
+  { id: "Impressions", title: "Impressions" },
+  { id: "Clicks", title: "Clicks" },
+  { id: "Install", title: "Install" },
+  { id: "Leads", title: "Leads" },
+  { id: "Demo", title: "Demo" },
+  { id: "RealAccount", title: "Real Account" },
+  { id: "FTD", title: "FTD" },
+  { id: "Withdrawal", title: "Withdrawal" },
+  { id: "ChargeBack", title: "ChargeBack" },
+  { id: "ActiveTrader", title: "Active Trader" },
+  { id: "Commission", title: "Commission" },
 ];
+
 const columnHelper = createColumnHelper<TopMerchantCreativeType>();
 export interface ItemType {
   id: number;
@@ -41,14 +44,19 @@ export interface ItemType {
   isChecked: boolean;
 }
 export const Dashboard = () => {
+  const { toast } = useToast();
   const { from, to } = useDateRange();
-  const [isChecked, setIsChecked] = useState(false);
-  const [selectColumnsMode, setSelectColumnsMode] = useState<boolean>(false);
-  const [showSelectedCheckbox, setShowSelectedCheckbox] = useState(false);
-  const [selectedCards, setSelectedCards] = useState<ItemType[]>([]);
-  const [unSelectedCards, setUnSelectedCards] = useState<ItemType[]>([]);
-  const [reportFields, setReportFields] = useState<ItemType[]>([]);
-  const [reportOldFields, setReportOldFields] = useState<ItemType[]>([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectColumnsMode, setSelectColumnsMode] = useState<string[] | null>(
+    null
+  );
+
+  // const [showSelectedCheckbox, setShowSelectedCheckbox] = useState(false);
+  // const [selectedCards, setSelectedCards] = useState<ItemType[]>([]);
+  // const [unSelectedCards, setUnSelectedCards] = useState<ItemType[]>([]);
+  // const [reportFields, setReportFields] = useState<ItemType[]>([]);
+  // const [reportOldFields, setReportOldFields] = useState<ItemType[]>([]);
 
   const { data } = api.affiliates.getDashboard.useQuery({
     from,
@@ -56,57 +64,96 @@ export const Dashboard = () => {
   });
 
   const { data: lastMonthData } = api.affiliates.getDashboard.useQuery(
-    useDateRangeDefault("last-month")
+    useDateRangeDefault("last-month"),
+    { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
   const { data: thisMonthData } = api.affiliates.getDashboard.useQuery(
-    useDateRangeDefault("month-to-date")
+    useDateRangeDefault("month-to-date"),
+    { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
   const { data: performanceChart } =
-    api.affiliates.getPerformanceChart.useQuery({ from, to });
+    api.affiliates.getPerformanceChart.useQuery(
+      { from, to },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
 
   const { data: allPerformanceChart } =
-    api.affiliates.getAllPerformanceChart.useQuery({ from, to });
+    api.affiliates.getAllPerformanceChart.useQuery(
+      { from, to },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
 
-  const { data: conversionChart } = api.affiliates.getConversionChart.useQuery({
-    from,
-    to,
-  });
+  const { data: conversionChart } = api.affiliates.getConversionChart.useQuery(
+    {
+      from,
+      to,
+    },
+    { keepPreviousData: true, refetchOnWindowFocus: false }
+  );
 
-  const { data: creative } = api.affiliates.getTopMerchantCreative.useQuery();
-  // const { data: report } = api.affiliates.getDashboardCountryReport.useQuery();
-  const { data: reportsHiddenCols } =
-    api.affiliates.getReportsHiddenCols.useQuery();
-  const { data: account, refetch } = api.affiliates.getAccount.useQuery();
+  const { data: creative } = api.affiliates.getTopMerchantCreative.useQuery(
+    undefined,
+    { keepPreviousData: true, refetchOnWindowFocus: false }
+  );
+  const { data: account, refetch } = api.affiliates.getAccount.useQuery(
+    undefined,
+    { keepPreviousData: true, refetchOnWindowFocus: false }
+  );
 
-  const upsertReportsField = api.affiliates.upsertReportsField.useMutation();
-  useEffect(() => {}, [selectedCards]);
-  useEffect(() => {
-    const fieldsArray = fields.map((field, i) => {
-      return {
-        id: i,
-        title: field,
-        value: field.replace(/\s/g, ""),
-        isChecked: !reportsHiddenCols?.includes(field),
-      };
-    });
-    setReportFields(fieldsArray);
-    setReportOldFields(fieldsArray);
-  }, [reportsHiddenCols]);
-  useEffect(() => {
-    if (showSelectedCheckbox) {
-      setReportFields([...selectedCards, ...unSelectedCards]);
-    } else {
-      console.log(reportOldFields, "reportOldFields");
-
-      setReportFields(reportOldFields);
+  const apiContext = api.useContext();
+  const { data: reportsColumns } = api.affiliates.getReportsColumns.useQuery(
+    { level: "affiliate", report: "dashStatCols" },
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
     }
-  }, [showSelectedCheckbox, reportOldFields]);
+  );
+  const upsertReportsColumns =
+    api.affiliates.upsertReportsColumns.useMutation();
+
+  const handleColumnChange = (fieldName: string, checked: boolean) => {
+    if (selectColumnsMode) {
+      if (checked) {
+        setSelectColumnsMode(
+          selectColumnsMode.filter((item) => item !== fieldName)
+        );
+      } else {
+        setSelectColumnsMode([...selectColumnsMode, fieldName]);
+      }
+    }
+  };
+
+  const handleSelectMode = async () => {
+    setIsLoading(true);
+    try {
+      if (selectColumnsMode) {
+        const columns = await upsertReportsColumns.mutateAsync({
+          level: "affiliate",
+          report: "dashStatCols",
+          fields: selectColumnsMode || [],
+        });
+
+        apiContext.affiliates.getReportsColumns.setData(
+          { level: "affiliate", report: "dashStatCols" },
+          columns
+        );
+      }
+      setSelectColumnsMode(selectColumnsMode ? null : reportsColumns || []);
+      toast({
+        title: "Saved dashboard setup",
+        duration: 5000,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (
     !data ||
     !creative ||
-    // !report ||
+    !reportsColumns ||
     !performanceChart ||
     !allPerformanceChart ||
     !conversionChart ||
@@ -115,71 +162,6 @@ export const Dashboard = () => {
   ) {
     return <Loading />;
   }
-
-  const columns = [
-    columnHelper.accessor("merchant.name", {
-      cell: (info) => info.getValue(),
-      header: "Merchant",
-    }),
-    columnHelper.accessor("language.title", {
-      cell: (info) => info.getValue(),
-      header: "Language",
-    }),
-    columnHelper.accessor("title", {
-      cell: (info) => info.getValue(),
-      header: "Creative Name",
-    }),
-    columnHelper.accessor("file", {
-      cell: ({ row }) => {
-        return !!row.original.file ? (
-          <img
-            className="w-44 bg-cover md:w-full"
-            src={row.original.file}
-            alt={row.original.alt}
-          />
-        ) : null;
-      },
-      header: "Preview",
-    }),
-    columnHelper.accessor("width", {
-      cell: ({ row }) => {
-        return (
-          <span>
-            {row.original.width}x{row.original.height}
-          </span>
-        );
-      },
-      header: "LP Preview",
-    }),
-  ];
-  const handleSelectMode = () => {
-    setSelectColumnsMode(!selectColumnsMode);
-    console.log(selectColumnsMode, "selectColumnsMode");
-    if (selectColumnsMode) {
-      setReportFields(selectedCards);
-      // setSelectedCards([]);
-      // setUnSelectedCards([]);
-    }
-  };
-
-  const handleCheckboxChange = (item: any, checkedStatus: boolean) => {
-    if (checkedStatus) {
-      setSelectedCards((prevSelectedCards) => [...prevSelectedCards, item]);
-      setUnSelectedCards((prevUnSelectedCards) =>
-        prevUnSelectedCards.filter(
-          (selectedItem) => selectedItem.id !== item.id
-        )
-      );
-    } else {
-      setSelectedCards((prevSelectedCards) =>
-        prevSelectedCards.filter((selectedItem) => selectedItem.id !== item.id)
-      );
-      setUnSelectedCards((prevUnSelectedCards) => [
-        ...prevUnSelectedCards,
-        item,
-      ]);
-    }
-  };
 
   return (
     <div className="pt-3.5">
@@ -194,16 +176,18 @@ export const Dashboard = () => {
             Update
           </Button>
 
-          <button
-            className="ml-2 rounded-md bg-white px-2 outline-0 drop-shadow md:px-3 md:pb-2 md:pt-1.5"
+          <Button
+            size="rec"
+            variant="secondary"
             onClick={handleSelectMode}
+            isLoading={isLoading}
           >
             {selectColumnsMode ? (
               <SaveIcon className="w-4" />
             ) : (
               <SettingsIcon className="w-4" />
             )}
-          </button>
+          </Button>
         </div>
         <div className="grid justify-items-stretch lg:hidden">
           <Button className="mb-2 justify-self-end" variant="primary">
@@ -212,56 +196,38 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      <div className="flex items-center">
-        <div className="mb-6 flex items-center md:mb-10">
-          <input
-            type="checkbox"
-            disabled={
-              selectedCards.length > 0 || unSelectedCards.length > 0
-                ? false
-                : true
-            }
-            className="form-checkbox text-blueGray-700 h-4 w-4 rounded border-0 transition-all duration-150 ease-linear"
-            onChange={() => setShowSelectedCheckbox(!showSelectedCheckbox)}
-          />
-          <div className="ml-5 items-center text-sm font-normal text-black md:ml-5">
-            selected show checkmark or X
-          </div>
-        </div>
-      </div>
-
       <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-\        {reportFields
-
-          .filter((item) => item.isChecked)
-          .map((item, idx) => {
+        {allColumns
+          .filter(
+            ({ id, title }) =>
+              selectColumnsMode || !reportsColumns.includes(title)
+          )
+          .map(({ id, title }, idx) => {
             interface Sum {
               [index: string]: number;
             }
+
             const sumObject = data[0]?._sum as Sum;
-            const value: number = sumObject ? Number(sumObject[item.value]) : 0;
+            const value: number = sumObject ? Number(sumObject[id]) : 0;
             const lastMonthObject = lastMonthData[0]?._sum as Sum;
-            const lastMonth = lastMonthObject ? lastMonthObject[item.value] : 0;
+            const lastMonth = lastMonthObject ? lastMonthObject[id] : 0;
             const thisMonthObject = thisMonthData[0]?._sum as Sum;
-            const thisMonth = thisMonthObject ? thisMonthObject[item.value] : 0;
+            const thisMonth = thisMonthObject ? thisMonthObject[id] : 0;
 
             return (
-              <>
-                <DashboardCards
-                  key={idx}
-                  idx={idx}
-                  item={item}
-                  lastMonth={lastMonth}
-                  thisMonth={thisMonth}
-                  value={value}
-                  performanceChartData={allPerformanceChart}
-                  selectColumnsMode={selectColumnsMode}
-                  handleCheckboxChange={handleCheckboxChange}
-                  selectedCards={selectedCards}
-                  unSelectedCards={unSelectedCards}
-                  isChecked={isChecked}
-                />
-              </>
+              <DashboardCards
+                key={idx}
+                idx={idx}
+                fieldName={id}
+                title={title}
+                lastMonth={lastMonth}
+                thisMonth={thisMonth}
+                value={value}
+                performanceChartData={allPerformanceChart}
+                selectColumnsMode={!!selectColumnsMode}
+                isChecked={!selectColumnsMode?.includes(id)}
+                handleCheckboxChange={handleColumnChange}
+              />
             );
           })}
       </div>
@@ -282,13 +248,6 @@ export const Dashboard = () => {
           mail={account?.mail}
         />
       </div>
-      {/*  Top Performing Creative Commented for a while will be added later */}
-      {/* <div className="mb-5 rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
-        <div className="text-xl font-bold text-[#2262C6] ">
-          Top Performing Creative
-        </div>
-        <DataTable data={creative} columns={columns} />
-      </div> */}
     </div>
   );
 };
