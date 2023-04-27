@@ -19,6 +19,9 @@ import { useState } from "react";
 import { Button } from "../../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import DynamicPerameter from "./dynamicPerameter";
+import { SelectInput } from "@/components/common/select-input";
+import { daysBackChoices } from "@/components/affiliates/dashboard/DashboradCountryReport";
+import { api } from "@/utils/api";
 
 interface Props {
   values: valueProps[];
@@ -41,6 +44,10 @@ export const CreativeMaterialDialogComponent = ({
   isOpen,
 }: Props) => {
   const { toast } = useToast();
+  const { data: profiles } = api.affiliates.getProfiles.useQuery(undefined, {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
 
   const onCopyClickUrl = async () => {
     await window.navigator.clipboard.writeText(url ?? "");
@@ -194,20 +201,23 @@ export const CreativeMaterialDialogComponent = ({
                 <div className=" relative flex w-full items-center ">
                   <Select defaultValue={"1"}>
                     <SelectTrigger className="border px-4 py-3  text-xs ">
-                      <SelectValue placeholder="Select days" />
+                      <SelectValue placeholder="Select profile" />
                     </SelectTrigger>
                     <SelectContent className="border text-xs">
                       <SelectGroup>
-                        <SelectItem value={"1"}>Account 1</SelectItem>
-                        <SelectItem value={"2"}>Account 2</SelectItem>
-                        <SelectItem value={"3"}>Account 3</SelectItem>
-                        <SelectItem value={"4"}>Account 4</SelectItem>
+                        {profiles?.map(({ name, url, id }, index) => (
+                          <SelectItem value={String(id)} key={id}>
+                            <div className="flex flex-col">
+                              <div>
+                                <b>{name}</b>
+                              </div>
+                              <div>{url}</div>
+                            </div>
+                          </SelectItem>
+                        ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                  {/* <Button variant="primary" className="ml-2" size="rec">
-                    <Plus className="h-4 w-4" />
-                  </Button> */}
                 </div>
               </div>
             </div>
@@ -274,7 +284,7 @@ export const CreativeMaterialDialogComponent = ({
                     <textarea
                       className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
                       value='<div class="container">
-                                                       
+
                                                         <div class="topleft">JSCode</div>
                                                       </div>'
                       id="grid-textarea"
@@ -289,7 +299,7 @@ export const CreativeMaterialDialogComponent = ({
                     <textarea
                       className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
                       value='<div class="container">
-                                                       
+
                                                         <div class="topleft">QrCode</div>
                                                       </div>'
                       id="grid-textarea"
@@ -303,7 +313,7 @@ export const CreativeMaterialDialogComponent = ({
                     <textarea
                       className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
                       value='<div class="container">
-                                                       
+
                                                         <div class="topleft">DirectLinkCode</div>
                                                       </div>'
                       id="grid-textarea"
