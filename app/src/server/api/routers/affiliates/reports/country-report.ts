@@ -285,6 +285,7 @@ export const countryReport = async ({
     `muly:countryReport:ReportTradersDataItems:v5 ${ReportTradersDataItems.length}`,
     {}
   );
+
   ReportTradersDataItems.map(convertPrismaResultsToNumbers).forEach((item) => {
     const country = item["country"] || "-";
     const base = baseCountryArray[country];
