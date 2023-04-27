@@ -1,13 +1,13 @@
 import type { PropsWithChildren } from "react";
 import React, { useState } from "react";
 // components
-
 import AffiliateFooter from "@/components/affiliates/layout/AffiliateFooter";
 import { SearchProvider } from "@/components/common/search/search-context";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "usehooks-ts";
 import AffiliatesNavbar from "../components/affiliates/layout/AffiliatesNavbar";
 import Sidebar from "../components/affiliates/layout/Sidebar";
+import styles from "./../pages/index.module.css";
 // import HeaderStats from "components/Headers/HeaderStats.js";
 // import FooterAdmin from "components/Footers/FooterAdmin.js";
 
@@ -56,6 +56,7 @@ const AffiliatesLayout = ({ children }: PropsWithChildren) => {
             className={cn([
               { "md:ml-64": tempCollapseShow, "md:ml-14": !tempCollapseShow },
               "bg-[#F5F8FA] px-4 pb-4 md:px-10",
+              styles.main,
             ])}
           >
             {children}
