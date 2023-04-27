@@ -90,7 +90,7 @@ const Sidebar: React.FC<Props> = ({
             }}
             width="280px"
           >
-            <Menu>
+            <Menu closeOnClick={true}>
               {navigationData.map((item, index) =>
                 renderLink(
                   item,
