@@ -22,8 +22,5 @@
   },
   "resolutions": {
     "prettier": "2.8.6"
-  },
-  "dependencies": {
-    "react-pro-sidebar": "^1.0.0"
   }
 }
