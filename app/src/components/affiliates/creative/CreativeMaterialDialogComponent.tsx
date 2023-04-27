@@ -15,6 +15,7 @@ import {
 
 import { useToast } from "@/components/ui/use-toast";
 import { Code2Icon, Copy, Image as ImageIcon } from "lucide-react";
+import { useState } from "react";
 import { Button } from "../../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import DynamicPerameter from "./dynamicPerameter";
@@ -51,7 +52,16 @@ export const CreativeMaterialDialogComponent = ({
       // isClosable: true,
     });
   };
+  const [activeTab, setActiveTab] = useState("HtmlCode");
 
+  const handleTabChange = (value: any) => {
+    console.log(value, "value");
+
+    // setActiveTab(value);
+  };
+  // useEffect(() => {
+  //   console.log(activeTab, "activeTab");
+  // }, [activeTab]);
   return (
     <Dialog open={isOpen}>
       <div className="w-full rounded-xl lg:ml-5">
@@ -127,7 +137,7 @@ export const CreativeMaterialDialogComponent = ({
             </div>
           </div>
         </div>
-        <div className="mt-1 hidden items-end justify-between md:mt-3 md:block md:flex">
+        <div className="mt-1 hidden items-end justify-between md:mt-3  md:flex">
           <div className="flex items-start justify-center md:justify-start">
             <div className="">
               <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">
@@ -235,7 +245,7 @@ export const CreativeMaterialDialogComponent = ({
             </div>
           </div>
           <div>
-            <Tabs defaultValue="HtmlCode">
+            <Tabs defaultValue="HtmlCode" onChange={handleTabChange}>
               <TabsList className="">
                 <TabsTrigger value="HtmlCode">HTML Code</TabsTrigger>
                 <TabsTrigger value="JSCode">JS Code</TabsTrigger>
@@ -300,7 +310,7 @@ export const CreativeMaterialDialogComponent = ({
                     />
                   </div>
                 </div>
-                <div className="mt-5 h-80  pb-5"></div>
+                {/* <div className="mt-5 h-80  pb-5"></div> */}
               </TabsContent>
             </Tabs>
           </div>
@@ -350,12 +360,35 @@ export const CreativeMaterialDialogComponent = ({
 
             <div className="rounded">
               <div className="">
-                <Button variant="primary">
-                  Download Image
-                  <div className="ml-2">
-                    <ImageIcon className="h-4 w-4 text-white" />
-                  </div>
-                </Button>
+                {activeTab === "HtmlCode" ? (
+                  <Button variant="primary">
+                    Download Html Code
+                    <div className="ml-2">
+                      <ImageIcon className="h-4 w-4 text-white" />
+                    </div>
+                  </Button>
+                ) : activeTab === "JSCode" ? (
+                  <Button variant="primary">
+                    Download JS Code
+                    <div className="ml-2">
+                      <ImageIcon className="h-4 w-4 text-white" />
+                    </div>
+                  </Button>
+                ) : activeTab === "QrCode" ? (
+                  <Button variant="primary">
+                    Download Qr Code
+                    <div className="ml-2">
+                      <ImageIcon className="h-4 w-4 text-white" />
+                    </div>
+                  </Button>
+                ) : (
+                  <Button variant="primary">
+                    Download Direct Link Code
+                    <div className="ml-2">
+                      <ImageIcon className="h-4 w-4 text-white" />
+                    </div>
+                  </Button>
+                )}
               </div>
             </div>
           </div>
