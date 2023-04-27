@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
+import { MenuItem, SubMenu } from "react-pro-sidebar";
 
 interface Props {
   activeName: string;
@@ -61,131 +63,57 @@ const DropdownLink = ({
 
   return (
     <>
-      <div
-        onClick={(e) => {
-          e.preventDefault();
-          if (dropdown != dropdownName) activeDropdownVector(true);
-          activeLink(defaultLink);
-          activeDropdown(dropdownName);
-        }}
-      >
-        <Link
-          className="text-white-600 hover:text-white-800 focus:orutline-none relative flex h-11 flex-row items-center justify-between pl-4 hover:bg-white dark:hover:bg-gray-600"
-          href={
-            "/affiliates/" +
-            (parentLink == "" ? "" : parentLink + "/") +
-            defaultLink
-          }
-          onClick={() => {
-            activeOnLink(true);
-          }}
-        >
-          <div
-            className="text-white-600 hover:text-white-800 relative flex h-11 flex-row items-center hover:bg-white focus:outline-none dark:hover:bg-gray-600"
-            onClick={(e) => {
-              console.log(`muly:click link ${collapseShow}`, {});
-              e.preventDefault();
-              setCollapseShow(!collapseShow);
-            }}
-          >
-            <img
-              alt="..."
-              className="w-6 border-none pt-0.5 align-middle"
-              src={
-                "/img/icons/" +
-                dropdownName +
-                (dropdown == dropdownName && onLink ? "Active" : "") +
-                ".png"
-              }
-            />
-            {collapseShow ? (
-              <span
-                className={
-                  "ml-4 truncate text-base font-medium tracking-wide " +
-                  (dropdown == dropdownName && onLink ? "text-[#2262C6]" : "")
-                }
-              >
-                {navbarName}
-              </span>
-            ) : (
-              ""
-            )}
-          </div>
-          {collapseShow ? (
-            <div
-              className="mr-8 truncate py-0.5 text-xs font-medium tracking-wide"
-              onClick={(e) => {
-                console.log(`muly:click dropdownVector`, { dropdownVector });
-                e.preventDefault();
-                activeDropdownVector(!dropdownVector);
-              }}
-            >
-              <img
-                alt="..."
-                className={
-                  "border-none align-middle" +
-                  (dropdownVector && dropdown == dropdownName
-                    ? " w-3"
-                    : " w-2 ")
-                }
-                src={
-                  "/img/icons/Vector" +
-                  (dropdownVector && dropdown == dropdownName ? "1" : "") +
-                  ".png"
-                }
-              />
-            </div>
-          ) : (
-            ""
-          )}
-        </Link>
-      </div>
-
-      <ul
-        className={
-          "flex-col pt-2 duration-300 " +
-          (dropdown == dropdownName && collapseShow && dropdownVector
-            ? "flex"
-            : "hidden")
+      <SubMenu
+        label={navbarName}
+        icon={
+          <Image
+            alt="..."
+            className="w-6 border-none pt-0.5 align-middle"
+            height={50}
+            width={50}
+            src={
+              "/img/icons/" +
+              dropdownName +
+              (dropdown == dropdownName && onLink ? "Active" : "") +
+              ".png"
+            }
+          />
         }
       >
         {linkName.map((value, index) => (
-          <li key={index}>
-            <div
-              onClick={(e) => {
-                console.log(`muly:link click ${value.link}`, {});
-                e.preventDefault();
-                setactiveName(value.link);
-                setCollapseShow(false);
-              }}
+          <div
+            onClick={(e) => {
+              console.log(`muly:link click ${value.link}`, {});
+              e.preventDefault();
+              activeOnLink(true);
+              setactiveName(value.link);
+              setCollapseShow(false);
+            }}
+            key={index}
+          >
+            <MenuItem
+              component={
+                <Link
+                  href={
+                    "/affiliates/" +
+                    (parentLink == "" ? "" : parentLink + "/") +
+                    value.link
+                  }
+                />
+              }
             >
-              <Link
-                className="text-white-600 hover:text-white-800 relative flex h-9 flex-row items-center pl-14 hover:bg-white focus:outline-none dark:hover:bg-gray-600"
-                href={
-                  "/affiliates/" +
-                  (parentLink == "" ? "" : parentLink + "/") +
-                  value.link
+              <span
+                className={
+                  "ml-11 truncate text-base font-medium tracking-wide " +
+                  (activeName == value.link ? "text-[#2262C6]" : "")
                 }
               >
-                {collapseShow ? (
-                  <span
-                    className={
-                      "ml-4 truncate text-base font-medium tracking-wide " +
-                      (activeName == value.link && onLink
-                        ? "text-[#2262C6]"
-                        : "")
-                    }
-                  >
-                    {value.name}
-                  </span>
-                ) : (
-                  ""
-                )}
-              </Link>
-            </div>
-          </li>
+                {value.name}
+              </span>
+            </MenuItem>
+          </div>
         ))}
-      </ul>
+      </SubMenu>
     </>
   );
 };

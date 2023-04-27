@@ -9,6 +9,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
+import { useProSidebar } from "react-pro-sidebar";
+import { useMediaQuery } from "usehooks-ts";
 import NotificationDropDown from "../../Dropdowns/NotificationDropdown";
 
 interface Props {
@@ -19,6 +21,8 @@ interface Props {
 const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
   const [selectLanguageItem, setSelectLanguageItem] =
     useState<LanguageOption | null>(null);
+  const { collapseSidebar, toggleSidebar } = useProSidebar();
+  const desktop = useMediaQuery("(min-width: 768px)");
 
   return (
     <>
@@ -30,13 +34,13 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
               <a
                 onClick={(e) => {
                   e.preventDefault();
+                  desktop ? collapseSidebar() : toggleSidebar();
                   setCollapseShow(!collapseShow);
                 }}
               >
                 <span
                   className={
-                    (collapseShow ? "-rotate-90 " : "rotate-0 ") +
-                    "bg-blueGray-200 inline-flex h-12 w-12 items-center justify-center text-sm text-white duration-300"
+                    "bg-blueGray-200 inline-flex h-12 w-12 -rotate-90 items-center justify-center text-sm text-white duration-300"
                   }
                 >
                   <SideMenuIcon />
@@ -44,7 +48,7 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
               </a>
 
               <Link href="/">
-                <span className="bg-blueGray-200 inline-flex h-10 w-20 items-center justify-center text-sm text-white md:h-12 md:w-32">
+                <span className="bg-blueGray-200 inline-flex h-10 w-16 items-center justify-center text-sm text-white md:h-12 md:w-32">
                   <Image
                     src={"/img/logo.png"}
                     width="90"
