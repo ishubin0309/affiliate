@@ -32,9 +32,7 @@ export const CreativeMaterialComponent = ({
       >
         <div className="mx-auto mb-5 h-64 rounded-xl">
           <img
-            src={
-              "https://go.best-brokers-partners.com/files/banners/1486039482v82Ip.jpg"
-            }
+            src={file}
             className="mx-auto	my-0 max-h-64 rounded-xl bg-cover"
             alt={alt}
           />
