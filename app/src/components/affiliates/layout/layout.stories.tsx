@@ -1,6 +1,7 @@
+import AffiliateFooterComponent from "@/components/affiliates/layout/AffiliateFooter";
+import AffiliatesNavbar from "@/components/affiliates/layout/AffiliatesNavbar";
 import Sidebar from "@/components/affiliates/layout/Sidebar";
 import AuthenticationFooterComponent from "@/components/common/footer/AuthenticationFooter";
-import AffiliatesNavbar from "@/components/affiliates/layout/AffiliatesNavbar";
 import { useRef, useState } from "react";
 
 const meta = {
@@ -11,6 +12,10 @@ export default meta;
 
 export const AuthenticationFooter = {
   render: () => <AuthenticationFooterComponent />,
+};
+
+export const AffiliateFooter = {
+  render: () => <AffiliateFooterComponent />,
 };
 
 const SidebarTest = (props: any) => {

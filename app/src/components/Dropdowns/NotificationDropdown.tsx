@@ -26,9 +26,9 @@ const NotificationDropDown = () => {
   };
   return (
     <>
-      <div className="border-blueGray-100 mx-1 h-10 border border-solid" />
+      <div className="border-blueGray-100 h-10 border border-solid md:mx-1" />
       <a
-        className="text-blueGray-500 block px-2 md:px-4"
+        className="text-blueGray-500 block px-1 md:px-4"
         href="#pablo"
         ref={btnDropdownRef}
         onClick={(e) => {
