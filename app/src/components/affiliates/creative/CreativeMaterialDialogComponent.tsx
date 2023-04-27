@@ -23,6 +23,7 @@ interface Props {
   alt?: string;
   url?: string;
   isOpen?: boolean;
+  toggleShow?: boolean;
 }
 
 interface valueProps {
@@ -35,7 +36,8 @@ export const CreativeMaterialDialogComponent = ({
   file,
   alt,
   url,
-  isOpen
+  isOpen,
+  toggleShow,
 }: Props) => {
   const { toast } = useToast();
 
@@ -52,7 +54,7 @@ export const CreativeMaterialDialogComponent = ({
 
   return (
     <Dialog open={isOpen}>
-      <div className="w-full rounded-xl col-span-2">
+      <div className="col-span-2 w-full rounded-xl">
         <div className=" bg-[#F5F8FA] p-4 md:px-8">
           <div className="justify-between md:flex">
             <div className="mt-2 flex justify-between md:block">
@@ -60,7 +62,7 @@ export const CreativeMaterialDialogComponent = ({
                 <div className=" text-sm font-medium text-[#717171]">
                   {values[0]?.title}
                 </div>
-                <div className="text-sm font-medium md:mt-3 md:text-lg">
+                <div className="h-12 text-sm font-medium md:mt-3 md:text-base">
                   {values[0]?.value}
                 </div>
               </div>
@@ -70,7 +72,7 @@ export const CreativeMaterialDialogComponent = ({
                 <div className=" text-sm font-medium text-[#717171]">
                   {values[1]?.title}
                 </div>
-                <div className="text-sm font-medium md:mt-3 md:text-lg">
+                <div className="text-sm font-medium md:mt-3 md:text-base">
                   {values[1]?.value}
                 </div>
               </div>
@@ -78,18 +80,23 @@ export const CreativeMaterialDialogComponent = ({
                 <div className=" text-sm font-medium text-[#717171]">
                   {values[2]?.title}
                 </div>
-                <div className=" text-sm text-[#353535] md:text-lg">
+                <div className=" text-sm text-[#353535] md:text-base">
                   {values[2]?.value}
                 </div>
               </div>
             </div>
           </div>
-          <div className="justify-between pt-1 md:flex md:pt-12 ">
+          <div
+            className={
+              "justify-between pt-1 md:pt-4 " +
+              (toggleShow ? "grid grid-cols-2" : " md:flex ")
+            }
+          >
             <div className="mt-2 hidden md:block">
               <div className=" text-sm font-medium text-[#717171]">
                 {values[2]?.title}
               </div>
-              <div className=" text-sm text-[#353535] md:text-lg">
+              <div className=" text-sm text-[#353535] md:text-base">
                 {values[2]?.value}
               </div>
             </div>
@@ -97,7 +104,7 @@ export const CreativeMaterialDialogComponent = ({
               <div className=" text-sm font-medium text-[#717171]">
                 {values[3]?.title}
               </div>
-              <div className=" text-sm text-[#353535] md:text-lg">
+              <div className=" text-sm text-[#353535] md:text-base">
                 {values[3]?.value}
               </div>
             </div>
@@ -106,7 +113,7 @@ export const CreativeMaterialDialogComponent = ({
                 <div className="text-sm font-medium text-[#717171]">
                   {values[4]?.title}
                 </div>
-                <div className=" text-sm text-[#353535] md:text-lg">
+                <div className=" text-sm text-[#353535] md:text-base">
                   {!values[4]?.value ? values[4]?.value : 0}
                 </div>
               </div>
@@ -114,7 +121,7 @@ export const CreativeMaterialDialogComponent = ({
                 <div className="text-sm font-medium text-[#717171]">
                   Language
                 </div>
-                <div className=" text-sm text-[#353535] md:text-lg">
+                <div className=" text-sm text-[#353535] md:text-base">
                   English
                 </div>
               </div>
@@ -123,11 +130,13 @@ export const CreativeMaterialDialogComponent = ({
               <div className=" text-sm font-medium text-[#717171]">
                 Language
               </div>
-              <div className=" text-sm text-[#353535] md:text-lg">English</div>
+              <div className=" text-sm text-[#353535] md:text-base">
+                English
+              </div>
             </div>
           </div>
         </div>
-        <div className="mt-1 hidden items-end justify-end md:mt-3 md:block md:flex">
+        <div className="mt-1 items-end justify-end md:mt-3 md:flex">
           <div className="mt-5 flex items-end justify-center md:justify-end">
             <div className="ml-2">
               <div className="">

@@ -4,13 +4,13 @@ import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { useSearchContext } from "@/components/common/search/search-context";
 import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
+import { GridToggleIcon, TableToggleIcon } from "@/components/icons";
 import type { MerchantCreativeType } from "@/server/db-types";
-import Image from "next/image";
 import React from "react";
 import { api } from "../../../utils/api";
 import { CreativeMaterialComponent } from "./CreativeMaterialComponent";
 
-const renderRow = (item: MerchantCreativeType,toggleShow:boolean) => {
+const renderRow = (item: MerchantCreativeType, toggleShow: boolean) => {
   const values = [
     // { title: "Id", value: item.id },
     { title: "Creative Name", value: item.title },
@@ -43,7 +43,7 @@ export const CreativeMaterial = () => {
     values: { creative: search, type, category, language, size, promotion },
   } = useSearchContext();
 
-  const [toggleShow , setToggleShow] = React.useState(false);
+  const [toggleShow, setToggleShow] = React.useState(false);
 
   const { data: meta } = api.affiliates.getMerchantCreativeMeta.useQuery(
     undefined,
@@ -67,19 +67,19 @@ export const CreativeMaterial = () => {
 
   console.log(data);
 
-  const handleChangeToggleShow = () =>  {
-    setToggleShow(!toggleShow)
-  }
+  const handleChangeToggleShow = () => {
+    setToggleShow(!toggleShow);
+  };
 
   return data ? (
     <div className="w-full">
-      <PageHeader
-        title="Marketing Tools"
-        subTitle="Creative Materials"
-      >
-        <Image src={'/img/icons/'+ (toggleShow ? 'grid' : 'table') + '.svg'} onClick={handleChangeToggleShow} 
-        className="hidden md:block cursor-pointer"
-        height={30} width={30} alt="..." />
+      <PageHeader title="Marketing Tools" subTitle="Creative Materials">
+        <div
+          onClick={handleChangeToggleShow}
+          className="hidden cursor-pointer md:block"
+        >
+          {toggleShow ? <TableToggleIcon /> : <GridToggleIcon />}
+        </div>
       </PageHeader>
       <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
         <SearchSelect
@@ -108,8 +108,10 @@ export const CreativeMaterial = () => {
         <SearchText varName="creative" />
         <SearchApply isLoading={isRefetching} />
       </div>
-      <div className={'grid grid-cols-'+ (toggleShow ? '3' : '12') +' gap-4'}>
-        {data?.map((item)=> renderRow(item, toggleShow ))}
+      <div
+        className={"grid gap-4 " + (toggleShow ? "grid-cols-4" : "grid-cols-1")}
+      >
+        {data?.map((item) => renderRow(item, toggleShow))}
       </div>
     </div>
   ) : (
