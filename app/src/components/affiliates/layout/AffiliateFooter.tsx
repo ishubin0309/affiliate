@@ -1,7 +1,7 @@
 const AffiliateFooter = () => {
   return (
-    <footer className="flex justify-center pb-6 pt-7 md:px-6 md:pt-7">
-      <span className="mt-1 flex text-xs sm:text-center">
+    <footer className="flex justify-center pb-4 pt-4">
+      <span className="flex text-xs sm:text-center">
         Power by&nbsp;
         <a
           href="https://affiliatets.com/"

@@ -2,8 +2,7 @@ import { DateRangeSelect, useDateRange } from "@/components/ui/date-range";
 import { Pagination } from "@/components/ui/pagination";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
-import type { ChangeEvent } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { QuerySelect } from "../../../components/common/QuerySelect";
 import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
 import type { QuickReportSummary } from "../../../server/db-types";
@@ -14,13 +13,6 @@ import { Button } from "../../ui/button";
 import { ExportButton } from "@/components/affiliates/reports/export-button";
 import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { Calendar, Download, Settings } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../../ui/dialog";
 
 const fields = [
   "Impressions",
@@ -271,11 +263,9 @@ export const QuickSummaryReport = () => {
         <div>
           <div className="flex items-center justify-between">
             <div className="flex">
-              <DialogTrigger>
-                <Button variant="primary-outline">
-                  <Settings className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
+              <Button variant="primary-outline">
+                <Settings className="h-4 w-4" />
+              </Button>
               <span className="font-sm ml-3 hidden items-center justify-between font-medium lg:flex">
                 Report Display
               </span>
