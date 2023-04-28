@@ -57,8 +57,12 @@ interface Props {
     amount_gap_from_previous_month: number;
   };
 }
-// Create Document Component
-const MyDocument = ({ payments_paid, affiliatesDetail, merchant }: Props) => {
+
+const PaymentDetail = ({
+  payments_paid,
+  affiliatesDetail,
+  merchant,
+}: Props) => {
   const previousMonthGap = payments_paid?.amount_gap_from_previous_month;
 
   const extraTotal =
@@ -218,4 +222,5 @@ const MyDocument = ({ payments_paid, affiliatesDetail, merchant }: Props) => {
     </>
   );
 };
-export default MyDocument;
+
+export default PaymentDetail;

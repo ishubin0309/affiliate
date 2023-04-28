@@ -66,7 +66,7 @@ export const Billings = () => {
           variant="ghost"
           onClick={() =>
             window.open(
-              "/affiliates/payment-detail?id=" + info?.row.original.paymentID,
+              `/affiliates/payment-view/${info?.row.original.paymentID}`,
               "_blank"
             )
           }

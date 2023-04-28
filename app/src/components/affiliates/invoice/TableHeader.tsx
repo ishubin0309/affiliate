@@ -7,15 +7,13 @@ interface TableHeaderProps {
   columns: number;
 }
 export const TableHeader = ({ columnName, key, columns }: TableHeaderProps) => (
-  <>
-    <View
-      style={{
-        ...styles.tableHeadingCol,
-        width: `${100 / columns}%`,
-      }}
-      key={key}
-    >
-      <Heading style={styles.tableCell} title={columnName} />
-    </View>
-  </>
+  <View
+    style={{
+      ...styles.tableHeadingCol,
+      width: `${100 / columns}%`,
+    }}
+    key={key}
+  >
+    <Heading style={styles.tableCell} title={columnName} />
+  </View>
 );

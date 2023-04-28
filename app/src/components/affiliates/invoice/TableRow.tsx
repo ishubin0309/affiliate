@@ -7,15 +7,13 @@ interface TableRowProps {
   columns: number;
 }
 export const TableRow = ({ data, key, columns }: TableRowProps) => (
-  <>
-    <View
-      key={key}
-      style={{
-        ...styles.tableCol,
-        width: `${100 / columns}%`,
-      }}
-    >
-      <Heading style={styles.tableCell} title={data} />
-    </View>
-  </>
+  <View
+    key={key}
+    style={{
+      ...styles.tableCol,
+      width: `${100 / columns}%`,
+    }}
+  >
+    <Heading style={styles.tableCell} title={data} />
+  </View>
 );

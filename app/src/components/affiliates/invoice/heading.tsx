@@ -5,7 +5,5 @@ interface HeaderProps {
   style?: object;
 }
 export const Heading = ({ title, style }: HeaderProps) => (
-  <>
-    <Text style={style ? style : styles.textHeading}>{title}</Text>
-  </>
+  <Text style={style ? style : styles.textHeading}>{title}</Text>
 );

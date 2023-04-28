@@ -5,10 +5,8 @@ interface HeaderInformationProps {
   value: string;
 }
 export const HeaderInformation = ({ title, value }: HeaderInformationProps) => (
-  <>
-    <div style={styles.flexDiv}>
-      <Heading style={styles.textSmall} title={title} />
-      <Heading style={styles.textBold} title={value} />
-    </div>
-  </>
+  <div style={styles.flexDiv}>
+    <Heading style={styles.textSmall} title={title} />
+    <Heading style={styles.textBold} title={value} />
+  </div>
 );
