@@ -1,3 +1,4 @@
+import React from "react";
 import { CreativeMaterialDialogComponent } from "./CreativeMaterialDialogComponent";
 
 interface Props {
@@ -13,6 +14,11 @@ interface valueProps {
   value: string | undefined;
 }
 
+interface ImageWithFallbackProps {
+  src: string | undefined | null;
+  alt: string;
+}
+
 export const CreativeMaterialComponent = ({
   values,
   file,
@@ -20,8 +26,25 @@ export const CreativeMaterialComponent = ({
   url,
   toggleShow,
 }: Props) => {
+  const ImageWithFallback = ({ src, alt }: ImageWithFallbackProps) => {
+    const [image, setImage] = React.useState(src ?? "/img/fallback.jpg");
+
+    const handleImageError = (): void => {
+      setImage("/img/fallback.jpg");
+    };
+
+    return (
+      <img
+        src={image}
+        alt={alt}
+        onError={handleImageError}
+        className="mx-auto	my-0 max-h-64 rounded-xl bg-cover"
+      />
+    );
+  };
+
   return (
-    <div className=" mb-5 rounded-xl bg-white p-4 shadow">
+    <div className="mb-5 rounded-xl bg-white p-4 shadow">
       <div
         className={
           "mt-4 items-start " +
@@ -31,11 +54,7 @@ export const CreativeMaterialComponent = ({
         }
       >
         <div className="mx-auto mb-5 h-64 rounded-xl">
-          <img
-            src={file}
-            className="mx-auto	my-0 max-h-64 rounded-xl bg-cover"
-            alt={alt}
-          />
+          <ImageWithFallback src={file} alt={alt} />
         </div>
         <CreativeMaterialDialogComponent
           values={values}

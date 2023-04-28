@@ -14,14 +14,12 @@ import {
 } from "../../ui/select";
 
 import { useToast } from "@/components/ui/use-toast";
+import { api } from "@/utils/api";
 import { Code2Icon, Copy, Image as ImageIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import DynamicPerameter from "./dynamicPerameter";
-import { SelectInput } from "@/components/common/select-input";
-import { daysBackChoices } from "@/components/affiliates/dashboard/DashboradCountryReport";
-import { api } from "@/utils/api";
 
 interface Props {
   values: valueProps[];
@@ -78,28 +76,28 @@ export const CreativeMaterialDialogComponent = ({
           <div className="justify-between md:flex">
             <div className="mt-2 flex justify-between md:block">
               <div>
-                <div className=" text-sm font-medium text-[#717171]">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
                   {values[0]?.title}
-                </div>
-                <div className="h-12 text-sm font-medium md:mt-3 md:text-base">
+                </label>
+                <div className="h-12 text-sm text-[#353535] md:text-base">
                   {values[0]?.value}
                 </div>
               </div>
             </div>
             <div className="mt-2 flex justify-between md:block">
               <div>
-                <div className=" text-sm font-medium text-[#717171]">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
                   {values[1]?.title}
-                </div>
-                <div className="text-sm font-medium md:mt-3 md:text-base">
+                </label>
+                <div className="text-sm text-[#353535] md:text-base">
                   {values[1]?.value}
                 </div>
               </div>
               <div className="md:hidden">
-                <div className=" text-sm font-medium text-[#717171]">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
                   {values[2]?.title}
-                </div>
-                <div className=" text-sm text-[#353535] md:text-base">
+                </label>
+                <div className="text-sm text-[#353535] md:text-base">
                   {values[2]?.value}
                 </div>
               </div>
@@ -112,50 +110,53 @@ export const CreativeMaterialDialogComponent = ({
             }
           >
             <div className="mt-2 hidden md:block">
-              <div className=" text-sm font-medium text-[#717171]">
+              <label className="mb-1 block text-sm font-bold text-gray-700">
                 {values[2]?.title}
-              </div>
-              <div className=" text-sm text-[#353535] md:text-base">
+              </label>
+              <div className="text-sm text-[#353535] md:text-base">
                 {values[2]?.value}
               </div>
             </div>
             <div className="mt-2">
-              <div className=" text-sm font-medium text-[#717171]">
+              <label className="mb-1 block text-sm font-bold text-gray-700">
                 {values[3]?.title}
-              </div>
-              <div className=" text-sm text-[#353535] md:text-base">
+              </label>
+              <div className="text-sm text-[#353535] md:text-base">
                 {values[3]?.value}
               </div>
             </div>
             <div className="mt-2 flex justify-between md:block">
               <div>
-                <div className="text-sm font-medium text-[#717171]">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
                   {values[4]?.title}
-                </div>
-                <div className=" text-sm text-[#353535] md:text-base">
+                </label>
+                <div className="text-sm text-[#353535] md:text-base">
                   {!values[4]?.value ? values[4]?.value : 0}
                 </div>
               </div>
               <div className="md:hidden">
-                <div className="text-sm font-medium text-[#717171]">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
                   Language
-                </div>
-                <div className=" text-sm text-[#353535] md:text-base">
+                </label>
+                <div className="text-sm text-[#353535] md:text-base">
                   English
                 </div>
               </div>
             </div>
             <div className="mt-2 hidden md:block">
-              <div className=" text-sm font-medium text-[#717171]">
+              <label className="mb-1 block text-sm font-bold text-gray-700">
                 Language
-              </div>
-              <div className=" text-sm text-[#353535] md:text-base">
-                English
-              </div>
+              </label>
+              <div className="text-sm text-[#353535] md:text-base">English</div>
             </div>
           </div>
         </div>
-        <div className="mt-1 items-end justify-end md:mt-3 md:flex">
+        <div
+          className={
+            "items-end justify-end md:flex" +
+            (toggleShow ? "" : " mt-1 pt-0.5 md:mt-3  ")
+          }
+        >
           <div className="mt-5 flex items-end justify-center md:justify-end">
             <div className="ml-2">
               <div className="">
