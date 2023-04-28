@@ -51,14 +51,14 @@ const AffiliatesLayout = ({ children }: PropsWithChildren) => {
         />
 
         <SearchProvider>
-          <div
+          <main
             className={cn([
               { "md:ml-72": tempCollapseShow, "md:ml-20": !tempCollapseShow },
-              "h-[calc(100vh - 170px)] bg-[#F5F8FA] px-4 pb-4 md:px-10",
+              "min-h-[calc(100vh-126px)] bg-[#F5F8FA] px-4 pb-4 md:px-10",
             ])}
           >
             {children}
-          </div>
+          </main>
         </SearchProvider>
         <AffiliateFooter />
       </div>

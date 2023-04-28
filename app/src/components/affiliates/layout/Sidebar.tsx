@@ -70,7 +70,7 @@ const Sidebar: React.FC<Props> = ({
 
   const sidebarClassName = cn(
     tempCollapseShow ? "md:rounded-none" : "",
-    "sidebar fixed top-16 left-0 z-20 flex h-full flex-col bg-white transition-all duration-300 dark:bg-gray-900 md:top-20 scrollbar-thin"
+    "sidebar fixed top-16 left-0 z-20 flex h-full flex-col bg-white transition-all duration-300 dark:bg-gray-900 scrollbar-thin"
   );
 
   return (

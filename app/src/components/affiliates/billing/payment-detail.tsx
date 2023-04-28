@@ -201,6 +201,7 @@ const MyDocument = ({ payments_paid, affiliatesDetail, merchant }: Props) => {
         <Page size="A4">
           <div style={styles.page}>
             <View style={styles.section}>
+              {/* eslint-disable-next-line jsx-a11y/alt-text */}
               <Image style={styles.img} src={"/img/aff.png"} />
             </View>
             <View style={styles.section}>
