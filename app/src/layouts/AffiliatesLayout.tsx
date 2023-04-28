@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { useMediaQuery } from "usehooks-ts";
 import AffiliatesNavbar from "../components/affiliates/layout/AffiliatesNavbar";
 import Sidebar from "../components/affiliates/layout/Sidebar";
-import styles from "./../pages/index.module.css";
 // import HeaderStats from "components/Headers/HeaderStats.js";
 // import FooterAdmin from "components/Footers/FooterAdmin.js";
 
@@ -54,9 +53,8 @@ const AffiliatesLayout = ({ children }: PropsWithChildren) => {
         <SearchProvider>
           <div
             className={cn([
-              { "md:ml-64": tempCollapseShow, "md:ml-14": !tempCollapseShow },
-              "bg-[#F5F8FA] px-4 pb-4 md:px-10",
-              styles.main,
+              { "md:ml-72": tempCollapseShow, "md:ml-20": !tempCollapseShow },
+              "h-[calc(100vh - 170px)] bg-[#F5F8FA] px-4 pb-4 md:px-10",
             ])}
           >
             {children}

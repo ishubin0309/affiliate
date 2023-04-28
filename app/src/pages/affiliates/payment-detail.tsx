@@ -23,6 +23,7 @@ const Page: MyPage = () => {
         <meta name="description" content="PaymentView" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {/* <main className={styles.main}> */}
       {typeof window !== "undefined" && payments_paid && affiliatesDetail && (
         <PDFViewer height={window.innerHeight} width={window.innerWidth}>
           <MyDocument
@@ -32,6 +33,7 @@ const Page: MyPage = () => {
           />
         </PDFViewer>
       )}
+      {/* </main> */}
     </>
   );
 };
