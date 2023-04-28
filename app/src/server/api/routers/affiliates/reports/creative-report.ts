@@ -31,7 +31,7 @@ export const getCreativeReport = publicProcedure
     })
   )
   .query(async ({ ctx, input: { from, to, banner_id, group_id, type } }) => {
-    let creativeArray = {};
+    const creativeArray = {};
     let creatives_stats_where = Prisma.empty;
 
     if (merchant_id) {

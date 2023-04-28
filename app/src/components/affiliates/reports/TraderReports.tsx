@@ -1,13 +1,22 @@
 import { QuerySelect } from "@/components/common/QuerySelect";
-import { DataTable } from "@/components/common/data-table/DataTable";
-import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
+import { Pagination } from "@/components/ui/pagination";
 import { createColumnHelper } from "@tanstack/react-table";
+import { Calendar, Download, Settings } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
 import type { TraderReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
+import { Button } from "../../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../ui/dialog";
 
 export const creativeType = [
   {
@@ -53,16 +62,19 @@ export const TraderReports = () => {
   const { merchant_id } = router.query;
   const { from, to } = useDateRange();
   const [traderID, setTraderID] = useState<string>("");
+  const [reportFields, setReportFields] = useState<
+    { id: number; title: string; value: string; isChecked: boolean }[]
+  >([]);
+  const { currentPage, itemsPerPage } = router.query;
 
-  // TODO: Add pagination
-  const pageSize = 50;
-  const page = 0;
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportQuickSummaryReport.useMutation();
 
   const { data, isLoading } = api.affiliates.getTraderReport.useQuery({
     from,
     to,
-    pageSize,
-    page,
+    pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
+    page: currentPage ? Number(currentPage) : 1,
     merchant_id: merchant_id ? Number(merchant_id) : undefined,
     trader_id: traderID,
   });
@@ -84,7 +96,7 @@ export const TraderReports = () => {
 
   const createColumn = (id: keyof TraderReportType, header: string) =>
     columnHelper.accessor(id, {
-      cell: (info) => info.getValue(),
+      cell: (info) => info.getValue() as string,
       header,
     });
 
@@ -123,7 +135,7 @@ export const TraderReports = () => {
   let totalWithdrawal = 0;
   let totalChargeback = 0;
 
-  data?.forEach((row: any) => {
+  data?.data?.forEach((row: any) => {
     totalVolume += Number(row?.Volume);
     totalLots += Number(row?.totalLots);
     totalWithdrawal += Number(row?.WithdrawalAmount);
@@ -158,55 +170,196 @@ export const TraderReports = () => {
     totalLots,
     SaleStatus: "",
   });
+  const displayOptions = [
+    {
+      id: "monthly",
+      title: "monthly",
+    },
+    {
+      id: "weekly",
+      title: "weekly",
+    },
+    {
+      id: "daily",
+      title: "daily",
+    },
+  ];
+
+  const handleSelectAll = async () => {
+    const value = reportFields.map((item) => {
+      const temp = Object.assign({}, item);
+      temp.isChecked = true;
+      return temp;
+    });
+    setReportFields(value);
+    const hiddenCols = value.filter((item) => item.isChecked === false);
+    const remove_fields = hiddenCols
+      .map((item) => {
+        return item.value;
+      })
+      .join("|");
+    // await upsertReportsField.mutateAsync({
+    //   remove_fields,
+    // });
+  };
+
+  const handleUnSelectAll = async () => {
+    const value = reportFields.map((item) => {
+      const temp = Object.assign({}, item);
+      temp.isChecked = false;
+      return temp;
+    });
+    setReportFields(value);
+    const hiddenCols = value.filter((item) => item.isChecked === false);
+    const remove_fields = hiddenCols
+      .map((item) => {
+        return item.value;
+      })
+      .join("|");
+    // await upsertReportsField.mutateAsync({
+    //   remove_fields,
+    // });
+  };
+
+  // const handleExport = async (exportType: ExportType) =>
+  //   reportExport({
+  //     from: new Date("2022-01-03"),
+  //     to: new Date("2023-01-03"),
+  //     exportType,
+  //   });
+
+  const handleReportField = (event: any) => {
+    void event;
+  };
 
   return (
     <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        width="90%"
-        alignItems={"center"}
-        alignSelf="center"
-      >
-        <GridItem>
-          <DateRangeSelect />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Merchant"
-            choices={merchants}
-            varName="merchant_id"
-          />
-        </GridItem>{" "}
-        <GridItem>
-          <FormLabel>Trader ID</FormLabel>
-          <Input
-            value={traderID}
-            onChange={(event) => setTraderID(event.target.value)}
-          />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Creative Type"
-            choices={creativeType}
-            varName="creative_type"
-          />
-        </GridItem>
-      </Grid>
-      <h2>Trader Report</h2>
-      <Grid
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-        alignSelf="center"
-      >
-        <DataTable
-          data={Object.values(data || {})}
-          columns={columns}
-          footerData={totalObj}
-        />
-      </Grid>
+      <div className="w-full pt-3.5">
+        <div className="block text-base font-medium md:justify-between lg:flex">
+          <div className="mb-2.5 flex items-center justify-between md:mb-5 lg:mb-5 ">
+            <div>
+              <span className="text-[#2262C6]">Affliate Program</span>
+              &nbsp;/&nbsp;Quick Summary Report
+            </div>
+            <Button className="lg:hidden">
+              <Calendar className="h-6 w-6" />
+            </Button>
+          </div>
+        </div>
+        <Dialog>
+          <div>
+            <div className="flex items-center justify-between">
+              <div className="flex">
+                <DialogTrigger>
+                  <Button variant="primary-outline">
+                    <Settings className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <span className="font-sm ml-3 hidden items-center justify-between font-medium lg:flex">
+                  Report Display
+                </span>
+              </div>
+              <div className="hidden lg:block">
+                <DateRangeSelect />
+              </div>
+              <div className="flex space-x-2 lg:hidden">
+                <Button variant="primary">Show Reports</Button>
+                <Button variant="primary-outline">Reset Search</Button>
+                <Button>
+                  <Download className="h-6 w-6" />
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="mt-2 items-center justify-between lg:flex">
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+              <QuerySelect
+                label="Merchant"
+                choices={merchants}
+                varName="merchant_id"
+              />
+              <QuerySelect
+                label="Search Type"
+                choices={displayOptions}
+                varName="display"
+              />
+            </div>
+            <div className="flex space-x-2">
+              <button className="hidden rounded-md bg-[#2262C6] px-8 py-2 text-white lg:block">
+                Show Reports
+              </button>
+              <button className="hidden rounded-md border border-[#2262C6] px-8 py-2 text-base font-semibold text-[#2262C6] lg:block">
+                Reset Search
+              </button>
+              {/* <ExportButton onExport={handleExport} /> */}
+            </div>
+          </div>
+
+          <DialogContent>
+            <DialogHeader className="text-left text-sm font-medium text-primary">
+              Manage Field On Report - Quick Summary
+            </DialogHeader>
+            <DialogTitle className="text-disabled text-sm font-normal md:mb-6 md:pt-2">
+              Please activate the fields you want to display on the report:
+            </DialogTitle>
+            <div className="grid grid-cols-1 md:mt-10 md:grid-cols-2">
+              {reportFields.map((field) => {
+                return (
+                  <div key={field.id}>
+                    <div className="mb-6 flex items-center md:mb-10">
+                      <input
+                        type="checkbox"
+                        id={`report-field-${field.id}`}
+                        checked={field.isChecked}
+                        value={field.id}
+                        onChange={(e) => void handleReportField(e)}
+                        className="form-checkbox text-blueGray-700 h-4 w-4 rounded border-0 transition-all duration-150 ease-linear"
+                      />
+                      <div className="ml-5 items-center text-lg font-medium text-black md:ml-10">
+                        {field.title}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex justify-between pb-5 font-medium md:pb-8 md:pt-12">
+              <div className="flex">
+                <button
+                  className="mr-3 rounded-md bg-[#2262C6] p-3 text-white md:px-14"
+                  onClick={handleSelectAll}
+                >
+                  Select All
+                </button>
+                <button
+                  className="rounded-md border border-[#1B48BB] bg-[#EFEEFF] p-3 text-[#1B48BB] md:px-12"
+                  onClick={handleUnSelectAll}
+                >
+                  Unselect All
+                </button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
+          {data.data.length > 0 ? (
+            <ReportDataTable
+              data={data?.data}
+              columns={columns}
+              // reportFields={reportFields}
+            />
+          ) : (
+            <div className="flex justify-between pb-5 font-medium md:pb-8 md:pt-12">
+              <div className="text-center">No Data</div>
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Pagination count={5} variant="focus" totalItems={100} />
+        </div>
+      </div>
     </>
   );
 };

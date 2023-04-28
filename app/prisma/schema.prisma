@@ -1420,8 +1420,9 @@ model reporttraders {
   AdminNotes          String   @db.VarChar(250)
   ClickDetails        String   @db.VarChar(80)
 
-  affiliate affiliates @relation(fields: [affiliate_id], references: [id])
-  data_reg  data_reg[]
+  affiliate   affiliates  @relation(fields: [affiliate_id], references: [id])
+  data_reg    data_reg[]
+  traders_tag traders_tag @relation(fields: [merchant_id], references: [merchant_id])
 
   @@id([TraderID, affiliate_id, merchant_id])
   @@index([affiliate_id], map: "AffiliateID")
@@ -1709,15 +1710,16 @@ model traders_tag {
   valid         Int
   added_by      Int
   rdate         DateTime           @db.DateTime(0)
-  merchant_id   Int
-  trader_id     Int
+  merchant_id   Int                @unique
+  trader_id     Int                @unique
   revenue       Float
   admin_revenue Float
   status        traders_tag_status
   notes         String             @db.Text
   calReport     Int
 
-  merchant merchants @relation(fields: [merchant_id], references: [id])
+  merchant      merchants       @relation(fields: [merchant_id], references: [id])
+  reporttraders reporttraders[]
 
   @@unique([merchant_id, trader_id], map: "merchant_id")
   @@index([merchant_id], map: "merchant_id_2")

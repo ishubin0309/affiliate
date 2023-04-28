@@ -1,9 +1,9 @@
-import { publicProcedure } from "@/server/api/trpc";
-import { z } from "zod";
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
-import moment from "moment/moment";
+import { publicProcedure } from "@/server/api/trpc";
 import type { Prisma } from "@prisma/client";
 import { formatISO } from "date-fns";
+import moment from "moment/moment";
+import { z } from "zod";
 
 interface TypeFilter {
   merchant_id?: number;
@@ -67,6 +67,10 @@ export const getTraderReport = publicProcedure
         filter,
       },
     }) => {
+      let offset;
+      if (page && pageSize) {
+        offset = (page - 1) * pageSize;
+      }
       // TODO: check PHP why needed?
       const profileNames = await ctx.prisma.affiliates_profiles.findMany({
         where: {
@@ -149,6 +153,7 @@ export const getTraderReport = publicProcedure
         // TODO: missing pagination use https://github.com/sandrewTx08/prisma-paginate
         trader_report_resource = await ctx.prisma.reporttraders.findMany({
           take: pageSize,
+          skip: offset,
           orderBy: {
             RegistrationDate: "desc",
             TraderID: "asc",
@@ -185,6 +190,7 @@ export const getTraderReport = publicProcedure
         // TODO: missing pagination use https://github.com/sandrewTx08/prisma-paginate
         trader_report_resource = await ctx.prisma.reporttraders.findMany({
           take: pageSize,
+          skip: offset,
           orderBy: {
             TraderID: "asc",
           },
@@ -211,19 +217,48 @@ export const getTraderReport = publicProcedure
           },
         });
       }
-      // console.log("profile names ------>", listProfiles);
-      console.log("profile names ------>", trader_report_resource);
 
-      const merged = [];
+      let totalFTD = 0;
+      let totalTotalDeposit = 0;
+      let totalDepositAmount = 0;
+      let totalVolumeAmount = 0;
+      let totalBonusAmount = 0;
+      let totalWithdrawalAmount = 0;
+      let totalChargeBackAmount = 0;
+      let totalNetRevenue = 0;
+      let totalTrades = 0;
+      let totalTotalCom = 0;
 
-      for (let i = 0; i < trader_report_resource.length; i++) {
-        merged.push({
-          ...trader_report_resource[i],
-          sub_trader_count: "",
-          totalLots: 0,
-        });
+      for (const item of trader_report_resource) {
+        totalFTD += Number(item.FTDAmount);
+        totalNetRevenue += Number(item.NetDeposit);
+        totalTotalDeposit += Number(item.TotalDeposits);
+        totalDepositAmount += Number(item.DepositAmount);
+        totalVolumeAmount += Number(item.Volume);
+        totalBonusAmount += Number(item.BonusAmount);
+        totalWithdrawalAmount += Number(item.WithdrawalAmount);
+        totalChargeBackAmount += Number(item.ChargeBackAmount);
+        totalTrades += Number(item.Trades);
+        totalTotalCom += Number(item.Commission);
       }
+      const arrRes: any = {};
 
-      return merged;
+      arrRes["data"] = Object.values(trader_report_resource);
+      arrRes["pageNumber"] = page;
+      arrRes["pageSize"] = pageSize;
+      arrRes["totals"] = {
+        totalFTD,
+        totalTotalDeposit,
+        totalDepositAmount,
+        totalVolumeAmount,
+        totalBonusAmount,
+        totalWithdrawalAmount,
+        totalChargeBackAmount,
+        totalNetRevenue,
+        totalTrades,
+        totalTotalCom,
+      };
+
+      return arrRes ;
     }
   );
