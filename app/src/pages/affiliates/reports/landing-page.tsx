@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { LandingPageReport } from "../../../components/affiliates/reports/LandingPageReport";
-import styles from "./../../index.module.css";
 
 import type { MyPage } from "../../../components/common/types";
 
@@ -13,9 +12,7 @@ const Page: MyPage = () => {
         <meta name="description" content="Creative Report" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main} style={{ marginTop: "20px" }}>
-        <LandingPageReport />
-      </main>
+      <LandingPageReport />
     </>
   );
 };
