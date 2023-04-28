@@ -12,10 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-interface IProps {
-  allowTyping: boolean;
-}
-
 export function CalendarDatePicker({ allowTyping }: IProps) {
   return null;
   // const [date, setDate] = React.useState<Date>(new Date());
