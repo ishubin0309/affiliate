@@ -1,5 +1,5 @@
-import { Button } from "./button";
 import { SaveIcon } from "lucide-react";
+import { Button } from "./button";
 
 const Buttons = ({ variant }: any) => (
   <div className="flex flex-col items-start gap-8">
@@ -91,13 +91,13 @@ export const sizeRect = {
   render: () => (
     <div className="flex flex-row gap-2">
       <Button>Normal</Button>
-      <Button size="rec">
+      <Button size="rec" className="h-10">
         <SaveIcon className="w-4" />
       </Button>
-      <Button size="rec" isLoading={true}>
+      <Button size="rec" isLoading={true} className="h-10">
         <SaveIcon className="w-4" />
       </Button>
-      <Button size="rec" variant="secondary">
+      <Button size="rec" variant="secondary" className="h-10">
         <SaveIcon className="w-4" />
       </Button>
     </div>
