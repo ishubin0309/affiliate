@@ -201,11 +201,7 @@ const MyDocument = ({ payments_paid, affiliatesDetail, merchant }: Props) => {
         <Page size="A4">
           <div style={styles.page}>
             <View style={styles.section}>
-              <Image
-                style={styles.img}
-                src={"/img/aff.png"}
-                alt="images of logo"
-              />
+              <Image style={styles.img} src={"/img/aff.png"} />
             </View>
             <View style={styles.section}>
               <Text style={styles.paymentForm}>Affiliate Payment Form </Text>
