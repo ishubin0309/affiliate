@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { SubAffiliateReport } from "../../../components/affiliates/reports/SubAffiliateReport";
 import type { MyPage } from "../../../components/common/types";
-import styles from "./../../index.module.css";
 const Page: MyPage = () => {
   return (
     <>
@@ -10,9 +9,7 @@ const Page: MyPage = () => {
         <meta name="description" content="Sub Affiliate Report" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main} style={{ marginTop: "20px" }}>
-        <SubAffiliateReport />
-      </main>
+      <SubAffiliateReport />
     </>
   );
 };
