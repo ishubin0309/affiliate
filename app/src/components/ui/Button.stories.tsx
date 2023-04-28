@@ -91,13 +91,13 @@ export const sizeRect = {
   render: () => (
     <div className="flex flex-row gap-2">
       <Button>Normal</Button>
-      <Button size="rec" className="h-10">
+      <Button size="rec">
         <SaveIcon className="w-4" />
       </Button>
-      <Button size="rec" isLoading={true} className="h-10">
+      <Button size="rec" isLoading={true}>
         <SaveIcon className="w-4" />
       </Button>
-      <Button size="rec" variant="secondary" className="h-10">
+      <Button size="rec" variant="secondary">
         <SaveIcon className="w-4" />
       </Button>
     </div>

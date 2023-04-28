@@ -27,7 +27,7 @@ const buttonVariants = cva(
         default: "h-10 py-2 px-4 w-36 min-w-max",
         sm: "h-9 px-3 rounded-md min-w-max",
         lg: "h-11 px-8 rounded-md w-48 min-w-max",
-        rec: "p-3.5",
+        rec: "p-3.5 h-10",
       },
     },
     defaultVariants: {
