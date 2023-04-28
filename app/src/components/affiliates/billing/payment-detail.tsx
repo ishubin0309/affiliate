@@ -1,155 +1,26 @@
-import {
-  Document,
-  Image,
-  Page,
-  StyleSheet,
-  Text,
-  View,
-} from "@react-pdf/renderer";
+import { Document, Image, Page, Text, View } from "@react-pdf/renderer";
 import { formatPrice } from "../../../utils/format";
-// Create styles
-const styles = StyleSheet.create({
-  page: {
-    flexDirection: "row",
-  },
-  section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1,
-  },
-  CommissionSection: {
-    fontSize: 12,
-    paddingBottom: 4,
-    flexGrow: 1,
-  },
-  ExtraSection: {
-    fontSize: 12,
-    paddingBottom: 4,
-    paddingTop: 12,
-    flexGrow: 1,
-  },
-  textSmall: {
-    fontSize: 10,
-    color: "#948f8f",
-  },
-  textMedium: {
-    fontSize: 12,
-    color: "#666666",
-  },
-  textLarge: {
-    fontSize: 20,
-    color: "#948f8f",
-  },
-  textBold: {
-    fontSize: 11,
-    fontWeight: "bold",
-    color: "#000",
-  },
-  // for table 1
+import { Table } from "../invoice/Table";
+import { HeaderInformation } from "../invoice/header-information";
+import { Heading } from "../invoice/heading";
+import { styles } from "../invoice/styles";
+const tables = {
   table1: {
-    width: "auto",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
+    columns: ["Merchant", "Deal Type", "Quantity", "Total Price"],
+    footers: [{ title: "Sub Total", value: 0 }],
+    data: [],
   },
-  tableRow1: {
-    margin: "auto",
-    flexDirection: "row",
+  table2: {
+    columns: ["Merchant", "Deal", "Unit Price", "Quantity", "Price"],
+    footers: [
+      { title: "Gap from Previous month", value: 0 },
+      { title: "Extra Total", value: 0 },
+      { title: "Commission Total", value: 0 },
+      { title: "Total Payment", value: 0 },
+    ],
+    data: [""],
   },
-  tableCol1: {
-    width: "25%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-  },
-  tableHeadingCol1: {
-    width: "25%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-    backgroundColor: "#C9C9C9",
-  },
-  tableCol751: {
-    width: "75%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-  },
-  tableCell1: {
-    margin: "auto",
-    marginTop: 3,
-    fontSize: 10,
-  },
-  // for table 2
-  table: {
-    width: "auto",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
-  },
-  tableRow: {
-    margin: "auto",
-    flexDirection: "row",
-  },
-  tableCol: {
-    width: "20%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-  },
-  tableHeadingCol: {
-    width: "20%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-    backgroundColor: "#C9C9C9",
-  },
-  tableCol75: {
-    width: "80%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-  },
-  tableCell: {
-    margin: "auto",
-    marginTop: 3,
-    fontSize: 10,
-  },
-  tableCell75: {
-    width: "auto",
-    marginLeft: "auto",
-    paddingRight: 3,
-    marginTop: 3,
-    fontSize: 10,
-  },
-  img: {
-    width: 200,
-  },
-  borderSection: {
-    marginLeft: 10,
-    marginRight: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  borderLine: {
-    width: "100%",
-    height: 1,
-    backgroundColor: "#c9c9c9",
-  },
-  paymentForm: {
-    fontSize: 22,
-    color: "#666666",
-    fontWeight: 800,
-  },
-});
+};
 interface Props {
   merchant: string;
   affiliatesDetail: {
@@ -195,6 +66,30 @@ const MyDocument = ({ payments_paid, affiliatesDetail, merchant }: Props) => {
     parseFloat(payments_paid?.extras.split("|")[3] ?? "0");
   const totalCommission = affiliatesDetail?.sub_com;
   const totalPayment = previousMonthGap + extraTotal + totalCommission;
+  tables.table2.footers.forEach((i, index) => {
+    if (index === 0) {
+      i.value = previousMonthGap;
+    } else if (index === 1) {
+      i.value = extraTotal;
+    } else if (index === 2) {
+      i.value = totalCommission;
+    } else if (index === 3) {
+      i.value = totalPayment;
+    }
+  });
+  tables.table1.footers.forEach((i) => (i.value = affiliatesDetail.sub_com));
+  tables.table2.data = [
+    merchant,
+    payments_paid?.extras.split("|")[1] ?? "",
+    payments_paid?.extras
+      ? formatPrice(parseFloat(payments_paid?.extras.split("|")[2] ?? "0"))
+      : "",
+    payments_paid?.extras.split("|")[3] ?? "",
+    formatPrice(extraTotal),
+  ];
+  console.log(tables);
+  console.log(tables.table1.data.length);
+
   return (
     <>
       <Document>
@@ -204,87 +99,66 @@ const MyDocument = ({ payments_paid, affiliatesDetail, merchant }: Props) => {
               <Image style={styles.img} src={"/img/aff.png"} />
             </View>
             <View style={styles.section}>
-              <Text style={styles.paymentForm}>Affiliate Payment Form </Text>
-              <Text style={styles.textSmall}>
-                payment #{" "}
-                <Text style={styles.textBold}>{payments_paid?.paymentID}</Text>{" "}
-              </Text>
-              <Text style={styles.textSmall}>
-                Month{" "}
-                <Text style={styles.textBold}>
-                  {payments_paid?.month}/{payments_paid?.year}
-                </Text>
-              </Text>
+              <Heading
+                style={styles.paymentForm}
+                title="Affiliate Payment Form"
+              />
+              <HeaderInformation
+                title="Payment #"
+                value={payments_paid?.paymentID}
+              />
+              <HeaderInformation
+                title="Month"
+                value={`${payments_paid?.month}/${payments_paid?.year}`}
+              />
             </View>
           </div>
 
           <div style={styles.borderSection}>
             <Text style={styles.borderLine}></Text>
           </div>
-
           <div style={styles.page}>
             <View style={styles.section}>
-              <Text style={styles.textSmall}>
-                Payable to :<Text style={styles.textBold}></Text>{" "}
-              </Text>
-              <Text style={styles.textSmall}>
-                Payment Method:
-                <Text style={styles.textBold}>
-                  {affiliatesDetail?.paymentMethod}
-                </Text>
-              </Text>
-              <Text style={styles.textSmall}>
-                Address:
-                <Text style={styles.textBold}>
-                  {affiliatesDetail?.pay_account}
-                </Text>
-              </Text>
-              <Text style={styles.textSmall}>
-                Name:
-                <Text style={styles.textBold}>
-                  {affiliatesDetail?.pay_company}
-                </Text>{" "}
-              </Text>
+              <Heading title="Payable to :" />
+              <HeaderInformation
+                title="Payment Method:"
+                value={affiliatesDetail?.paymentMethod}
+              />
+              <HeaderInformation
+                title="Address:"
+                value={affiliatesDetail?.pay_account}
+              />
+              <HeaderInformation
+                title="Name:"
+                value={affiliatesDetail?.pay_company}
+              />
             </View>
             <View style={styles.section}>
-              <Text style={styles.textSmall}>
-                Affiliate Information: <Text style={styles.textBold}> </Text>{" "}
-              </Text>
-              <Text style={styles.textSmall}>
-                Affiliate #{" "}
-                <Text style={styles.textBold}>{affiliatesDetail?.id}</Text>{" "}
-              </Text>
-              <Text style={styles.textSmall}>
-                Full Name:
-                <Text style={styles.textBold}>
-                  {" "}
-                  {affiliatesDetail?.first_name} {affiliatesDetail?.last_name}
-                </Text>{" "}
-              </Text>
-              <Text style={styles.textSmall}>
-                Username:
-                <Text style={styles.textBold}>
-                  {affiliatesDetail?.username}
-                </Text>{" "}
-              </Text>
-              <Text style={styles.textSmall}>
-                Country:
-                <Text style={styles.textBold}>
-                  {affiliatesDetail?.country}
-                </Text>{" "}
-              </Text>
-              <Text style={styles.textSmall}>
-                Phone:
-                <Text style={styles.textBold}>
-                  {affiliatesDetail?.phone}
-                </Text>{" "}
-              </Text>
-              <Text style={styles.textSmall}>
-                Email:
-                <Text style={styles.textBold}>
-                  {affiliatesDetail?.mail}{" "}
-                </Text>{" "}
-              </Text>
+              <Heading title="Affiliate Information:" />
+              <HeaderInformation
+                title="Affiliate #"
+                value={String(affiliatesDetail?.id)}
+              />
+              <HeaderInformation
+                title="Full Name:"
+                value={`${affiliatesDetail?.first_name} ${affiliatesDetail?.last_name}`}
+              />
+              <HeaderInformation
+                title="Username:"
+                value={affiliatesDetail?.username}
+              />
+              <HeaderInformation
+                title="Country:"
+                value={affiliatesDetail?.country}
+              />
+              <HeaderInformation
+                title="Phone:"
+                value={affiliatesDetail?.phone}
+              />
+              <HeaderInformation
+                title="Email:"
+                value={affiliatesDetail?.mail}
+              />
             </View>
           </div>
           <div style={styles.borderSection}>
@@ -295,174 +169,47 @@ const MyDocument = ({ payments_paid, affiliatesDetail, merchant }: Props) => {
           <View style={styles.section}>
             <div style={styles.page}>
               <View style={styles.CommissionSection}>
-                <Text style={styles.textMedium}>Commission payments</Text>
+                <Heading
+                  title="Commission payments"
+                  style={styles.textMedium}
+                />
               </View>
             </div>
-
-            <View style={styles.table1}>
-              <View style={styles.tableRow1}>
-                <View style={styles.tableHeadingCol1}>
-                  <Text style={styles.tableCell1}>Merchant</Text>
-                </View>
-                <View style={styles.tableHeadingCol1}>
-                  <Text style={styles.tableCell1}>Deal Type</Text>
-                </View>
-                <View style={styles.tableHeadingCol1}>
-                  <Text style={styles.tableCell1}>Quantity</Text>
-                </View>
-                <View style={styles.tableHeadingCol1}>
-                  <Text style={styles.tableCell1}>Total Price</Text>
-                </View>
-              </View>
-              {affiliatesDetail?.sub_com && affiliatesDetail?.sub_com > 0 && (
-                <View style={styles.tableRow1}>
-                  <View style={styles.tableCol1}>
-                    <Text style={styles.tableCell1}>React-PDF</Text>
-                  </View>
-                  <View style={styles.tableCol1}>
-                    <Text style={styles.tableCell1}>3 User </Text>
-                  </View>
-                  <View style={styles.tableCol1}>
-                    <Text style={styles.tableCell1}>
-                      2019-02-20 - 2020-02-19
-                    </Text>
-                  </View>
-                  <View style={styles.tableCol1}>
-                    <Text style={styles.tableCell1}>5€</Text>
-                  </View>
-                </View>
-              )}
-              <View style={styles.tableRow1}>
-                <View style={styles.tableCol751}>
-                  <Text style={styles.tableCell75}>Sub Total</Text>
-                </View>
-                <View style={styles.tableCol1}>
-                  <Text style={styles.tableCell1}>
-                    {formatPrice(affiliatesDetail?.sub_com)}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
+            <Table
+              data={tables.table1.data}
+              columns={tables.table1.columns}
+              footers={tables.table1.footers}
+            />
             {/* //------second table-------- */}
             <div style={styles.page}>
               <View style={styles.ExtraSection}>
-                <Text style={styles.textMedium}>Extra payments</Text>
+                <Heading title="Extra payments" style={styles.textMedium} />
               </View>
             </div>
-
-            <View style={styles.table}>
-              <View style={styles.tableRow}>
-                <View style={styles.tableHeadingCol}>
-                  <Text style={styles.tableCell}>Merchant</Text>
-                </View>
-                <View style={styles.tableHeadingCol}>
-                  <Text style={styles.tableCell}>Deal</Text>
-                </View>
-                <View style={styles.tableHeadingCol}>
-                  <Text style={styles.tableCell}>Unit Price</Text>
-                </View>
-                <View style={styles.tableHeadingCol}>
-                  <Text style={styles.tableCell}>Quantity</Text>
-                </View>
-                <View style={styles.tableHeadingCol}>
-                  <Text style={styles.tableCell}>Price</Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>{merchant}</Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>
-                    {payments_paid?.extras
-                      ? payments_paid?.extras.split("|")[1]
-                      : ""}
-                  </Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>
-                    {payments_paid?.extras
-                      ? formatPrice(
-                          parseFloat(payments_paid?.extras.split("|")[2] ?? "0")
-                        )
-                      : ""}
-                  </Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>
-                    {payments_paid?.extras
-                      ? payments_paid?.extras.split("|")[3]
-                      : ""}
-                  </Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>
-                    {formatPrice(extraTotal)}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCol75}>
-                  <Text style={styles.tableCell75}>
-                    Gap from Previous month
-                  </Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>
-                    {formatPrice(previousMonthGap)}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCol75}>
-                  <Text style={styles.tableCell75}>Extra Total</Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>
-                    {formatPrice(extraTotal)}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCol75}>
-                  <Text style={styles.tableCell75}>Commission Total</Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>
-                    {formatPrice(totalCommission)}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCol75}>
-                  <Text style={styles.tableCell75}>Total Payment</Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>
-                    {formatPrice(totalPayment)}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
+            <Table
+              data={tables.table2.data}
+              columns={tables.table2.columns}
+              footers={tables.table2.footers}
+            />
             <div style={styles.page}>
               <View style={styles.section}>
-                <Text style={styles.textSmall}>Transection ID </Text>
-                <Text style={styles.textBold}>
-                  {payments_paid?.transaction_id}
-                </Text>
+                <Heading style={styles.textSmall} title="Transection ID" />
+                <Heading
+                  style={styles.textBold}
+                  title={payments_paid?.transaction_id}
+                />
               </View>
               <View style={styles.section}>
-                <Text style={styles.textSmall}>Notes</Text>
-                <Text style={styles.textBold}>{payments_paid?.notes}</Text>
+                <Heading style={styles.textSmall} title="Notes" />
+                <Heading style={styles.textBold} title={payments_paid?.notes} />
               </View>
             </div>
             <div style={styles.page}>
               <View style={styles.section}>
-                <Text style={styles.textLarge}>
-                  {"Thank you for your business\nGamingAffiliates"}
-                </Text>
+                <Heading
+                  style={styles.textLarge}
+                  title={"Thank you for your business\nGamingAffiliates"}
+                />
               </View>
             </div>
           </View>
