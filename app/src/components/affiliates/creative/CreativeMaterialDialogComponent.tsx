@@ -362,21 +362,21 @@ export const CreativeMaterialDialogComponent = ({
               <div className="">
                 {activeTab === "HtmlCode" ? (
                   <Button variant="primary">
-                    Download Html Code
+                    Download as text
                     <div className="ml-2">
                       <ImageIcon className="h-4 w-4 text-white" />
                     </div>
                   </Button>
                 ) : activeTab === "JSCode" ? (
                   <Button variant="primary">
-                    Download JS Code
+                    Download as text
                     <div className="ml-2">
                       <ImageIcon className="h-4 w-4 text-white" />
                     </div>
                   </Button>
                 ) : activeTab === "QrCode" ? (
                   <Button variant="primary">
-                    Download Qr Code
+                    Download image
                     <div className="ml-2">
                       <ImageIcon className="h-4 w-4 text-white" />
                     </div>
