@@ -1,7 +1,7 @@
 import * as z from "zod"
 import * as imports from "../zod-add-schema"
 import { traders_tag_status } from "@prisma/client"
-import { Completemerchants, RelatedmerchantsModel, Completereporttraders, RelatedreporttradersModel } from "./index"
+import { Completemerchants, RelatedmerchantsModel } from "./index"
 
 export const traders_tagModel = z.object({
   id: z.number().int(),
@@ -19,7 +19,6 @@ export const traders_tagModel = z.object({
 
 export interface Completetraders_tag extends z.infer<typeof traders_tagModel> {
   merchant: Completemerchants
-  reporttraders: Completereporttraders[]
 }
 
 /**
@@ -29,5 +28,4 @@ export interface Completetraders_tag extends z.infer<typeof traders_tagModel> {
  */
 export const Relatedtraders_tagModel: z.ZodSchema<Completetraders_tag> = z.lazy(() => traders_tagModel.extend({
   merchant: RelatedmerchantsModel,
-  reporttraders: RelatedreporttradersModel.array(),
 }))

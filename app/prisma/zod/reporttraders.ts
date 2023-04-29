@@ -1,6 +1,6 @@
 import * as z from "zod"
 import * as imports from "../zod-add-schema"
-import { Completeaffiliates, RelatedaffiliatesModel, Completedata_reg, Relateddata_regModel, Completetraders_tag, Relatedtraders_tagModel } from "./index"
+import { Completeaffiliates, RelatedaffiliatesModel, Completedata_reg, Relateddata_regModel } from "./index"
 
 export const reporttradersModel = z.object({
   Date: z.date(),
@@ -54,7 +54,6 @@ export const reporttradersModel = z.object({
 export interface Completereporttraders extends z.infer<typeof reporttradersModel> {
   affiliate: Completeaffiliates
   data_reg: Completedata_reg[]
-  traders_tag: Completetraders_tag
 }
 
 /**
@@ -65,5 +64,4 @@ export interface Completereporttraders extends z.infer<typeof reporttradersModel
 export const RelatedreporttradersModel: z.ZodSchema<Completereporttraders> = z.lazy(() => reporttradersModel.extend({
   affiliate: RelatedaffiliatesModel,
   data_reg: Relateddata_regModel.array(),
-  traders_tag: Relatedtraders_tagModel,
 }))

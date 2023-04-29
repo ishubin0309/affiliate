@@ -6,10 +6,16 @@ import { exportJSON } from "../config/exportJson";
 import { exportXLSX } from "../config/exportXLSX";
 
 // Common params for all reports
-export const pageParams = {
-  page: z.number().int().optional(),
-  items_per_page: z.number().int().optional(),
-};
+export const pageParams = z.object({
+  pageNumber: z.number().int(),
+  pageSize: z.number().int(),
+});
+
+export const pageOutput = z.object({
+  pageNumber: z.number().int(),
+  pageSize: z.number().int(),
+  totalItems: z.number().int(),
+});
 
 // Common params for all reports export
 export const reportParams = {
