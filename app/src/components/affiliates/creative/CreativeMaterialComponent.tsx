@@ -8,6 +8,7 @@ interface Props {
   file?: string;
   alt: string;
   url: string;
+  creative_id: number;
 }
 
 interface valueProps {
@@ -20,6 +21,7 @@ export const CreativeMaterialComponent = ({
   file,
   alt,
   url,
+  creative_id,
 }: Props) => {
   return (
     <div className=" mb-5 rounded-xl bg-white p-4 shadow">
@@ -28,7 +30,11 @@ export const CreativeMaterialComponent = ({
           <img src={file} className="rounded-xl bg-cover" alt={alt} />
         </div>
 
-        <CreativeMaterialDialogComponent values={values} url={url} />
+        <CreativeMaterialDialogComponent
+          values={values}
+          url={url}
+          creative_id={creative_id}
+        />
       </div>
 
       <div className="mt-1 items-end md:mt-3 md:hidden">

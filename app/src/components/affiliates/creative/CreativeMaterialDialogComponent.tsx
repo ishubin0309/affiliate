@@ -20,7 +20,7 @@ import { Code2Icon, Copy, Image as ImageIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
-import { AddDynamicPerameter } from "./AddDynamicPerameter";
+import { AddDynamicParameter } from "./AddDynamicParameter";
 
 interface Props {
   values: valueProps[];
@@ -28,6 +28,8 @@ interface Props {
   alt?: string;
   url?: string;
   isOpen?: boolean;
+
+  creative_id: number;
 }
 
 interface valueProps {
@@ -41,17 +43,53 @@ export const CreativeMaterialDialogComponent = ({
   alt,
   url,
   isOpen,
+  creative_id,
 }: Props) => {
   const { toast } = useToast();
   const { data: profiles } = api.affiliates.getProfiles.useQuery(undefined, {
     keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
-  const [permeterFirstValues, setPermeterFirstValues] = useState("");
-  const [permeterValues, setPermeterValues] = useState<any[]>([]);
-  const [profileValue, setProfileValue] = useState<number>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [parameterFirstValues, setParameterFirstValues] = useState("");
+  const [params, setParams] = useState<string[]>([]);
+  const [profile_id, setProfile_id] = useState<number>();
+
+  const generateBannerCode = api.affiliates.generateBannerCode.useMutation();
+
+  const handleGetCode = async () => {
+    setIsLoading(true);
+    try {
+      console.log(`muly:handleGetCode`, {
+        creative_id,
+        params,
+        profile_id,
+      });
+
+      if (!profile_id) {
+        // TODO: Show error that need to select profile
+        return;
+      }
+
+      const codes = await generateBannerCode.mutateAsync({
+        creative_id,
+        params,
+        profile_id,
+      });
+
+      console.log(`muly:handleGetCode codes`, {
+        codes,
+        creative_id,
+        params,
+        profile_id,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleProfileChange = (e: any) => {
-    setProfileValue(e);
+    setProfile_id(e);
   };
 
   const onCopyClickUrl = async () => {
@@ -77,6 +115,7 @@ export const CreativeMaterialDialogComponent = ({
   const DownloadQrcodeImage = () => {
     console.log("DownloadQrcodeImage");
   };
+
   return (
     <Dialog open={isOpen}>
       <div className="w-full rounded-xl lg:ml-5">
@@ -209,10 +248,12 @@ export const CreativeMaterialDialogComponent = ({
                       Profile
                     </label>
                     <div className="flex">
-                      <div className=" relative flex w-full items-center ">
+                      <div className="relative flex w-full items-center ">
                         <Select
-                          defaultValue={"1"}
-                          onValueChange={handleProfileChange}
+                          defaultValue={String(profile_id)}
+                          onValueChange={(value) =>
+                            setProfile_id(Number(value))
+                          }
                         >
                           <SelectTrigger className="border px-4 py-3  text-xs ">
                             <SelectValue placeholder="Select profile" />
@@ -259,25 +300,28 @@ export const CreativeMaterialDialogComponent = ({
                       </SelectContent>
                     </Select> */}
                           <Input
-                            className="w-full "
-                            placeholder="Add perameter"
-                            value={permeterFirstValues}
+                            className="w-full"
+                            placeholder="Add parameter"
+                            value={parameterFirstValues}
                             onChange={(e) => {
-                              setPermeterFirstValues(e.target.value);
+                              setParameterFirstValues(e.target.value);
                             }}
                           />
                         </div>
 
-                        <AddDynamicPerameter
-                          setPermeterValues={setPermeterValues}
-                        />
+                        <AddDynamicParameter setParametersValue={setParams} />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="mb-6 rounded md:mb-0">
-                <Button variant="primary" className="w-full">
+                <Button
+                  onClick={handleGetCode}
+                  variant="primary"
+                  className="w-full"
+                  isLoading={isLoading}
+                >
                   Get Code
                 </Button>
               </div>
