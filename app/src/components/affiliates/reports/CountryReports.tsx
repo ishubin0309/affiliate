@@ -1,24 +1,15 @@
-import { fakeTraderReportData } from "@/components/affiliates/reports/fake-trader-report-data";
 import { createColumnHelper } from "@tanstack/react-table";
-import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import type {
-  TraderReportType,
-  CountryReportType,
-} from "../../../server/db-types";
+import type { CountryReportType } from "../../../server/db-types";
 import { ReportControl } from "@/components/affiliates/reports/report-control";
 import { SearchSelect } from "@/components/common/search/search-select";
-import { SearchText } from "@/components/common/search/search-text";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { creativeType } from "@/components/affiliates/reports/TraderReports";
 import { api } from "@/utils/api";
-import { ClicksReportType } from "../../../server/db-types";
 import {
   getDateParam,
   getNumberParam,
   useSearchContext,
 } from "@/components/common/search/search-context";
-import { parse, sub } from "date-fns";
 
 const columnHelper = createColumnHelper<CountryReportType>();
 const createColumn = (id: keyof CountryReportType, header: string) =>
@@ -37,7 +28,7 @@ const columns = [
   createColumn("withdrawal", "Withdrawal"),
   createColumn("leads", "Leads"),
   createColumn("demo", "Demo"),
-  createColumn("real", "Real"),
+  createColumn("real", "Account"),
   createColumn("depositingAccounts", "Depositing Accounts"),
   createColumn("real_ftd", "Real FTD"),
   createColumn("ftd", "FTD"),
@@ -56,12 +47,6 @@ export const CountryReports = () => {
     values: { merchant_id, from, to },
   } = useSearchContext();
 
-  const params = {
-    from,
-    to,
-    merchant_id,
-  };
-
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery(
     undefined,
     { keepPreviousData: true, refetchOnWindowFocus: false }
@@ -75,7 +60,7 @@ export const CountryReports = () => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
-  console.log(`muly:CountryReports:render`, { data, params });
+  console.log(`muly:CountryReports:render`, { data });
 
   return (
     <ReportControl

@@ -3,6 +3,10 @@ import { api } from "../../../utils/api";
 import CountryChart from "../../common/chart/CountryChart";
 import { SelectInput } from "@/components/common/select-input";
 import type { DashboardCountryReportType } from "../../../server/db-types";
+import { getCountryReportDashboard } from "@/server/api/routers/affiliates/reports/country-report-dashboard";
+import type { DashboardCountryReportInputType } from "../../../server/db-types";
+
+export const reportDropDown = ["Clicks", "Accounts", "FTD"];
 
 export const daysBackChoices = [
   { id: "90", title: "Last 90 Days" },
@@ -10,25 +14,23 @@ export const daysBackChoices = [
   { id: "1", title: "Last 1 Day" },
 ];
 
-const DashboardCountryReport = () => {
-  const [selectedReport, setSelectedReport] = useState<string>("Clicks");
+type ValueType = DashboardCountryReportInputType["value"];
+
+export const DashboardCountryReport = () => {
+  const [selectedReport, setSelectedReport] = useState<ValueType>("Clicks");
   const [lastDays, setLastDays] = useState<string>("90");
   const { data: reportData } =
-    api.affiliates.getDashboardCountryReport.useQuery({
-      lastDays: Number(lastDays),
-    });
-  const labels: string[] =
-    reportData?.map((item) => item?.CountryID ?? "") ?? [];
+    api.affiliates.getCountryReportDashboard.useQuery(
+      {
+        lastDays: Number(lastDays),
+        value: selectedReport,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
+
+  const labels: string[] = reportData?.map((item) => item.country) ?? [];
   const values: number[] =
-    reportData?.map(
-      (item: DashboardCountryReportType): number =>
-        item?._sum[selectedReport as keyof typeof item._sum] as number
-    ) ?? [];
-  const reportDropDown = [
-    { id: "Clicks", title: "Clicks" },
-    { id: "BannerID", title: "Banner" },
-    { id: "Impressions", title: "Impressions" },
-  ];
+    reportData?.map((item: DashboardCountryReportType) => item.value) ?? [];
 
   return (
     <div className="rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
@@ -55,7 +57,7 @@ const DashboardCountryReport = () => {
         <div className="flex w-48 items-center justify-center text-xs">
           <SelectInput
             value={selectedReport}
-            onChange={setSelectedReport}
+            onChange={(value) => setSelectedReport(value as ValueType)}
             choices={reportDropDown}
           />
         </div>
@@ -67,5 +69,3 @@ const DashboardCountryReport = () => {
     </div>
   );
 };
-
-export default DashboardCountryReport;

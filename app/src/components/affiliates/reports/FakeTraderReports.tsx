@@ -1,13 +1,13 @@
+import { creativeType } from "@/components/affiliates/reports/TraderReports";
 import { fakeTraderReportData } from "@/components/affiliates/reports/fake-trader-report-data";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
-import type { TraderReportType } from "../../../server/db-types";
 import { ReportControl } from "@/components/affiliates/reports/report-control";
 import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { creativeType } from "@/components/affiliates/reports/TraderReports";
+import { createColumnHelper } from "@tanstack/react-table";
+import { useState } from "react";
+import "react-datepicker/dist/react-datepicker.css";
+import type { TraderReportType } from "../../../server/db-types";
 
 export const FakeTraderReports = () => {
   const [traderReportColumns, settraderReportColumns] = useState([

@@ -6,8 +6,10 @@ import { ReportDataTable } from "@/components/common/data-table/ReportDataTable"
 import { PageHeader } from "@/components/common/page/page-header";
 import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { SearchDateRange } from "@/components/common/search/search-date-range";
+import { CSVIcon, ExcelIcon, JSONIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
+import { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { SettingsIcon } from "lucide-react";
 import React from "react";
 
@@ -16,7 +18,6 @@ interface Props<Data extends object> extends ReportDataTableProps<Data> {
   isRefetching: boolean;
   totalItems: number;
   children: React.ReactNode;
-
   handleExport: OnExport;
 }
 
@@ -32,9 +33,6 @@ export const ReportControl = <Data extends object>({
 }: Props<Data>) => {
   const pageSize = 50; // Should be from SearchContext
   const pageCount = Math.ceil(totalItems / pageSize);
-
-  console.log("page size ------>", pageSize);
-  console.log("page count ------>", pageCount);
 
   return data ? (
     <div className="flex w-full flex-col gap-2">

@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 interface Props {
   children?: React.ReactNode;
 }
