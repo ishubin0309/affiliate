@@ -53,9 +53,7 @@ export const CreativeMaterialDialogComponent = ({
   const handleProfileChange = (e: any) => {
     setProfileValue(e);
   };
-  // useEffect(() => {
-  //   console.log(profileValue, "profileValue");
-  // }, [profileValue]);
+
   const onCopyClickUrl = async () => {
     await window.navigator.clipboard.writeText(url ?? "");
     toast({
@@ -270,10 +268,6 @@ export const CreativeMaterialDialogComponent = ({
                           />
                         </div>
 
-                        {/* <DynamicPerameter
-                          permeterValues={permeterValues}
-                          setPermeterValues={setPermeterValues}
-                        /> */}
                         <AddDynamicPerameter
                           setPermeterValues={setPermeterValues}
                         />
@@ -343,7 +337,6 @@ export const CreativeMaterialDialogComponent = ({
                         </Button>
                       </div>
                     </div>
-                    {/* <div className="mt-5 h-80  pb-5">JSCode</div> */}
                   </TabsContent>
                   <TabsContent className="border-0 p-0" value="QrCode">
                     <div className="-mx-3 mb-6 flex flex-wrap">
@@ -397,81 +390,6 @@ export const CreativeMaterialDialogComponent = ({
             </div>
           </div>
         </form>
-        {/* <div className="justify-between md:flex"> */}
-        {/* <div className="mb-2 flex justify-between md:block">
-            <div className="rounded md:hidden">
-              <Button variant="primary">
-                <div className="text-base text-white">Copy Click Url</div>
-                <div className="ml-2">
-                  <Copy className="h-4 w-4 text-white" />
-                </div>
-              </Button>
-            </div>
-          </div> */}
-        {/* <div className="flex justify-between md:justify-center md:space-x-2"> */}
-        {/* <div className="hidden rounded md:block">
-              <div className="rounded">
-                <Button
-                  variant="primary"
-                  onClick={() =>
-                    window.navigator.clipboard.writeText(url ?? "")
-                  }
-                >
-                  <div className="text-base text-white md:font-medium">
-                    Copy Click Url
-                  </div>
-                  <div className="ml-2">
-                    <Copy className="h-4 w-4 text-white" />
-                  </div>
-                </Button>
-              </div>
-            </div>
-            <div className=" rounded">
-              <div className="">
-                <Button variant="primary-outline">
-                  Get HTML Code
-                  <div className="ml-2">
-                    <Code2Icon className="h-5  w-5 text-[#282560]" />
-                  </div>
-                </Button>
-              </div>
-            </div> */}
-
-        {/* <div className="rounded">
-              <div className="">
-                {activeTab === "HtmlCode" ? (
-                  <Button variant="primary">
-                    Download as text
-                    <div className="ml-2">
-                      <ImageIcon className="h-4 w-4 text-white" />
-                    </div>
-                  </Button>
-                ) : activeTab === "JSCode" ? (
-                  <Button variant="primary">
-                    Download as text
-                    <div className="ml-2">
-                      <ImageIcon className="h-4 w-4 text-white" />
-                    </div>
-                  </Button>
-                ) : activeTab === "QrCode" ? (
-                  <Button variant="primary">
-                    Download image
-                    <div className="ml-2">
-                      <ImageIcon className="h-4 w-4 text-white" />
-                    </div>
-                  </Button>
-                ) : (
-                  <Button variant="primary">
-                    Download Direct Link Code
-                    <div className="ml-2">
-                      <ImageIcon className="h-4 w-4 text-white" />
-                    </div>
-                  </Button>
-                )}
-              </div>
-            </div> */}
-        {/* </div> */}
-        {/* </div> */}
       </DialogContent>
     </Dialog>
   );
