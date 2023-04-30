@@ -1,25 +1,26 @@
-import type { AppProps } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
+import type { AppProps } from "next/app";
 
 import { appWithTranslation } from "next-i18next";
 import { i18nConfig } from "../../next-i18next.config.mjs";
 
 import { api } from "../utils/api";
 
+import type { NextComponentType, NextPageContext } from "next";
 import type { LayoutKeys } from "../layouts/Layouts";
 import { Layouts } from "../layouts/Layouts";
-import type { NextComponentType, NextPage, NextPageContext } from "next";
 
+import { Toaster } from "@/components/ui/toaster";
+import { FlagBagProvider } from "@happykit/flags/context";
+import { useFlags } from "../flags/client";
 import { missingKeyHandler } from "../utils/i18n-utils";
 import "../utils/zod-meta";
-import { useFlags } from "../flags/client";
-import { FlagBagProvider } from "@happykit/flags/context";
-import { Toaster } from "@/components/ui/toaster";
 
-import "../styles/globals.css";
-import "react-datepicker/dist/react-datepicker.css";
 import "@etchteam/next-pagination/dist/index.css";
+import "react-datepicker/dist/react-datepicker.css";
+import { ProSidebarProvider } from "react-pro-sidebar";
+import "../styles/globals.css";
 
 // import { Inter as FontSans } from "next/font/google";
 //
@@ -50,15 +51,16 @@ const MyApp = ({
       {/*		--font-sans: ${fontSans.style.fontFamily};*/}
       {/*	}*/}
       {/*}`}</style>*/}
-
-      <FlagBagProvider value={flagBag}>
-        <SessionProvider session={session}>
-          <Layout>
-            <Component {...pageProps} />
-            <Toaster />
-          </Layout>
-        </SessionProvider>
-      </FlagBagProvider>
+      <ProSidebarProvider>
+        <FlagBagProvider value={flagBag}>
+          <SessionProvider session={session}>
+            <Layout>
+              <Component {...pageProps} />
+              <Toaster />
+            </Layout>
+          </SessionProvider>
+        </FlagBagProvider>
+      </ProSidebarProvider>
     </>
   );
 };

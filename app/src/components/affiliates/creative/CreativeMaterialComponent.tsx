@@ -1,6 +1,3 @@
-import { Code2Icon, Copy } from "lucide-react";
-
-import { Button } from "../../ui/button";
 import { CreativeMaterialDialogComponent } from "./CreativeMaterialDialogComponent";
 
 interface Props {
@@ -8,6 +5,7 @@ interface Props {
   file?: string;
   alt: string;
   url: string;
+  toggleShow?: boolean;
   creative_id: number;
 }
 
@@ -21,10 +19,25 @@ export const CreativeMaterialComponent = ({
   file,
   alt,
   url,
+  toggleShow,
   creative_id,
 }: Props) => {
   return (
     <div className=" mb-5 rounded-xl bg-white p-4 shadow">
+      <div
+        className={
+          "mt-4 items-start " +
+          (toggleShow
+            ? "md:grid md:grid-cols-1 md:gap-4"
+            : "md:grid md:grid-cols-3 md:gap-4")
+        }
+      >
+        <div className="mx-auto mb-5 h-64 rounded-xl">
+          <img
+            src={file}
+            className="mx-auto	my-0 max-h-64 rounded-xl bg-cover"
+            alt={alt}
+          />
       <div className="mt-4 items-start lg:flex">
         <div className="mx-auto mb-5 w-32 rounded-xl lg:mr-4 lg:w-96">
           <img src={file} className="rounded-xl bg-cover" alt={alt} />

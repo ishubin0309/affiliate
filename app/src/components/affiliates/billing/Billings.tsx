@@ -3,17 +3,16 @@ import type { PaymentsPaidType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DataTable } from "../../common/data-table/DataTable";
 
-import Affiliates from "../../../layouts/AffiliatesLayout";
-import { Button } from "@/components/ui/button";
-import { ViewIcon } from "lucide-react";
-import React from "react";
 import { Loading } from "@/components/common/Loading";
 import { PageHeader } from "@/components/common/page/page-header";
-import { Badge } from "@/components/ui/badge";
-import { formatPrice } from "@/utils/format";
-import { SearchText } from "@/components/common/search/search-text";
 import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { useSearchContext } from "@/components/common/search/search-context";
+import { SearchText } from "@/components/common/search/search-text";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/utils/format";
+import { ViewIcon } from "lucide-react";
+import { useRouter } from "next/router";
 
 const columnHelper = createColumnHelper<PaymentsPaidType>();
 
@@ -29,6 +28,7 @@ const createColumn = (
   });
 
 export const Billings = () => {
+  const router = useRouter();
   const {
     values: { billing: search },
   } = useSearchContext();
@@ -62,7 +62,15 @@ export const Billings = () => {
     }),
     columnHelper.accessor("edit-button" as any, {
       cell: (info) => (
-        <Button variant="ghost">
+        <Button
+          variant="ghost"
+          onClick={() =>
+            window.open(
+              `/affiliates/payment-view/${info?.row.original.paymentID}`,
+              "_blank"
+            )
+          }
+        >
           <ViewIcon className="mr-2 h-4 w-4" />
           View
         </Button>
@@ -83,5 +91,3 @@ export const Billings = () => {
     <Loading />
   );
 };
-
-Billings.getLayout = Affiliates;

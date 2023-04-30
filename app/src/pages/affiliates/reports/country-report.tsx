@@ -1,8 +1,7 @@
 import Head from "next/head";
-import styles from "./../../index.module.css";
 
-import type { MyPage } from "../../../components/common/types";
 import { CountryReports } from "@/components/affiliates/reports/CountryReports";
+import type { MyPage } from "../../../components/common/types";
 
 const Page: MyPage = () => {
   return (
@@ -12,9 +11,7 @@ const Page: MyPage = () => {
         <meta name="description" content="Affiliates Country Report" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <CountryReports />
-      </main>
+      <CountryReports />
     </>
   );
 };
