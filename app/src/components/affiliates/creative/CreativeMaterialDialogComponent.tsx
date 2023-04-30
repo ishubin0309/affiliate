@@ -196,7 +196,7 @@ export const CreativeMaterialDialogComponent = ({
         </div>
       </div>
 
-      <DialogContent className="max-w-[90%] sm:max-w-sm md:max-w-6xl">
+      <DialogContent className="max-w-[90%] sm:max-w-sm md:max-w-6xl ">
         <DialogHeader className="text-left text-lg font-medium text-primary">
           HTML Code
         </DialogHeader>
