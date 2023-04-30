@@ -90,3 +90,103 @@ jobs:
             --port=3000
             --max-instances=5
             --min-instances=0
+
+      - id: "deploy_freevpnplanet"
+        name: deploy freevpnplanet
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: "freevpnplanet-prod"
+          image: "europe-docker.pkg.dev/api-front-dashbord/production/aff:latest"
+          labels: env=prod
+          project_id: api-front-dashbord
+          region: europe-west1
+          secrets: |
+            DATABASE_URL=PROD_FREEVPNPLANET_DATABASE_URL:latest
+            LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
+            NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
+            SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+          env_vars: |
+            NEXTAUTH_URL=https://affiliate.freevpnplanet.com
+            NODE_ENV=production
+          flags: |
+            --allow-unauthenticated
+            --vpc-connector=production-serverless-vp
+            --vpc-egress=all-traffic
+            --port=3000
+            --max-instances=5
+            --min-instances=0
+
+      - id: "deploy_partners-bi-winning"
+        name: deploy partners-bi-winning
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: "partners-bi-winning-prod"
+          image: "europe-docker.pkg.dev/api-front-dashbord/production/aff:latest"
+          labels: env=prod
+          project_id: api-front-dashbord
+          region: europe-west1
+          secrets: |
+            DATABASE_URL=PROD_PARTNERSBIWINNING_DATABASE_URL:latest
+            LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
+            NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
+            SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+          env_vars: |
+            NEXTAUTH_URL=https://partners.bi-winning.org
+            NODE_ENV=production
+          flags: |
+            --allow-unauthenticated
+            --vpc-connector=production-serverless-vp
+            --vpc-egress=all-traffic
+            --port=3000
+            --max-instances=5
+            --min-instances=0
+      
+      - id: "deploy_partners-fivestars-market"
+        name: deploy partners-fivestars-market
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: "partners-fivestars-market-prod"
+          image: "europe-docker.pkg.dev/api-front-dashbord/production/aff:latest"
+          labels: env=prod
+          project_id: api-front-dashbord
+          region: europe-west1
+          secrets: |
+            DATABASE_URL=PROD_FIVESTARSMARKET_DATABASE_URL:latest
+            LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
+            NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
+            SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+          env_vars: |
+            NEXTAUTH_URL=https://partners.fivestars-markets.com
+            NODE_ENV=production
+          flags: |
+            --allow-unauthenticated
+            --vpc-connector=production-serverless-vp
+            --vpc-egress=all-traffic
+            --port=3000
+            --max-instances=5
+            --min-instances=0
+      
+      - id: "deploy_partners-focusoption"
+        name: deploy partners-focusoption
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: "partners-focusoption-prod"
+          image: "europe-docker.pkg.dev/api-front-dashbord/production/aff:latest"
+          labels: env=prod
+          project_id: api-front-dashbord
+          region: europe-west1
+          secrets: |
+            DATABASE_URL=PROD_FOCUSOPTION_DATABASE_URL:latest
+            LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
+            NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
+            SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+          env_vars: |
+            NEXTAUTH_URL=https://partners.focusoption.com
+            NODE_ENV=production
+          flags: |
+            --allow-unauthenticated
+            --vpc-connector=production-serverless-vp
+            --vpc-egress=all-traffic
+            --port=3000
+            --max-instances=5
+            --min-instances=0

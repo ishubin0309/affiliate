@@ -17,7 +17,11 @@ const SelectUserDropdown = () => {
       </span>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="mr-2 rounded-full p-1">
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-full p-1 md:mr-2"
+          >
             <User />
           </Button>
         </DropdownMenuTrigger>

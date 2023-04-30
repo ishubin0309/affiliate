@@ -1,3 +1,4 @@
+import { SaveIcon } from "lucide-react";
 import { Button } from "./button";
 
 const Buttons = ({ variant }: any) => (
@@ -84,4 +85,21 @@ export const ghost = {
 export const link = {
   ...Primary,
   args: { ...Primary.args, variant: "link" },
+};
+
+export const sizeRect = {
+  render: () => (
+    <div className="flex flex-row gap-2">
+      <Button>Normal</Button>
+      <Button size="rec">
+        <SaveIcon className="w-4" />
+      </Button>
+      <Button size="rec" isLoading={true}>
+        <SaveIcon className="w-4" />
+      </Button>
+      <Button size="rec" variant="secondary">
+        <SaveIcon className="w-4" />
+      </Button>
+    </div>
+  ),
 };

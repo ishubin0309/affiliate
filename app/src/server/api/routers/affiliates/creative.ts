@@ -153,6 +153,7 @@ export const getMerchantCreative = publicProcedure
         ({ file, ...data }) => ({ ...data, file: serverStoragePath(file) }),
         addFreeTextSearchJSFilter(
           await ctx.prisma.merchants_creative.findMany({
+            take: 10,
             where,
             include: {
               language: {

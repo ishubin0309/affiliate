@@ -6,7 +6,7 @@ export const exportJSON = (
   rows: Array<number>,
   localFileName: string
 ) => {
-  let path_name = path.join(
+  const path_name = path.join(
     __dirname,
     "../../../../../src/server/api/routers/affiliates/config/generated/" +
       localFileName

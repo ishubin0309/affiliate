@@ -4,13 +4,15 @@ import {
 } from "@/server/api/routers/affiliates/const";
 import {
   exportReportLoop,
-  pageOutput,
-  pageParams,
-  reportParams,
+  exportType,
+  getPageOffset,
+  pageInfo,
+  PageParamsSchema,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { publicProcedure } from "@/server/api/trpc";
-import { Prisma, PrismaClient } from "@prisma/client";
-import { Simplify } from "@trpc/server";
+import type { Prisma } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
+import type { Simplify } from "@trpc/server";
 import { formatISO } from "date-fns";
 import path from "path";
 import { z } from "zod";
@@ -42,11 +44,11 @@ const traderReportTotalsSchema = z.object({
 
 const traderReportResultSchema = z.object({
   data: z.array(traderReportSchema),
-  pageInfo: z.object(pageOutput),
+  pageInfo,
   totals: traderReportTotalsSchema,
 });
 
-const params = z.object({
+const Input = z.object({
   from: z.date(),
   to: z.date(),
   merchant_id: z.number().optional(),
@@ -58,14 +60,11 @@ const params = z.object({
   filter: z.string().optional(),
 });
 
-const paramsWithPage = params.extend(pageParams);
-const paramsWithReport = params.extend(reportParams);
+const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
-type InputType = z.infer<typeof paramsWithPage>;
-
-const traderReport = async ({
-  ctx,
-  input: {
+const traderReport = async (
+  prisma: PrismaClient,
+  {
     from,
     to,
     country,
@@ -74,14 +73,10 @@ const traderReport = async ({
     parameter,
     parameter_2,
     filter,
-    ...pageParams
-  },
-}: {
-  ctx: Simplify<unknown>;
-  input: InputType;
-}) => {
-  const offset = (pageParams.pageNumber - 1) * pageParams.pageSize;
-  const prismaClient = new PrismaClient();
+    pageParams,
+  }: z.infer<typeof InputWithPageInfo>
+) => {
+  const offset = getPageOffset(pageParams);
 
   const baseTypeFilter: Prisma.reporttradersWhereInput = {
     affiliate_id,
@@ -129,7 +124,7 @@ const traderReport = async ({
   };
 
   const [trader_report_resource, trader_report_totals] = await Promise.all([
-    prismaClient.reporttraders.findMany({
+    prisma.reporttraders.findMany({
       take: pageParams.pageSize,
       skip: offset,
       orderBy: isFTD
@@ -158,7 +153,7 @@ const traderReport = async ({
 
     // notice separate query with no pagination
     // usually better to use prisma.aggregate but in this case cannot as fields are string
-    prismaClient.reporttraders.findMany({
+    prisma.reporttraders.findMany({
       select: {
         FTDAmount: true,
         NetDeposit: true,
@@ -226,12 +221,12 @@ const traderReport = async ({
 };
 
 export const getTraderReport = publicProcedure
-  .input(paramsWithPage)
+  .input(InputWithPageInfo)
   .output(traderReportResultSchema)
-  .query(traderReport);
+  .query(({ ctx, input }) => traderReport(ctx.prisma, input));
 
 export const exportTraderReport = publicProcedure
-  .input(paramsWithReport)
+  .input(Input.extend({ exportType }))
   .mutation(async function ({ ctx, input }) {
     const { exportType, ...params } = input;
 
@@ -257,9 +252,9 @@ export const exportTraderReport = publicProcedure
       generic_filename,
       trader_report,
       async (pageNumber, pageSize) =>
-        traderReport({
-          ctx,
-          input: { ...params, pageNumber, pageSize },
+        traderReport(ctx.prisma, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
         })
     );
 

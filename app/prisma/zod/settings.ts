@@ -173,6 +173,5 @@ export const settingsModel = z.object({
   deal_geoLocation: z.boolean(),
   pnlTable: z.string(),
   ShowQualificationOnChart: z.boolean(),
-  ShowQualificationOnChartSince: z.date(),
   hasContinuousyCommissionType: z.boolean(),
 })

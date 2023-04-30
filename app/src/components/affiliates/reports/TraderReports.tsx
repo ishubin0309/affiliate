@@ -69,16 +69,16 @@ export const TraderReports = () => {
   >([]);
   const { currentPage, itemsPerPage } = router.query;
 
-  const { mutateAsync: reportExport } =
-    api.affiliates.exportTraderReport.useMutation();
-
   const { data, isLoading } = api.affiliates.getTraderReport.useQuery({
     from,
     to,
-    pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
-    pageNumber: currentPage ? Number(currentPage) : 1,
     merchant_id: merchant_id ? Number(merchant_id) : undefined,
     trader_id: traderID,
+    pageParams: {
+      // TODO
+      pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
+      pageNumber: currentPage ? Number(currentPage) : 1,
+    },
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<TraderReportType>();
@@ -105,7 +105,7 @@ export const TraderReports = () => {
   // TODO: no match between columns here and what display on screen
   const columns = [
     createColumn("TraderID", "Trader ID"),
-    createColumn("sub_trader_count", "Trader Sub Accounts"),
+    // createColumn("sub_trader_count", "Trader Sub Accounts"),
     createColumn("RegistrationDate", "Registration Date"),
     createColumn("TraderStatus", "Trader Status"),
     createColumn("Country", "Country"),
@@ -128,7 +128,7 @@ export const TraderReports = () => {
     createColumn("Volume", "Volume"),
     createColumn("WithdrawalAmount", "Withdrawal Amount"),
     createColumn("ChargeBackAmount", "ChargeBack Amount"),
-    createColumn("totalLots", "Lots"),
+    // createColumn("totalLots", "Lots"),
     createColumn("SaleStatus", "Sale Status"),
   ];
 
@@ -187,53 +187,6 @@ export const TraderReports = () => {
     },
   ];
 
-  const handleSelectAll = async () => {
-    const value = reportFields.map((item) => {
-      const temp = Object.assign({}, item);
-      temp.isChecked = true;
-      return temp;
-    });
-    setReportFields(value);
-    const hiddenCols = value.filter((item) => item.isChecked === false);
-    const remove_fields = hiddenCols
-      .map((item) => {
-        return item.value;
-      })
-      .join("|");
-    // await upsertReportsField.mutateAsync({
-    //   remove_fields,
-    // });
-  };
-
-  const handleUnSelectAll = async () => {
-    const value = reportFields.map((item) => {
-      const temp = Object.assign({}, item);
-      temp.isChecked = false;
-      return temp;
-    });
-    setReportFields(value);
-    const hiddenCols = value.filter((item) => item.isChecked === false);
-    const remove_fields = hiddenCols
-      .map((item) => {
-        return item.value;
-      })
-      .join("|");
-    // await upsertReportsField.mutateAsync({
-    //   remove_fields,
-    // });
-  };
-
-  const handleExport = async (exportType: ExportType) =>
-    reportExport({
-      from: new Date("2022-01-03"),
-      to: new Date("2023-01-03"),
-      exportType,
-    });
-
-  const handleReportField = (event: any) => {
-    void event;
-  };
-
   return (
     <>
       <div className="w-full pt-3.5">
@@ -248,117 +201,13 @@ export const TraderReports = () => {
             </Button>
           </div>
         </div>
-        <Dialog>
-          <div>
-            <div className="flex items-center justify-between">
-              <div className="flex">
-                <DialogTrigger>
-                  <Button variant="primary-outline">
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <span className="font-sm ml-3 hidden items-center justify-between font-medium lg:flex">
-                  Report Display
-                </span>
-              </div>
-              <div className="hidden lg:block">
-                <DateRangeSelect />
-              </div>
-              <div className="flex space-x-2 lg:hidden">
-                <Button variant="primary">Show Reports</Button>
-                <Button variant="primary-outline">Reset Search</Button>
-                <Button>
-                  <Download className="h-6 w-6" />
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="mt-2 items-center justify-between lg:flex">
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-              <QuerySelect
-                label="Merchant"
-                choices={merchants}
-                varName="merchant_id"
-              />
-              <QuerySelect
-                label="Search Type"
-                choices={displayOptions}
-                varName="display"
-              />
-            </div>
-            <div className="flex space-x-2">
-              <button className="hidden rounded-md bg-[#2262C6] px-8 py-2 text-white lg:block">
-                Show Reports
-              </button>
-              <button className="hidden rounded-md border border-[#2262C6] px-8 py-2 text-base font-semibold text-[#2262C6] lg:block">
-                Reset Search
-              </button>
-              <ExportButton
-                report_name="trader-report"
-                onExport={handleExport}
-              />
-            </div>
-          </div>
-
-          <DialogContent>
-            <DialogHeader className="text-left text-sm font-medium text-primary">
-              Manage Field On Report - Quick Summary
-            </DialogHeader>
-            <DialogTitle className="text-disabled text-sm font-normal md:mb-6 md:pt-2">
-              Please activate the fields you want to display on the report:
-            </DialogTitle>
-            <div className="grid grid-cols-1 md:mt-10 md:grid-cols-2">
-              {reportFields.map((field) => {
-                return (
-                  <div key={field.id}>
-                    <div className="mb-6 flex items-center md:mb-10">
-                      <input
-                        type="checkbox"
-                        id={`report-field-${field.id}`}
-                        checked={field.isChecked}
-                        value={field.id}
-                        onChange={(e) => void handleReportField(e)}
-                        className="form-checkbox text-blueGray-700 h-4 w-4 rounded border-0 transition-all duration-150 ease-linear"
-                      />
-                      <div className="ml-5 items-center text-lg font-medium text-black md:ml-10">
-                        {field.title}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex justify-between pb-5 font-medium md:pb-8 md:pt-12">
-              <div className="flex">
-                <button
-                  className="mr-3 rounded-md bg-[#2262C6] p-3 text-white md:px-14"
-                  onClick={handleSelectAll}
-                >
-                  Select All
-                </button>
-                <button
-                  className="rounded-md border border-[#1B48BB] bg-[#EFEEFF] p-3 text-[#1B48BB] md:px-12"
-                  onClick={handleUnSelectAll}
-                >
-                  Unselect All
-                </button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
 
         <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
-          {data?.data?.length > 0 ? (
-            <ReportDataTable
-              data={data?.data}
-              columns={columns}
-              // reportFields={reportFields}
-            />
-          ) : (
-            <div className="flex justify-between pb-5 font-medium md:pb-8 md:pt-12">
-              <div className="text-center">No Data</div>
-            </div>
-          )}
+          <ReportDataTable
+            data={data?.data}
+            columns={columns}
+            // reportFields={reportFields}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-2">

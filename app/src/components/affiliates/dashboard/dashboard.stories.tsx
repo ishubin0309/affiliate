@@ -1,8 +1,8 @@
 import AccountManager from "./AccountManager";
-import DashboardCountryReport from "./DashboradCountryReport";
-import DashboardCards from "./DashboardCards";
+import { DashboardCountryReport } from "./DashboradCountryReport";
 import DashboardCharts from "./DashboardCharts";
 import DeviceReport from "./DeviceReport";
+
 const performanceChart = [
   {
     date: "Dec, 2022",
@@ -25,6 +25,7 @@ const performanceChart = [
     ActiveTraders: 1,
   },
 ];
+
 const conversionChart = [
   {
     date: "Dec, 2022",
@@ -50,6 +51,7 @@ const conversionChart = [
 const meta = {
   component: DeviceReport,
 };
+
 const report = {
   first_name: "ner",
   last_name: "cohen",
@@ -99,45 +101,6 @@ export const Charts = {
       performanceChart={performanceChart}
       conversionChart={conversionChart}
     />
-  ),
-  parameters: {
-    design: {
-      type: "figma",
-      url: "https://www.figma.com/file/0JFoPEDsqew7pF100tiCOT/affiliate-dashboard-v2?node-id=1210-28142&t=ljE9QCN43WSsoBp3-0",
-    },
-  },
-};
-
-export const Card = {
-  render: () => (
-    <>
-      <DashboardCards
-        idx={0}
-        item={{
-          id: 0,
-          title: "title",
-          value: "RealAccount",
-          isChecked: false,
-        }}
-        thisMonth={212000}
-        lastMonth={40000}
-        value={23000}
-        performanceChartData={undefined}
-      />
-      <DashboardCards
-        idx={0}
-        item={{
-          id: 0,
-          title: "title",
-          value: "RealAccount",
-          isChecked: false,
-        }}
-        thisMonth={2120000000000}
-        lastMonth={400}
-        value={2300000}
-        performanceChartData={undefined}
-      />
-    </>
   ),
   parameters: {
     design: {

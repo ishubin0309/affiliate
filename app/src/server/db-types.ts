@@ -50,6 +50,9 @@ export type TopMerchantCreativeType =
 export type CountryReportType =
   RouterOutput["affiliates"]["getCountryReport"][0];
 
+export type TranslateReportFakeType =
+  RouterOutput["affiliates"]["getTranslateReportFake"][0];
+
 export type PixelMonitorType = RouterOutput["affiliates"]["getPixelMonitor"][0];
 export type PixelMonitorUpsertType =
   RouterInput["affiliates"]["upsertPixelMonitor"];
@@ -57,10 +60,10 @@ export type PixelMonitorUpsertType =
 export type pixel_monitorModelType = z.infer<typeof pixel_monitorModel>;
 
 export type QuickReportSummary =
-  RouterOutput["affiliates"]["getQuickReportSummary"][0];
+  RouterOutput["affiliates"]["getQuickReportSummary"]["data"][0];
 
 export type CommissionReportType =
-  RouterOutput["affiliates"]["getCommissionReport"][0];
+  RouterOutput["affiliates"]["getCommissionReport"]["data"][0];
 
 export type ClicksReportType = RouterOutput["affiliates"]["getClicksReport"][0];
 
@@ -73,7 +76,8 @@ export type CreativeReportType =
 export type LandingPageReportType =
   RouterOutput["affiliates"]["getLandingPageData"][0];
 
-export type TraderReportType = RouterOutput["affiliates"]["getTraderReport"][0];
+export type TraderReportType =
+  RouterOutput["affiliates"]["getTraderReport"]["data"][0];
 
 export type PixelLogsReportType =
   RouterOutput["affiliates"]["getPixelLogReport"][0];
@@ -90,5 +94,8 @@ export type AffiliateCommissionType =
 export type DashboardDeviceReportType =
   RouterOutput["affiliates"]["getDashboardDeviceReport"][0];
 
+export type DashboardCountryReportInputType =
+  RouterInput["affiliates"]["getCountryReportDashboard"];
+
 export type DashboardCountryReportType =
-  RouterOutput["affiliates"]["getDashboardCountryReport"][0];
+  RouterOutput["affiliates"]["getCountryReportDashboard"][0];

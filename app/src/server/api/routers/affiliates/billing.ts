@@ -1,12 +1,9 @@
+import { TRPCError } from "@trpc/server";
+import { indexBy, map } from "rambda";
+import { z } from "zod";
+import { addFreeTextSearchJSFilter } from "../../../../../prisma/prisma-utils";
 import { publicProcedure } from "../../trpc";
 import { affiliate_id } from "./const";
-import { z } from "zod";
-import {
-  addFreeTextSearchJSFilter,
-  addFreeTextSearchWhere,
-} from "../../../../../prisma/prisma-utils";
-import { indexBy, map } from "rambda";
-import { TRPCError } from "@trpc/server";
 
 export const getPaymentsPaid = publicProcedure
   .input(
@@ -82,6 +79,29 @@ export const getPaymentDetails = publicProcedure
         where: { paymentID: paymentId },
       }),
     ]);
+    const affiliatesDetail = await ctx.prisma.affiliates.findFirst({
+      where: { id: payments_paid?.affiliate_id },
+    });
+    const bonusesDetail = await ctx.prisma.payments_details.findMany({
+      where: {
+        month: payments_paid?.month,
+        year: payments_paid?.year,
+        reportType: "bonus",
+        paymentID: payments_paid?.paymentID,
+        status: "approved",
+      },
+    });
+    const merchants = await ctx.prisma.merchants.findFirst({
+      where: {
+        id: parseInt(affiliatesDetail?.merchants ?? "0"),
+      },
+    });
 
-    return { payments_details, payments_paid };
+    return {
+      payments_details,
+      payments_paid,
+      affiliatesDetail,
+      bonusesDetail,
+      merchants,
+    };
   });

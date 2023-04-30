@@ -1,10 +1,14 @@
-import { getReportTraderData } from "@/server/api/routers/affiliates/reports/get-trader-data";
 import { publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { affiliate_id, merchant_id } from "../const";
-import { pageParams, reportParams } from "./reports-utils";
+import {
+  getReportTraderData,
+  ReportTraderDataItemSchema,
+} from "@/server/api/routers/affiliates/reports/get-trader-data";
+import { trafficModel } from "../../../../../../prisma/zod";
+import { PageParamsSchema } from "@/server/api/routers/affiliates/reports/reports-utils";
 
-const params = z.object({
+const Input = z.object({
   from: z.date(),
   to: z.date(),
   merchant_id: z.number().optional(),
@@ -13,79 +17,47 @@ const params = z.object({
   type: z.enum(["clicks", "views"]).optional(),
 });
 
-const Merchant = z.object({
-  name: z.string(),
-});
-
-const Affiliate = z.object({
-  username: z.string(),
-});
-
-const output = z.array(
-  z.object({
-    id: z.number().optional(),
-    rdate: z.date().optional(),
-    unixRdate: z.number().optional(),
-    ctag: z.string().optional(),
-    uid: z.string().optional(),
-    ip: z.string().optional(),
-    admin_id: z.number().optional(),
-    affiliate_id: z.number().optional(),
-    group_id: z.number().optional(),
-    banner_id: z.number().optional(),
-    merchant_id: z.number().optional(),
-    profile_id: z.number().optional(),
-    language_id: z.number().optional(),
-    promotion_id: z.number().optional(),
-    valid: z.boolean().optional(),
-    title: z.string().optional(),
-    bannerType: z.string().optional(),
-    type: z.string().optional(),
-    width: z.number().optional(),
-    height: z.number().optional(),
-    file: z.string().optional(),
-    url: z.string().optional(),
-    alt: z.string().optional(),
-    platform: z.string().optional(),
-    os: z.string().optional(),
-    osVersion: z.string().optional(),
-    browser: z.string().optional(),
-    broswerVersion: z.string().optional(),
-    userAgent: z.string().optional(),
-    country_id: z.string().optional(),
-    refer_url: z.string().optional(),
-    param: z.string().optional(),
-    param2: z.string().optional(),
-    param3: z.string().optional(),
-    param4: z.string().optional(),
-    param5: z.string().optional(),
-    views: z.number().optional(),
-    clicks: z.number().optional(),
-    product_id: z.number().optional(),
-    merchant: Merchant.optional(),
-    affiliate: Affiliate.optional(),
-    trader_id2: z.string().optional(),
-    trader_alias: z.string().optional(),
-    sales_status: z.string().optional(),
+const ClickReportItem = trafficModel
+  .pick({
+    id: true,
+    uid: true,
+    clicks: true,
+    views: true,
+    rdate: true,
+    profile_id: true,
+    type: true,
+    banner_id: true,
+    param: true,
+    param2: true,
+    param3: true,
+    param4: true,
+    param5: true,
+    refer_url: true,
+    ip: true,
+    affiliate_id: true,
+    platform: true,
+    os: true,
+    osVersion: true,
+    browser: true,
+    broswerVersion: true,
+    merchant_id: true,
   })
-);
+  .merge(ReportTraderDataItemSchema.partial())
+  .extend({
+    country: z.string(),
+    banner_title: z.string(),
+    banner_url: z.string(),
+    merchant_name: z.string(),
+    affiliate_name: z.string(),
+    profile_name: z.string(),
+  });
 
-const paramsWithPage = params.extend(pageParams);
-const paramsWithReport = params.extend(reportParams);
+const output = z.array(ClickReportItem);
 
-type InputType = z.infer<typeof paramsWithPage>;
-type OutputType = z.infer<typeof output>;
+const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
 export const getClicksReport = publicProcedure
-  .input(
-    z.object({
-      from: z.date(),
-      to: z.date(),
-      unique_id: z.string().optional(),
-      trader_id: z.string().optional(),
-      type: z.enum(["clicks", "views"]).optional(),
-    })
-  )
+  .input(InputWithPageInfo)
   .output(output)
   .query(async ({ ctx, input: { from, to, unique_id, trader_id, type } }) => {
     const uid: string[] = [];
@@ -97,9 +69,7 @@ export const getClicksReport = publicProcedure
           gt: 0,
         },
       };
-    }
-
-    if (type === "clicks") {
+    } else if (type === "clicks") {
       type_filter = {
         clicks: {
           gt: 0,
@@ -176,6 +146,12 @@ export const getClicksReport = publicProcedure
             url: true,
           },
         },
+        affiliates_profiles: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 
@@ -209,25 +185,25 @@ export const getClicksReport = publicProcedure
       const {
         uid,
         banner_id,
-        merchant_id,
-        affiliate_id,
-        rdate,
         country,
         merchant,
         affiliate,
         merchant_creative,
+        affiliates_profiles,
         ...restItem
       } = item;
       const traderData = ReportTradersDataItems[uid] || {};
 
       return {
+        uid,
+        banner_id,
         ...restItem,
-        traffic_date: rdate,
         country: country.title,
         banner_title: merchant_creative.title,
         banner_url: merchant_creative.url,
         merchant_name: merchant.name,
-        affiliate_username: affiliate.username,
+        affiliate_name: affiliate.username,
+        profile_name: affiliates_profiles.name,
         ...traderData,
       };
     });

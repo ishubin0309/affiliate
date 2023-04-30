@@ -2,17 +2,17 @@ import {
   affiliate_id,
   merchant_id,
 } from "@/server/api/routers/affiliates/const";
-import {
-  pageParams,
-  reportParams,
-} from "@/server/api/routers/affiliates/reports/reports-utils";
 import { publicProcedure } from "@/server/api/trpc";
 import type { data_install_type } from "@prisma/client";
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 import type { Simplify } from "@trpc/server";
 import { z } from "zod";
+import {
+  getPageOffset,
+  PageParamsSchema,
+} from "@/server/api/routers/affiliates/reports/reports-utils";
 
-const params = z.object({
+const Input = z.object({
   from: z.date().optional(),
   to: z.date().optional(),
   country: z.string().optional(),
@@ -23,14 +23,11 @@ const params = z.object({
   filter: z.string().optional(),
 });
 
-const paramsWithPage = params.extend(pageParams);
-const paramsWithReport = params.extend(reportParams);
+const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
-type InputType = z.infer<typeof paramsWithPage>;
-
-export const installReport = async ({
-  ctx,
-  input: {
+export const installReport = async (
+  prisma: PrismaClient,
+  {
     from,
     to,
     country,
@@ -39,20 +36,10 @@ export const installReport = async ({
     param,
     param2,
     filter,
-    page,
-    items_per_page,
-  },
-}: {
-  ctx: Simplify<unknown>;
-  input: InputType;
-}) => {
-  const prismaClient = new PrismaClient();
-  // const paginate = paginator(prismaClient);
-
-  let offset;
-  if (page && items_per_page) {
-    offset = (page - 1) * items_per_page;
-  }
+    pageParams,
+  }: z.infer<typeof InputWithPageInfo>
+) => {
+  const offset = getPageOffset(pageParams);
   // type filter
   let type_filter = {};
   if (merchant_id) {
@@ -90,7 +77,7 @@ export const installReport = async ({
       Param2: param2,
     };
   }
-  const data = await prismaClient.data_install.findMany({
+  const data = await prisma.data_install.findMany({
     orderBy: {
       rdate: "asc",
     },
@@ -135,8 +122,8 @@ export const installReport = async ({
 };
 
 export const getInstallReport = publicProcedure
-  .input(paramsWithPage)
-  .query(installReport);
+  .input(InputWithPageInfo)
+  .query(({ ctx, input }) => installReport(ctx.prisma, input));
 
 // export const exportInstallReport = publicProcedure
 //   .input(paramsWithReport)
