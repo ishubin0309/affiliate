@@ -20,7 +20,7 @@ import { Code2Icon, Copy, Image as ImageIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
-import DynamicPerameter from "./dynamicPerameter";
+import { AddDynamicPerameter } from "./AddDynamicPerameter";
 
 interface Props {
   values: valueProps[];
@@ -48,9 +48,7 @@ export const CreativeMaterialDialogComponent = ({
     refetchOnWindowFocus: false,
   });
   const [permeterFirstValues, setPermeterFirstValues] = useState("");
-  const [permeterValues, setPermeterValues] = useState<{
-    [key: string]: string;
-  }>({});
+  const [permeterValues, setPermeterValues] = useState<any[]>([]);
   const [profileValue, setProfileValue] = useState<number>();
   const handleProfileChange = (e: any) => {
     setProfileValue(e);
@@ -272,8 +270,11 @@ export const CreativeMaterialDialogComponent = ({
                           />
                         </div>
 
-                        <DynamicPerameter
+                        {/* <DynamicPerameter
                           permeterValues={permeterValues}
+                          setPermeterValues={setPermeterValues}
+                        /> */}
+                        <AddDynamicPerameter
                           setPermeterValues={setPermeterValues}
                         />
                       </div>
