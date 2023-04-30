@@ -56,8 +56,8 @@ export const QuickSummaryReport = () => {
     from: new Date("2022-01-03"),
     to: new Date("2023-01-03"),
     display: display ? String(display) : undefined,
-    page: currentPage ? Number(currentPage) : 1,
-    items_per_page: itemsPerPage ? Number(itemsPerPage) : 10,
+    pageNumber: currentPage ? Number(currentPage) : 1,
+    pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
   });
 
   const { mutateAsync: reportExport } =

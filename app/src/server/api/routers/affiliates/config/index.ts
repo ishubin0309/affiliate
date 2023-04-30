@@ -34,8 +34,9 @@ export const uploadFile = async (
 
     const localFileName = path.join(
       __dirname,
-      `../../../../../tmp/${generic_filename}.${exportType}`
+      `../../../../../src/server/api/routers/affiliates/config/generated/${generic_filename}.${exportType}`
     );
+
     console.log("local file name ----->", localFileName);
     // const file_date = new Date().toISOString();
     const response = await storage.bucket(bucketName).upload(localFileName, {

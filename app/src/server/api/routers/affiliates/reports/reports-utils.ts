@@ -6,16 +6,16 @@ import { exportJSON } from "../config/exportJson";
 import { exportXLSX } from "../config/exportXLSX";
 
 // Common params for all reports
-export const pageParams = z.object({
+export const pageParams = {
   pageNumber: z.number().int(),
   pageSize: z.number().int(),
-});
+};
 
-export const pageOutput = z.object({
+export const pageOutput = {
   pageNumber: z.number().int(),
   pageSize: z.number().int(),
   totalItems: z.number().int(),
-});
+};
 
 // Common params for all reports export
 export const reportParams = {
@@ -33,15 +33,15 @@ export const exportReportLoop = async (
   report_type: string,
   getPage: (page: number, items_per_page: number) => Promise<any[]>
 ) => {
-  let page = 0;
+  let page = 1;
   const items_per_page = 5000;
   let hasMoreData = true;
   while (hasMoreData) {
-    console.log("generic file name ------->", generic_filename);
+    console.log("generic file name ------->", page, items_per_page);
     const data = await getPage(page, items_per_page);
     // TODO: write data to to csv, xlsx, json based on exportType
 
-    console.log("data ----->", data);
+    // console.log("data ----->", data);
     const data_rows = filterData(data, report_type);
 
     const xlsx_filename = `${generic_filename}.${exportType}`;
@@ -111,7 +111,8 @@ export const filterData = (data: any[], report_type: string) => {
         );
       });
     default:
-      data.map((item) => {
+      // console.log("data ------>", data?.data);
+      data?.data?.map((item) => {
         data_rows.push(item);
       });
       break;

@@ -1,8 +1,8 @@
+import { getReportTraderData } from "@/server/api/routers/affiliates/reports/get-trader-data";
 import { publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { affiliate_id, merchant_id } from "../const";
 import { pageParams, reportParams } from "./reports-utils";
-import { getReportTraderData } from "@/server/api/routers/affiliates/reports/get-trader-data";
 
 const params = z.object({
   from: z.date(),

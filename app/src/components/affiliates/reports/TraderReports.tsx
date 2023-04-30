@@ -1,5 +1,6 @@
 import { QuerySelect } from "@/components/common/QuerySelect";
 import { Pagination } from "@/components/ui/pagination";
+import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Calendar, Download, Settings } from "lucide-react";
 import { useRouter } from "next/router";
@@ -17,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog";
+import { ExportButton } from "./export-button";
 
 export const creativeType = [
   {
@@ -68,13 +70,13 @@ export const TraderReports = () => {
   const { currentPage, itemsPerPage } = router.query;
 
   const { mutateAsync: reportExport } =
-    api.affiliates.exportQuickSummaryReport.useMutation();
+    api.affiliates.exportTraderReport.useMutation();
 
   const { data, isLoading } = api.affiliates.getTraderReport.useQuery({
     from,
     to,
     pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
-    page: currentPage ? Number(currentPage) : 1,
+    pageNumber: currentPage ? Number(currentPage) : 1,
     merchant_id: merchant_id ? Number(merchant_id) : undefined,
     trader_id: traderID,
   });
@@ -221,12 +223,12 @@ export const TraderReports = () => {
     // });
   };
 
-  // const handleExport = async (exportType: ExportType) =>
-  //   reportExport({
-  //     from: new Date("2022-01-03"),
-  //     to: new Date("2023-01-03"),
-  //     exportType,
-  //   });
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      from: new Date("2022-01-03"),
+      to: new Date("2023-01-03"),
+      exportType,
+    });
 
   const handleReportField = (event: any) => {
     void event;
@@ -291,7 +293,10 @@ export const TraderReports = () => {
               <button className="hidden rounded-md border border-[#2262C6] px-8 py-2 text-base font-semibold text-[#2262C6] lg:block">
                 Reset Search
               </button>
-              {/* <ExportButton onExport={handleExport} /> */}
+              <ExportButton
+                report_name="trader-report"
+                onExport={handleExport}
+              />
             </div>
           </div>
 
@@ -343,7 +348,7 @@ export const TraderReports = () => {
         </Dialog>
 
         <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
-          {data.data.length > 0 ? (
+          {data?.data?.length > 0 ? (
             <ReportDataTable
               data={data?.data}
               columns={columns}
