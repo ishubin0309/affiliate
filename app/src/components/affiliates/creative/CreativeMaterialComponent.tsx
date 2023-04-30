@@ -2,13 +2,14 @@ import React from "react";
 import { Code2Icon, Copy } from "lucide-react";
 import { Button } from "../../ui/button";
 import { CreativeMaterialDialogComponent } from "./CreativeMaterialDialogComponent";
+import Image from "next/image";
 
 interface Props {
   values: valueProps[];
   file?: string;
   alt: string;
   url: string;
-  toggleShow?: boolean;
+  toggleShow: boolean;
   creative_id: number;
 }
 
@@ -38,7 +39,7 @@ export const CreativeMaterialComponent = ({
     };
 
     return (
-      <img
+      <Image
         src={image}
         alt={alt}
         onError={handleImageError}
@@ -63,6 +64,7 @@ export const CreativeMaterialComponent = ({
             values={values}
             url={url}
             creative_id={creative_id}
+            toggleShow={toggleShow}
           />
         </div>
       </div>

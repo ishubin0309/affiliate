@@ -29,6 +29,7 @@ const renderRow = (item: MerchantSubCreativeType) => {
       alt={item.alt}
       url={item.url}
       creative_id={item.id}
+      toggleShow={false}
     />
   );
 };

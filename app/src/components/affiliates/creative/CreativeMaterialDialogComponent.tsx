@@ -30,6 +30,7 @@ interface Props {
   isOpen?: boolean;
 
   creative_id: number;
+  toggleShow: boolean;
 }
 
 interface valueProps {
@@ -44,6 +45,7 @@ export const CreativeMaterialDialogComponent = ({
   url,
   isOpen,
   creative_id,
+  toggleShow,
 }: Props) => {
   const { toast } = useToast();
   const { data: profiles } = api.affiliates.getProfiles.useQuery(undefined, {
