@@ -49,7 +49,6 @@ export const navigationData: NavigationLinkData[] = [
       { name: "Install Report", link: "install-reports" },
       { name: "Profile Report", link: "profile-report" },
       { name: "Sub Affiliates Report", link: "sub-affiliate-report" },
-      { name: "Fake Report Local (Debug)", link: "fake-trader-report" },
       { name: "Fake Report Server (Debug)", link: "fake-server-report" },
     ],
   },

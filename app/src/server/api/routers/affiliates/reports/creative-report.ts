@@ -25,9 +25,9 @@ export const getCreativeReport = publicProcedure
     z.object({
       from: z.date().optional(),
       to: z.date().optional(),
-      banner_id: z.string().optional(),
+      banner_id: z.number().optional(),
       type: z.string().optional(),
-      group_id: z.string().optional(),
+      group_id: z.number().optional(),
     })
   )
   .query(async ({ ctx, input: { from, to, banner_id, group_id, type } }) => {
@@ -45,7 +45,7 @@ export const getCreativeReport = publicProcedure
     const ww = await ctx.prisma.$queryRaw<
       z.infer<typeof CreativeReportSchema>[]
     >(
-      Prisma.sql`SELECT CONCAT(Date,MerchantID,AffiliateID,BannerID) as id, MerchantID as merchant_id, AffiliateID as affiliate_id, SUM(Impressions) AS totalViews, SUM(Clicks) AS totalClicks, BannerID as banner_id 
+      Prisma.sql`SELECT CONCAT(Date,MerchantID,AffiliateID,BannerID) as id, MerchantID as merchant_id, AffiliateID as affiliate_id, SUM(Impressions) AS totalViews, SUM(Clicks) AS totalClicks, BannerID as banner_id
                         FROM merchants_creative_stats WHERE (Date BETWEEN  ${from}  AND ${to} ) ${creatives_stats_where} GROUP BY BannerID`
     );
 
@@ -106,8 +106,8 @@ export const getCreativeReport = publicProcedure
           gte: from,
           lte: to,
         },
-        banner_id: banner_id ? banner_id : "",
-        group_id: group_id ? group_id : "",
+        banner_id: banner_id ? banner_id : undefined,
+        group_id: group_id ? group_id : undefined,
       },
     });
 

@@ -5,8 +5,10 @@ import {
 import { QuickReportSummarySchema } from "@/server/api/routers/affiliates/reports";
 import {
   exportReportLoop,
-  pageParams,
-  reportParams,
+  exportType,
+  getPageOffset,
+  pageInfo,
+  PageParamsSchema,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { publicProcedure } from "@/server/api/trpc";
 import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
@@ -17,27 +19,26 @@ import path from "path";
 import paginator from "prisma-paginate";
 import { z } from "zod";
 import { uploadFile } from "../config";
-const QuickReportSummarySchemaArray = z.array(QuickReportSummarySchema);
 
-const params = z.object({
+const QuickReportSummaryResultSchema = z.object({
+  data: z.array(QuickReportSummarySchema),
+  pageInfo,
+  totals: z.any(),
+});
+
+const Input = z.object({
   from: z.date(),
   to: z.date(),
   display: z.string().optional(),
   merchant_id: z.number().optional(),
 });
 
-const paramsWithPage = params.extend(pageParams);
-const paramsWithReport = params.extend(reportParams);
+const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
-type InputType = z.infer<typeof paramsWithPage>;
-
-const quickReportSummary = async ({
-  ctx,
-  input: { from, to, display = "", page, items_per_page },
-}: {
-  ctx: Simplify<unknown>;
-  input: InputType;
-}) => {
+const quickReportSummary = async (
+  prisma: PrismaClient,
+  { from, to, display = "", pageParams }: z.infer<typeof InputWithPageInfo>
+) => {
   console.log(from, to);
 
   // TODO: no reason to use paginator, can use the prisma query directly as paginator does not support $queryRaw
@@ -45,10 +46,7 @@ const quickReportSummary = async ({
   const paginate = paginator(prismaClient);
   console.log("display type", display, merchant_id);
 
-  let offset;
-  if (page && items_per_page) {
-    offset = (page - 1) * items_per_page;
-  }
+  const offset = getPageOffset(pageParams);
   let dasboardSQLperiod = Prisma.sql`GROUP BY d.MerchantId ORDER BY d.MerchantId ASC`;
   let dasboardSQLwhere = Prisma.empty;
 
@@ -110,20 +108,32 @@ const quickReportSummary = async ({
           d.Date >= ${formatISO(from, { representation: "date" })}
         AND d.Date <  ${formatISO(to, {
           representation: "date",
-        })} ${dasboardSQLwhere}  ${dasboardSQLperiod}  LIMIT ${offset}, ${items_per_page}`);
+        })}
+        ${dasboardSQLwhere}
+        ${dasboardSQLperiod}
+        LIMIT ${pageParams.pageSize} OFFSET ${offset}`);
 
   // console.log("quick report data ----->", data);
 
-  return data?.map(convertPrismaResultsToNumbers) || data;
+  return {
+    data: data?.map(convertPrismaResultsToNumbers) || data,
+    // TODO
+    totals: {},
+    pageInfo: {
+      ...pageParams,
+      // TODO
+      totalItems: 0,
+    },
+  };
 };
 
 export const getQuickReportSummary = publicProcedure
-  .input(paramsWithPage)
-  .output(QuickReportSummarySchemaArray)
-  .query(quickReportSummary);
+  .input(InputWithPageInfo)
+  .output(QuickReportSummaryResultSchema)
+  .query(({ ctx, input }) => quickReportSummary(ctx.prisma, input));
 
 export const exportQuickSummaryReport = publicProcedure
-  .input(paramsWithReport)
+  .input(Input.extend({ exportType }))
   .mutation(async function ({ ctx, input }) {
     const items_per_page = 5000;
     const { exportType, ...params } = input;
@@ -152,10 +162,10 @@ export const exportQuickSummaryReport = publicProcedure
       columns,
       generic_filename,
       quick_summary,
-      async (page, items_per_page) =>
-        quickReportSummary({
-          ctx,
-          input: { ...params, page, items_per_page },
+      async (pageNumber, pageSize) =>
+        quickReportSummary(ctx.prisma, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
         })
     );
 

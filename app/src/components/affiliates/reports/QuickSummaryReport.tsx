@@ -48,8 +48,10 @@ export const QuickSummaryReport = () => {
     from: new Date("2022-01-03"),
     to: new Date("2023-01-03"),
     display: display ? String(display) : undefined,
-    pageNumber: currentPage ? Number(currentPage) : 1,
-    pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
+    pageParams: {
+      pageNumber: currentPage ? Number(currentPage) : 1,
+      pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
+    },
   });
 
   const { mutateAsync: reportExport } =
@@ -203,7 +205,7 @@ export const QuickSummaryReport = () => {
   let totalActiveTraders = 0;
   let totalComs = 0;
 
-  data?.forEach((row: any) => {
+  data?.data.forEach((row: any) => {
     totalImpressions += row?.Impressions;
     totalClicks += Number(row?.Clicks);
     totalCPIM += Number(row?.Install);
@@ -246,6 +248,11 @@ export const QuickSummaryReport = () => {
   });
 
   // console.log("link ----->", link);
+
+  if (!data) {
+    return <Loading />;
+  }
+
   return (
     <>
       <div className="w-full pt-3.5">
@@ -308,7 +315,7 @@ export const QuickSummaryReport = () => {
 
         <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
           <ReportDataTable
-            data={data}
+            data={data.data}
             columns={columns}
             // reportFields={reportFields}
           />

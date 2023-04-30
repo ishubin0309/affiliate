@@ -40,7 +40,7 @@ import {
 } from "@/server/api/routers/affiliates/reports/commission-report";
 import { getCreativeReport } from "@/server/api/routers/affiliates/reports/creative-report";
 import {
-  exportInstallReport,
+  // exportInstallReport,
   getInstallReport,
 } from "@/server/api/routers/affiliates/reports/install-reports";
 import { getLandingPageData } from "@/server/api/routers/affiliates/reports/landing-page";
@@ -100,7 +100,7 @@ export const affiliatesRouter = createTRPCRouter({
   getQuickReportSummary,
   exportQuickSummaryReport,
   getInstallReport,
-  exportInstallReport,
+  // exportInstallReport,
   getAllMerchants,
 
   getCommissionReport,
