@@ -30,6 +30,7 @@ interface Props {
   isOpen?: boolean;
 
   creative_id: number;
+  toggleShow: boolean;
 }
 
 interface valueProps {
@@ -44,6 +45,7 @@ export const CreativeMaterialDialogComponent = ({
   url,
   isOpen,
   creative_id,
+  toggleShow,
 }: Props) => {
   const { toast } = useToast();
   const { data: profiles } = api.affiliates.getProfiles.useQuery(undefined, {
@@ -121,28 +123,30 @@ export const CreativeMaterialDialogComponent = ({
       <div className="w-full rounded-xl lg:ml-5">
         <div className=" bg-[#F5F8FA] p-4 md:px-8">
           <div className="justify-between md:flex">
-            <div className="">
-              <div className=" text-sm font-medium text-[#717171]">
-                {values[0]?.title}
-              </div>
-              <div className="text-sm font-medium md:mt-3 md:text-lg">
-                {values[0]?.value}
+            <div className="mt-2 flex justify-between md:block">
+              <div>
+                <label className="mb-1 block text-sm font-bold text-gray-700">
+                  {values[0]?.title}
+                </label>
+                <div className="h-12 text-sm text-[#353535] md:text-base">
+                  {values[0]?.value}
+                </div>
               </div>
             </div>
             <div className="mt-2 flex justify-between md:block">
               <div>
-                <div className=" text-sm font-medium text-[#717171]">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
                   {values[1]?.title}
-                </div>
-                <div className="text-sm font-medium md:mt-3 md:text-lg">
+                </label>
+                <div className="text-sm text-[#353535] md:text-base">
                   {values[1]?.value}
                 </div>
               </div>
               <div className="md:hidden">
-                <div className=" text-sm font-medium text-[#717171]">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
                   {values[2]?.title}
-                </div>
-                <div className=" text-sm text-[#353535] md:text-lg">
+                </label>
+                <div className="text-sm text-[#353535] md:text-base">
                   {values[2]?.value}
                 </div>
               </div>
@@ -150,70 +154,53 @@ export const CreativeMaterialDialogComponent = ({
           </div>
           <div className="justify-between pt-1 md:flex md:pt-12 ">
             <div className="mt-2 hidden md:block">
-              <div className=" text-sm font-medium text-[#717171]">
+              <label className="mb-1 block text-sm font-bold text-gray-700">
                 {values[2]?.title}
-              </div>
-              <div className=" text-sm text-[#353535] md:text-lg">
+              </label>
+              <div className="text-sm text-[#353535] md:text-base">
                 {values[2]?.value}
               </div>
             </div>
             <div className="mt-2">
-              <div className=" text-sm font-medium text-[#717171]">
+              <label className="mb-1 block text-sm font-bold text-gray-700">
                 {values[3]?.title}
-              </div>
-              <div className=" text-sm text-[#353535] md:text-lg">
+              </label>
+              <div className="text-sm text-[#353535] md:text-base">
                 {values[3]?.value}
               </div>
             </div>
             <div className="mt-2 flex justify-between md:block">
               <div>
-                <div className="text-sm font-medium text-[#717171]">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
                   {values[4]?.title}
-                </div>
-                <div className=" text-sm text-[#353535] md:text-lg">
+                </label>
+                <div className="text-sm text-[#353535] md:text-base">
                   {!values[4]?.value ? values[4]?.value : 0}
                 </div>
               </div>
               <div className="md:hidden">
-                <div className="text-sm font-medium text-[#717171]">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
                   Language
-                </div>
-                <div className=" text-sm text-[#353535] md:text-lg">
+                </label>
+                <div className="text-sm text-[#353535] md:text-base">
                   English
                 </div>
               </div>
             </div>
             <div className="mt-2 hidden md:block">
-              <div className=" text-sm font-medium text-[#717171]">
+              <label className="mb-1 block text-sm font-bold text-gray-700">
                 Language
-              </div>
-              <div className=" text-sm text-[#353535] md:text-lg">English</div>
+              </label>
+              <div className="text-sm text-[#353535] md:text-base">English</div>
             </div>
           </div>
         </div>
-        <div className="mt-1 hidden items-end justify-between md:mt-3  md:flex">
-          {/*<div className="flex items-start justify-center md:justify-start">*/}
-          {/*  <div className="">*/}
-          {/*    <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">*/}
-          {/*      Click URL*/}
-          {/*    </div>*/}
-          {/*    <div className="truncate rounded border border-[#D7D7D7] bg-[#F9F9FF] px-3 py-2 text-base font-medium text-[#666666] xl:w-60 2xl:w-96">*/}
-          {/*      {url}*/}
-          {/*    </div>*/}
-          {/*  </div>*/}
-          {/*  <div className="ml-2 mt-5">*/}
-          {/*    <Button*/}
-          {/*      className="md:px-4"*/}
-          {/*      variant="primary"*/}
-          {/*      onClick={onCopyClickUrl}*/}
-          {/*    >*/}
-          {/*      <div>Copy Click Url</div>*/}
-          {/*      <div className="ml-2 items-center">*/}
-          {/*        <Copy />*/}
-          {/*      </div>*/}
-          {/*    </Button>*/}
-          {/*  </div>*/}
-          {/*</div>*/}
+        <div
+          className={
+            "items-end justify-end md:flex" +
+            (toggleShow ? "" : " mt-1 pt-0.5 md:mt-3  ")
+          }
+        >
           <div className="mt-5 flex items-end justify-center md:justify-end">
             <div className="ml-2">
               <div className="">
