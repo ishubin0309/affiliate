@@ -192,28 +192,28 @@ export const CreativeMaterialDialogComponent = ({
           </div>
         </div>
         <div className="mt-1 hidden items-end justify-between md:mt-3  md:flex">
-          <div className="flex items-start justify-center md:justify-start">
-            <div className="">
-              <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">
-                Click URL
-              </div>
-              <div className="truncate rounded border border-[#D7D7D7] bg-[#F9F9FF] px-3 py-2 text-base font-medium text-[#666666] xl:w-60 2xl:w-96">
-                {url}
-              </div>
-            </div>
-            <div className="ml-2 mt-5">
-              <Button
-                className="md:px-4"
-                variant="primary"
-                onClick={onCopyClickUrl}
-              >
-                <div>Copy Click Url</div>
-                <div className="ml-2 items-center">
-                  <Copy />
-                </div>
-              </Button>
-            </div>
-          </div>
+          {/*<div className="flex items-start justify-center md:justify-start">*/}
+          {/*  <div className="">*/}
+          {/*    <div className="mb-1 ml-2 text-xs font-medium text-[#525252]">*/}
+          {/*      Click URL*/}
+          {/*    </div>*/}
+          {/*    <div className="truncate rounded border border-[#D7D7D7] bg-[#F9F9FF] px-3 py-2 text-base font-medium text-[#666666] xl:w-60 2xl:w-96">*/}
+          {/*      {url}*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*  <div className="ml-2 mt-5">*/}
+          {/*    <Button*/}
+          {/*      className="md:px-4"*/}
+          {/*      variant="primary"*/}
+          {/*      onClick={onCopyClickUrl}*/}
+          {/*    >*/}
+          {/*      <div>Copy Click Url</div>*/}
+          {/*      <div className="ml-2 items-center">*/}
+          {/*        <Copy />*/}
+          {/*      </div>*/}
+          {/*    </Button>*/}
+          {/*  </div>*/}
+          {/*</div>*/}
           <div className="mt-5 flex items-end justify-center md:justify-end">
             <div className="ml-2">
               <div className="">
@@ -286,19 +286,6 @@ export const CreativeMaterialDialogComponent = ({
                     <div className="flex flex-wrap">
                       <div className="relative flex w-full flex-wrap items-center justify-between ">
                         <div className="w-[calc(100%-56px)]">
-                          {/* <Select defaultValue={"1"}>
-                      <SelectTrigger className="border px-4 py-3  text-xs ">
-                        <SelectValue placeholder="Select days" />
-                      </SelectTrigger>
-                      <SelectContent className="border text-xs">
-                        <SelectGroup>
-                          <SelectItem value={"1"}>Account 1</SelectItem>
-                          <SelectItem value={"2"}>Account 2</SelectItem>
-                          <SelectItem value={"3"}>Account 3</SelectItem>
-                          <SelectItem value={"4"}>Account 4</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select> */}
                           <Input
                             className="w-full"
                             placeholder="Add parameter"

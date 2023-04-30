@@ -20,7 +20,7 @@ const BannerCode = z.object({
   code: z.string(),
   preview: z.string(),
   directLink: z.string(),
-  facebookCode: z.string(),
+  // facebookCode: z.string(),
   qrCode: z.string(),
 });
 
@@ -36,47 +36,47 @@ const _generateBannerCode = async (
   const { legacy_host, webTitle } = await getConfig(prisma);
   const webAddress = `${legacy_host}/`;
 
-  const getFacebookPixel = async () => {
-    let fullurl = `${webAddress}facebookshare.php?brand=${encodeURIComponent(
-      merchantww.name
-    )}&name=${encodeURIComponent(ww.title)}&image=${encodeURIComponent(
-      ww.file
-    )}&url=${encodeURIComponent(
-      link.replace("ad.g", "click.php")
-    )}&date=${encodeURIComponent(
-      ww.last_update.getTime()
-    )}&pta=${encodeURIComponent(Date.now())}`;
-
-    const url = await urlToShortCode(prisma, fullurl);
-    let dispShorterLink = 0;
-
-    if (url.length > 0) {
-      fullurl = `${
-        env.LEGACY_PHP_URL
-      }/facebookshare.php?q=${url}&pta=${encodeURIComponent(Date.now())}`;
-      dispShorterLink = 1;
-    }
-
-    const includeTmp = ww.file.includes("/tmp");
-    let code = "";
-    if (includeTmp) {
-      code = "";
-    } else if (dispShorterLink === 0) {
-      code = `${webAddress}facebookshare.php?brand=${encodeURIComponent(
-        merchantww.name
-      )}&name=${encodeURIComponent(ww.title)}&image=${encodeURIComponent(
-        ww.file
-      )}&url=${encodeURIComponent(
-        link.replace("ad.g", "click.php")
-      )}&date=${encodeURIComponent(
-        ww.last_update.getTime()
-      )}&pta=${encodeURIComponent(Date.now())}`;
-    } else {
-      code = fullurl;
-    }
-
-    return code;
-  };
+  // const getFacebookPixel = async () => {
+  //   let fullurl = `${webAddress}facebookshare.php?brand=${encodeURIComponent(
+  //     merchantww.name
+  //   )}&name=${encodeURIComponent(ww.title)}&image=${encodeURIComponent(
+  //     ww.file
+  //   )}&url=${encodeURIComponent(
+  //     link.replace("ad.g", "click.php")
+  //   )}&date=${encodeURIComponent(
+  //     ww.last_update.getTime()
+  //   )}&pta=${encodeURIComponent(Date.now())}`;
+  //
+  //   const url = await urlToShortCode(prisma, fullurl);
+  //   let dispShorterLink = 0;
+  //
+  //   if (url.length > 0) {
+  //     fullurl = `${
+  //       env.LEGACY_PHP_URL
+  //     }/facebookshare.php?q=${url}&pta=${encodeURIComponent(Date.now())}`;
+  //     dispShorterLink = 1;
+  //   }
+  //
+  //   const includeTmp = ww.file.includes("/tmp");
+  //   let code = "";
+  //   if (includeTmp) {
+  //     code = "";
+  //   } else if (dispShorterLink === 0) {
+  //     code = `${webAddress}facebookshare.php?brand=${encodeURIComponent(
+  //       merchantww.name
+  //     )}&name=${encodeURIComponent(ww.title)}&image=${encodeURIComponent(
+  //       ww.file
+  //     )}&url=${encodeURIComponent(
+  //       link.replace("ad.g", "click.php")
+  //     )}&date=${encodeURIComponent(
+  //       ww.last_update.getTime()
+  //     )}&pta=${encodeURIComponent(Date.now())}`;
+  //   } else {
+  //     code = fullurl;
+  //   }
+  //
+  //   return code;
+  // };
 
   const generateQRCode = async (link: string): Promise<string> => {
     if (
@@ -234,7 +234,7 @@ const _generateBannerCode = async (
     code = `<a href="${directLink}">${srcFile}</a>`;
   }
 
-  const facebookCode = await getFacebookPixel();
+  // const facebookCode = await getFacebookPixel();
   const qrCode = await generateQRCode(link);
 
   console.log(`muly:generateBannerCode`, {
@@ -243,11 +243,11 @@ const _generateBannerCode = async (
     code,
     preview,
     directLink,
-    facebookCode,
+    // facebookCode,
     qrCode,
   });
 
-  return { code, preview, link, directLink, facebookCode, qrCode };
+  return { code, preview, link, directLink, qrCode };
 };
 
 export const generateBannerCode = publicProcedure
