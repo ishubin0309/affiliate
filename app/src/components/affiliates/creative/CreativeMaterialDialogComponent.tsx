@@ -90,10 +90,6 @@ export const CreativeMaterialDialogComponent = ({
     }
   };
 
-  const handleProfileChange = (e: any) => {
-    setProfile_id(e);
-  };
-
   const onCopyClickUrl = async () => {
     await window.navigator.clipboard.writeText(url ?? "");
     toast({

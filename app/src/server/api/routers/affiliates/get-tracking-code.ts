@@ -1,4 +1,5 @@
-// FocusOption/FocusOption-main/site/affiliate/common/getTrackingCode.php
+// NO  FocusOption/FocusOption-main/site/affiliate/common/getTrackingCode.php
+// YES FocusOption/FocusOption-main/site/common/creatives/edit_banner.php
 
 import type { PrismaClient } from "@prisma/client";
 // import { urlToShortCode } from "@/server/api/routers/misc/short-url";
@@ -8,6 +9,7 @@ import { getConfig } from "@/server/config";
 import { publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
+import QRCode from "qrcode";
 
 const Input = z.object({
   creative_id: z.number(),
@@ -16,9 +18,9 @@ const Input = z.object({
 });
 
 const BannerCode = z.object({
-  link: z.string(),
+  htmlCode: z.string(),
   code: z.string(),
-  preview: z.string(),
+  // preview: z.string(),
   directLink: z.string(),
   // facebookCode: z.string(),
   qrCode: z.string(),
@@ -33,6 +35,53 @@ const _generateBannerCode = async (
   // typeURL: number,
   prisma: PrismaClient
 ): Promise<z.infer<typeof BannerCode>> => {
+  function getCodeTypeLink(link: string) {
+    return `<!-- ${webTitle} Affiliate Code -->
+<a href="${link}" target="_blank">${ww.title}</a>
+<!-- // ${webTitle} Affiliate Code -->`;
+  }
+
+  function getCodeWidget() {
+    return `<!-- ${webTitle} Affiliate Code -->
+<iframe frameborder="0" src="${webAddress}view.php?ctag=${tag}" style="width: ${ww.width}px; height: ${ww.height}px;" scrolling="no"></iframe>
+<!-- // ${webTitle} Affiliate Code -->`;
+  }
+
+  function getCodeScript(link: string) {
+    return `<!-- ${webTitle} Affiliate Code -->
+<iframe src="${link}" width="${ww.width}" height="${ww.height}" frameborder="0" scrolling="no"></iframe>
+<!-- // ${webTitle} Affiliate Code -->`;
+  }
+
+  function getCodeEmail() {
+    return `<!-- ${webTitle} Affiliate Code -->
+<!-- // ${webTitle} Affiliate Code -->`;
+  }
+
+  function getCodeOther(link: string) {
+    return `<!-- ${webTitle} Affiliate Code -->
+<div id="containerSWF">
+  <script type= "text/javascript" language="javascript" src="${link}"></script>
+</div>
+<script type="text/javascript">
+  var _object = document.querySelector("#containerSWF OBJECT");
+  _object.onmousedown = function() {
+    document.location.href = "${webAddress}click.php?ctag=${tag}";
+  };
+</script>
+<!-- // ${webTitle} Affiliate Code -->`;
+  }
+
+  function getPreviewOther() {
+    return `
+<div class="outerBox_preview">
+  <div class="wrapper_preview">
+    <img class="popupTrackingWindowImg" src="${ww.file}" alt="" />
+  </div>
+</div>
+`;
+  }
+
   const { legacy_host, webTitle } = await getConfig(prisma);
   const webAddress = `${legacy_host}/`;
 
@@ -85,13 +134,8 @@ const _generateBannerCode = async (
       ww.file &&
       affiliate_id
     ) {
-      await pause(1);
-      return "";
       // generateQRCode from link
-      // const qrDataUrl = await QRCode.toDataURL(
-      //   link.replace("ad.g", "click.php")
-      // );
-      // const qrCodeFilePath = path.join(qrImagePath, "qrcode.png");
+      return await QRCode.toDataURL(link);
       // const base64Data = qrDataUrl.replace(/^data:image\/png;base64,/, "");
       //
       // fs.writeFileSync(qrCodeFilePath, base64Data, "base64");
@@ -135,58 +179,12 @@ const _generateBannerCode = async (
   const tag = `a${affiliate_id}-b${ww["id"]}${productTagPart}-p${profile_id}${freeParam}`; // Creat CTag
   // const webAddress = typeURL === 2 ? webAddressHttps : webAddress;
 
+  let htmlCode = "";
   let code: string;
   let preview: string;
   let srcFile = "";
   let link = "";
   let directLink = "";
-
-  function getCodeTypeLink(link: string) {
-    return `<!-- ${webTitle} Affiliate Code -->
-<a href="${link}" target="_blank">${ww.title}</a>
-<!-- // ${webTitle} Affiliate Code -->`;
-  }
-
-  function getCodeWidget() {
-    return `<!-- ${webTitle} Affiliate Code -->
-<iframe frameborder="0" src="${webAddress}view.php?ctag=${tag}" style="width: ${ww.width}px; height: ${ww.height}px;" scrolling="no"></iframe>
-<!-- // ${webTitle} Affiliate Code -->`;
-  }
-
-  function getCodeScript(link: string) {
-    return `<!-- ${webTitle} Affiliate Code -->
-<iframe src="${link}" width="${ww.width}" height="${ww.height}" frameborder="0" scrolling="no"></iframe>
-<!-- // ${webTitle} Affiliate Code -->`;
-  }
-
-  function getCodeEmail() {
-    return `<!-- ${webTitle} Affiliate Code -->
-<!-- // ${webTitle} Affiliate Code -->`;
-  }
-
-  function getCodeOther(link: string) {
-    return `<!-- ${webTitle} Affiliate Code -->
-<div id="containerSWF">
-  <script type= "text/javascript" language="javascript" src="${link}"></script>
-</div>
-<script type="text/javascript">
-  var _object = document.querySelector("#containerSWF OBJECT");
-  _object.onmousedown = function() {
-    document.location.href = "${webAddress}click.php?ctag=${tag}";
-  };
-</script>
-<!-- // ${webTitle} Affiliate Code -->`;
-  }
-
-  function getPreviewOther() {
-    return `
-<div class="outerBox_preview">
-  <div class="wrapper_preview">
-    <img class="popupTrackingWindowImg" src="${ww.file}" alt="" />
-  </div>
-</div>
-`;
-  }
 
   if (ww.type === "link") {
     link = `${webAddress}click.php?ctag=${tag}`;
@@ -219,6 +217,8 @@ const _generateBannerCode = async (
     preview = getPreviewOther();
   }
 
+  const rlink = link.replace("ad.g", "click.php");
+
   if (ww.type === "image") {
     srcFile = `<img border="0" src="${webAddress}view.php?ctag=${tag}" alt="${ww.title}" title="${ww.title}" />`;
   }
@@ -228,17 +228,17 @@ const _generateBannerCode = async (
   }
 
   if (ww.type !== "mobileleader" && ww.type !== "mobilesplash") {
-    directLink =
-      ww.file.indexOf("/tmp") !== -1 ? "" : link.replace("ad.g", "click.php");
+    directLink = ww.file.indexOf("/tmp") !== -1 ? "" : rlink;
 
-    code = `<a href="${directLink}">${srcFile}</a>`;
+    htmlCode = `<a href="${rlink}">${srcFile}</a>`;
   }
 
   // const facebookCode = await getFacebookPixel();
-  const qrCode = await generateQRCode(link);
+  const qrCode = await generateQRCode(rlink);
 
   console.log(`muly:generateBannerCode`, {
     type: ww.type,
+    htmlCode,
     link,
     code,
     preview,
@@ -247,7 +247,13 @@ const _generateBannerCode = async (
     qrCode,
   });
 
-  return { code, preview, link, directLink, qrCode };
+  return {
+    htmlCode,
+    code,
+    //preview, link,
+    qrCode,
+    directLink,
+  };
 };
 
 export const generateBannerCode = publicProcedure

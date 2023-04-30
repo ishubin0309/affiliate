@@ -39,11 +39,13 @@ export const CreativeMaterialComponent = ({
     };
 
     return (
-      <Image
+      <img
         src={image}
         alt={alt}
         onError={handleImageError}
-        className="mx-auto	my-0 max-h-64 rounded-xl bg-cover"
+        className="mx-auto my-0 max-h-64 rounded-xl bg-cover"
+        width={100}
+        height={100}
       />
     );
   };
@@ -58,7 +60,7 @@ export const CreativeMaterialComponent = ({
             : "md:grid md:grid-cols-3 md:gap-4")
         }
       >
-        <div className="mx-auto mb-5 h-64 rounded-xl">
+        <div className="mx-auto mb-5 flex h-64 flex-row rounded-xl">
           <ImageWithFallback src={file} alt={alt} />
           <CreativeMaterialDialogComponent
             values={values}
