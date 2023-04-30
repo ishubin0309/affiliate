@@ -6,7 +6,7 @@ import type { ClicksReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
 import { ReportControl } from "@/components/affiliates/reports/report-control";
-import { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
 import {

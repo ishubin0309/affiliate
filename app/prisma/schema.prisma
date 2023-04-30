@@ -1608,7 +1608,7 @@ model settings {
   deal_geoLocation                                   Boolean               @default(false)
   pnlTable                                           String                @db.VarChar(20)
   ShowQualificationOnChart                           Boolean               @default(true)
-  ShowQualificationOnChartSince                      DateTime              @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  // ShowQualificationOnChartSince                      DateTime              @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
   hasContinuousyCommissionType                       Boolean               @default(false)
 }
 

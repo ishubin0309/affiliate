@@ -31,6 +31,7 @@ const renderRow = (item: MerchantCreativeType) => {
       file={item.file || undefined}
       alt={item.alt}
       url={item.url}
+      creative_id={item.id}
     />
   );
 };

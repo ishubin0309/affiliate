@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "../../ui/button";
 
 interface IProps {
-  setPermeterValues?: any;
+  setParametersValue?: (value: string[]) => void;
 }
 
 interface InputField {
@@ -13,8 +13,8 @@ interface InputField {
   placeholder: string;
 }
 
-export function AddDynamicPerameter({ setPermeterValues }: IProps) {
-  const [dynamicPerameterDisabled, setDynamicPerameterDisabled] =
+export function AddDynamicParameter({ setParametersValue }: IProps) {
+  const [dynamicParameterDisabled, setDynamicParameterDisabled] =
     useState<boolean>(false);
   const [inputFields, setInputFields] = useState<InputField[]>([]);
 
@@ -29,20 +29,8 @@ export function AddDynamicPerameter({ setPermeterValues }: IProps) {
     ];
     setInputFields(newInputFields);
     if (newInputFields.length === 9) {
-      setDynamicPerameterDisabled(true);
+      setDynamicParameterDisabled(true);
     }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    e.preventDefault();
-    const newInputFields = inputFields.slice();
-    newInputFields[index].value = e.target.value;
-    setInputFields(newInputFields);
-    let values = newInputFields.map((item) => item.value);
-    setPermeterValues(values);
   };
 
   const inputFieldElements = inputFields.map((inputField, index) => (
@@ -53,7 +41,6 @@ export function AddDynamicPerameter({ setPermeterValues }: IProps) {
         type={inputField.type}
         placeholder={inputField.placeholder}
         value={inputField.value}
-        onChange={(e) => handleChange(e, index)}
       />
     </div>
   ));
@@ -61,7 +48,7 @@ export function AddDynamicPerameter({ setPermeterValues }: IProps) {
   return (
     <>
       <Button
-        disabled={dynamicPerameterDisabled}
+        disabled={dynamicParameterDisabled}
         variant="primary"
         className="ml-2 h-10 w-10"
         size="rec"
