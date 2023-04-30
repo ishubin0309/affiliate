@@ -1,5 +1,5 @@
 import AccountManager from "./AccountManager";
-import DashboardCountryReport from "./DashboradCountryReport";
+import { DashboardCountryReport } from "./DashboradCountryReport";
 import DashboardCharts from "./DashboardCharts";
 import DeviceReport from "./DeviceReport";
 

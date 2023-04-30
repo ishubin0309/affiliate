@@ -1,9 +1,9 @@
 import { SettingsIcon } from "@chakra-ui/icons";
 import { createColumnHelper } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../../ui/button";
 import AccountManager from "./AccountManager";
-import DashboradCountryReport from "./DashboradCountryReport";
+import { DashboardCountryReport } from "./DashboradCountryReport";
 import DeviceReport from "./DeviceReport";
 
 import type { TopMerchantCreativeType } from "../../../server/db-types";
@@ -241,7 +241,7 @@ export const Dashboard = () => {
 
       <div className="my-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
         <DeviceReport />
-        <DashboradCountryReport />
+        <DashboardCountryReport />
         <AccountManager
           first_name={account?.first_name}
           last_name={account?.last_name}

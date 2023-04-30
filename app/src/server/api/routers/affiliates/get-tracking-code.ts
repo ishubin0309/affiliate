@@ -1,8 +1,8 @@
 // FocusOption/FocusOption-main/site/affiliate/common/getTrackingCode.php
 
 import type { PrismaClient } from "@prisma/client";
-import { urlToShortCode } from "@/server/api/routers/misc/short-url";
-import { env } from "@/env.mjs";
+// import { urlToShortCode } from "@/server/api/routers/misc/short-url";
+// import { env } from "@/env.mjs";
 import { pause } from "@/utils/pause";
 import { getConfig } from "@/server/config";
 import { publicProcedure } from "@/server/api/trpc";

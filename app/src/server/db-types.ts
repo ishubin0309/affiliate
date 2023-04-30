@@ -93,5 +93,8 @@ export type AffiliateCommissionType =
 export type DashboardDeviceReportType =
   RouterOutput["affiliates"]["getDashboardDeviceReport"][0];
 
+export type DashboardCountryReportInputType =
+  RouterInput["affiliates"]["getCountryReportDashboard"];
+
 export type DashboardCountryReportType =
-  RouterOutput["affiliates"]["getDashboardCountryReport"][0];
+  RouterOutput["affiliates"]["getCountryReportDashboard"][0];

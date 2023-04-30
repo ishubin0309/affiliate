@@ -275,49 +275,38 @@ export const countryReport = async ({
         ${traders_main}
         GROUP BY Country`;
 
-  const countryArray: Record<string, CountryDataType> = {};
-
-  debugSaveData("ReportTradersDataItems", ReportTradersDataItems);
-  debugSaveData("baseCountryArray", baseCountryArray);
-  debugSaveData("StatsData", StatsData);
-
-  console.log(
-    `muly:countryReport:ReportTradersDataItems:v5 ${ReportTradersDataItems.length}`,
-    {}
-  );
-
+  const countryArray: CountryDataType[] = [];
   ReportTradersDataItems.map(convertPrismaResultsToNumbers).forEach((item) => {
     const country = item["country"] || "-";
     const base = baseCountryArray[country];
     if (base) {
-      countryArray[country] = {
+      countryArray.push({
         ...base,
         cpi: InstallationsDataItems[country] || 0,
         merchant: MerchantsDataItems[item["MerchantID"]] || "",
-        country: item["country"],
-        // type: item["type"],
-        volume: item["Volume"],
-        withdrawal: item["WithdrawalAmount"],
-        leads: item["leads"],
-        demo: item["demo"],
-        real: item["reals"],
-        depositingAccounts: item["NextDeposits"],
-        real_ftd: item["demo"],
-        ftd: item["FirstDeposit"],
-        ftd_amount: item["FTDAmount"],
-        sumDeposits: item["DepositAmount"],
-        bonus: item["BonusAmount"],
-        chargeback: item["ChargeBackAmount"],
-        netRevenue: item["NetDeposit"],
-        pnl: item["PNL"],
-        totalCom: item["Commission"],
-        Qftd: item["Qftd"],
-      };
+        country: item.country,
+        // type: item.type,
+        volume: item.Volume,
+        withdrawal: item.WithdrawalAmount,
+        leads: item.leads,
+        demo: item.demo,
+        real: item.reals,
+        depositingAccounts: item.NextDeposits,
+        real_ftd: item.demo,
+        ftd: item.FirstDeposit,
+        ftd_amount: item.FTDAmount,
+        sumDeposits: item.DepositAmount,
+        bonus: item.BonusAmount,
+        chargeback: item.ChargeBackAmount,
+        netRevenue: item.NetDeposit,
+        pnl: item.PNL,
+        totalCom: item.Commission,
+        Qftd: item.Qftd,
+      });
     }
   });
 
-  debugSaveData("countryArray", countryArray);
-  return Object.values(countryArray);
+  return countryArray;
 };
 
 export const getCountryReport = publicProcedure

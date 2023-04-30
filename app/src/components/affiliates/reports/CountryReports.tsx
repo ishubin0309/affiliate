@@ -28,7 +28,7 @@ const columns = [
   createColumn("withdrawal", "Withdrawal"),
   createColumn("leads", "Leads"),
   createColumn("demo", "Demo"),
-  createColumn("real", "Real"),
+  createColumn("real", "Account"),
   createColumn("depositingAccounts", "Depositing Accounts"),
   createColumn("real_ftd", "Real FTD"),
   createColumn("ftd", "FTD"),

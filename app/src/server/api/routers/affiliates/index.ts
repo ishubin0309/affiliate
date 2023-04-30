@@ -20,7 +20,6 @@ import {
   upsertReportsColumns,
 } from "./reports/columns-setup";
 
-import { getDashboardCountryReport } from "./dashboard-country-report";
 import { getDashboardDeviceReport } from "./dashboard-device-report";
 import { deleteProfile, getProfiles, upsertProfile } from "./profile";
 import { getMerchantSubCreative, getMerchantSubCreativeMeta } from "./sub";
@@ -64,6 +63,7 @@ import {
 import { getCountryReport } from "@/server/api/routers/affiliates/reports/country-report";
 import { getTranslateReportFake } from "@/server/api/routers/affiliates/reports/translate-report-fake";
 import { generateBannerCode } from "@/server/api/routers/affiliates/get-tracking-code";
+import { getCountryReportDashboard } from "@/server/api/routers/affiliates/reports/country-report-dashboard";
 
 export const affiliatesRouter = createTRPCRouter({
   getDashboard,
@@ -129,6 +129,6 @@ export const affiliatesRouter = createTRPCRouter({
 
   badQuerySample,
 
-  getDashboardCountryReport,
+  getCountryReportDashboard,
   getDashboardDeviceReport,
 });
