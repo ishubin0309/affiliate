@@ -1,36 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
 
+import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-const DynamicPerameter = () => {
-  const [elements, setElements] = useState<JSX.Element[]>([]);
+interface IPropsPerameter {
+  permeterValues: { [key: string]: string };
+  setPermeterValues: React.Dispatch<
+    React.SetStateAction<{ [key: string]: string }>
+  >;
+}
 
+const DynamicPerameter = ({
+  permeterValues,
+  setPermeterValues,
+}: IPropsPerameter) => {
+  const [dynamicPerameterFields, setDynamicPerameterFields] = useState<
+    JSX.Element[]
+  >([]);
+  const [perameterFieldsId, setPerameterFieldsId] = useState(0);
+  useEffect(() => {
+    console.log(permeterValues);
+  }, [permeterValues]);
   const handleAddElement = () => {
-    if (elements.length < 10) {
-      setElements((prevElements) => [
-        ...prevElements,
-        <div key={prevElements.length} className="mt-4 w-full">
-          <Select defaultValue={"1"}>
-            <SelectTrigger className="border px-4 py-3  text-xs ">
-              <SelectValue placeholder="Select days" />
-            </SelectTrigger>
-            <SelectContent className="border text-xs">
-              <SelectGroup>
-                <SelectItem value={"1"}>Account 1</SelectItem>
-                <SelectItem value={"2"}>Account 2</SelectItem>
-                <SelectItem value={"3"}>Account 3</SelectItem>
-                <SelectItem value={"4"}>Account 4</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+    if (dynamicPerameterFields.length < 10) {
+      const id = `perameter-fields-${perameterFieldsId}`;
+      setPerameterFieldsId(perameterFieldsId + 1);
+      setDynamicPerameterFields((prevPerameters) => [
+        ...prevPerameters,
+        <div key={prevPerameters.length} className="mt-4 w-full">
+          <Input
+            className="w-full"
+            id={id}
+            type="text"
+            placeholder={`Add perameter ${dynamicPerameterFields.length}`}
+            value={permeterValues[id] || ""}
+            onChange={(e) => {
+              console.log(e.target.value, "eeeeeeeeeee", id);
+
+              // setPermeterValues((prev) => ({
+              //   ...prev,
+              //   [id]: e.target.value,
+              // }));
+            }}
+          />
         </div>,
       ]);
     }
@@ -42,12 +54,13 @@ const DynamicPerameter = () => {
         variant="primary"
         className="ml-2 h-10 w-10"
         size="rec"
+        disabled={dynamicPerameterFields.length === 10 ? true : false}
         onClick={handleAddElement}
       >
         <Plus className="h-4 w-4" />
       </Button>
       <div className="flex w-full">
-        <div className="w-full">{elements}</div>
+        <div className="w-full">{dynamicPerameterFields}</div>
       </div>
     </>
   );
