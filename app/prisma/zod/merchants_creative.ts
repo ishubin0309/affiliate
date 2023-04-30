@@ -1,7 +1,7 @@
 import * as z from "zod"
 import * as imports from "../zod-add-schema"
 import { merchants_creative_type } from "@prisma/client"
-import { Completemerchants_creative_categories, Relatedmerchants_creative_categoriesModel, Completemerchants, RelatedmerchantsModel, Completelanguages, RelatedlanguagesModel, Completetraffic, RelatedtrafficModel, Completepixel_monitor, Relatedpixel_monitorModel } from "./index"
+import { Completemerchants_creative_categories, Relatedmerchants_creative_categoriesModel, Completemerchants, RelatedmerchantsModel, Completelanguages, RelatedlanguagesModel, Completetraffic, RelatedtrafficModel, Completepixel_monitor, Relatedpixel_monitorModel, Completedata_install, Relateddata_installModel } from "./index"
 
 export const merchants_creativeModel = z.object({
   id: z.number().int(),
@@ -34,6 +34,7 @@ export interface Completemerchants_creative extends z.infer<typeof merchants_cre
   language: Completelanguages
   traffic: Completetraffic[]
   pixel_monitor: Completepixel_monitor[]
+  data_install: Completedata_install[]
 }
 
 /**
@@ -47,4 +48,5 @@ export const Relatedmerchants_creativeModel: z.ZodSchema<Completemerchants_creat
   language: RelatedlanguagesModel,
   traffic: RelatedtrafficModel.array(),
   pixel_monitor: Relatedpixel_monitorModel.array(),
+  data_install: Relateddata_installModel.array(),
 }))

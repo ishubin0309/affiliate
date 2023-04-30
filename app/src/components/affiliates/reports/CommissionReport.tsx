@@ -40,8 +40,10 @@ export const CommissionReport = () => {
     to: new Date("2023-01-03"),
     commission: commission ? String(commission) : "",
     trader_id: traderID,
-    page: currentPage ? Number(currentPage) : 1,
-    items_per_page: itemsPerPage ? Number(itemsPerPage) : 10,
+    pageParams: {
+      pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
+      pageNumber: currentPage ? Number(currentPage) : 1,
+    },
   });
   const { mutateAsync: reportExport } =
     api.affiliates.exportCommissionReport.useMutation();
@@ -329,7 +331,7 @@ export const CommissionReport = () => {
 
         <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
           <ReportDataTable
-            data={data}
+            data={data.data}
             columns={columns}
             footerData={totalData}
           />

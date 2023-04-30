@@ -20,6 +20,9 @@ export const InstallReport = () => {
     to,
     country: country ? String(country) : undefined,
     trader_id: traderID ? Number(traderID) : undefined,
+
+    // TODO
+    pageParams: { pageSize: 10, pageNumber: 1 },
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const { data: countries } = api.affiliates.getLongCountries.useQuery({});

@@ -1,7 +1,7 @@
 import * as z from "zod"
 import * as imports from "../zod-add-schema"
 import { data_install_type } from "@prisma/client"
-import { Completemerchants, RelatedmerchantsModel, Completeaffiliates, RelatedaffiliatesModel } from "./index"
+import { Completemerchants, RelatedmerchantsModel, Completeaffiliates, RelatedaffiliatesModel, Completemerchants_creative, Relatedmerchants_creativeModel } from "./index"
 
 export const data_installModel = z.object({
   id: z.number().int(),
@@ -36,6 +36,7 @@ export const data_installModel = z.object({
 export interface Completedata_install extends z.infer<typeof data_installModel> {
   merchant: Completemerchants
   affiliate: Completeaffiliates
+  merchant_creative: Completemerchants_creative
 }
 
 /**
@@ -46,4 +47,5 @@ export interface Completedata_install extends z.infer<typeof data_installModel> 
 export const Relateddata_installModel: z.ZodSchema<Completedata_install> = z.lazy(() => data_installModel.extend({
   merchant: RelatedmerchantsModel,
   affiliate: RelatedaffiliatesModel,
+  merchant_creative: Relatedmerchants_creativeModel,
 }))

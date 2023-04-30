@@ -84,6 +84,11 @@ export const ClicksReport = () => {
       merchant_id: getNumberParam(merchant_id),
       trader_id,
       unique_id,
+      // TODO
+      pageParams: {
+        pageSize: 10,
+        pageNumber: 1,
+      },
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );

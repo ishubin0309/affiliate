@@ -1,14 +1,14 @@
 import { publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { affiliate_id, merchant_id } from "../const";
-import { pageParams, reportParams } from "./reports-utils";
 import {
   getReportTraderData,
   ReportTraderDataItemSchema,
 } from "@/server/api/routers/affiliates/reports/get-trader-data";
 import { trafficModel } from "../../../../../../prisma/zod";
+import { PageParamsSchema } from "@/server/api/routers/affiliates/reports/reports-utils";
 
-const params = z.object({
+const Input = z.object({
   from: z.date(),
   to: z.date(),
   merchant_id: z.number().optional(),
@@ -54,23 +54,10 @@ const ClickReportItem = trafficModel
 
 const output = z.array(ClickReportItem);
 
-const paramsWithPage = params.extend(pageParams);
-const paramsWithReport = params.extend(reportParams);
-
-type InputType = z.infer<typeof paramsWithPage>;
-type OutputType = z.infer<typeof output>;
+const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
 export const getClicksReport = publicProcedure
-  .input(
-    z.object({
-      from: z.date(),
-      to: z.date(),
-      merchant_id: z.number().optional(),
-      unique_id: z.string().optional(),
-      trader_id: z.string().optional(),
-      type: z.enum(["clicks", "views"]).optional(),
-    })
-  )
+  .input(InputWithPageInfo)
   .output(output)
   .query(async ({ ctx, input: { from, to, unique_id, trader_id, type } }) => {
     const uid: string[] = [];

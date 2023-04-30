@@ -1,13 +1,24 @@
 import { QuerySelect } from "@/components/common/QuerySelect";
-import { DataTable } from "@/components/common/data-table/DataTable";
-import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
+import { Pagination } from "@/components/ui/pagination";
+import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
+import { Calendar, Download, Settings } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
 import type { TraderReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
+import { Button } from "../../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../ui/dialog";
+import { ExportButton } from "./export-button";
 
 export const creativeType = [
   {
@@ -53,18 +64,21 @@ export const TraderReports = () => {
   const { merchant_id } = router.query;
   const { from, to } = useDateRange();
   const [traderID, setTraderID] = useState<string>("");
-
-  // TODO: Add pagination
-  const pageSize = 50;
-  const page = 0;
+  const [reportFields, setReportFields] = useState<
+    { id: number; title: string; value: string; isChecked: boolean }[]
+  >([]);
+  const { currentPage, itemsPerPage } = router.query;
 
   const { data, isLoading } = api.affiliates.getTraderReport.useQuery({
     from,
     to,
-    pageSize,
-    page,
     merchant_id: merchant_id ? Number(merchant_id) : undefined,
     trader_id: traderID,
+    pageParams: {
+      // TODO
+      pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
+      pageNumber: currentPage ? Number(currentPage) : 1,
+    },
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<TraderReportType>();
@@ -84,14 +98,14 @@ export const TraderReports = () => {
 
   const createColumn = (id: keyof TraderReportType, header: string) =>
     columnHelper.accessor(id, {
-      cell: (info) => info.getValue(),
+      cell: (info) => info.getValue() as string,
       header,
     });
 
   // TODO: no match between columns here and what display on screen
   const columns = [
     createColumn("TraderID", "Trader ID"),
-    createColumn("sub_trader_count", "Trader Sub Accounts"),
+    // createColumn("sub_trader_count", "Trader Sub Accounts"),
     createColumn("RegistrationDate", "Registration Date"),
     createColumn("TraderStatus", "Trader Status"),
     createColumn("Country", "Country"),
@@ -114,7 +128,7 @@ export const TraderReports = () => {
     createColumn("Volume", "Volume"),
     createColumn("WithdrawalAmount", "Withdrawal Amount"),
     createColumn("ChargeBackAmount", "ChargeBack Amount"),
-    createColumn("totalLots", "Lots"),
+    // createColumn("totalLots", "Lots"),
     createColumn("SaleStatus", "Sale Status"),
   ];
 
@@ -123,7 +137,7 @@ export const TraderReports = () => {
   let totalWithdrawal = 0;
   let totalChargeback = 0;
 
-  data?.forEach((row: any) => {
+  data?.data?.forEach((row: any) => {
     totalVolume += Number(row?.Volume);
     totalLots += Number(row?.totalLots);
     totalWithdrawal += Number(row?.WithdrawalAmount);
@@ -158,55 +172,48 @@ export const TraderReports = () => {
     totalLots,
     SaleStatus: "",
   });
+  const displayOptions = [
+    {
+      id: "monthly",
+      title: "monthly",
+    },
+    {
+      id: "weekly",
+      title: "weekly",
+    },
+    {
+      id: "daily",
+      title: "daily",
+    },
+  ];
 
   return (
     <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        width="90%"
-        alignItems={"center"}
-        alignSelf="center"
-      >
-        <GridItem>
-          <DateRangeSelect />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Merchant"
-            choices={merchants}
-            varName="merchant_id"
+      <div className="w-full pt-3.5">
+        <div className="block text-base font-medium md:justify-between lg:flex">
+          <div className="mb-2.5 flex items-center justify-between md:mb-5 lg:mb-5 ">
+            <div>
+              <span className="text-[#2262C6]">Affliate Program</span>
+              &nbsp;/&nbsp;Quick Summary Report
+            </div>
+            <Button className="lg:hidden">
+              <Calendar className="h-6 w-6" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
+          <ReportDataTable
+            data={data?.data}
+            columns={columns}
+            // reportFields={reportFields}
           />
-        </GridItem>{" "}
-        <GridItem>
-          <FormLabel>Trader ID</FormLabel>
-          <Input
-            value={traderID}
-            onChange={(event) => setTraderID(event.target.value)}
-          />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Creative Type"
-            choices={creativeType}
-            varName="creative_type"
-          />
-        </GridItem>
-      </Grid>
-      <h2>Trader Report</h2>
-      <Grid
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-        alignSelf="center"
-      >
-        <DataTable
-          data={Object.values(data || {})}
-          columns={columns}
-          footerData={totalObj}
-        />
-      </Grid>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Pagination count={5} variant="focus" totalItems={100} />
+        </div>
+      </div>
     </>
   );
 };
