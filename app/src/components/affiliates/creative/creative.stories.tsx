@@ -31,6 +31,7 @@ export const CreativeMaterial = {
       }
       alt={"CKcasino Logo"}
       url={"https://ckcasino.com/#/lobby"}
+      creative_id={1}
     />
   ),
 };
@@ -40,11 +41,7 @@ export const MaterialDialog = {
       key={1}
       isOpen={true}
       values={values}
-      // file={
-      //   "https://www.figma.com/file/CHxJV6V2o7WVj1rsYmRRWe/Affiliate_client_Design?node-id=161-22504&t=Cw4CgrEMKeymnN7m-4"
-      // }
-      // alt={"CKcasino Logo"}
-      // url={"https://ckcasino.com/#/lobby"}
+      creative_id={1}
     />
   ),
   parameters: {
