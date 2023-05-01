@@ -1,5 +1,4 @@
 import { DateRangeSelect, useDateRange } from "@/components/ui/date-range";
-import { Pagination } from "@/components/ui/pagination";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -315,14 +314,10 @@ export const QuickSummaryReport = () => {
 
         <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
           <ReportDataTable
-            data={data.data}
+            report={data}
             columns={columns}
             // reportFields={reportFields}
           />
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          <Pagination count={5} variant="focus" totalItems={100} />
         </div>
       </div>
     </>

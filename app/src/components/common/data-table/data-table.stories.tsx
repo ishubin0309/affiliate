@@ -34,6 +34,15 @@ const data = sampleData.map((item) => {
   };
 });
 
+const report = {
+  data,
+  pageInfo: {
+    totalItems: data.length,
+    pageSize: 10,
+    pageNumber: 0,
+  },
+};
+
 export const DataTableComponent = {
   render: () => <DataTable data={data} columns={profileColumns} />,
   name: "DataTable with Profile",
@@ -46,7 +55,7 @@ export const DataTableComponent = {
 };
 
 export const ReportDataTableComponent = {
-  render: () => <ReportDataTable data={data} columns={profileColumns} />,
+  render: () => <ReportDataTable report={report} columns={profileColumns} />,
   name: "ReportDataTable",
   parameters: {
     design: {

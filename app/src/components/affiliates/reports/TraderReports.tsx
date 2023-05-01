@@ -1,5 +1,4 @@
 import { QuerySelect } from "@/components/common/QuerySelect";
-import { Pagination } from "@/components/ui/pagination";
 import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Calendar, Download, Settings } from "lucide-react";
@@ -204,14 +203,10 @@ export const TraderReports = () => {
 
         <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
           <ReportDataTable
-            data={data?.data}
+            report={data}
             columns={columns}
             // reportFields={reportFields}
           />
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          <Pagination count={5} variant="focus" totalItems={100} />
         </div>
       </div>
     </>
