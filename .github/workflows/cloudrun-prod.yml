@@ -91,6 +91,7 @@ jobs:
             --max-instances=5
             --min-instances=0
 
+
       - id: "deploy_freevpnplanet"
         name: deploy freevpnplanet
         uses: "google-github-actions/deploy-cloudrun@v1"
@@ -106,7 +107,8 @@ jobs:
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
           env_vars: |
-            NEXTAUTH_URL=https://affiliate.freevpnplanet.com
+            LEGACY_PHP_URL=affiliate.freevpnplanet.com
+            NEXTAUTH_URL=https://go.freevpnplanet.com
             NODE_ENV=production
           flags: |
             --allow-unauthenticated
@@ -140,7 +142,7 @@ jobs:
             --port=3000
             --max-instances=5
             --min-instances=0
-      
+
       - id: "deploy_partners-fivestars-market"
         name: deploy partners-fivestars-market
         uses: "google-github-actions/deploy-cloudrun@v1"
@@ -165,7 +167,7 @@ jobs:
             --port=3000
             --max-instances=5
             --min-instances=0
-      
+
       - id: "deploy_partners-focusoption"
         name: deploy partners-focusoption
         uses: "google-github-actions/deploy-cloudrun@v1"

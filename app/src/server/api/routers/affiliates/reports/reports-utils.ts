@@ -11,7 +11,7 @@ export const PageParamsSchema = z.object({
   pageSize: z.number().int(),
 });
 
-export const getPageOffset = (pageParams: z.infer<typeof PageParamsSchema>) =>
+export const getPageOffset = (pageParams: PageParam) =>
   (pageParams.pageNumber - 1) * pageParams.pageSize;
 
 export const pageInfo = z.object({
@@ -20,10 +20,24 @@ export const pageInfo = z.object({
   totalItems: z.number().int(),
 });
 
+export type PageParam = z.infer<typeof PageParamsSchema>;
+export type PageInfo = z.infer<typeof pageInfo>;
+
 export interface PageResult {
   data: any[];
-  pageInfo: z.infer<typeof pageInfo>;
+  pageInfo: PageInfo;
 }
+
+export const splitToPages = <Row>(data: Row[], pageParams: PageParam) => {
+  const offset = getPageOffset(pageParams);
+  const pageData = data.slice(offset, offset + pageParams.pageSize);
+  const pageInfo = {
+    pageNumber: pageParams.pageNumber,
+    pageSize: pageParams.pageSize,
+    totalItems: data.length,
+  };
+  return { data: pageData, pageInfo };
+};
 
 // Common params for all reports export
 export const exportType = z.enum(["csv", "xlsx", "json"]);

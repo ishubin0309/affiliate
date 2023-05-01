@@ -15,6 +15,7 @@ import {
   useSearchContext,
 } from "@/components/common/search/search-context";
 import { DateColumn } from "@/components/common/data-table/available-column";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 
 const columnHelper = createColumnHelper<ClicksReportType>();
 const createColumn = (id: keyof ClicksReportType, header: string) =>
@@ -75,6 +76,7 @@ export const ClicksReport = () => {
   const {
     values: { merchant_id, from, to, trader_id, unique_id, type },
   } = useSearchContext();
+  const pagination = usePagination();
 
   const { data, isLoading } = api.affiliates.getClicksReport.useQuery(
     {
@@ -84,11 +86,7 @@ export const ClicksReport = () => {
       merchant_id: getNumberParam(merchant_id),
       trader_id,
       unique_id,
-      // TODO
-      pageParams: {
-        pageSize: 10,
-        pageNumber: 1,
-      },
+      pageParams: pagination.pageParams,
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
@@ -101,9 +99,9 @@ export const ClicksReport = () => {
   return (
     <ReportControl
       reportName="Clicks Report"
-      totalItems={data?.length || 0}
-      data={data}
+      report={data}
       columns={columns}
+      pagination={pagination}
       isRefetching={isLoading}
       handleExport={(exportType: ExportType) => Promise.resolve("ok")}
     >

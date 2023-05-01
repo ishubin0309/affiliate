@@ -48,10 +48,10 @@ export type TopMerchantCreativeType =
   RouterOutput["affiliates"]["getTopMerchantCreative"][0];
 
 export type CountryReportType =
-  RouterOutput["affiliates"]["getCountryReport"][0];
+  RouterOutput["affiliates"]["getCountryReport"]["data"][0];
 
 export type TranslateReportFakeType =
-  RouterOutput["affiliates"]["getTranslateReportFake"][0];
+  RouterOutput["affiliates"]["getTranslateReportFake"]["data"][0];
 
 export type PixelMonitorType = RouterOutput["affiliates"]["getPixelMonitor"][0];
 export type PixelMonitorUpsertType =
@@ -65,7 +65,8 @@ export type QuickReportSummary =
 export type CommissionReportType =
   RouterOutput["affiliates"]["getCommissionReport"]["data"][0];
 
-export type ClicksReportType = RouterOutput["affiliates"]["getClicksReport"][0];
+export type ClicksReportType =
+  RouterOutput["affiliates"]["getClicksReport"]["data"][0];
 
 export type InstallReportType =
   RouterOutput["affiliates"]["getInstallReport"][0];

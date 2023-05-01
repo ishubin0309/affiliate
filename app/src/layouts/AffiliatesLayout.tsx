@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useMediaQuery } from "usehooks-ts";
 import AffiliatesNavbar from "../components/affiliates/layout/AffiliatesNavbar";
 import Sidebar from "../components/affiliates/layout/Sidebar";
+import { PaginationProvider } from "@/components/common/data-table/paginagion-context";
 // import HeaderStats from "components/Headers/HeaderStats.js";
 // import FooterAdmin from "components/Footers/FooterAdmin.js";
 
