@@ -8,22 +8,27 @@ import {
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import * as React from "react";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { PageInfo } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export type ReportDataTableProps<Data extends object> = {
-  data: Data[] | null | undefined;
+  report:
+    | { data: Data[] | null | undefined; pageInfo: PageInfo; totals?: any }
+    | null
+    | undefined;
   columns: ColumnDef<Data, any>[];
   footerData?: any;
 };
 
 export function ReportDataTable<Data extends object>({
-  data,
+  report,
   columns,
   footerData = [],
 }: ReportDataTableProps<Data>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const { getHeaderGroups, getRowModel } = useReactTable({
     columns,
-    data: data || [],
+    data: report?.data ?? [],
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),

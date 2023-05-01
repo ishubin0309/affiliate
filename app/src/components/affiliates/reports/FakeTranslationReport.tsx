@@ -20,6 +20,7 @@ import {
 } from "@/components/common/search/search-context";
 import { parse, sub } from "date-fns";
 import { DateColumn } from "@/components/common/data-table/available-column";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -52,12 +53,14 @@ export const FakeTranslationReport = () => {
   const {
     values: { from, to, search },
   } = useSearchContext();
+  const pagination = usePagination();
 
   const { data, isLoading } = api.affiliates.getTranslateReportFake.useQuery(
     {
       from: getDateParam(from),
       to: getDateParam(to),
       search,
+      pageParams: pagination.pageParams,
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
@@ -65,9 +68,10 @@ export const FakeTranslationReport = () => {
   return (
     <ReportControl
       reportName="Fake Translation Report"
-      totalItems={data?.length || 0}
-      data={data}
+      // totalItems={data.length || 0}
+      report={data}
       columns={columns}
+      pagination={pagination}
       isRefetching={isLoading}
       handleExport={(exportType: ExportType) => Promise.resolve("ok")}
     >
