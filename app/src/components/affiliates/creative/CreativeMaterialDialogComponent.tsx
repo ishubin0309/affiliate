@@ -60,7 +60,6 @@ export const CreativeMaterialDialogComponent = ({
   gridView,
 }: Props) => {
   const { toast } = useToast();
-  console.log("values: ", values);
   const { data: profiles } = api.affiliates.getProfiles.useQuery(undefined, {
     keepPreviousData: true,
     refetchOnWindowFocus: false,
