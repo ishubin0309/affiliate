@@ -6,35 +6,31 @@ import { ReportDataTable } from "@/components/common/data-table/ReportDataTable"
 import { PageHeader } from "@/components/common/page/page-header";
 import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { SearchDateRange } from "@/components/common/search/search-date-range";
-import { CSVIcon, ExcelIcon, JSONIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
-import { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { SettingsIcon } from "lucide-react";
 import React from "react";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 
 interface Props<Data extends object> extends ReportDataTableProps<Data> {
   reportName: string;
   isRefetching: boolean;
-  totalItems: number;
   children: React.ReactNode;
   handleExport: OnExport;
+  pagination: ReturnType<typeof usePagination>;
 }
 
 export const ReportControl = <Data extends object>({
   children,
-  totalItems,
   reportName,
   isRefetching,
-  data,
+  report,
   columns,
+  pagination,
   footerData,
   handleExport,
 }: Props<Data>) => {
-  const pageSize = 50; // Should be from SearchContext
-  const pageCount = Math.ceil(totalItems / pageSize);
-
-  return data ? (
+  return report ? (
     <div className="flex w-full flex-col gap-2">
       <PageHeader title="Reports" subTitle={reportName}>
         <div className="flex flex-row gap-2">
@@ -52,9 +48,16 @@ export const ReportControl = <Data extends object>({
         <SearchApply isLoading={isRefetching} />
       </div>
 
-      <ReportDataTable data={data} columns={columns} footerData={footerData} />
+      <ReportDataTable
+        report={report}
+        columns={columns}
+        footerData={footerData}
+      />
       <div className="grid grid-cols-2 gap-2">
-        <Pagination count={pageCount} variant="focus" totalItems={totalItems} />
+        <Pagination
+          pagination={pagination}
+          totalItems={report.pageInfo.totalItems}
+        />
       </div>
     </div>
   ) : (

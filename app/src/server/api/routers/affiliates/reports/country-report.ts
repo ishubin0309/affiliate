@@ -10,8 +10,23 @@ import { z } from "zod";
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import type { Sql } from "@prisma/client/runtime";
 import { sub } from "date-fns";
-import { debugSaveData } from "@/server/api/routers/affiliates/reports/reports-utils";
+import {
+  debugSaveData,
+  getPageOffset,
+  pageInfo,
+  PageParam,
+  PageParamsSchema,
+  splitToPages,
+} from "@/server/api/routers/affiliates/reports/reports-utils";
 import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
+
+const Input = z.object({
+  from: z.date(),
+  to: z.date(),
+  merchant_id: z.number().optional(),
+});
+
+const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
 interface UserInfo {
   level: string;
@@ -20,7 +35,6 @@ interface UserInfo {
 
 interface CountryReportParams {
   userInfo: UserInfo;
-  prisma: PrismaClient;
   merchant_id?: number;
   affiliate_id?: number;
   country_id?: string;
@@ -57,15 +71,24 @@ const CountryData = BaseCountryArrayItem.extend({
 
 type CountryDataType = z.infer<typeof CountryData>;
 
-export const countryReport = async ({
-  userInfo,
-  prisma,
-  merchant_id,
-  affiliate_id,
-  country_id,
-  from,
-  to,
-}: CountryReportParams): Promise<CountryDataType[]> => {
+const countryReportResultSchema = z.object({
+  data: z.array(CountryData),
+  pageInfo,
+  totals: z.any(),
+});
+
+export const countryReport = async (
+  prisma: PrismaClient,
+  pageParams: PageParam,
+  {
+    userInfo,
+    merchant_id,
+    affiliate_id,
+    country_id,
+    from,
+    to,
+  }: CountryReportParams
+) => {
   const userLevel: string = userInfo.level;
   const group_id = userLevel === "manager" ? userInfo.group_id : null;
 
@@ -306,25 +329,18 @@ export const countryReport = async ({
     }
   });
 
-  return countryArray;
+  return splitToPages(countryArray, pageParams);
 };
 
 export const getCountryReport = publicProcedure
-  .input(
-    z.object({
-      from: z.date(),
-      to: z.date(),
-      merchant_id: z.number().optional(),
-    })
-  )
-  .output(z.array(CountryData))
-  .query(async ({ ctx, input: { from, to, merchant_id } }) => {
+  .input(InputWithPageInfo)
+  .output(countryReportResultSchema)
+  .query(async ({ ctx, input: { from, to, merchant_id, pageParams } }) => {
     const { prisma } = ctx;
 
     const userInfo = { level: "all" };
 
-    const countryData = await countryReport({
-      prisma,
+    const countryData = await countryReport(prisma, pageParams, {
       from: sub(new Date(from), { years: 2 }),
       to,
       userInfo,

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import * as React from "react";
+import ReactPaginate from "react-paginate";
 
 import { queryTypes, useQueryState } from "next-usequerystate";
 import {
@@ -13,12 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./select";
+import { useSearchContext } from "@/components/common/search/search-context";
+import { usePaginationContext } from "@/components/common/data-table/paginagion-context";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 
-export interface PaginationProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  error?: any;
-  count: number;
-  variant?: string;
+export interface Props {
+  pagination: ReturnType<typeof usePagination>;
   totalItems: number;
 }
 
@@ -36,89 +37,49 @@ const paginationVariants = cva(
     },
   }
 );
-const Pagination = React.forwardRef<HTMLInputElement, PaginationProps>(
-  ({ totalItems, count, error, className, variant, ...props }, ref) => {
-    const [currentPage, setCurrentPage] = useQueryState(
-      "currentPage",
-      queryTypes.integer.withDefault(1)
-    );
-    const [itemsPerPage, setItemPerPage] = useQueryState(
-      "itemsPerPage",
-      queryTypes.integer.withDefault(10)
-    );
+export const Pagination = ({
+  pagination: {
+    pageParams: { pageNumber, pageSize },
+    setPageParams,
+  },
+  totalItems,
+}: Props) => {
+  const handleChange = (value: string) => {
+    void setPageParams({ pageNumber: 1, pageSize: Number(value) });
+  };
 
-    const paginate = (event: any, type: string) => {
-      if (type === "increase") {
-        void setCurrentPage((currentPage) => currentPage + 1);
-      } else if (type === "decrease") {
-        void setCurrentPage((currentPage) => currentPage - 1);
-      } else {
-        void setCurrentPage(event);
-      }
-    };
-    const handleChange = (e: any) => {
-      void setItemPerPage(e);
-    };
-    const pages = [];
-    const page = totalItems / itemsPerPage < 1 ? 1 : totalItems / itemsPerPage;
-    for (let i = 1; i <= page; i++) {
-      pages.push(i);
-    }
+  const pageCount = Math.ceil(totalItems / pageSize);
 
-    // console.log("items per page ", props.totalItems / props.itemsPerPage);
-    return (
-      <nav
-        className="flex items-center justify-start space-x-2"
-        ref={ref}
-        {...props}
-      >
-        <a
-          onClick={(event) => paginate(event, "decrease")}
-          className="inline-flex items-center gap-2 rounded-md p-4 text-gray-500 hover:text-blue-600"
-        >
-          <ChevronsLeft />
-        </a>
+  const handlePageClick = ({ selected }: { selected: number }) => {
+    const pageNumber = selected + 1;
+    setPageParams({ pageNumber, pageSize });
+  };
 
-        {pages.map((item, key) => {
-          return (
-            <a
-              className={
-                item === currentPage
-                  ? cn(paginationVariants({ variant: "focus" }))
-                  : cn(paginationVariants({ variant: "secondary" }))
-              }
-              onClick={(event) => paginate(item, "onpoint")}
-              aria-current="page"
-              key={key}
-            >
-              {item}
-            </a>
-          );
-        })}
-        <a
-          onClick={(event) => paginate(event, "increase")}
-          className="inline-flex items-center gap-2 rounded-md p-4 text-gray-500 hover:text-blue-600"
-        >
-          <ChevronsRight />
-        </a>
+  return (
+    <nav className="flex items-center justify-start space-x-2">
+      <ReactPaginate
+        breakLabel="..."
+        nextLabel="next >"
+        onPageChange={handlePageClick}
+        pageRangeDisplayed={5}
+        pageCount={pageCount}
+        previousLabel="< previous"
+        renderOnZeroPageCount={null}
+      />
 
-        <div className="mt-2">
-          <Select onValueChange={handleChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </nav>
-    );
-  }
-);
-Pagination.displayName = "Pagination";
-
-export { Pagination };
+      <div className="mt-2">
+        <Select onValueChange={handleChange} value={String(pageSize)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+            <SelectItem value="50">50</SelectItem>
+            <SelectItem value="100">100</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </nav>
+  );
+};

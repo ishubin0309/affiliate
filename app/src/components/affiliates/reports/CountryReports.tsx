@@ -10,6 +10,7 @@ import {
   getNumberParam,
   useSearchContext,
 } from "@/components/common/search/search-context";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 
 const columnHelper = createColumnHelper<CountryReportType>();
 const createColumn = (id: keyof CountryReportType, header: string) =>
@@ -46,6 +47,7 @@ export const CountryReports = () => {
   const {
     values: { merchant_id, from, to },
   } = useSearchContext();
+  const pagination = usePagination();
 
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery(
     undefined,
@@ -56,6 +58,7 @@ export const CountryReports = () => {
       from: getDateParam(from),
       to: getDateParam(to),
       merchant_id: getNumberParam(merchant_id),
+      pageParams: pagination.pageParams,
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
@@ -65,9 +68,9 @@ export const CountryReports = () => {
   return (
     <ReportControl
       reportName="Country Report"
-      totalItems={data?.length || 0}
-      data={data}
+      report={data}
       columns={columns}
+      pagination={pagination}
       isRefetching={isLoading}
       handleExport={(exportType: ExportType) => Promise.resolve("ok")}
     >
