@@ -9,14 +9,14 @@ const PDFViewer = dynamic(
   () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
   { ssr: false }
 );
-const Page: MyPage = () => {
+const PaymentView: MyPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const { data } = api.affiliates.getPaymentDetails.useQuery({
     paymentId: String(id),
   });
   const { payments_paid, affiliatesDetail, merchants } = data || {};
-  console.log(data);
+  console.log(`PaymentView:data`, { id, data });
 
   return (
     <>
@@ -44,5 +44,5 @@ const Page: MyPage = () => {
   );
 };
 
-export default Page;
-Page.Layout = "NoLayout";
+export default PaymentView;
+PaymentView.Layout = "NoLayout";

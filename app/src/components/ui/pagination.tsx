@@ -23,20 +23,6 @@ export interface Props {
   totalItems: number;
 }
 
-const paginationVariants = cva(
-  "inline-flex h-10 w-10 items-center rounded-md",
-  {
-    variants: {
-      variant: {
-        focus: "bg-blue-500 p-4 text-sm font-medium text-white",
-        secondary: "p-4 text-sm font-medium text-gray-500 hover:text-blue-600",
-      },
-    },
-    defaultVariants: {
-      variant: "focus",
-    },
-  }
-);
 export const Pagination = ({
   pagination: {
     pageParams: { pageNumber, pageSize },
