@@ -8,9 +8,16 @@ interface footer {
   title: string;
   value: number;
 }
+interface tableData {
+  merchant: string;
+  deal: string;
+  unitPrice: string;
+  quantity: string;
+  price: string;
+}
 interface TableProps {
   columns: string[];
-  data: string[];
+  data?: tableData[];
   footers: footer[];
 }
 export const Table = ({ columns, data, footers }: TableProps) => (
@@ -21,14 +28,25 @@ export const Table = ({ columns, data, footers }: TableProps) => (
           <TableHeader columnName={i} key={index} columns={columns.length} />
         ))}
       </View>
-      <View style={styles.tableRow}>
-        {data.map((i: string, index: number) => (
-          <TableRow data={i} key={index} columns={columns.length} />
+      {data &&
+        data.map((i: tableData, index: number) => (
+          <View style={styles.tableRow} key={index}>
+            {Object.keys(i).map((item) => (
+              <TableRow
+                key={index}
+                data={i[item as keyof tableData]}
+                columns={columns.length}
+              />
+            ))}
+          </View>
         ))}
-      </View>
       {footers.map((i: footer, index: number) => (
         <View style={styles.tableRow} key={index}>
-          <TableFooter title={i.title} value={i.value} />
+          <TableFooter
+            title={i.title}
+            value={i.value}
+            columnLength={columns.length}
+          />
         </View>
       ))}
     </View>
