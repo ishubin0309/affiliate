@@ -29,11 +29,11 @@ export const styles = StyleSheet.create({
     color: "#666666",
   },
   textLarge: {
-    fontSize: 20,
+    fontSize: 16,
     color: "#948f8f",
   },
   textBold: {
-    fontSize: 11,
+    fontSize: 9,
     fontWeight: "bold",
     color: "#000",
   },
@@ -99,7 +99,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#c9c9c9",
   },
   paymentForm: {
-    fontSize: 22,
+    fontSize: 17,
     color: "#666666",
     fontWeight: 800,
   },
@@ -116,5 +116,11 @@ export const styles = StyleSheet.create({
     paddingRight: "20px",
     paddingLeft: "20px",
     marginTop: "1px",
+  },
+  headerFlexDiv: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: "1px",
+    paddingRight: "20px",
   },
 });

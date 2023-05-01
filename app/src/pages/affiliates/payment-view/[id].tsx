@@ -16,6 +16,7 @@ const Page: MyPage = () => {
     paymentId: String(id),
   });
   const { payments_paid, affiliatesDetail, merchants } = data || {};
+  console.log(data);
 
   return (
     <>
@@ -30,7 +31,11 @@ const Page: MyPage = () => {
           <PaymentDetail
             payments_paid={payments_paid}
             affiliatesDetail={affiliatesDetail}
-            merchant={merchants?.APIpass ?? ""}
+            merchant={
+              Number(affiliatesDetail?.merchants) === 0
+                ? "OTHER"
+                : merchants?.name ?? ""
+            }
           />
         </PDFViewer>
       )}
