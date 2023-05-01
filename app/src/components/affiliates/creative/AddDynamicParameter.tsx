@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../ui/button";
 
@@ -8,6 +8,7 @@ interface IProps {
 }
 
 interface InputField {
+  id: string;
   type: string;
   value: string;
   placeholder: string;
@@ -16,15 +17,27 @@ interface InputField {
 export function AddDynamicParameter({ setParametersValue }: IProps) {
   const [dynamicParameterDisabled, setDynamicParameterDisabled] =
     useState<boolean>(false);
-  const [inputFields, setInputFields] = useState<InputField[]>([]);
+
+  const generateId = () => {
+    return Math.random().toString(36).substr(2, 9);
+  };
+  const [inputFields, setInputFields] = useState<InputField[]>([
+    {
+      id: generateId(),
+      type: "text",
+      value: "",
+      placeholder: "Add parameter",
+    },
+  ]);
 
   const addInput = () => {
     const newInputFields = [
       ...inputFields,
       {
+        id: generateId(),
         type: "text",
         value: "",
-        placeholder: `Add parameter ${inputFields.length + 1}`,
+        placeholder: `Add parameter`,
       },
     ];
     setInputFields(newInputFields);
@@ -33,30 +46,62 @@ export function AddDynamicParameter({ setParametersValue }: IProps) {
     }
   };
 
+  const removeInput = (id: string) => {
+    const newInputFields = inputFields.filter(
+      (inputField) => inputField.id !== id
+    );
+    setInputFields(newInputFields);
+    if (dynamicParameterDisabled && newInputFields.length < 9) {
+      setDynamicParameterDisabled(false);
+    }
+  };
+
+  const editInput = (id: string, value: string) => {
+    const newInputFields = inputFields.map((inputField) => {
+      if (inputField.id === id) {
+        return {
+          ...inputField,
+          value: value,
+        };
+      }
+      return inputField;
+    });
+    setInputFields(newInputFields);
+  };
+
   const inputFieldElements = inputFields.map((inputField, index) => (
-    <div key={index} className="mt-4 w-full">
+    <div key={inputField.id} className="mb-2 flex w-full">
       <Input
         className="w-full"
-        id={String(index)}
+        id={inputField.id}
         type={inputField.type}
         placeholder={inputField.placeholder}
         value={inputField.value}
+        onChange={(e) => editInput(inputField.id, e.target.value)}
       />
+      {index >= 1 && (
+        <Button
+          variant="primary"
+          className="ml-2 h-10 w-10"
+          size="rec"
+          onClick={() => removeInput(inputField.id)}
+        >
+          <Minus className="h-4 w-4" />
+        </Button>
+      )}
+      {index === 0 && (
+        <Button
+          disabled={dynamicParameterDisabled}
+          variant="primary"
+          className="ml-2 h-10 w-10"
+          size="rec"
+          onClick={addInput}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   ));
 
-  return (
-    <>
-      <Button
-        disabled={dynamicParameterDisabled}
-        variant="primary"
-        className="ml-2 h-10 w-10"
-        size="rec"
-        onClick={addInput}
-      >
-        <Plus className="h-4 w-4" />
-      </Button>
-      {inputFieldElements}
-    </>
-  );
+  return <>{inputFieldElements}</>;
 }
