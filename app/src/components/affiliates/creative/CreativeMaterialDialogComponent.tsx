@@ -93,11 +93,7 @@ export const CreativeMaterialDialogComponent = ({
         params,
         profile_id,
       });
-
-      console.log("codes: ", codes);
-
       setCodesValues(codes);
-
       console.log(`muly:handleGetCode codes`, {
         codes,
         creative_id,
