@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { PageInfo } from "@/server/api/routers/affiliates/reports/reports-utils";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import {
   flexRender,
@@ -6,10 +7,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, CheckIcon, XIcon } from "lucide-react";
 import * as React from "react";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
-import { PageInfo } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export type ReportDataTableProps<Data extends object> = {
   report:
@@ -18,12 +17,18 @@ export type ReportDataTableProps<Data extends object> = {
     | undefined;
   columns: ColumnDef<Data, any>[];
   footerData?: any;
+  selectColumnsMode: boolean;
+  selectColumnsModeData: any;
+  handleCheckboxChange: (fieldName: string, checked: boolean) => void;
 };
 
 export function ReportDataTable<Data extends object>({
   report,
   columns,
   footerData = [],
+  selectColumnsMode,
+  selectColumnsModeData,
+  handleCheckboxChange,
 }: ReportDataTableProps<Data>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const { getHeaderGroups, getRowModel } = useReactTable({
@@ -53,12 +58,42 @@ export function ReportDataTable<Data extends object>({
                 // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
                 const meta = header.column.columnDef.meta;
                 headers.push(header.column.columnDef.header);
+                const isChecked = selectColumnsModeData?.includes(header.id);
                 return (
                   <th
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    className="border"
+                    className="relative border"
                   >
+                    {selectColumnsMode && (
+                      <div className="absolute inset-0 bg-gray-300  opacity-75"></div>
+                    )}
+
+                    {selectColumnsMode && isChecked && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-transparent">
+                        <CheckIcon className="h-8 w-auto text-green-600" />
+                      </div>
+                    )}
+
+                    {selectColumnsMode && !isChecked && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-transparent">
+                        <XIcon className="h-8 w-auto text-red-600" />
+                      </div>
+                    )}
+
+                    {selectColumnsMode && (
+                      <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                        <input
+                          className="scale-[25] opacity-0"
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            handleCheckboxChange(header.id, e.target.checked);
+                          }}
+                        />
+                      </div>
+                    )}
+
                     <div className="text=[#323232] flex p-2 text-sm">
                       {flexRender(
                         header.column.columnDef.header,
