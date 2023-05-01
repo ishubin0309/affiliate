@@ -18,15 +18,23 @@ const sites = [
     name: "bi-winning",
     LEGACY_PHP_URL: "partners.bi-winning.org",
     prod: {},
-    dev: {},
+    dev: {
+      TXT: "google-site-verification=gHbtaFsW6cjA1BDSgUTysmEYP2BViiduU5RiyC7A2fs",
+    },
   },
   {
     name: "fivestars-market",
     LEGACY_PHP_URL: "partners.fivestars-markets.com",
+    dev: {
+      TXT: "google-site-verification=ySNJ6xA4irl1Wjfv_B5fSdejwoQGk2lVOccKnOQfN1o",
+    },
   },
   {
     name: "focusoption",
     LEGACY_PHP_URL: "partners.focusoption.com",
+    dev: {
+      TXT: "google-site-verification=dQrcg_qZ9DlT_RHnwckPqBKtu3hmpvc1ZIzQBeY-8aQ",
+    },
   },
 ];
 
@@ -117,15 +125,15 @@ for (const site of sites) {
   }
 
   if (step === "verify") {
-    // await $`gcloud domains verify ${domain}`;
-    console.log(
-      `not working need to do it manually. see docs/deploy/new-customer-deploy.md ##Verify domain"
-
-      service: ${val.service}
-      domain: ${val.domain}
-
-      `
-    );
+    await $`gcloud domains verify ${val.domain}`;
+    // console.log(
+    //   `not working need to do it manually. see docs/deploy/new-customer-deploy.md ##Verify domain"
+    //
+    //   service: ${val.service}
+    //   domain: ${val.domain}
+    //
+    //   `
+    // );
   }
 
   if (step === "dns") {
@@ -136,7 +144,6 @@ ${val.TXT}
 `);
   }
 }
-
 
 if (out) {
   const fileName = "./tmp/deploy-process.txt";
