@@ -188,3 +188,68 @@
     @apply px-4;
   }
 }
+
+/* React paginate css starts */
+
+/* .item must be first */
+.item {
+  align-items: center;
+  background-color: #fff;
+  border-radius: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+  display: flex;
+  font-size: 14px;
+  height: 40px;
+  justify-content: center;
+  font-weight: bolder;
+  width: 40px;
+}
+
+.disabled-page {
+  pointer-events: none;
+  color: #b3a9a9;
+}
+
+.active {
+  background-color: #2160c4;
+  color: #fff;
+  border-radius: 10px;
+}
+
+.break-me {
+}
+
+.next {
+  background-color: transparent;
+  height: 40px;
+  right: 0;
+}
+
+.pagination {
+  align-items: center;
+  color: #2160c4;
+  display: flex;
+  flex-direction: row;
+  height: 60px;
+  justify-content: center;
+  list-style-type: none;
+  position: relative;
+  /* width: 1000px; */
+  max-width: 60vw;
+}
+
+.pagination-page {
+  font-weight: 700;
+}
+
+.previous {
+  background-color: transparent;
+  height: 40px;
+  left: 0;
+  width: fit-content;
+  margin-right: 15px;
+}
+
+/* React paginate css ends */
