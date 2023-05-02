@@ -1,5 +1,10 @@
 #!/usr/bin/env zx
 
+// ./deploy-process.mjs --step=secret
+// ./deploy-process.mjs --step=dns
+// ./deploy-process.mjs --step=secret --prod
+// ./deploy-process.mjs --step=secret
+
 import { sites } from "./deploy.secrets.mjs";
 
 const { _, step, service, prod: deployProd } = argv;
@@ -50,7 +55,13 @@ for (const site of sites) {
     password,
     db,
   } = site;
+
+
+
   if (deployProd) {
+    if (!prod) {
+      continue;
+    }
     prod.service = `${name}-prod`;
   }
   if (!deployProd) {
@@ -155,9 +166,8 @@ for (const site of sites) {
 
   if (step === "dns") {
     console.log(`DOMAIN: ${val.domain}
-Add the TXT record below to the DNS configuration for ${val.domain}.
-${val.TXT}
-
+TXT: ${val.TXT}
+CNAME: ghs.googlehosted.com
 `);
   }
 }
