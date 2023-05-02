@@ -34,17 +34,17 @@ export const AccountDetails = () => {
               <TabsTrigger value="website">Website</TabsTrigger>
             </TabsList>
             <TabsContent className="border-0" value="account">
-              <div className="w-3/6">
+              <div className="sm:w-full lg:w-3/6">
                 <FormAccount account={account} onSubmit={handleSubmit} />
               </div>
             </TabsContent>
             <TabsContent className="border-0" value="contract">
-              <div className="w-3/6">
+              <div className="sm:w-full lg:w-3/6">
                 <FormContact account={account} onSubmit={handleSubmit} />
               </div>
             </TabsContent>
             <TabsContent className="border-0" value="invoice">
-              <div className="w-3/6">
+              <div className="sm:w-full lg:w-3/6">
                 <FormInvoice
                   account={account}
                   onSubmit={handleSubmit}
@@ -53,7 +53,7 @@ export const AccountDetails = () => {
               </div>
             </TabsContent>
             <TabsContent className="border-0" value="website">
-              <div className="w-3/6">
+              <div className="sm:w-full lg:w-3/6">
                 <FormWebSites account={account} onSubmit={handleSubmit} />
               </div>
             </TabsContent>
