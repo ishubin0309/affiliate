@@ -23,17 +23,17 @@ import DashboardCharts from "./DashboardCharts";
 import { useToast } from "@/components/ui/use-toast";
 
 const allColumns = [
-  { id: "Impressions", title: "Impressions" },
-  { id: "Clicks", title: "Clicks" },
-  { id: "Install", title: "Install" },
-  { id: "Leads", title: "Leads" },
-  { id: "Demo", title: "Demo" },
-  { id: "RealAccount", title: "Real Account" },
-  { id: "FTD", title: "FTD" },
-  { id: "Withdrawal", title: "Withdrawal" },
-  { id: "ChargeBack", title: "ChargeBack" },
-  { id: "ActiveTrader", title: "Active Trader" },
-  { id: "Commission", title: "Commission" },
+  { id: "Impressions", title: "Impressions", link: "reports/creative-report" },
+  { id: "Clicks", title: "Clicks", link: "reports/clicks-report" },
+  { id: "Install", title: "Install", link: "reports/install-reports" },
+  { id: "Leads", title: "Leads", link: "reports/trader-report" },
+  { id: "Demo", title: "Demo", link: "reports/clicks-report" },
+  { id: "RealAccount", title: "Real Account", link: "reports/trader-report" },
+  { id: "FTD", title: "FTD", link: "reports/trader-report" },
+  { id: "Withdrawal", title: "Withdrawal", link: "reports/trader-report" },
+  { id: "ChargeBack", title: "ChargeBack", link: "reports/clicks-report" },
+  { id: "ActiveTrader", title: "Active Trader", link: "reports/trader-report" },
+  { id: "Commission", title: "Commission", link: "reports/quick-summary" },
 ];
 
 const columnHelper = createColumnHelper<TopMerchantCreativeType>();
@@ -199,10 +199,10 @@ export const Dashboard = () => {
       <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {allColumns
           .filter(
-            ({ id, title }) =>
+            ({ id, title, link }) =>
               selectColumnsMode || !reportsColumns.includes(title)
           )
-          .map(({ id, title }, idx) => {
+          .map(({ id, title, link }, idx) => {
             interface Sum {
               [index: string]: number;
             }
@@ -220,6 +220,7 @@ export const Dashboard = () => {
                 idx={idx}
                 fieldName={id}
                 title={title}
+                link={link}
                 lastMonth={lastMonth}
                 thisMonth={thisMonth}
                 value={value}
