@@ -6,14 +6,18 @@ interface TableHeaderProps {
   key: number;
   columns: number;
 }
-export const TableHeader = ({ columnName, key, columns }: TableHeaderProps) => (
-  <View
-    style={{
-      ...styles.tableHeadingCol,
-      width: `${100 / columns}%`,
-    }}
-    key={key}
-  >
-    <Heading style={styles.tableCell} title={columnName} />
-  </View>
-);
+export const TableHeader = ({ columnName, key, columns }: TableHeaderProps) => {
+  console.log(`${100 / columns}%`);
+
+  return (
+    <View
+      style={{
+        ...styles.tableHeadingCol,
+        width: `${100 / columns}%`,
+      }}
+      key={key}
+    >
+      <Heading style={styles.tableCell} title={columnName} />
+    </View>
+  );
+};

@@ -90,3 +90,114 @@ jobs:
             --port=3000
             --max-instances=3
             --min-instances=0
+
+
+
+      - id: "deploy_freevpnplanet"
+        name: deploy freevpnplanet-staging
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: "freevpnplanet-staging"
+          image: "europe-docker.pkg.dev/api-front-dashbord/dev/aff:latest"
+          labels: env=dev
+          project_id: api-front-dashbord
+          region: europe-west1
+          secrets: |
+            DATABASE_URL=DEV_FREEVPNPLANET_DATABASE_URL:latest
+            LEGACY_PHP_ACCESS_TOKEN=DEV_LEGACY_PHP_ACCESS_TOKEN:latest
+            NEXTAUTH_SECRET=DEV_NEXTAUTH_SECRET:latest
+            SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+          env_vars: |
+            LEGACY_PHP_URL=affiliate.freevpnplanet.com
+            NEXTAUTH_URL=https://freevpnplanet.staging.affiliatets.com
+            NODE_ENV=production
+          flags: |
+            --allow-unauthenticated
+            --vpc-connector=development-serverless-vp
+            --vpc-egress=all-traffic
+            --port=3000
+            --max-instances=3
+            --min-instances=0
+
+
+      - id: "deploy_bi-winning"
+        name: deploy bi-winning-staging
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: "bi-winning-staging"
+          image: "europe-docker.pkg.dev/api-front-dashbord/dev/aff:latest"
+          labels: env=dev
+          project_id: api-front-dashbord
+          region: europe-west1
+          secrets: |
+            DATABASE_URL=DEV_BI-WINNING_DATABASE_URL:latest
+            LEGACY_PHP_ACCESS_TOKEN=DEV_LEGACY_PHP_ACCESS_TOKEN:latest
+            NEXTAUTH_SECRET=DEV_NEXTAUTH_SECRET:latest
+            SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+          env_vars: |
+            LEGACY_PHP_URL=partners.bi-winning.org
+            NEXTAUTH_URL=https://bi-winning.staging.affiliatets.com
+            NODE_ENV=production
+          flags: |
+            --allow-unauthenticated
+            --vpc-connector=development-serverless-vp
+            --vpc-egress=all-traffic
+            --port=3000
+            --max-instances=3
+            --min-instances=0
+
+
+      - id: "deploy_fivestars-market"
+        name: deploy fivestars-market-staging
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: "fivestars-market-staging"
+          image: "europe-docker.pkg.dev/api-front-dashbord/dev/aff:latest"
+          labels: env=dev
+          project_id: api-front-dashbord
+          region: europe-west1
+          secrets: |
+            DATABASE_URL=DEV_FIVESTARS-MARKET_DATABASE_URL:latest
+            LEGACY_PHP_ACCESS_TOKEN=DEV_LEGACY_PHP_ACCESS_TOKEN:latest
+            NEXTAUTH_SECRET=DEV_NEXTAUTH_SECRET:latest
+            SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+          env_vars: |
+            LEGACY_PHP_URL=partners.fivestars-markets.com
+            NEXTAUTH_URL=https://fivestars-market.staging.affiliatets.com
+            NODE_ENV=production
+          flags: |
+            --allow-unauthenticated
+            --vpc-connector=development-serverless-vp
+            --vpc-egress=all-traffic
+            --port=3000
+            --max-instances=3
+            --min-instances=0
+
+
+      - id: "deploy_focusoption"
+        name: deploy focusoption-staging
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: "focusoption-staging"
+          image: "europe-docker.pkg.dev/api-front-dashbord/dev/aff:latest"
+          labels: env=dev
+          project_id: api-front-dashbord
+          region: europe-west1
+          secrets: |
+            DATABASE_URL=DEV_FOCUSOPTION_DATABASE_URL:latest
+            LEGACY_PHP_ACCESS_TOKEN=DEV_LEGACY_PHP_ACCESS_TOKEN:latest
+            NEXTAUTH_SECRET=DEV_NEXTAUTH_SECRET:latest
+            SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+          env_vars: |
+            LEGACY_PHP_URL=partners.focusoption.com
+            NEXTAUTH_URL=https://focusoption.staging.affiliatets.com
+            NODE_ENV=production
+          flags: |
+            --allow-unauthenticated
+            --vpc-connector=development-serverless-vp
+            --vpc-egress=all-traffic
+            --port=3000
+            --max-instances=3
+            --min-instances=0
+
+
