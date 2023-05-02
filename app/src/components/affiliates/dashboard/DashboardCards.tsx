@@ -4,11 +4,13 @@ import { UpwardArrowIcon } from "@/components/icons";
 import { format } from "d3-format";
 import { CheckIcon, XIcon } from "lucide-react";
 import { Bar } from "react-chartjs-2";
+import Link from "next/link";
 
 interface Props {
   idx: number | undefined;
   fieldName: string;
   title: string;
+  link: string;
   thisMonth: number | undefined;
   lastMonth: number | undefined;
   value: number;
@@ -22,6 +24,7 @@ const DashboardCards = ({
   idx,
   fieldName,
   title,
+  link,
   thisMonth,
   lastMonth,
   value,
@@ -74,7 +77,8 @@ const DashboardCards = ({
   };
 
   return (
-    <div
+    <Link
+      href={"/affiliates/" + link}
       className="ounded-2xl relative mb-1 bg-white px-2 pt-3 shadow-sm md:px-6"
       key={idx}
     >
@@ -152,7 +156,7 @@ const DashboardCards = ({
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

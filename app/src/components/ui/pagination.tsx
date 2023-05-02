@@ -16,7 +16,7 @@ import {
 } from "./select";
 import { useSearchContext } from "@/components/common/search/search-context";
 import { usePaginationContext } from "@/components/common/data-table/paginagion-context";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
+import type { usePagination } from "@/components/common/data-table/pagination-hook";
 
 export interface Props {
   pagination: ReturnType<typeof usePagination>;
@@ -45,15 +45,23 @@ export const Pagination = ({
     <nav className="flex items-center justify-start space-x-2">
       <ReactPaginate
         breakLabel="..."
-        nextLabel="next >"
+        nextLabel={<ChevronsRight />}
         onPageChange={handlePageClick}
-        pageRangeDisplayed={5}
         pageCount={pageCount}
-        previousLabel="< previous"
+        previousLabel={<ChevronsLeft />}
         renderOnZeroPageCount={null}
+        activeClassName="paginate-item paginate-active"
+        breakClassName="paginate-item paginate-break-me "
+        containerClassName="paginate-pagination"
+        disabledClassName="paginate-disabled-page"
+        marginPagesDisplayed={2}
+        nextClassName="paginate-item paginate-next"
+        pageClassName="paginate-item paginate-pagination-page"
+        pageRangeDisplayed={2}
+        previousClassName="paginate-item paginate-previous"
       />
 
-      <div className="mt-2">
+      <div className="mt-0">
         <Select onValueChange={handleChange} value={String(pageSize)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue />
