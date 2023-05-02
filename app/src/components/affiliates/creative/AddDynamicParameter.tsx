@@ -31,6 +31,18 @@ export function AddDynamicParameter({ setParametersValue }: IProps) {
   ]);
 
   const addInput = () => {
+    // Check if there is any empty field
+    const emptyField = inputFields.find(
+      (inputField) => inputField.value === ""
+    );
+
+    // If there is an empty field, focus on it and return
+    if (emptyField) {
+      document.getElementById(emptyField.id)?.focus();
+      return;
+    }
+
+    // Add a new input field if there are no empty fields
     const newInputFields = [
       ...inputFields,
       {
@@ -41,6 +53,8 @@ export function AddDynamicParameter({ setParametersValue }: IProps) {
       },
     ];
     setInputFields(newInputFields);
+
+    // Disable adding more fields if the maximum limit is reached
     if (newInputFields.length === 9) {
       setDynamicParameterDisabled(true);
     }

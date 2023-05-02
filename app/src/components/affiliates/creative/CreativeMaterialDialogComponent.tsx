@@ -13,9 +13,9 @@ import {
   SelectValue,
 } from "../../ui/select";
 
-import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
 import { Code2Icon, Image as ImageIcon } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { Button } from "../../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
@@ -59,7 +59,6 @@ export const CreativeMaterialDialogComponent = ({
   creative_id,
   gridView,
 }: Props) => {
-  const { toast } = useToast();
   const { data: profiles } = api.affiliates.getProfiles.useQuery(undefined, {
     keepPreviousData: true,
     refetchOnWindowFocus: false,
@@ -104,28 +103,33 @@ export const CreativeMaterialDialogComponent = ({
     }
   };
 
-  const onCopyClickUrl = async () => {
-    await window.navigator.clipboard.writeText(url ?? "");
-    toast({
-      title: "URL Copied to Clipboard",
-      // description: "URL Copied to Clipboard! 📋",
-      // status: "success",
-      duration: 5000,
-      // isClosable: true,
-    });
-  };
+  const downloadCode = (codesValues: CodeProps, fileType: string): void => {
+    let codeValue: string | undefined;
+    let fileName: any;
 
-  const DownloadHtmlText = () => {
-    console.log("DownloadHtmlText");
-  };
-  const DownloadJsText = () => {
-    console.log("DownloadJsText");
-  };
-  const DownloadDirectLinkText = () => {
-    console.log("DownloadDirectLinkText");
-  };
-  const DownloadQrcodeImage = () => {
-    console.log("DownloadQrcodeImage");
+    if (fileType === "html") {
+      codeValue = codesValues?.htmlCode;
+      fileName = "code.html";
+    } else if (fileType === "js") {
+      codeValue = codesValues?.code;
+      fileName = "code.js";
+    } else if (fileType === "directLink") {
+      codeValue = codesValues?.directLink;
+      fileName = "direct-link.txt";
+    } else if (fileType === "qrCode") {
+      codeValue = codesValues?.qrCode;
+      fileName = "qrcode.png";
+    }
+
+    if (codeValue) {
+      const link: HTMLAnchorElement = document.createElement("a");
+      link.href =
+        fileType === "qrCode"
+          ? codeValue
+          : `data:text/plain;charset=utf-8,${encodeURIComponent(codeValue)}`;
+      link.download = fileName;
+      link.click();
+    }
   };
 
   return (
@@ -152,18 +156,18 @@ export const CreativeMaterialDialogComponent = ({
           </div>
         </div>
       </div>
-      <DialogContent className="max-w-[90%] sm:max-w-sm md:max-w-6xl ">
+      <DialogContent className="max-h-screen max-w-[90%] overflow-auto sm:max-w-sm md:max-w-6xl md:overflow-hidden">
         <DialogHeader className="text-left text-lg font-medium text-primary">
           Get Tracking Code
         </DialogHeader>
         <form className="w-full pt-5">
           <div className="justify-between md:flex md:space-x-4">
             <div className="w-full md:w-1/4">
-              <div className="mb-6 justify-between md:flex md:space-x-4">
+              <div className="mb-11 mb-12 h-[calc(100%-43px)] justify-between md:flex md:space-x-4">
                 <div className="w-full">
                   <div className="mb-3">
                     <label
-                      className="mb-2 block  pl-3 text-sm font-medium tracking-wide text-[#525252]"
+                      className="mb-2 block pt-3 text-sm font-medium tracking-wide text-[#525252]"
                       htmlFor="grid-first-name"
                     >
                       Profile
@@ -199,7 +203,7 @@ export const CreativeMaterialDialogComponent = ({
                   </div>
                   <div className="w-full">
                     <label
-                      className="mb-2 block pl-3 text-sm font-medium tracking-wide text-[#525252]"
+                      className="mb-2 block text-sm font-medium tracking-wide text-[#525252]"
                       htmlFor="grid-first-name"
                     >
                       Dynamic Parameter
@@ -212,11 +216,11 @@ export const CreativeMaterialDialogComponent = ({
                   </div>
                 </div>
               </div>
-              <div className="mb-6 rounded md:mb-0">
+              <div className="relative mb-6 rounded md:mb-0">
                 <Button
                   onClick={handleGetCode}
                   variant="primary"
-                  className="w-full"
+                  className="absolute bottom-0 w-full"
                   isLoading={isLoading}
                 >
                   Get Code
@@ -225,8 +229,8 @@ export const CreativeMaterialDialogComponent = ({
             </div>
             <div className="w-full md:w-3/4">
               {" "}
-              <div>
-                <Tabs defaultValue="HtmlCode">
+              <div className="h-full">
+                <Tabs defaultValue="HtmlCode" className="h-full">
                   <TabsList className="flex-wrap justify-start whitespace-nowrap">
                     <TabsTrigger value="HtmlCode">HTML Code</TabsTrigger>
                     <TabsTrigger value="JSCode">JS Code</TabsTrigger>
@@ -235,17 +239,21 @@ export const CreativeMaterialDialogComponent = ({
                       Direct Link Code
                     </TabsTrigger>
                   </TabsList>
-                  <TabsContent className="border-0 p-0" value="HtmlCode">
-                    <div className="-mx-3 mb-6 flex flex-wrap">
-                      <div className="w-full px-3">
+                  <TabsContent className="h-full border-0 p-0" value="HtmlCode">
+                    <div className="-mx-3 flex h-full flex-wrap">
+                      <div className="h-full w-full px-3">
                         <textarea
-                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
+                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-md border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB] md:mb-12 md:h-[calc(100%-100px)]"
                           value={codesValues?.htmlCode}
                           id="grid-textarea"
                         />
                       </div>
                       <div className="flex w-full flex-wrap justify-end px-3">
-                        <Button variant="primary" onClick={DownloadHtmlText}>
+                        <Button
+                          className="bottom-6 md:absolute"
+                          variant="primary"
+                          onClick={() => downloadCode(codesValues, "html")}
+                        >
                           Download Html As Text
                           <div className="ml-2">
                             <ImageIcon className="h-4 w-4 text-white" />
@@ -254,17 +262,21 @@ export const CreativeMaterialDialogComponent = ({
                       </div>
                     </div>
                   </TabsContent>
-                  <TabsContent className="border-0 p-0" value="JSCode">
-                    <div className="-mx-3 mb-6 flex flex-wrap">
-                      <div className="w-full px-3">
+                  <TabsContent className="h-full border-0 p-0" value="JSCode">
+                    <div className="-mx-3 flex h-full flex-wrap">
+                      <div className="h-full w-full px-3">
                         <textarea
-                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
+                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-md border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB] md:mb-12 md:h-[calc(100%-100px)]"
                           value={codesValues?.code}
                           id="grid-textarea"
                         />
                       </div>
                       <div className="flex w-full flex-wrap justify-end px-3">
-                        <Button variant="primary" onClick={DownloadJsText}>
+                        <Button
+                          className="bottom-6 md:absolute"
+                          variant="primary"
+                          onClick={() => downloadCode(codesValues, "js")}
+                        >
                           Download Js Code As Text
                           <div className="ml-2">
                             <ImageIcon className="h-4 w-4 text-white" />
@@ -273,17 +285,25 @@ export const CreativeMaterialDialogComponent = ({
                       </div>
                     </div>
                   </TabsContent>
-                  <TabsContent className="border-0 p-0" value="QrCode">
-                    <div className="-mx-3 mb-6 flex flex-wrap">
-                      <div className="w-full px-3">
-                        <textarea
-                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
-                          value={codesValues?.qrCode}
-                          id="grid-textarea"
-                        />
+                  <TabsContent className="h-full border-0 p-0" value="QrCode">
+                    <div className="-mx-3 flex h-full flex-wrap">
+                      <div className="mb-3 mt-1.5 flex h-48 w-full items-center px-3 md:mb-12 md:h-[calc(100%-100px)]">
+                        {codesValues?.qrCode && (
+                          <Image
+                            className="mx-auto my-0"
+                            src={codesValues?.qrCode}
+                            height={100}
+                            width={200}
+                            alt="..."
+                          />
+                        )}
                       </div>
                       <div className="flex w-full flex-wrap justify-end px-3">
-                        <Button variant="primary" onClick={DownloadQrcodeImage}>
+                        <Button
+                          className="bottom-6 md:absolute"
+                          variant="primary"
+                          onClick={() => downloadCode(codesValues, "qrCode")}
+                        >
                           Download Qrcode As Image
                           <div className="ml-2">
                             <ImageIcon className="h-4 w-4 text-white" />
@@ -292,19 +312,25 @@ export const CreativeMaterialDialogComponent = ({
                       </div>
                     </div>
                   </TabsContent>
-                  <TabsContent className="border-0 p-0" value="DirectLinkCode">
-                    <div className="-mx-3 mb-6 flex flex-wrap">
-                      <div className="w-full px-3">
+                  <TabsContent
+                    className="h-full border-0 p-0"
+                    value="DirectLinkCode"
+                  >
+                    <div className="-mx-3 flex h-full flex-wrap">
+                      <div className="h-full w-full px-3">
                         <textarea
-                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
+                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-md border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB] md:mb-12 md:h-[calc(100%-100px)]"
                           value={codesValues?.directLink}
                           id="grid-textarea"
                         />
                       </div>
                       <div className="flex w-full flex-wrap justify-end px-3">
                         <Button
+                          className="bottom-6 md:absolute"
                           variant="primary"
-                          onClick={DownloadDirectLinkText}
+                          onClick={() =>
+                            downloadCode(codesValues, "directLink")
+                          }
                         >
                           Download Sirect Link Code As Text
                           <div className="ml-2">

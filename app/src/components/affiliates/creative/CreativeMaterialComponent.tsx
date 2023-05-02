@@ -73,7 +73,7 @@ export const CreativeMaterialComponent = ({
         <div className="relative mx-auto mb-5 h-64 w-full rounded-xl">
           <ImageWithFallback src={file} alt={alt} />
           <div className="absolute right-0 top-0">
-            <Button size="rec">
+            <Button variant="primary-outline" size="rec">
               <Download className="w-4" />
             </Button>
           </div>
@@ -81,14 +81,12 @@ export const CreativeMaterialComponent = ({
         <div className="col-span-2 w-full rounded-xl">
           <div className=" bg-[#F5F8FA] p-4 md:px-8">
             <div className="justify-between md:flex">
-              <div className="mt-2 flex justify-between md:block">
-                <div>
-                  <label className="mb-1 block text-sm font-bold text-gray-700">
-                    {values[0]?.title}
-                  </label>
-                  <div className="h-12 text-sm text-[#353535] md:text-base">
-                    {values[0]?.value}
-                  </div>
+              <div className="mt-2 flex justify-between truncate md:block">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
+                  {values[0]?.title}
+                </label>
+                <div className="truncate text-sm text-[#353535] md:text-base">
+                  {values[0]?.value}
                 </div>
               </div>
               <div className="mt-2 flex justify-between md:block">
@@ -111,7 +109,7 @@ export const CreativeMaterialComponent = ({
               </div>
             </div>
 
-            <div className="flex">
+            <div className="flex md:pt-4">
               <div className="mt-2 truncate">
                 <label className="mb-1 block text-sm font-bold text-gray-700">
                   URL
@@ -121,7 +119,11 @@ export const CreativeMaterialComponent = ({
                 </div>
               </div>
               <div className="ml-5 mt-2">
-                <Button size="rec" onClick={onCopyClickUrl}>
+                <Button
+                  variant="primary-outline"
+                  size="rec"
+                  onClick={onCopyClickUrl}
+                >
                   <Copy className="w-4" />
                 </Button>
               </div>
@@ -160,19 +162,19 @@ export const CreativeMaterialComponent = ({
                 </div>
                 <div className="md:hidden">
                   <label className="mb-1 block text-sm font-bold text-gray-700">
-                    Language
+                    {values[5]?.title}
                   </label>
                   <div className="text-sm text-[#353535] md:text-base">
-                    English
+                    {values[5]?.value}
                   </div>
                 </div>
               </div>
               <div className="mt-2 hidden md:block">
                 <label className="mb-1 block text-sm font-bold text-gray-700">
-                  Language
+                  {values[5]?.title}
                 </label>
                 <div className="text-sm text-[#353535] md:text-base">
-                  English
+                  {values[5]?.value}
                 </div>
               </div>
             </div>
