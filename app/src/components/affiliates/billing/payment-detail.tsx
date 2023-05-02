@@ -4,6 +4,8 @@ import { Table } from "../invoice/Table";
 import { HeaderInformation } from "../invoice/header-information";
 import { Heading } from "../invoice/heading";
 import { styles } from "../invoice/styles";
+import { useCallback } from "react";
+import { PayAbleTo } from "../invoice/PayAbleTo";
 const tables = {
   table1: {
     columns: ["Merchant", "Deal Type", "Quantity", "Total Price"],
@@ -18,30 +20,44 @@ const tables = {
       { title: "Commission Total", value: 0 },
       { title: "Total Payment", value: 0 },
     ],
-    data: [""],
+    data: [
+      {
+        merchant: "",
+        deal: "",
+        unitPrice: "",
+        quantity: "",
+        price: "",
+      },
+    ],
   },
 };
+export interface affiliatesDetail {
+  id: number;
+  username: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+  mail: string;
+  phone: string;
+  city: string;
+  company: string;
+  country: string;
+  paymentMethod: string;
+  pay_account: string;
+  pay_email: string;
+  pay_country: number;
+  pay_company: string;
+  pay_bank: string;
+  pay_branch: string;
+  pay_swift: string;
+  credit: number;
+  sub_com: number;
+  pay_firstname: string;
+  pay_lastname: string;
+}
 interface Props {
   merchant: string;
-  affiliatesDetail: {
-    id: number;
-    username: string;
-    password: string;
-    first_name: string;
-    last_name: string;
-    mail: string;
-    phone: string;
-    city: string;
-    company: string;
-    country: string;
-    paymentMethod: string;
-    pay_account: string;
-    pay_email: string;
-    pay_country: number;
-    pay_company: string;
-    credit: number;
-    sub_com: number;
-  };
+  affiliatesDetail: affiliatesDetail;
   payments_paid: {
     id: number;
     month: string;
@@ -64,7 +80,6 @@ const PaymentDetail = ({
   merchant,
 }: Props) => {
   const previousMonthGap = payments_paid?.amount_gap_from_previous_month;
-
   const extraTotal =
     parseFloat(payments_paid?.extras.split("|")[2] ?? "0") *
     parseFloat(payments_paid?.extras.split("|")[3] ?? "0");
@@ -82,17 +97,19 @@ const PaymentDetail = ({
     }
   });
   tables.table1.footers.forEach((i) => (i.value = affiliatesDetail.sub_com));
-  tables.table2.data = [
-    merchant,
-    payments_paid?.extras.split("|")[1] ?? "",
-    payments_paid?.extras
-      ? formatPrice(parseFloat(payments_paid?.extras.split("|")[2] ?? "0"))
-      : "",
-    payments_paid?.extras.split("|")[3] ?? "",
-    formatPrice(extraTotal),
-  ];
-  console.log(tables);
-  console.log(tables.table1.data.length);
+  const extras = payments_paid?.extras.split("[var]");
+
+  tables.table2.data = extras.map((extra) => {
+    return {
+      merchant,
+      deal: extra.split("|")[1] ?? "",
+      unitPrice: extra
+        ? formatPrice(parseFloat(extra.split("|")[2] ?? "0"))
+        : "",
+      quantity: extra.split("|")[3] ?? "",
+      price: formatPrice(extraTotal),
+    };
+  });
 
   return (
     <>
@@ -109,10 +126,12 @@ const PaymentDetail = ({
                 title="Affiliate Payment Form"
               />
               <HeaderInformation
+                style={styles.headerFlexDiv}
                 title="Payment #"
                 value={payments_paid?.paymentID}
               />
               <HeaderInformation
+                style={styles.headerFlexDiv}
                 title="Month"
                 value={`${payments_paid?.month}/${payments_paid?.year}`}
               />
@@ -125,17 +144,9 @@ const PaymentDetail = ({
           <div style={styles.page}>
             <View style={styles.section}>
               <Heading title="Payable to :" />
-              <HeaderInformation
-                title="Payment Method:"
-                value={affiliatesDetail?.paymentMethod}
-              />
-              <HeaderInformation
-                title="Address:"
-                value={affiliatesDetail?.pay_account}
-              />
-              <HeaderInformation
-                title="Name:"
-                value={affiliatesDetail?.pay_company}
+              <PayAbleTo
+                bank={affiliatesDetail?.paymentMethod}
+                affiliatesDetail={affiliatesDetail}
               />
             </View>
             <View style={styles.section}>

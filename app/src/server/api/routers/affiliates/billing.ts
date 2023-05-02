@@ -86,9 +86,23 @@ export const getPaymentDetails = publicProcedure
       where: {
         month: payments_paid?.month,
         year: payments_paid?.year,
-        reportType: "bonus",
+        reportType: "sub",
         paymentID: payments_paid?.paymentID,
         status: "approved",
+      },
+    });
+    const commissionReport = await ctx.prisma.payments_details.aggregate({
+      where: {
+        month: payments_paid?.month,
+        year: payments_paid?.year,
+        reportType: "sub",
+        paymentID: paymentId,
+      },
+      _sum: {
+        amount: true,
+      },
+      _count: {
+        id: true,
       },
     });
     const merchants = await ctx.prisma.merchants.findFirst({
@@ -103,5 +117,6 @@ export const getPaymentDetails = publicProcedure
       affiliatesDetail,
       bonusesDetail,
       merchants,
+      commissionReport,
     };
   });

@@ -1,9 +1,9 @@
 # New Developer Checklist
 
 ## Setup
-- [ ] make sure you connect to Slack, share email address to get invite
+- [ ] make sure you connect to Slack, share email address here in this issue to get invite
 - [ ] Get GitHub access tp repo https://github.com/affiliatets-com/aff, share your GitHub username
-- [ ] Get .env file and save in ./app
+- [ ] Get .env file and save in ./app/.env
 - [ ] Start to app
 
 ```bash
