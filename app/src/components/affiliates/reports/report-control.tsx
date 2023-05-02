@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/common/page/page-header";
 import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { SearchDateRange } from "@/components/common/search/search-date-range";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Pagination } from "@/components/ui/pagination";
 import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
@@ -32,6 +33,7 @@ export const ReportControl = <Data extends object>({
   footerData,
   handleExport,
 }: Props<Data>) => {
+  console.log("columns: ", columns);
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [selectColumnsMode, setSelectColumnsMode] = useState<string[] | null>(
@@ -39,6 +41,8 @@ export const ReportControl = <Data extends object>({
   );
 
   const handleColumnChange = (fieldName: string, checked: boolean) => {
+    console.log("fieldName: ", fieldName);
+    console.log("checked: ", checked);
     if (selectColumnsMode) {
       if (checked) {
         setSelectColumnsMode([...selectColumnsMode, fieldName]);
@@ -58,6 +62,8 @@ export const ReportControl = <Data extends object>({
       refetchOnWindowFocus: false,
     }
   );
+
+  console.log("reportsColumns: ", reportsColumns);
 
   const upsertReportsColumns =
     api.affiliates.upsertReportsColumns.useMutation();
@@ -114,13 +120,29 @@ export const ReportControl = <Data extends object>({
         <SearchApply isLoading={isRefetching} />
       </div>
 
+      {selectColumnsMode &&
+        columns.map((item: any) => (
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id={item.accessorKey}
+              name={item.accessorKey}
+              checked={selectColumnsMode?.includes(item.accessorKey)}
+              onCheckedChange={(checked: any) => {
+                handleColumnChange(item.accessorKey, checked);
+              }}
+            />
+            <label
+              htmlFor={item.accessorKey}
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              {item.accessorKey}
+            </label>
+          </div>
+        ))}
       <ReportDataTable
         report={report}
         columns={columns}
         footerData={footerData}
-        selectColumnsMode={!!selectColumnsMode}
-        selectColumnsModeData={selectColumnsMode}
-        handleCheckboxChange={handleColumnChange}
       />
       <div className="grid grid-cols-2 gap-2">
         <Pagination
