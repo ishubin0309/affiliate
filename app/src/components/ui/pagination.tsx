@@ -59,20 +59,20 @@ export const Pagination = ({
     <nav className="flex items-center justify-start space-x-2">
       <ReactPaginate
         breakLabel="..."
-        nextLabel=">>"
+        nextLabel={<ChevronsRight />}
         onPageChange={handlePageClick}
         pageCount={pageCount}
-        previousLabel="<<"
+        previousLabel={<ChevronsLeft />}
         renderOnZeroPageCount={null}
-        activeClassName={"item active "}
-        breakClassName={"item break-me "}
-        containerClassName={"pagination"}
-        disabledClassName={"disabled-page"}
+        activeClassName="paginate-item paginate-active"
+        breakClassName="paginate-item paginate-break-me "
+        containerClassName="paginate-pagination"
+        disabledClassName="paginate-disabled-page"
         marginPagesDisplayed={2}
-        nextClassName={"item next "}
-        pageClassName={"item pagination-page "}
+        nextClassName="paginate-item paginate-next"
+        pageClassName="paginate-item paginate-pagination-page"
         pageRangeDisplayed={2}
-        previousClassName={"item previous"}
+        previousClassName="paginate-item paginate-previous"
       />
 
       <div className="mt-0">

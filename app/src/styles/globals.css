@@ -191,8 +191,8 @@
 
 /* React paginate css starts */
 
-/* .item must be first */
-.item {
+/* .paginate-item must be first */
+.paginate-item {
   align-items: center;
   background-color: #fff;
   border-radius: 10px;
@@ -207,27 +207,24 @@
   width: 40px;
 }
 
-.disabled-page {
+.paginate-disabled-page {
   pointer-events: none;
   color: #b3a9a9;
 }
 
-.active {
+.paginate-active {
   background-color: #2160c4;
   color: #fff;
   border-radius: 10px;
 }
 
-.break-me {
-}
-
-.next {
+.paginate-next {
   background-color: transparent;
   height: 40px;
   right: 0;
 }
 
-.pagination {
+.paginate-pagination {
   align-items: center;
   color: #2160c4;
   display: flex;
@@ -240,11 +237,11 @@
   max-width: 60vw;
 }
 
-.pagination-page {
+.paginate-pagination-page {
   font-weight: 700;
 }
 
-.previous {
+.paginate-previous {
   background-color: transparent;
   height: 40px;
   left: 0;
