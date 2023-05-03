@@ -33,6 +33,8 @@ export const ReportControl = <Data extends object>({
   footerData,
   handleExport,
 }: Props<Data>) => {
+  console.log("footerData: ", footerData);
+  console.log("report: ", report);
   console.log("columns: ", columns);
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -120,28 +122,43 @@ export const ReportControl = <Data extends object>({
         <SearchApply isLoading={isRefetching} />
       </div>
 
-      {selectColumnsMode &&
-        columns.map((item: any) => (
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id={item.accessorKey}
-              name={item.accessorKey}
-              checked={selectColumnsMode?.includes(item.accessorKey)}
-              onCheckedChange={(checked: any) => {
-                handleColumnChange(item.accessorKey, checked);
-              }}
-            />
-            <label
-              htmlFor={item.accessorKey}
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              {item.accessorKey}
-            </label>
-          </div>
-        ))}
+      <div
+        className={`mt-4 overflow-hidden transition-all duration-500	 ${
+          selectColumnsMode ? "h-52 md:h-28" : "h-0"
+        }`}
+      >
+        <div className="bg-white p-4 shadow">
+          {columns.map((item: any) => (
+            <div className="mr-5 inline-block">
+              <div
+                key={item.accessorKey}
+                className="flex items-center space-x-2"
+              >
+                <Checkbox
+                  className=""
+                  id={item.accessorKey}
+                  name={item.accessorKey}
+                  checked={selectColumnsMode?.includes(item.accessorKey)}
+                  onCheckedChange={(checked: boolean) => {
+                    handleColumnChange(item.accessorKey, checked);
+                  }}
+                />
+                <label
+                  htmlFor={item.header}
+                  className="cursor-pointer text-sm font-medium leading-none"
+                >
+                  {item.header}
+                </label>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
       <ReportDataTable
         report={report}
-        columns={columns}
+        columns={columns.filter((item: any) =>
+          reportsColumns?.includes(item.accessorKey)
+        )}
         footerData={footerData}
       />
       <div className="grid grid-cols-2 gap-2">
