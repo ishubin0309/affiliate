@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { PageInfo } from "@/server/api/routers/affiliates/reports/reports-utils";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import {
   flexRender,
