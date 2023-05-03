@@ -10,7 +10,7 @@ import React from "react";
 import { api } from "../../../utils/api";
 import { CreativeMaterialComponent } from "./CreativeMaterialComponent";
 
-const renderRow = (item: MerchantCreativeType, toggleShow: boolean) => {
+const renderRow = (item: MerchantCreativeType, gridView: boolean) => {
   const values = [
     // { title: "Id", value: item.id },
     { title: "Creative Name", value: item.title },
@@ -34,7 +34,7 @@ const renderRow = (item: MerchantCreativeType, toggleShow: boolean) => {
       alt={item.alt}
       url={item.url}
       creative_id={item.id}
-      toggleShow={toggleShow}
+      gridView={gridView}
     />
   );
 };
@@ -44,7 +44,7 @@ export const CreativeMaterial = () => {
     values: { creative: search, type, category, language, size, promotion },
   } = useSearchContext();
 
-  const [toggleShow, setToggleShow] = React.useState(false);
+  const [gridView, setGridView] = React.useState(false);
 
   const { data: meta } = api.affiliates.getMerchantCreativeMeta.useQuery(
     undefined,
@@ -68,18 +68,18 @@ export const CreativeMaterial = () => {
 
   console.log(data);
 
-  const handleChangeToggleShow = () => {
-    setToggleShow(!toggleShow);
+  const handleChangeGridView = () => {
+    setGridView(!gridView);
   };
 
   return data ? (
     <div className="w-full">
       <PageHeader title="Marketing Tools" subTitle="Creative Materials">
         <div
-          onClick={handleChangeToggleShow}
+          onClick={handleChangeGridView}
           className="hidden cursor-pointer md:block"
         >
-          {toggleShow ? <TableToggleIcon /> : <GridToggleIcon />}
+          {gridView ? <TableToggleIcon /> : <GridToggleIcon />}
         </div>
       </PageHeader>
       <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
@@ -110,9 +110,9 @@ export const CreativeMaterial = () => {
         <SearchApply isLoading={isRefetching} />
       </div>
       <div
-        className={"grid gap-4 " + (toggleShow ? "grid-cols-4" : "grid-cols-1")}
+        className={"grid gap-4 " + (gridView ? "grid-cols-4" : "grid-cols-1")}
       >
-        {data?.map((item) => renderRow(item, toggleShow))}
+        {data?.map((item) => renderRow(item, gridView))}
       </div>
     </div>
   ) : (

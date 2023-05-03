@@ -1,62 +1,88 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
-import { useState } from "react";
-import { Button } from "../../ui/button";
+import { Minus, Plus } from "lucide-react";
+import { useRef, useState } from "react";
 
 interface IProps {
   setParametersValue?: (value: string[]) => void;
 }
 
-interface InputField {
-  type: string;
-  value: string;
-  placeholder: string;
-}
-
 export function AddDynamicParameter({ setParametersValue }: IProps) {
   const [dynamicParameterDisabled, setDynamicParameterDisabled] =
     useState<boolean>(false);
-  const [inputFields, setInputFields] = useState<InputField[]>([]);
+
+  const [inputValues, setInputValues] = useState<string[]>([""]);
+
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const addInput = () => {
-    const newInputFields = [
-      ...inputFields,
-      {
-        type: "text",
-        value: "",
-        placeholder: `Add parameter ${inputFields.length + 1}`,
-      },
-    ];
-    setInputFields(newInputFields);
-    if (newInputFields.length === 9) {
+    // Check if there is any empty field
+    const emptyIndex = inputValues.findIndex((value) => value === "");
+
+    // If there is an empty field, focus on it and return
+    if (emptyIndex !== -1) {
+      inputRefs.current[emptyIndex]?.focus();
+      return;
+    }
+
+    // Add a new input field if there are no empty fields
+    const newInputValues = [...inputValues, ""];
+    setInputValues(newInputValues);
+
+    // Disable adding more fields if the maximum limit is reached
+    if (newInputValues.length === 9) {
       setDynamicParameterDisabled(true);
     }
   };
 
-  const inputFieldElements = inputFields.map((inputField, index) => (
-    <div key={index} className="mt-4 w-full">
+  const removeInput = (index: number) => {
+    const newInputValues = inputValues.filter((_, i) => i !== index);
+    setInputValues(newInputValues);
+    if (dynamicParameterDisabled && newInputValues.length < 9) {
+      setDynamicParameterDisabled(false);
+    }
+  };
+
+  const editInput = (index: number, value: string) => {
+    const newInputValues = [...inputValues];
+    newInputValues[index] = value;
+    setInputValues(newInputValues);
+  };
+
+  const inputFieldElements = inputValues.map((value, index) => (
+    <div key={`input_${index}`} className="mb-2 flex w-full">
       <Input
+        ref={(el) => (inputRefs.current[index] = el)}
         className="w-full"
-        id={String(index)}
-        type={inputField.type}
-        placeholder={inputField.placeholder}
-        value={inputField.value}
+        id={`input_${index}`}
+        type="text"
+        placeholder="Add parameter"
+        value={value}
+        onChange={(e) => editInput(index, e.target.value)}
       />
+      {index >= 1 && (
+        <Button
+          variant="primary"
+          className="ml-2 h-10 w-10"
+          size="rec"
+          onClick={() => removeInput(index)}
+        >
+          <Minus className="h-4 w-4" />
+        </Button>
+      )}
+      {index === 0 && (
+        <Button
+          disabled={dynamicParameterDisabled}
+          variant="primary"
+          className="ml-2 h-10 w-10"
+          size="rec"
+          onClick={addInput}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   ));
 
-  return (
-    <>
-      <Button
-        disabled={dynamicParameterDisabled}
-        variant="primary"
-        className="ml-2 h-10 w-10"
-        size="rec"
-        onClick={addInput}
-      >
-        <Plus className="h-4 w-4" />
-      </Button>
-      {inputFieldElements}
-    </>
-  );
+  return <>{inputFieldElements}</>;
 }

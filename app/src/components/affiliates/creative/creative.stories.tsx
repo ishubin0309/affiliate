@@ -32,7 +32,7 @@ export const CreativeMaterial = {
       alt={"CKcasino Logo"}
       url={"https://ckcasino.com/#/lobby"}
       creative_id={1}
-      toggleShow={true}
+      gridView={true}
     />
   ),
 };
@@ -43,7 +43,7 @@ export const MaterialDialog = {
       isOpen={true}
       values={values}
       creative_id={1}
-      toggleShow={true}
+      gridView={true}
     />
   ),
   parameters: {
