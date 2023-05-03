@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import { SettingsIcon } from "lucide-react";
 import React from "react";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
+import type { usePagination } from "@/components/common/data-table/pagination-hook";
 
 interface Props<Data extends object> extends ReportDataTableProps<Data> {
   reportName: string;

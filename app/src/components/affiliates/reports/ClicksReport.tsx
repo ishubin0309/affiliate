@@ -76,8 +76,8 @@ export const ClicksReport = () => {
 
   const { data, isLoading } = api.affiliates.getClicksReport.useQuery(
     {
-      from: getDateParam(20201031),
-      to: getDateParam(20231031),
+      from: getDateParam(from),
+      to: getDateParam(to),
       type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
       merchant_id: getNumberParam(merchant_id),
       trader_id,
@@ -87,20 +87,19 @@ export const ClicksReport = () => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
-  const { mutateAsync: reportExport } =
-    api.affiliates.exportClicksReport.useMutation();
+  // const { mutateAsync: reportExport } =
+  //   api.affiliates.exportClicksReport.useMutation();
 
-  const handleExport = async (exportType: ExportType) =>
-    reportExport({
-      from: getDateParam(20201031),
-      to: getDateParam(20231031),
-      type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
-      merchant_id: getNumberParam(merchant_id),
-      trader_id,
-      unique_id,
-      pageParams: pagination.pageParams,
-      exportType,
-    });
+  const handleExport = async (exportType: ExportType) => {
+    return Promise.resolve("ok");
+  };
+  // reportExport({
+  //   type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
+  //   merchant_id: getNumberParam(merchant_id),
+  //   trader_id,
+  //   unique_id,
+  //   exportType,
+  // });
 
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery(
     undefined,
@@ -114,7 +113,7 @@ export const ClicksReport = () => {
       columns={columns}
       pagination={pagination}
       isRefetching={isLoading}
-      handleExport={(exportType: ExportType) => handleExport(exportType)}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
     >
       <SearchSelect
         label="Merchant"
