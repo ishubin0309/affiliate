@@ -122,11 +122,8 @@ export const ReportControl = <Data extends object>({
       >
         <div className="bg-white p-4 shadow">
           {columns.map((item: any) => (
-            <div className="mr-5 inline-block">
-              <div
-                key={item.accessorKey}
-                className="flex items-center space-x-2"
-              >
+            <div className="mr-5 inline-block" key={item.accessorKey}>
+              <div className="flex items-center space-x-2">
                 <Checkbox
                   className=""
                   id={item.accessorKey}
