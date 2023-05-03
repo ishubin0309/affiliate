@@ -125,7 +125,7 @@ export const ReportControl = <Data extends object>({
             <div className="mr-5 inline-block" key={item.accessorKey}>
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  className=""
+                  className="w-[18px] h-[18px]"
                   id={item.accessorKey}
                   name={item.accessorKey}
                   checked={selectColumnsMode?.includes(item.accessorKey)}
