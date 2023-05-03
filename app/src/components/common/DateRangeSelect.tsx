@@ -155,8 +155,6 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
 
   const { name, from, to } = getDateRange(value);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
 
@@ -195,7 +193,7 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
     <>
       <FormControl>
         <HStack>
-          <div>
+          <div className="text-center">
             <div className="relative inline-block">
               <select
                 className="flex h-full cursor-pointer appearance-none items-center space-x-2 rounded border border-[#D7D7D7] bg-white py-4 pl-2 pr-8 text-xs md:py-2 md:pl-6 md:pr-14 md:text-base"
@@ -233,32 +231,31 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
             </div> */}
 
             <div className="inline-block">
-              <label className="float-left mt-2 px-0 text-sm font-medium text-[#525252] md:px-4">
-                Start Date:
-              </label>
-              <div className="ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-base">
-                <DatePicker
-                  selected={from}
-                  onChange={async (date: Date) => {
-                    setFromDate(date);
-                    await handleOnchage(date, to);
-                  }}
-                ></DatePicker>
+              <div className="inline-block">
+                <div className="customDatePickerStyling ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-base">
+                  <DatePicker
+                    selected={from}
+                    onChange={async (date: Date) => {
+                      setFromDate(date);
+                      await handleOnchage(date, to);
+                    }}
+                  ></DatePicker>
+                </div>
               </div>
-            </div>
 
-            <div className="inline-block">
-              <label className="float-left mt-2 px-0 text-sm font-medium text-[#525252] md:px-4">
-                End Date:
-              </label>
-              <div className="ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-base">
-                <DatePicker
-                  selected={to}
-                  onChange={async (date: Date) => {
-                    setToDate(date);
-                    await handleOnchage(from, date);
-                  }}
-                ></DatePicker>
+              <div className="inline-block">
+                <label className="float-left mt-2 px-0 text-sm font-bold text-[#525252] md:px-4">
+                  To:
+                </label>
+                <div className="customDatePickerStyling ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xl md:px-4 md:text-base">
+                  <DatePicker
+                    selected={to}
+                    onChange={async (date: Date) => {
+                      setToDate(date);
+                      await handleOnchage(from, date);
+                    }}
+                  ></DatePicker>
+                </div>
               </div>
             </div>
           </div>
@@ -273,48 +270,6 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
         /> */}
         </HStack>
       </FormControl>
-      <Modal isOpen={isOpen} size="3xl" onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent ml={4} mr={4}>
-          <div className="flex items-end justify-between pl-6 pt-4 md:pl-8">
-            <div className="font-medium text-[#282560]">Add Date</div>
-            <Image
-              alt="..."
-              className="mr-4 h-10 w-10 rounded-full align-middle "
-              src="/img/icons/close.png"
-              onClick={onClose}
-            />
-          </div>
-
-          <ModalBody>
-            {/* <div className="mt-2 max-w-lg md:mt-7">
-              <label className="px-0 text-sm font-medium text-[#525252] md:px-4">
-                Start Date
-              </label>
-              <div className="px-0 pt-2 md:px-2">
-                <DatePicker
-                  date={fromDate}
-                  onChange={setFromDate}
-                  handleOnchage={handleOnchage}
-                ></DatePicker>
-              </div>
-            </div>
-
-            <div className="mt-2 max-w-lg pb-10 md:mt-7 md:pb-80">
-              <label className="px-0 text-sm font-medium text-[#525252] md:px-4">
-                End Date
-              </label>
-              <div className="px-0 pt-2 md:px-2">
-                <DatePicker
-                  date={toDate}
-                  onChange={setToDate}
-                  handleOnchage={handleOnchage}
-                ></DatePicker>
-              </div>
-            </div> */}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
     </>
   );
 };
