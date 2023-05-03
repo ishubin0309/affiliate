@@ -33,9 +33,6 @@ export const ReportControl = <Data extends object>({
   footerData,
   handleExport,
 }: Props<Data>) => {
-  console.log("footerData: ", footerData);
-  console.log("report: ", report);
-  console.log("columns: ", columns);
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [selectColumnsMode, setSelectColumnsMode] = useState<string[] | null>(
@@ -43,8 +40,6 @@ export const ReportControl = <Data extends object>({
   );
 
   const handleColumnChange = (fieldName: string, checked: boolean) => {
-    console.log("fieldName: ", fieldName);
-    console.log("checked: ", checked);
     if (selectColumnsMode) {
       if (checked) {
         setSelectColumnsMode([...selectColumnsMode, fieldName]);
@@ -64,8 +59,6 @@ export const ReportControl = <Data extends object>({
       refetchOnWindowFocus: false,
     }
   );
-
-  console.log("reportsColumns: ", reportsColumns);
 
   const upsertReportsColumns =
     api.affiliates.upsertReportsColumns.useMutation();
