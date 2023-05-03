@@ -1,4 +1,4 @@
-// import DatePicker from "react-datepicker";
+import DatePicker from "react-datepicker";
 import {
   FormControl,
   HStack,
@@ -25,7 +25,7 @@ import { Calendar } from "lucide-react";
 import { queryTypes, useQueryState } from "next-usequerystate";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { DatePicker } from "./datepicker/Datepicker";
+// import { DatePicker } from "./datepicker/Datepicker";
 
 export type DateRange =
   | "today"
@@ -164,7 +164,7 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
     return setValue(formatValueDateRange(from, to));
   };
 
-  const handleOnchage = async () => {
+  const handleOnchage = async (fromDate: Date, toDate: Date) => {
     await setDateRange(fromDate, toDate);
   };
 
@@ -195,8 +195,8 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
     <>
       <FormControl>
         <HStack>
-          <div className="flex">
-            <div className="relative">
+          <div>
+            <div className="relative inline-block">
               <select
                 className="flex h-full cursor-pointer appearance-none items-center space-x-2 rounded border border-[#D7D7D7] bg-white py-4 pl-2 pr-8 text-xs md:py-2 md:pl-6 md:pr-14 md:text-base"
                 placeholder="Select date range"
@@ -223,13 +223,43 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
               </div>
             </div>
 
-            <div
+            {/* <div
               className="ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-base"
               onClick={onOpen}
             >
               {from.getDate()} {month[from.getMonth()]} {from.getFullYear()}{" "}
               &nbsp;&nbsp; TO &nbsp;&nbsp;
               {to.getDate()} {month[to.getMonth()]} {to.getFullYear()}
+            </div> */}
+
+            <div className="inline-block">
+              <label className="float-left mt-2 px-0 text-sm font-medium text-[#525252] md:px-4">
+                Start Date:
+              </label>
+              <div className="ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-base">
+                <DatePicker
+                  selected={from}
+                  onChange={async (date: Date) => {
+                    setFromDate(date);
+                    await handleOnchage(date, to);
+                  }}
+                ></DatePicker>
+              </div>
+            </div>
+
+            <div className="inline-block">
+              <label className="float-left mt-2 px-0 text-sm font-medium text-[#525252] md:px-4">
+                End Date:
+              </label>
+              <div className="ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-base">
+                <DatePicker
+                  selected={to}
+                  onChange={async (date: Date) => {
+                    setToDate(date);
+                    await handleOnchage(from, date);
+                  }}
+                ></DatePicker>
+              </div>
             </div>
           </div>
 
@@ -257,7 +287,7 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
           </div>
 
           <ModalBody>
-            <div className="mt-2 max-w-lg md:mt-7">
+            {/* <div className="mt-2 max-w-lg md:mt-7">
               <label className="px-0 text-sm font-medium text-[#525252] md:px-4">
                 Start Date
               </label>
@@ -281,7 +311,7 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
                   handleOnchage={handleOnchage}
                 ></DatePicker>
               </div>
-            </div>
+            </div> */}
           </ModalBody>
         </ModalContent>
       </Modal>
