@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { PageInfo } from "@/server/api/routers/affiliates/reports/reports-utils";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import {
   flexRender,
@@ -8,8 +9,6 @@ import {
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import * as React from "react";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
-import { PageInfo } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export type ReportDataTableProps<Data extends object> = {
   report:
