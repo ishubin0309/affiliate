@@ -1,104 +1,71 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Minus, Plus } from "lucide-react";
-import { useState } from "react";
-import { Button } from "../../ui/button";
+import { useRef, useState } from "react";
 
 interface IProps {
   setParametersValue?: (value: string[]) => void;
-}
-
-interface InputField {
-  id: string;
-  type: string;
-  value: string;
-  placeholder: string;
 }
 
 export function AddDynamicParameter({ setParametersValue }: IProps) {
   const [dynamicParameterDisabled, setDynamicParameterDisabled] =
     useState<boolean>(false);
 
-  const generateId = () => {
-    return Math.random().toString(36).substr(2, 9);
-  };
-  const [inputFields, setInputFields] = useState<InputField[]>([
-    {
-      id: generateId(),
-      type: "text",
-      value: "",
-      placeholder: "Add parameter",
-    },
-  ]);
+  const [inputValues, setInputValues] = useState<string[]>([""]);
+
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const addInput = () => {
     // Check if there is any empty field
-    const emptyField = inputFields.find(
-      (inputField) => inputField.value === ""
-    );
+    const emptyIndex = inputValues.findIndex((value) => value === "");
 
     // If there is an empty field, focus on it and return
-    if (emptyField) {
-      document.getElementById(emptyField.id)?.focus();
+    if (emptyIndex !== -1) {
+      inputRefs.current[emptyIndex]?.focus();
       return;
     }
 
     // Add a new input field if there are no empty fields
-    const newInputFields = [
-      ...inputFields,
-      {
-        id: generateId(),
-        type: "text",
-        value: "",
-        placeholder: `Add parameter`,
-      },
-    ];
-    setInputFields(newInputFields);
+    const newInputValues = [...inputValues, ""];
+    setInputValues(newInputValues);
 
     // Disable adding more fields if the maximum limit is reached
-    if (newInputFields.length === 9) {
+    if (newInputValues.length === 9) {
       setDynamicParameterDisabled(true);
     }
   };
 
-  const removeInput = (id: string) => {
-    const newInputFields = inputFields.filter(
-      (inputField) => inputField.id !== id
-    );
-    setInputFields(newInputFields);
-    if (dynamicParameterDisabled && newInputFields.length < 9) {
+  const removeInput = (index: number) => {
+    const newInputValues = inputValues.filter((_, i) => i !== index);
+    setInputValues(newInputValues);
+    if (dynamicParameterDisabled && newInputValues.length < 9) {
       setDynamicParameterDisabled(false);
     }
   };
 
-  const editInput = (id: string, value: string) => {
-    const newInputFields = inputFields.map((inputField) => {
-      if (inputField.id === id) {
-        return {
-          ...inputField,
-          value: value,
-        };
-      }
-      return inputField;
-    });
-    setInputFields(newInputFields);
+  const editInput = (index: number, value: string) => {
+    const newInputValues = [...inputValues];
+    newInputValues[index] = value;
+    setInputValues(newInputValues);
   };
 
-  const inputFieldElements = inputFields.map((inputField, index) => (
-    <div key={inputField.id} className="mb-2 flex w-full">
+  const inputFieldElements = inputValues.map((value, index) => (
+    <div key={`input_${index}`} className="mb-2 flex w-full">
       <Input
+        ref={(el) => (inputRefs.current[index] = el)}
         className="w-full"
-        id={inputField.id}
-        type={inputField.type}
-        placeholder={inputField.placeholder}
-        value={inputField.value}
-        onChange={(e) => editInput(inputField.id, e.target.value)}
+        id={`input_${index}`}
+        type="text"
+        placeholder="Add parameter"
+        value={value}
+        onChange={(e) => editInput(index, e.target.value)}
       />
       {index >= 1 && (
         <Button
           variant="primary"
           className="ml-2 h-10 w-10"
           size="rec"
-          onClick={() => removeInput(inputField.id)}
+          onClick={() => removeInput(index)}
         >
           <Minus className="h-4 w-4" />
         </Button>
