@@ -1,15 +1,5 @@
 import DatePicker from "react-datepicker";
 import {
-  FormControl,
-  HStack,
-  Image,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
-  useDisclosure,
-} from "@chakra-ui/react";
-import {
   endOfDay,
   endOfMonth,
   endOfYear,
@@ -25,6 +15,7 @@ import { Calendar } from "lucide-react";
 import { queryTypes, useQueryState } from "next-usequerystate";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { SelectInput } from "@/components/common/select-input";
 // import { DatePicker } from "./datepicker/Datepicker";
 
 export type DateRange =
@@ -38,6 +29,18 @@ export type DateRange =
   | "last-year";
 
 type CustomDateRange = DateRange | "custom";
+
+export const dateRangeChoices = [
+  { id: "today", title: "Today" },
+  { id: "yesterday", title: "Yesterday" },
+  { id: "this-week", title: "This Week" },
+  { id: "month-to-date", title: "Month to Date" },
+  { id: "last-month", title: "Last Month" },
+  { id: "last-6-month", title: "Last 6 Month" },
+  { id: "year-to-date", title: "Year to Date" },
+  { id: "last-year", title: "Last Year" },
+  { id: "custom", title: "Custom" },
+];
 
 const formatValueDateRange = (
   from: Date | null | undefined,
@@ -93,7 +96,7 @@ const getPredefinedDateRange = (value?: string | null) => {
   return range;
 };
 
-const getDateRange = (value?: string) => {
+export const getDateRange = (value?: string) => {
   let range;
   const regex = /^(\d{8})-(\d{8})$/gm;
 
@@ -191,37 +194,21 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
 
   return (
     <>
-      <FormControl>
-        <HStack>
-          <div className="text-center">
-            <div className="relative inline-block">
-              <select
-                className="flex h-full cursor-pointer appearance-none items-center space-x-2 rounded border border-[#D7D7D7] bg-white py-4 pl-2 pr-8 text-xs md:py-2 md:pl-6 md:pr-14 md:text-base"
-                placeholder="Select date range"
-                value={name}
-                onChange={(event) => {
-                  if (event.target.value !== "custom") {
-                    void handleSelectDateRange(event.target.value as DateRange);
-                  }
-                }}
-              >
-                <option value="today">Today</option>
-                <option value="yesterday">Yesterday</option>
-                <option value="this-week">This Week</option>
-                <option value="month-to-date">Month to Date</option>
-                <option value="last-month">Last Month</option>
-                <option value="last-6-month">Last 6 Month</option>
-                <option value="year-to-date">Year to Date</option>
-                <option value="last-year">Last Year</option>
-                <option value="custom">Custom</option>
-              </select>
+      <div>
+        <div className="relative my-1 mr-2 inline-block lg:my-0">
+          <SelectInput
+            choices={dateRangeChoices}
+            value={name}
+            onChange={(value) => {
+              if (value !== "custom") {
+                void handleSelectDateRange(value as DateRange);
+              }
+            }}
+            placeholder="Select date range"
+          />
+        </div>
 
-              <div className="absolute right-2 -mt-9 cursor-pointer md:right-6 md:-mt-8 ">
-                <Calendar className="h-6 w-6" />
-              </div>
-            </div>
-
-            {/* <div
+        {/* <div
               className="ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-base"
               onClick={onOpen}
             >
@@ -230,46 +217,32 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
               {to.getDate()} {month[to.getMonth()]} {to.getFullYear()}
             </div> */}
 
-            <div className="inline-block">
-              <div className="inline-block">
-                <div className="customDatePickerStyling ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-base">
-                  <DatePicker
-                    selected={from}
-                    onChange={async (date: Date) => {
-                      setFromDate(date);
-                      await handleOnchage(date, to);
-                    }}
-                  ></DatePicker>
-                </div>
-              </div>
-
-              <div className="inline-block">
-                <label className="float-left mt-2 px-0 text-sm font-bold text-[#525252] md:px-4">
-                  To:
-                </label>
-                <div className="customDatePickerStyling ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xl md:px-4 md:text-base">
-                  <DatePicker
-                    selected={to}
-                    onChange={async (date: Date) => {
-                      setToDate(date);
-                      await handleOnchage(from, date);
-                    }}
-                  ></DatePicker>
-                </div>
-              </div>
+        <div className="inline-block">
+          <div className="inline-block">
+            <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-sm lg:my-0">
+              <DatePicker
+                selected={from}
+                onChange={async (date: Date) => {
+                  setFromDate(date);
+                  await handleOnchage(date, to);
+                }}
+              ></DatePicker>
             </div>
           </div>
-
-          {/* <DatePicker
-          selected={from}
-          onChange={(date) => setDateRange(date, to)}
-        />
-        <DatePicker
-          selected={to}
-          onChange={(date) => setDateRange(from, date)}
-        /> */}
-        </HStack>
-      </FormControl>
+          <label className="px-1 text-sm text-[#525252]">To</label>
+          <div className="inline-block">
+            <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-sm lg:my-0">
+              <DatePicker
+                selected={to}
+                onChange={async (date: Date) => {
+                  setToDate(date);
+                  await handleOnchage(from, date);
+                }}
+              ></DatePicker>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

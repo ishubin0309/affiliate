@@ -258,7 +258,7 @@
 /* React date picker width starts */
 
 .customDatePickerStyling > div > div.react-datepicker__input-container > input {
-  width: 8rem;
+  width: 5rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
 }

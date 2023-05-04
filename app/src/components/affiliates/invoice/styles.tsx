@@ -57,12 +57,13 @@ export const styles = StyleSheet.create({
     borderTopWidth: 0,
   },
   tableHeadingCol: {
-    width: "20%",
+    // width: "20%",
     borderStyle: "solid",
     borderWidth: 1,
     borderLeftWidth: 0,
     borderTopWidth: 0,
     backgroundColor: "#C9C9C9",
+    textAlign: "center",
   },
   tableCol75: {
     width: "80%",
@@ -72,7 +73,7 @@ export const styles = StyleSheet.create({
     borderTopWidth: 0,
   },
   tableCell: {
-    margin: "auto",
+    // margin: "auto",
     marginTop: 3,
     marginBottom: 2,
     fontSize: 10,
