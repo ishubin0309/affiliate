@@ -1,6 +1,7 @@
 #!/usr/bin/env zx
 
 // ./deploy-process.mjs --step=secret
+// ./deploy-process.mjs --step=verify --prod
 // ./deploy-process.mjs --step=dns
 // ./deploy-process.mjs --step=secret --prod
 // ./deploy-process.mjs --step=secret
