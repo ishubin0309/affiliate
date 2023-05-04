@@ -2,8 +2,8 @@ import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
 import { Form } from "@/components/common/forms/Form";
 import { useTranslation } from "next-i18next";
 
-const FormTestComponent = (args: any) => {
-  const { t } = useTranslation("affiliate");
+export const FormTestComponent = (args: any) => {
+  const { t } = useTranslation("common");
   const formContext = usePrepareSchema(t, args.schema);
 
   const onSubmit = (values: any) => {

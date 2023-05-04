@@ -1,5 +1,5 @@
 import { Document, Image, Page, Text, View } from "@react-pdf/renderer";
-import { formatPrice } from "../../../utils/format";
+import { convertToNumber, formatPrice } from "../../../utils/format";
 import { PayAbleTo } from "../invoice/PayAbleTo";
 import { Table } from "../invoice/Table";
 import { HeaderInformation } from "../invoice/header-information";
@@ -107,19 +107,6 @@ const PaymentDetail = ({
   const extraTotal =
     parseFloat(payments_paid?.extras.split("|")[2] ?? "0") *
     parseFloat(payments_paid?.extras.split("|")[3] ?? "0");
-  const totalCommission = affiliatesDetail?.sub_com;
-  const totalPayment = previousMonthGap + extraTotal + totalCommission;
-  tables.table2.footers.forEach((i, index) => {
-    if (index === 0) {
-      i.value = previousMonthGap;
-    } else if (index === 1) {
-      i.value = extraTotal;
-    } else if (index === 2) {
-      i.value = totalCommission;
-    } else if (index === 3) {
-      i.value = totalPayment;
-    }
-  });
 
   const calcPaymentDetails = (detail_list: payments_details[]) => {
     let type_list = detail_list.map((x) => x.reportType);
@@ -138,11 +125,28 @@ const PaymentDetail = ({
     });
     return result_list;
   };
-
-  tables.table1.footers.forEach((i) => (i.value = affiliatesDetail.sub_com));
-  const extras = payments_paid?.extras.split("[var]");
-
   tables.table1.data = calcPaymentDetails(payments_details);
+
+  const totalCommission = tables.table1.data.reduce(
+    (partialSum, v) => partialSum + convertToNumber(v.total_price),
+    0
+  );
+  const totalPayment = previousMonthGap + extraTotal + totalCommission;
+
+  tables.table1.footers.forEach((i) => (i.value = totalCommission));
+  tables.table2.footers.forEach((i, index) => {
+    if (index === 0) {
+      i.value = previousMonthGap;
+    } else if (index === 1) {
+      i.value = extraTotal;
+    } else if (index === 2) {
+      i.value = totalCommission;
+    } else if (index === 3) {
+      i.value = totalPayment;
+    }
+  });
+
+  const extras = payments_paid?.extras.split("[var]");
 
   tables.table2.data = extras.map((extra) => {
     return {
