@@ -1,7 +1,33 @@
-export const formatPrice = (value?: number) =>
-  value && value < 0
-    ? `($${(-value || 0).toFixed(2)})`
-    : `$${(value || 0).toFixed(2)}`;
+export const formatPrice = (value?: number) => {
+  let v = parseFloat((value || 0).toFixed(2));
+
+  return v && v < 0
+    ? `($${performanceFormatter(-v)})`
+    : `$${performanceFormatter(v)}`;
+};
+
+export const isNumeric = (value?: number | string) => {
+  if (!value) {
+    return false;
+  }
+  let v = `${value}`;
+  v = v.replace("$", "");
+  v = v.replace("%", "");
+  return !Number.isNaN(parseFloat(v));
+};
+
+export const convertToNumber = (value: number | string): number => {
+  if (!value) {
+    return 0;
+  }
+  let v = `${value}`;
+  v = v.replace("$", "");
+  v = v.replace("%", "");
+  if (Number.isNaN(parseFloat(v))) {
+    return 0;
+  }
+  return parseFloat(v);
+};
 
 export const performanceFormatter = (number: number) => {
   return Intl.NumberFormat("us").format(number).toString();
