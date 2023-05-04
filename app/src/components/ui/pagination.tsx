@@ -23,20 +23,6 @@ export interface Props {
   totalItems: number;
 }
 
-const paginationVariants = cva(
-  "inline-flex h-10 w-10 items-center rounded-md",
-  {
-    variants: {
-      variant: {
-        focus: "bg-blue-500 p-4 text-sm font-medium text-white",
-        secondary: "p-4 text-sm font-medium text-gray-500 hover:text-blue-600",
-      },
-    },
-    defaultVariants: {
-      variant: "focus",
-    },
-  }
-);
 export const Pagination = ({
   pagination: {
     pageParams: { pageNumber, pageSize },
@@ -59,15 +45,23 @@ export const Pagination = ({
     <nav className="flex items-center justify-start space-x-2">
       <ReactPaginate
         breakLabel="..."
-        nextLabel="next >"
+        nextLabel={<ChevronsRight />}
         onPageChange={handlePageClick}
-        pageRangeDisplayed={5}
         pageCount={pageCount}
-        previousLabel="< previous"
+        previousLabel={<ChevronsLeft />}
         renderOnZeroPageCount={null}
+        activeClassName="paginate-item paginate-active"
+        breakClassName="paginate-item paginate-break-me "
+        containerClassName="paginate-pagination"
+        disabledClassName="paginate-disabled-page"
+        marginPagesDisplayed={2}
+        nextClassName="paginate-item paginate-next"
+        pageClassName="paginate-item paginate-pagination-page"
+        pageRangeDisplayed={2}
+        previousClassName="paginate-item paginate-previous"
       />
 
-      <div className="mt-2">
+      <div className="mt-0">
         <Select onValueChange={handleChange} value={String(pageSize)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue />
