@@ -3,12 +3,12 @@ import type { OnExport } from "@/components/affiliates/reports/utils";
 import { Loading } from "@/components/common/Loading";
 import type { ReportDataTableProps } from "@/components/common/data-table/ReportDataTable";
 import { ReportDataTable } from "@/components/common/data-table/ReportDataTable";
+import ColumnSelect from "@/components/common/data-table/column-select";
 import type { usePagination } from "@/components/common/data-table/pagination-hook";
 import { PageHeader } from "@/components/common/page/page-header";
 import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { SearchDateRange } from "@/components/common/search/search-date-range";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Pagination } from "@/components/ui/pagination";
 import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
@@ -115,33 +115,11 @@ export const ReportControl = <Data extends object>({
         <SearchApply isLoading={isRefetching} />
       </div>
 
-      <div
-        className={`mt-4 overflow-hidden transition-all duration-500	 ${
-          selectColumnsMode ? "h-52 md:h-44 lg:h-36 xl:h-28" : "h-0"
-        }`}
-      >
-        <div className="grid grid-cols-2 gap-2 rounded-lg bg-white p-4 shadow-md md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9">
-          {columns.map((item: any) => (
-            <div className="flex items-center space-x-2" key={item.accessorKey}>
-              <Checkbox
-                className="mr-2 h-[18px] w-[18px] whitespace-nowrap"
-                id={item.header}
-                name={item.accessorKey}
-                checked={selectColumnsMode?.includes(item.accessorKey)}
-                onCheckedChange={(checked: boolean) => {
-                  handleColumnChange(item.accessorKey, checked);
-                }}
-              />
-              <label
-                htmlFor={item.header}
-                className="cursor-pointer text-sm font-medium leading-none"
-              >
-                {item.header}
-              </label>
-            </div>
-          ))}
-        </div>
-      </div>
+      <ColumnSelect
+        columns={columns}
+        selectColumnsMode={selectColumnsMode}
+        handleCheckboxChange={handleColumnChange}
+      />
 
       <ReportDataTable
         report={report}
