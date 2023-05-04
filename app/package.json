@@ -13,7 +13,9 @@
     "i18next-scan-translation": "../node_modules/.bin/i18next",
     "storybook": "storybook dev -p 6001",
     "build-storybook": "storybook build",
-    "publish-storybook": "chromatic --project-token=cddc24775ebe"
+    "publish-storybook": "chromatic --project-token=cddc24775ebe",
+    "deploy-staging": "mode ../scripts/auto_merge_no_checks.mjs --headBranch=dev --baseBranch=staging",
+    "deploy-prod": "mode ../scripts/auto_merge_no_checks.mjs --headBranch=dev --baseBranch=main"
   },
   "dependencies": {
     "@atomictech/xlsx-write-stream": "^2.0.2",
