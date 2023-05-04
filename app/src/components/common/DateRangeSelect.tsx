@@ -195,7 +195,7 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
   return (
     <>
       <div>
-        <div className="relative my-1 inline-block lg:my-0 mr-2">
+        <div className="relative my-1 mr-2 inline-block lg:my-0">
           <SelectInput
             choices={dateRangeChoices}
             value={name}
