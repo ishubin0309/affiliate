@@ -26,18 +26,21 @@ import { getMerchantSubCreative, getMerchantSubCreativeMeta } from "./sub";
 import { deleteTicket, getTickets, upsertTicket } from "./ticket";
 
 import { badQuerySample } from "@/server/api/routers/affiliates/bad-query-sample";
+import { generateBannerCode } from "@/server/api/routers/affiliates/get-tracking-code";
 import {
   getAllMerchants,
   getLongCountries,
 } from "@/server/api/routers/affiliates/reports";
 import {
-  // exportClicksReport,
+  exportClicksReport,
   getClicksReport,
 } from "@/server/api/routers/affiliates/reports/clicks-report";
 import {
   exportCommissionReport,
   getCommissionReport,
 } from "@/server/api/routers/affiliates/reports/commission-report";
+import { getCountryReport } from "@/server/api/routers/affiliates/reports/country-report";
+import { getCountryReportDashboard } from "@/server/api/routers/affiliates/reports/country-report-dashboard";
 import { getCreativeReport } from "@/server/api/routers/affiliates/reports/creative-report";
 import {
   // exportInstallReport,
@@ -52,6 +55,7 @@ import {
 } from "@/server/api/routers/affiliates/reports/quick-summary";
 import { getSubAffiliateReport } from "@/server/api/routers/affiliates/reports/sub-affiliate-report";
 import { getTraderReport } from "@/server/api/routers/affiliates/reports/trader-report";
+import { getTranslateReportFake } from "@/server/api/routers/affiliates/reports/translate-report-fake";
 import { getCommissions } from "./commission";
 import { getDocuments } from "./document";
 import {
@@ -60,10 +64,6 @@ import {
   getPixelMonitorMeta,
   upsertPixelMonitor,
 } from "./pixel";
-import { getCountryReport } from "@/server/api/routers/affiliates/reports/country-report";
-import { getTranslateReportFake } from "@/server/api/routers/affiliates/reports/translate-report-fake";
-import { generateBannerCode } from "@/server/api/routers/affiliates/get-tracking-code";
-import { getCountryReportDashboard } from "@/server/api/routers/affiliates/reports/country-report-dashboard";
 
 export const affiliatesRouter = createTRPCRouter({
   getDashboard,
@@ -107,7 +107,7 @@ export const affiliatesRouter = createTRPCRouter({
   exportCommissionReport,
   getClicksReport,
   getTranslateReportFake,
-  // exportClicksReport,
+  exportClicksReport,
   getCountryReport,
   getDocuments,
 

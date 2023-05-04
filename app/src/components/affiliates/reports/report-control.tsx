@@ -3,7 +3,7 @@ import type { OnExport } from "@/components/affiliates/reports/utils";
 import { Loading } from "@/components/common/Loading";
 import type { ReportDataTableProps } from "@/components/common/data-table/ReportDataTable";
 import { ReportDataTable } from "@/components/common/data-table/ReportDataTable";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
+import type { usePagination } from "@/components/common/data-table/pagination-hook";
 import { PageHeader } from "@/components/common/page/page-header";
 import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { SearchDateRange } from "@/components/common/search/search-date-range";
@@ -125,7 +125,7 @@ export const ReportControl = <Data extends object>({
             <div className="mr-5 inline-block" key={item.accessorKey}>
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  className="w-[18px] h-[18px]"
+                  className="h-[18px] w-[18px]"
                   id={item.accessorKey}
                   name={item.accessorKey}
                   checked={selectColumnsMode?.includes(item.accessorKey)}

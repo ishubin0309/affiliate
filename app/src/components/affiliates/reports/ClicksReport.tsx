@@ -1,21 +1,17 @@
-import { createColumnHelper } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import type { ClicksReportType } from "../../../server/db-types";
-import { api } from "../../../utils/api";
-import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
 import { ReportControl } from "@/components/affiliates/reports/report-control";
-import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { SearchSelect } from "@/components/common/search/search-select";
-import { SearchText } from "@/components/common/search/search-text";
+import { DateColumn } from "@/components/common/data-table/available-column";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 import {
   getDateParam,
   getNumberParam,
   useSearchContext,
 } from "@/components/common/search/search-context";
-import { DateColumn } from "@/components/common/data-table/available-column";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { SearchSelect } from "@/components/common/search/search-select";
+import { SearchText } from "@/components/common/search/search-text";
+import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { createColumnHelper } from "@tanstack/react-table";
+import type { ClicksReportType } from "../../../server/db-types";
+import { api } from "../../../utils/api";
 
 const columnHelper = createColumnHelper<ClicksReportType>();
 const createColumn = (id: keyof ClicksReportType, header: string) =>
@@ -91,6 +87,20 @@ export const ClicksReport = () => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
+  // const { mutateAsync: reportExport } =
+  //   api.affiliates.exportClicksReport.useMutation();
+
+  const handleExport = async (exportType: ExportType) => {
+    return Promise.resolve("ok");
+  };
+  // reportExport({
+  //   type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
+  //   merchant_id: getNumberParam(merchant_id),
+  //   trader_id,
+  //   unique_id,
+  //   exportType,
+  // });
+
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery(
     undefined,
     { keepPreviousData: true, refetchOnWindowFocus: false }
@@ -103,7 +113,7 @@ export const ClicksReport = () => {
       columns={columns}
       pagination={pagination}
       isRefetching={isLoading}
-      handleExport={(exportType: ExportType) => Promise.resolve("ok")}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
     >
       <SearchSelect
         label="Merchant"

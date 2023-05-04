@@ -1,18 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   affiliate_id,
   merchant_id,
 } from "@/server/api/routers/affiliates/const";
 import {
+  PageParamsSchema,
   exportReportLoop,
   exportType,
   getPageOffset,
   pageInfo,
-  PageParamsSchema,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { publicProcedure } from "@/server/api/trpc";
-import type { Prisma } from "@prisma/client";
-import type { PrismaClient } from "@prisma/client";
-import type { Simplify } from "@trpc/server";
+import type { Prisma, PrismaClient } from "@prisma/client";
 import { formatISO } from "date-fns";
 import path from "path";
 import { z } from "zod";
