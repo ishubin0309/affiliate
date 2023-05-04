@@ -42,7 +42,7 @@ export const Pagination = ({
   };
 
   return (
-    <nav className="flex items-center justify-start space-x-2">
+    <nav className="flex items-center justify-start space-x-0">
       <ReactPaginate
         breakLabel="..."
         nextLabel={<ChevronsRight />}
@@ -63,7 +63,7 @@ export const Pagination = ({
 
       <div className="mt-0">
         <Select onValueChange={handleChange} value={String(pageSize)}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

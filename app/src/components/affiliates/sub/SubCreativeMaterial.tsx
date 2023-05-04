@@ -7,6 +7,8 @@ import { api } from "../../../utils/api";
 import { SearchSelect } from "../../common/search/search-select";
 import { SearchText } from "../../common/search/search-text";
 import { CreativeMaterialComponent } from "../creative/CreativeMaterialComponent";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { Pagination } from "@/components/ui/pagination";
 
 const renderRow = (item: MerchantSubCreativeType) => {
   const values = [
@@ -38,6 +40,7 @@ export const SubCreativeMaterial = () => {
   const {
     values: { creative: search, type },
   } = useSearchContext();
+  const pagination = usePagination();
 
   const { data: meta } = api.affiliates.getMerchantSubCreativeMeta.useQuery();
 
@@ -66,6 +69,12 @@ export const SubCreativeMaterial = () => {
         <SearchApply isLoading={isRefetching} />
       </div>
       {data?.map(renderRow)}
+      <div className="grid grid-cols-2 gap-2">
+        <Pagination
+          pagination={pagination}
+          totalItems={data.length}
+        />
+      </div>
     </div>
   ) : (
     <Loading />
