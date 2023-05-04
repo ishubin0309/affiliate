@@ -1,16 +1,22 @@
 import { Document, Image, Page, Text, View } from "@react-pdf/renderer";
 import { formatPrice } from "../../../utils/format";
+import { PayAbleTo } from "../invoice/PayAbleTo";
 import { Table } from "../invoice/Table";
 import { HeaderInformation } from "../invoice/header-information";
 import { Heading } from "../invoice/heading";
 import { styles } from "../invoice/styles";
-import { useCallback } from "react";
-import { PayAbleTo } from "../invoice/PayAbleTo";
 const tables = {
   table1: {
     columns: ["Merchant", "Deal Type", "Quantity", "Total Price"],
     footers: [{ title: "Sub Total", value: 0 }],
-    data: [],
+    data: [
+      {
+        merchant: "",
+        deal: "",
+        quantity: "",
+        total_price: "",
+      },
+    ],
   },
   table2: {
     columns: ["Merchant", "Deal", "Unit Price", "Quantity", "Price"],
@@ -55,9 +61,26 @@ export interface affiliatesDetail {
   pay_firstname: string;
   pay_lastname: string;
 }
+interface payments_details {
+  id: number;
+  rdate: Date;
+  status: string;
+  reportType: string;
+  month: string;
+  year: string;
+  paymentID: string;
+  merchant_id: number;
+  affiliate_id: number;
+  trader_id: string;
+  amount: number;
+  deposit: number;
+  withdrawal: number;
+  reason: string;
+}
 interface Props {
   merchant: string;
   affiliatesDetail: affiliatesDetail;
+  payments_details: payments_details[];
   payments_paid: {
     id: number;
     month: string;
@@ -77,6 +100,7 @@ interface Props {
 const PaymentDetail = ({
   payments_paid,
   affiliatesDetail,
+  payments_details,
   merchant,
 }: Props) => {
   const previousMonthGap = payments_paid?.amount_gap_from_previous_month;
@@ -96,8 +120,29 @@ const PaymentDetail = ({
       i.value = totalPayment;
     }
   });
+
+  const calcPaymentDetails = (detail_list: payments_details[]) => {
+    let type_list = detail_list.map((x) => x.reportType);
+    type_list = type_list.filter((item, i, ar) => ar.indexOf(item) === i);
+
+    const result_list = type_list.map((x) => {
+      const amount_list = detail_list.map((p_info) => p_info["amount"]);
+      return {
+        merchant: merchant,
+        deal: x.toUpperCase(),
+        quantity: `${amount_list.length}`,
+        total_price: formatPrice(
+          amount_list.reduce((partialSum, v) => partialSum + v, 0)
+        ),
+      };
+    });
+    return result_list;
+  };
+
   tables.table1.footers.forEach((i) => (i.value = affiliatesDetail.sub_com));
   const extras = payments_paid?.extras.split("[var]");
+
+  tables.table1.data = calcPaymentDetails(payments_details);
 
   tables.table2.data = extras.map((extra) => {
     return {
