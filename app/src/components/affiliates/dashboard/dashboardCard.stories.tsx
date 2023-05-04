@@ -25,7 +25,11 @@ export const Primary = {
       console.log(`muly:handleCheckboxChange`, {});
     },
   },
-  render: (args: any) => <DashboardCards {...args} />,
+  render: (args: any) => (
+    <div className="max-w-sm">
+      <DashboardCards {...args} />
+    </div>
+  ),
 };
 
 export const LargeNumbers = {
@@ -38,26 +42,26 @@ export const LargeNumbers = {
   },
 };
 
-export const SelectModeSelected = {
-  ...Primary,
-  args: {
-    ...Primary.args,
-    thisMonth: 2_125_464,
-    lastMonth: 12_125_464,
-    value: 125_464,
-    selectColumnsMode: true,
-    isChecked: true,
-  },
-};
-
-export const SelectModeUnSelected = {
-  ...Primary,
-  args: {
-    ...Primary.args,
-    thisMonth: 2_125_464,
-    lastMonth: 12_125_464,
-    value: 125_464,
-    selectColumnsMode: true,
-    isChecked: false,
-  },
-};
+// export const SelectModeSelected = {
+//   ...Primary,
+//   args: {
+//     ...Primary.args,
+//     thisMonth: 2_125_464,
+//     lastMonth: 12_125_464,
+//     value: 125_464,
+//     selectColumnsMode: true,
+//     isChecked: true,
+//   },
+// };
+//
+// export const SelectModeUnSelected = {
+//   ...Primary,
+//   args: {
+//     ...Primary.args,
+//     thisMonth: 2_125_462,
+//     lastMonth: 12_125_464,
+//     value: 125_464,
+//     selectColumnsMode: true,
+//     isChecked: false,
+//   },
+// };

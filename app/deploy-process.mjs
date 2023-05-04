@@ -57,8 +57,6 @@ for (const site of sites) {
     db,
   } = site;
 
-
-
   if (deployProd) {
     if (!prod) {
       continue;
