@@ -42,6 +42,16 @@ export const LargeNumbers = {
   },
 };
 
+export const LargeNumbers2 = {
+  ...Primary,
+  args: {
+    ...Primary.args,
+    thisMonth: 200_125_464,
+    lastMonth: 12_125_464,
+    value: 125_464,
+  },
+};
+
 // export const SelectModeSelected = {
 //   ...Primary,
 //   args: {
