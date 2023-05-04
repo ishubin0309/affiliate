@@ -9,6 +9,8 @@ import type { MerchantCreativeType } from "@/server/db-types";
 import React from "react";
 import { api } from "../../../utils/api";
 import { CreativeMaterialComponent } from "./CreativeMaterialComponent";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { Pagination } from "@/components/ui/pagination";
 
 const renderRow = (item: MerchantCreativeType, gridView: boolean) => {
   const values = [
@@ -43,6 +45,7 @@ export const CreativeMaterial = () => {
   const {
     values: { creative: search, type, category, language, size, promotion },
   } = useSearchContext();
+  const pagination = usePagination();
 
   const [gridView, setGridView] = React.useState(false);
 
@@ -113,6 +116,12 @@ export const CreativeMaterial = () => {
         className={"grid gap-4 " + (gridView ? "grid-cols-4" : "grid-cols-1")}
       >
         {data?.map((item) => renderRow(item, gridView))}
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <Pagination
+          pagination={pagination}
+          totalItems={data.length}
+        />
       </div>
     </div>
   ) : (
