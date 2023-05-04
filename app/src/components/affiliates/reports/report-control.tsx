@@ -117,33 +117,32 @@ export const ReportControl = <Data extends object>({
 
       <div
         className={`mt-4 overflow-hidden transition-all duration-500	 ${
-          selectColumnsMode ? "h-52 md:h-28" : "h-0"
+          selectColumnsMode ? "h-52 md:h-44 lg:h-36 xl:h-28" : "h-0"
         }`}
       >
-        <div className="bg-white p-4 shadow">
+        <div className="grid grid-cols-2 gap-2 rounded-lg bg-white p-4 shadow-md md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9">
           {columns.map((item: any) => (
-            <div className="mr-5 inline-block" key={item.accessorKey}>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  className="h-[18px] w-[18px]"
-                  id={item.accessorKey}
-                  name={item.accessorKey}
-                  checked={selectColumnsMode?.includes(item.accessorKey)}
-                  onCheckedChange={(checked: boolean) => {
-                    handleColumnChange(item.accessorKey, checked);
-                  }}
-                />
-                <label
-                  htmlFor={item.header}
-                  className="cursor-pointer text-sm font-medium leading-none"
-                >
-                  {item.header}
-                </label>
-              </div>
+            <div className="flex items-center space-x-2" key={item.accessorKey}>
+              <Checkbox
+                className="mr-2 h-[18px] w-[18px] whitespace-nowrap"
+                id={item.header}
+                name={item.accessorKey}
+                checked={selectColumnsMode?.includes(item.accessorKey)}
+                onCheckedChange={(checked: boolean) => {
+                  handleColumnChange(item.accessorKey, checked);
+                }}
+              />
+              <label
+                htmlFor={item.header}
+                className="cursor-pointer text-sm font-medium leading-none"
+              >
+                {item.header}
+              </label>
             </div>
           ))}
         </div>
       </div>
+
       <ReportDataTable
         report={report}
         columns={columns.filter((item: any) =>
