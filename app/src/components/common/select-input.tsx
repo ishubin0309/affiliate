@@ -25,7 +25,7 @@ export const SelectInput = ({
 }: Props) => {
   return (
     <Select defaultValue={value} onValueChange={onChange}>
-      <SelectTrigger className="pr-2 text-xs font-light text-black">
+      <SelectTrigger className="pr-2 text-sm font-light text-black">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className="pr-2 text-xs font-light text-black">

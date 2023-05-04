@@ -194,8 +194,8 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
 
   return (
     <>
-      <div className="text-center">
-        <div className="relative my-1 inline-block lg:my-0">
+      <div>
+        <div className="relative my-1 inline-block lg:my-0 mr-2">
           <SelectInput
             choices={dateRangeChoices}
             value={name}
@@ -219,7 +219,7 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
 
         <div className="inline-block">
           <div className="inline-block">
-            <div className="customDatePickerStyling my-1 ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-base lg:my-0">
+            <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-sm lg:my-0">
               <DatePicker
                 selected={from}
                 onChange={async (date: Date) => {
@@ -231,7 +231,7 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
           </div>
           <label className="px-1 text-sm text-[#525252]">To</label>
           <div className="inline-block">
-            <div className="customDatePickerStyling my-1 ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-base lg:my-0">
+            <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-sm lg:my-0">
               <DatePicker
                 selected={to}
                 onChange={async (date: Date) => {
