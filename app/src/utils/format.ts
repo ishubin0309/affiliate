@@ -23,6 +23,7 @@ export const convertToNumber = (value: number | string): number => {
   let v = `${value}`;
   v = v.replace("$", "");
   v = v.replace("%", "");
+  v = v.replace(",", "");
   if (Number.isNaN(parseFloat(v))) {
     return 0;
   }

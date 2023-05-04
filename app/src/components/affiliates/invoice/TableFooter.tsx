@@ -30,7 +30,11 @@ export const TableFooter = ({
           width: `${100 / columnLength}%`,
         }}
       >
-        <Heading style={{ ...styles.tableCell }} title={formatPrice(value)} />
+        <Heading
+          style={{ ...styles.tableCell }}
+          title={formatPrice(value)}
+          is_table={true}
+        />
       </View>
     </>
   );
