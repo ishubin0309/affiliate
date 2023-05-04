@@ -4,6 +4,7 @@ import { env } from "../env.mjs";
 // You can replace this with your exact flag types
 export type AppFlags = {
   enableBackdoorLogin: boolean;
+  debugTopic: "none" | "billing";
 };
 
 export const config: Configuration<AppFlags> = {
@@ -12,5 +13,6 @@ export const config: Configuration<AppFlags> = {
   // You can provide defaults flag values here
   defaultFlags: {
     enableBackdoorLogin: false,
+    debugTopic: "none",
   },
 };
