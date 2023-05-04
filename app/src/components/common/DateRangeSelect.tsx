@@ -93,7 +93,7 @@ const getPredefinedDateRange = (value?: string | null) => {
   return range;
 };
 
-const getDateRange = (value?: string) => {
+export const getDateRange = (value?: string) => {
   let range;
   const regex = /^(\d{8})-(\d{8})$/gm;
 
@@ -244,8 +244,8 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
               </div>
 
               <div className="inline-block">
-                <label className="float-left mt-2 px-0 text-sm font-bold text-[#525252] md:px-4">
-                  To:
+                <label className="float-left px-1 text-sm text-[#525252]">
+                  To
                 </label>
                 <div className="customDatePickerStyling ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xl md:px-4 md:text-base">
                   <DatePicker
