@@ -10,8 +10,7 @@ import { z } from "zod";
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import type { Sql } from "@prisma/client/runtime";
 import { sub } from "date-fns";
-import type {
-  PageParam} from "@/server/api/routers/affiliates/reports/reports-utils";
+import type { PageParam } from "@/server/api/routers/affiliates/reports/reports-utils";
 import {
   debugSaveData,
   getPageOffset,

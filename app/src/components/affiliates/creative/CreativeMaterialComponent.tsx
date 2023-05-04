@@ -1,15 +1,15 @@
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { Copy, Download } from "lucide-react";
 import React from "react";
-import { Code2Icon, Copy } from "lucide-react";
-import { Button } from "../../ui/button";
 import { CreativeMaterialDialogComponent } from "./CreativeMaterialDialogComponent";
-import Image from "next/image";
 
 interface Props {
   values: valueProps[];
   file?: string;
   alt: string;
   url: string;
-  toggleShow: boolean;
+  gridView: boolean;
   creative_id: number;
 }
 
@@ -28,9 +28,10 @@ export const CreativeMaterialComponent = ({
   file,
   alt,
   url,
-  toggleShow,
+  gridView,
   creative_id,
 }: Props) => {
+  const { toast } = useToast();
   const ImageWithFallback = ({ src, alt }: ImageWithFallbackProps) => {
     const [image, setImage] = React.useState(src ?? "/img/fallback.jpg");
 
@@ -44,29 +45,145 @@ export const CreativeMaterialComponent = ({
         alt={alt}
         onError={handleImageError}
         className="mx-auto my-0 max-h-64 rounded-xl bg-cover"
-        width={100}
-        height={100}
       />
     );
+  };
+
+  const onCopyClickUrl = async () => {
+    await window.navigator.clipboard.writeText(url ?? "");
+    toast({
+      title: "URL Copied to Clipboard",
+      // description: "URL Copied to Clipboard! 📋",
+      // status: "success",
+      duration: 5000,
+      // isClosable: true,
+    });
   };
 
   return (
     <div className="mb-5 rounded-xl bg-white p-4 shadow">
       <div
         className={
-          "mt-4 items-start " +
-          (toggleShow
+          "items-start " +
+          (gridView
             ? "md:grid md:grid-cols-1 md:gap-4"
             : "md:grid md:grid-cols-3 md:gap-4")
         }
       >
-        <div className="mx-auto mb-5 flex h-64 flex-row rounded-xl">
+        <div className="relative mx-auto mb-5 h-64 w-full rounded-xl">
           <ImageWithFallback src={file} alt={alt} />
+          <div className="absolute right-0 top-0">
+            <Button variant="primary-outline" size="rec">
+              <Download className="w-4" />
+            </Button>
+          </div>
+        </div>
+        <div className="col-span-2 w-full rounded-xl">
+          <div className=" bg-[#F5F8FA] p-4 md:px-8">
+            <div className="justify-between md:flex">
+              <div className="mt-2 flex justify-between truncate md:block">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
+                  {values[0]?.title}
+                </label>
+                <div className="truncate text-sm text-[#353535] md:text-base">
+                  {values[0]?.value}
+                </div>
+              </div>
+              <div className="mt-2 flex justify-between md:block">
+                <div>
+                  <label className="mb-1 block text-sm font-bold text-gray-700">
+                    {values[1]?.title}
+                  </label>
+                  <div className="text-sm text-[#353535] md:text-base">
+                    {values[1]?.value}
+                  </div>
+                </div>
+                <div className="md:hidden">
+                  <label className="mb-1 block text-sm font-bold text-gray-700">
+                    {values[2]?.title}
+                  </label>
+                  <div className="text-sm text-[#353535] md:text-base">
+                    {values[2]?.value}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex md:pt-4">
+              <div className="mt-2 truncate">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
+                  URL
+                </label>
+                <div className="truncate text-sm text-[#353535] md:text-base">
+                  {url}
+                </div>
+              </div>
+              <div className="ml-5 mt-2">
+                <Button
+                  variant="primary-outline"
+                  size="rec"
+                  onClick={onCopyClickUrl}
+                >
+                  <Copy className="w-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div
+              className={
+                "justify-between pt-1 md:pt-4 " +
+                (gridView ? "grid grid-cols-2" : " md:flex ")
+              }
+            >
+              <div className="mt-2 hidden md:block">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
+                  {values[2]?.title}
+                </label>
+                <div className="text-sm text-[#353535] md:text-base">
+                  {values[2]?.value}
+                </div>
+              </div>
+              <div className="mt-2">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
+                  {values[3]?.title}
+                </label>
+                <div className="text-sm text-[#353535] md:text-base">
+                  {values[3]?.value}
+                </div>
+              </div>
+              <div className="mt-2 flex justify-between md:block">
+                <div>
+                  <label className="mb-1 block text-sm font-bold text-gray-700">
+                    {values[4]?.title}
+                  </label>
+                  <div className="text-sm text-[#353535] md:text-base">
+                    {!values[4]?.value ? values[4]?.value : 0}
+                  </div>
+                </div>
+                <div className="md:hidden">
+                  <label className="mb-1 block text-sm font-bold text-gray-700">
+                    {values[5]?.title}
+                  </label>
+                  <div className="text-sm text-[#353535] md:text-base">
+                    {values[5]?.value}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-2 hidden md:block">
+                <label className="mb-1 block text-sm font-bold text-gray-700">
+                  {values[5]?.title}
+                </label>
+                <div className="text-sm text-[#353535] md:text-base">
+                  {values[5]?.value}
+                </div>
+              </div>
+            </div>
+          </div>
           <CreativeMaterialDialogComponent
             values={values}
             url={url}
             creative_id={creative_id}
-            toggleShow={toggleShow}
+            gridView={gridView}
           />
         </div>
       </div>

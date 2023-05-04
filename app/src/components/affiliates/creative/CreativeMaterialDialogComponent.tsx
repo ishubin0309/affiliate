@@ -13,10 +13,10 @@ import {
   SelectValue,
 } from "../../ui/select";
 
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
-import { Code2Icon, Copy, Image as ImageIcon } from "lucide-react";
+import { Code2Icon, Image as ImageIcon } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { Button } from "../../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
@@ -30,13 +30,26 @@ interface Props {
   isOpen?: boolean;
 
   creative_id: number;
-  toggleShow: boolean;
+  gridView: boolean;
 }
 
 interface valueProps {
   title: string;
   value: string | undefined;
 }
+interface CodeProps {
+  code: string;
+  directLink: string;
+  htmlCode: string;
+  qrCode: string;
+}
+
+const initialCodeProps: CodeProps = {
+  code: "",
+  directLink: "",
+  htmlCode: "",
+  qrCode: "",
+};
 
 export const CreativeMaterialDialogComponent = ({
   values,
@@ -45,7 +58,7 @@ export const CreativeMaterialDialogComponent = ({
   url,
   isOpen,
   creative_id,
-  toggleShow,
+  gridView,
 }: Props) => {
   const { toast } = useToast();
   const { data: profiles } = api.affiliates.getProfiles.useQuery(undefined, {
@@ -54,8 +67,11 @@ export const CreativeMaterialDialogComponent = ({
   });
   const [isLoading, setIsLoading] = useState(false);
   const [parameterFirstValues, setParameterFirstValues] = useState("");
+  const [codesValues, setCodesValues] = useState<CodeProps>(initialCodeProps);
+
   const [params, setParams] = useState<string[]>([]);
   const [profile_id, setProfile_id] = useState<number>();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const generateBannerCode = api.affiliates.generateBannerCode.useMutation();
 
@@ -70,6 +86,7 @@ export const CreativeMaterialDialogComponent = ({
 
       if (!profile_id) {
         // TODO: Show error that need to select profile
+        setErrorMessage("Please select a profile");
         return;
       }
 
@@ -78,7 +95,7 @@ export const CreativeMaterialDialogComponent = ({
         params,
         profile_id,
       });
-
+      setCodesValues(codes);
       console.log(`muly:handleGetCode codes`, {
         codes,
         creative_id,
@@ -90,142 +107,71 @@ export const CreativeMaterialDialogComponent = ({
     }
   };
 
-  const onCopyClickUrl = async () => {
-    await window.navigator.clipboard.writeText(url ?? "");
-    toast({
-      title: "URL Copied to Clipboard",
-      // description: "URL Copied to Clipboard! 📋",
-      // status: "success",
-      duration: 5000,
-      // isClosable: true,
-    });
-  };
+  const downloadCode = (codesValues: CodeProps, fileType: string): void => {
+    let codeValue: string | undefined;
+    let fileName: any;
 
-  const DownloadHtmlText = () => {
-    console.log("DownloadHtmlText");
-  };
-  const DownloadJsText = () => {
-    console.log("DownloadJsText");
-  };
-  const DownloadDirectLinkText = () => {
-    console.log("DownloadDirectLinkText");
-  };
-  const DownloadQrcodeImage = () => {
-    console.log("DownloadQrcodeImage");
+    if (fileType === "html") {
+      codeValue = codesValues?.htmlCode;
+      fileName = "code.html";
+    } else if (fileType === "js") {
+      codeValue = codesValues?.code;
+      fileName = "code.js";
+    } else if (fileType === "directLink") {
+      codeValue = codesValues?.directLink;
+      fileName = "direct-link.txt";
+    } else if (fileType === "qrCode") {
+      codeValue = codesValues?.qrCode;
+      fileName = "qrcode.png";
+    }
+
+    if (codeValue) {
+      const link: HTMLAnchorElement = document.createElement("a");
+      link.href =
+        fileType === "qrCode"
+          ? codeValue
+          : `data:text/plain;charset=utf-8,${encodeURIComponent(codeValue)}`;
+      link.download = fileName;
+      link.click();
+    }
   };
 
   return (
     <Dialog open={isOpen}>
-      <div className="w-full rounded-xl lg:ml-5">
-        <div className=" bg-[#F5F8FA] p-4 md:px-8">
-          <div className="justify-between md:flex">
-            <div className="mt-2 flex justify-between md:block">
-              <div>
-                <label className="mb-1 block text-sm font-bold text-gray-700">
-                  {values[0]?.title}
-                </label>
-                <div className="h-12 text-sm text-[#353535] md:text-base">
-                  {values[0]?.value}
-                </div>
-              </div>
-            </div>
-            <div className="mt-2 flex justify-between md:block">
-              <div>
-                <label className="mb-1 block text-sm font-bold text-gray-700">
-                  {values[1]?.title}
-                </label>
-                <div className="text-sm text-[#353535] md:text-base">
-                  {values[1]?.value}
-                </div>
-              </div>
-              <div className="md:hidden">
-                <label className="mb-1 block text-sm font-bold text-gray-700">
-                  {values[2]?.title}
-                </label>
-                <div className="text-sm text-[#353535] md:text-base">
-                  {values[2]?.value}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="justify-between pt-1 md:flex md:pt-12 ">
-            <div className="mt-2 hidden md:block">
-              <label className="mb-1 block text-sm font-bold text-gray-700">
-                {values[2]?.title}
-              </label>
-              <div className="text-sm text-[#353535] md:text-base">
-                {values[2]?.value}
-              </div>
-            </div>
-            <div className="mt-2">
-              <label className="mb-1 block text-sm font-bold text-gray-700">
-                {values[3]?.title}
-              </label>
-              <div className="text-sm text-[#353535] md:text-base">
-                {values[3]?.value}
-              </div>
-            </div>
-            <div className="mt-2 flex justify-between md:block">
-              <div>
-                <label className="mb-1 block text-sm font-bold text-gray-700">
-                  {values[4]?.title}
-                </label>
-                <div className="text-sm text-[#353535] md:text-base">
-                  {!values[4]?.value ? values[4]?.value : 0}
-                </div>
-              </div>
-              <div className="md:hidden">
-                <label className="mb-1 block text-sm font-bold text-gray-700">
-                  Language
-                </label>
-                <div className="text-sm text-[#353535] md:text-base">
-                  English
-                </div>
-              </div>
-            </div>
-            <div className="mt-2 hidden md:block">
-              <label className="mb-1 block text-sm font-bold text-gray-700">
-                Language
-              </label>
-              <div className="text-sm text-[#353535] md:text-base">English</div>
-            </div>
-          </div>
-        </div>
-        <div
-          className={
-            "items-end justify-end md:flex" +
-            (toggleShow ? "" : " mt-1 pt-0.5 md:mt-3  ")
-          }
-        >
-          <div className="mt-5 flex items-end justify-center md:justify-end">
-            <div className="ml-2">
-              <div className="">
-                <DialogTrigger>
-                  <Button variant="primary-outline" className="md:px-4">
-                    Get HTML Code
-                    <div className="ml-2 items-center">
-                      <Code2Icon className="text-[#282560]" />
-                    </div>
-                  </Button>
-                </DialogTrigger>
-              </div>
+      <div className={"mt-4 items-end justify-end md:flex"}>
+        <div className="flex items-end justify-center md:justify-end">
+          <div className="ml-2">
+            <div className="">
+              <DialogTrigger>
+                <Button
+                  variant="primary-outline"
+                  className="md:px-4"
+                  onClick={() => {
+                    setCodesValues(initialCodeProps);
+                  }}
+                >
+                  Get Tracking Code
+                  <div className="ml-2 items-center">
+                    <Code2Icon className="text-[#282560]" />
+                  </div>
+                </Button>
+              </DialogTrigger>
             </div>
           </div>
         </div>
       </div>
-
-      <DialogContent className="max-w-[90%] sm:max-w-sm md:max-w-6xl ">
+      <DialogContent className="max-h-screen max-w-[90%] overflow-auto sm:max-w-sm md:max-w-6xl md:overflow-hidden">
         <DialogHeader className="text-left text-lg font-medium text-primary">
-          HTML Code
+          Get Tracking Code
         </DialogHeader>
         <form className="w-full pt-5">
           <div className="justify-between md:flex md:space-x-4">
             <div className="w-full md:w-1/4">
-              <div className="mb-6 justify-between md:flex md:space-x-4">
+              <div className="mb-11 mb-12 h-[calc(100%-43px)] justify-between md:flex md:space-x-4">
                 <div className="w-full">
                   <div className="mb-3">
                     <label
-                      className="mb-2 block  pl-3 text-sm font-medium tracking-wide text-[#525252]"
+                      className="mb-2 block pt-3 text-sm font-medium tracking-wide text-[#525252]"
                       htmlFor="grid-first-name"
                     >
                       Profile
@@ -234,9 +180,10 @@ export const CreativeMaterialDialogComponent = ({
                       <div className="relative flex w-full items-center ">
                         <Select
                           defaultValue={String(profile_id)}
-                          onValueChange={(value) =>
-                            setProfile_id(Number(value))
-                          }
+                          onValueChange={(value) => {
+                            setProfile_id(Number(value));
+                            setErrorMessage("");
+                          }}
                         >
                           <SelectTrigger className="border px-4 py-3  text-xs ">
                             <SelectValue placeholder="Select profile" />
@@ -245,7 +192,7 @@ export const CreativeMaterialDialogComponent = ({
                             <SelectGroup>
                               {profiles?.map(({ name, url, id }, index) => (
                                 <SelectItem value={String(id)} key={id}>
-                                  <div className="flex flex-col">
+                                  <div className="flex flex-col text-left">
                                     <div>
                                       <b>{name}</b>
                                     </div>
@@ -258,38 +205,32 @@ export const CreativeMaterialDialogComponent = ({
                         </Select>
                       </div>
                     </div>
+                    <div>
+                      {errorMessage && (
+                        <p className="text-red-500">{errorMessage}</p>
+                      )}
+                    </div>
                   </div>
                   <div className="w-full">
                     <label
-                      className="mb-2 block pl-3 text-sm font-medium tracking-wide text-[#525252]"
+                      className="mb-2 block text-sm font-medium tracking-wide text-[#525252]"
                       htmlFor="grid-first-name"
                     >
                       Dynamic Parameter
                     </label>
                     <div className="flex flex-wrap">
                       <div className="relative flex w-full flex-wrap items-center justify-between ">
-                        <div className="w-[calc(100%-56px)]">
-                          <Input
-                            className="w-full"
-                            placeholder="Add parameter"
-                            value={parameterFirstValues}
-                            onChange={(e) => {
-                              setParameterFirstValues(e.target.value);
-                            }}
-                          />
-                        </div>
-
-                        <AddDynamicParameter setParametersValue={setParams} />
+                        <AddDynamicParameter />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="mb-6 rounded md:mb-0">
+              <div className="relative mb-6 rounded md:mb-0">
                 <Button
                   onClick={handleGetCode}
                   variant="primary"
-                  className="w-full"
+                  className="absolute bottom-0 w-full"
                   isLoading={isLoading}
                 >
                   Get Code
@@ -298,8 +239,8 @@ export const CreativeMaterialDialogComponent = ({
             </div>
             <div className="w-full md:w-3/4">
               {" "}
-              <div>
-                <Tabs defaultValue="HtmlCode">
+              <div className="h-full">
+                <Tabs defaultValue="HtmlCode" className="h-full">
                   <TabsList className="flex-wrap justify-start whitespace-nowrap">
                     <TabsTrigger value="HtmlCode">HTML Code</TabsTrigger>
                     <TabsTrigger value="JSCode">JS Code</TabsTrigger>
@@ -308,90 +249,100 @@ export const CreativeMaterialDialogComponent = ({
                       Direct Link Code
                     </TabsTrigger>
                   </TabsList>
-                  <TabsContent className="border-0 p-0" value="HtmlCode">
-                    <div className="-mx-3 mb-6 flex flex-wrap">
-                      <div className="w-full px-3">
+                  <TabsContent className="h-full border-0 p-0" value="HtmlCode">
+                    <div className="-mx-3 flex h-full flex-wrap">
+                      <div className="h-full w-full px-3">
                         <textarea
-                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
-                          value='<div class="container">
-                                                        <img src="img_5terre_wide.jpg" alt="Cinque Terre" width="1000" height="300">
-                                                        <div class="topleft">Top Left</div>
-                                                      </div>'
-                          id="grid-textarea"
-                        />
-                      </div>
-                      <div className="flex w-full flex-wrap justify-end px-3">
-                        <Button variant="primary" onClick={DownloadHtmlText}>
-                          Download html as text
-                          <div className="ml-2">
-                            <ImageIcon className="h-4 w-4 text-white" />
-                          </div>
-                        </Button>
-                      </div>
-                    </div>
-                  </TabsContent>
-                  <TabsContent className="border-0 p-0" value="JSCode">
-                    <div className="-mx-3 mb-6 flex flex-wrap">
-                      <div className="w-full px-3">
-                        <textarea
-                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
-                          value='<div class="container">
-
-                                                        <div class="topleft">JSCode</div>
-                                                      </div>'
-                          id="grid-textarea"
-                        />
-                      </div>
-                      <div className="flex w-full flex-wrap justify-end px-3">
-                        <Button variant="primary" onClick={DownloadJsText}>
-                          Download js code as text
-                          <div className="ml-2">
-                            <ImageIcon className="h-4 w-4 text-white" />
-                          </div>
-                        </Button>
-                      </div>
-                    </div>
-                  </TabsContent>
-                  <TabsContent className="border-0 p-0" value="QrCode">
-                    <div className="-mx-3 mb-6 flex flex-wrap">
-                      <div className="w-full px-3">
-                        <textarea
-                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
-                          value='<div class="container">
-
-                                                        <div class="topleft">QrCode</div>
-                                                      </div>'
-                          id="grid-textarea"
-                        />
-                      </div>
-                      <div className="flex w-full flex-wrap justify-end px-3">
-                        <Button variant="primary" onClick={DownloadQrcodeImage}>
-                          Download qrcode as image
-                          <div className="ml-2">
-                            <ImageIcon className="h-4 w-4 text-white" />
-                          </div>
-                        </Button>
-                      </div>
-                    </div>
-                  </TabsContent>
-                  <TabsContent className="border-0 p-0" value="DirectLinkCode">
-                    <div className="-mx-3 mb-6 flex flex-wrap">
-                      <div className="w-full px-3">
-                        <textarea
-                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-3xl border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB]"
-                          value='<div class="container">
-
-                                                        <div class="topleft">https://go.best-brokers-partners.com/click.php?ctag=a500-b781-p60</div>
-                                                      </div>'
+                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-md border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB] md:mb-12 md:h-[calc(100%-100px)]"
+                          value={codesValues?.htmlCode}
                           id="grid-textarea"
                         />
                       </div>
                       <div className="flex w-full flex-wrap justify-end px-3">
                         <Button
+                          className="bottom-6 md:absolute"
                           variant="primary"
-                          onClick={DownloadDirectLinkText}
+                          onClick={() => downloadCode(codesValues, "html")}
                         >
-                          Download direct link code as text
+                          Download Html As Text
+                          <div className="ml-2">
+                            <ImageIcon className="h-4 w-4 text-white" />
+                          </div>
+                        </Button>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  <TabsContent className="h-full border-0 p-0" value="JSCode">
+                    <div className="-mx-3 flex h-full flex-wrap">
+                      <div className="h-full w-full px-3">
+                        <textarea
+                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-md border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB] md:mb-12 md:h-[calc(100%-100px)]"
+                          value={codesValues?.code}
+                          id="grid-textarea"
+                        />
+                      </div>
+                      <div className="flex w-full flex-wrap justify-end px-3">
+                        <Button
+                          className="bottom-6 md:absolute"
+                          variant="primary"
+                          onClick={() => downloadCode(codesValues, "js")}
+                        >
+                          Download Js Code As Text
+                          <div className="ml-2">
+                            <ImageIcon className="h-4 w-4 text-white" />
+                          </div>
+                        </Button>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  <TabsContent className="h-full border-0 p-0" value="QrCode">
+                    <div className="-mx-3 flex h-full flex-wrap">
+                      <div className="mb-3 mt-1.5 flex h-48 w-full items-center px-3 md:mb-12 md:h-[calc(100%-100px)]">
+                        {codesValues?.qrCode && (
+                          <Image
+                            className="mx-auto my-0"
+                            src={codesValues?.qrCode}
+                            height={100}
+                            width={200}
+                            alt="..."
+                          />
+                        )}
+                      </div>
+                      <div className="flex w-full flex-wrap justify-end px-3">
+                        <Button
+                          className="bottom-6 md:absolute"
+                          variant="primary"
+                          onClick={() => downloadCode(codesValues, "qrCode")}
+                        >
+                          Download Qrcode As Image
+                          <div className="ml-2">
+                            <ImageIcon className="h-4 w-4 text-white" />
+                          </div>
+                        </Button>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  <TabsContent
+                    className="h-full border-0 p-0"
+                    value="DirectLinkCode"
+                  >
+                    <div className="-mx-3 flex h-full flex-wrap">
+                      <div className="h-full w-full px-3">
+                        <textarea
+                          className="border-#D7D7D7 mb-3 h-48 w-full rounded-md border bg-[#F0F9FF] px-4 py-3 text-base font-medium text-[#1B48BB] md:mb-12 md:h-[calc(100%-100px)]"
+                          value={codesValues?.directLink}
+                          id="grid-textarea"
+                        />
+                      </div>
+                      <div className="flex w-full flex-wrap justify-end px-3">
+                        <Button
+                          className="bottom-6 md:absolute"
+                          variant="primary"
+                          onClick={() =>
+                            downloadCode(codesValues, "directLink")
+                          }
+                        >
+                          Download Sirect Link Code As Text
                           <div className="ml-2">
                             <ImageIcon className="h-4 w-4 text-white" />
                           </div>
