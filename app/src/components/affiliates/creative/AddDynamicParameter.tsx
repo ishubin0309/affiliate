@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Minus, Plus } from "lucide-react";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 interface IProps {
   setParametersValue?: (value: string[]) => void;
@@ -14,6 +14,11 @@ export function AddDynamicParameter({ setParametersValue }: IProps) {
   const [inputValues, setInputValues] = useState<string[]>([""]);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  React.useEffect(() => {
+    const newIndex = inputValues.length - 1;
+    inputRefs.current[newIndex]?.focus();
+  }, [inputValues]);
 
   const addInput = () => {
     // Check if there is any empty field

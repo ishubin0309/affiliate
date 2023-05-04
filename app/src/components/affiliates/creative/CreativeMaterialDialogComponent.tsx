@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "../../ui/select";
 
+import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
 import { Code2Icon, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
@@ -59,6 +60,7 @@ export const CreativeMaterialDialogComponent = ({
   creative_id,
   gridView,
 }: Props) => {
+  const { toast } = useToast();
   const { data: profiles } = api.affiliates.getProfiles.useQuery(undefined, {
     keepPreviousData: true,
     refetchOnWindowFocus: false,
@@ -69,6 +71,7 @@ export const CreativeMaterialDialogComponent = ({
 
   const [params, setParams] = useState<string[]>([]);
   const [profile_id, setProfile_id] = useState<number>();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const generateBannerCode = api.affiliates.generateBannerCode.useMutation();
 
@@ -83,6 +86,7 @@ export const CreativeMaterialDialogComponent = ({
 
       if (!profile_id) {
         // TODO: Show error that need to select profile
+        setErrorMessage("Please select a profile");
         return;
       }
 
@@ -176,9 +180,10 @@ export const CreativeMaterialDialogComponent = ({
                       <div className="relative flex w-full items-center ">
                         <Select
                           defaultValue={String(profile_id)}
-                          onValueChange={(value) =>
-                            setProfile_id(Number(value))
-                          }
+                          onValueChange={(value) => {
+                            setProfile_id(Number(value));
+                            setErrorMessage("");
+                          }}
                         >
                           <SelectTrigger className="border px-4 py-3  text-xs ">
                             <SelectValue placeholder="Select profile" />
@@ -199,6 +204,11 @@ export const CreativeMaterialDialogComponent = ({
                           </SelectContent>
                         </Select>
                       </div>
+                    </div>
+                    <div>
+                      {errorMessage && (
+                        <p className="text-red-500">{errorMessage}</p>
+                      )}
                     </div>
                   </div>
                   <div className="w-full">
