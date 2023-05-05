@@ -1,21 +1,16 @@
 // affiliates
 
+import type { affiliates } from ".prisma/client";
+import { env } from "@/env.mjs";
+import { TRPCError } from "@trpc/server";
+import md5 from "md5";
+import { affiliatesModel } from "../../../../../prisma/zod";
+import { schema as schemaLostPassword } from "../../../../shared-types/forms/lost-password";
+import { schema as schemaRegister } from "../../../../shared-types/forms/register";
+import type { queryRawId } from "../../../db-utils";
+import { sentEmailTemplate } from "../../../email";
 import { publicProcedure } from "../../trpc";
 import { affiliate_id } from "./const";
-import { affiliatesModel } from "../../../../../prisma/zod";
-import { TRPCError } from "@trpc/server";
-import { schema as schemaRegister } from "../../../../shared-types/forms/register";
-import { schema as schemaLostPassword } from "../../../../shared-types/forms/lost-password";
-import md5 from "md5";
-import type { queryRawId } from "../../../db-utils";
-import { getConfig } from "../../../config";
-import type { PrismaClient } from "@prisma/client";
-import { Awaitable, User } from "next-auth";
-import type { AuthUser } from "../../../auth";
-import type { affiliates } from ".prisma/client";
-import { sentEmailTemplate } from "../../../email";
-import { Prisma } from "@prisma/client";
-import { env } from "@/env.mjs";
 
 export const getAccount = publicProcedure.query(async ({ ctx }) => {
   const data = await ctx.prisma.affiliates.findUnique({
@@ -29,6 +24,49 @@ export const getAccount = publicProcedure.query(async ({ ctx }) => {
     });
   }
 
+  return data;
+});
+
+export const getAdminInfo = publicProcedure.query(async ({ ctx }) => {
+  const account_data = await ctx.prisma.affiliates.findUnique({
+    where: { id: affiliate_id },
+  });
+
+  if (!account_data) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Affiliate account ${affiliate_id} not found.`,
+    });
+  }
+  const group_id = account_data["group_id"];
+  const data = await ctx.prisma.admins.findFirst({
+    where: {
+      valid: 1,
+      group_id: group_id,
+      id: {
+        gt: 1,
+      },
+    },
+  });
+  return data;
+});
+export const getGroupInfo = publicProcedure.query(async ({ ctx }) => {
+  const account_data = await ctx.prisma.affiliates.findUnique({
+    where: { id: affiliate_id },
+  });
+
+  if (!account_data) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Affiliate account ${affiliate_id} not found.`,
+    });
+  }
+  const group_id = account_data["group_id"];
+  const data = await ctx.prisma.groups.findFirst({
+    where: {
+      id: group_id,
+    },
+  });
   return data;
 });
 

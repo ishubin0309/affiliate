@@ -16,11 +16,11 @@ import {
 } from "../../common/DateRangeSelect";
 
 import { Loading } from "@/components/common/Loading";
+import { useToast } from "@/components/ui/use-toast";
 import { Home, SaveIcon } from "lucide-react";
 import Affiliates from "../../../layouts/AffiliatesLayout";
 import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
-import { useToast } from "@/components/ui/use-toast";
 
 const allColumns = [
   { id: "Impressions", title: "Impressions", link: "reports/creative-report" },
@@ -102,6 +102,12 @@ export const Dashboard = () => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
+  const { data: adminInfo } = api.affiliates.getAdminInfo.useQuery();
+
+  const { data: groupInfo } = api.affiliates.getGroupInfo.useQuery();
+
+  // console.log("TT: ", adminInfo);
+
   const apiContext = api.useContext();
   const { data: reportsColumns } = api.affiliates.getReportsColumns.useQuery(
     { level: "affiliate", report: "dashStatCols" },
@@ -162,7 +168,7 @@ export const Dashboard = () => {
   ) {
     return <Loading />;
   }
-
+  console.log("adminInfo: ", adminInfo);
   return (
     <div className="pt-3.5">
       <div className="block text-base font-medium md:justify-between lg:flex">
@@ -244,9 +250,14 @@ export const Dashboard = () => {
         <DeviceReport />
         <DashboardCountryReport />
         <AccountManager
-          first_name={account?.first_name}
-          last_name={account?.last_name}
-          mail={account?.mail}
+          first_name={adminInfo?.first_name}
+          last_name={adminInfo?.last_name}
+          mail={adminInfo?.email}
+          phone={adminInfo?.phone}
+          skype={adminInfo?.IMUser}
+          group_title={groupInfo?.title}
+          link={adminInfo?.additionalLinkUrl}
+          level={adminInfo?.level}
         />
       </div>
     </div>

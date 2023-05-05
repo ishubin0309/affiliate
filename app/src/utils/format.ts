@@ -15,7 +15,10 @@ export const isNumeric = (value?: number | string) => {
   v = v.replace("%", "");
   return !Number.isNaN(parseFloat(v));
 };
-
+export const firstLetterUpperCase = (string?: string) => {
+  if (!string) return "";
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
 export const convertToNumber = (value: number | string): number => {
   if (!value) {
     return 0;
