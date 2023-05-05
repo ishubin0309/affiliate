@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
-import { MenuItem, SubMenu } from "react-pro-sidebar";
+import { MenuItem, SubMenu, useProSidebar } from "react-pro-sidebar";
+import { useMediaQuery } from "usehooks-ts";
 
 interface Props {
   activeName: string;
@@ -36,23 +37,12 @@ const DropdownLink = ({
   parentLink,
   defaultLink,
 }: Props) => {
-  const activeLink = (value: string) => {
-    setactiveName(value);
-  };
-
-  const activeDropdown = (value: string) => {
-    setdropdown(value);
-  };
-
-  const activeDropdownVector = (value: boolean) => {
-    setdropdownVector(value);
-  };
+  const { toggleSidebar } = useProSidebar();
+  const desktop = useMediaQuery("(min-width: 768px)");
 
   const activeOnLink = (value: boolean) => {
     setonLink(value);
   };
-
-  const [dropdownVector, setdropdownVector] = useState(true);
 
   const [onLink, setonLink] = useState(false);
 
@@ -88,6 +78,9 @@ const DropdownLink = ({
               activeOnLink(true);
               setactiveName(value.link);
               setCollapseShow(false);
+              if (!desktop) {
+                toggleSidebar();
+              }
             }}
             key={index}
           >
