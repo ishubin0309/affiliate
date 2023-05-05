@@ -205,6 +205,7 @@ export const DateRangeSelect = ({ range: defaultRange }: Props) => {
               }
             }}
             placeholder="Select date range"
+            icon={<Calendar className="h-4 w-4 opacity-50 ml-2" />}
           />
         </div>
 

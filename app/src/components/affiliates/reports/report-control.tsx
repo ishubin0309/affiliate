@@ -151,7 +151,7 @@ export const ReportControl = <Data extends object>({
         )}
         footerData={footerData}
       />
-      <div className="grid grid-cols-2 gap-2">
+      <div>
         <Pagination
           pagination={pagination}
           totalItems={report.pageInfo.totalItems}
