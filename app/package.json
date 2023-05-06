@@ -14,8 +14,8 @@
     "storybook": "storybook dev -p 6001",
     "build-storybook": "storybook build",
     "publish-storybook": "chromatic --project-token=cddc24775ebe",
-    "deploy-staging": "mode ../scripts/auto_merge_no_checks.mjs --headBranch=dev --baseBranch=staging",
-    "deploy-prod": "mode ../scripts/auto_merge_no_checks.mjs --headBranch=dev --baseBranch=main"
+    "deploy-staging": "zx ../scripts/auto_merge_no_checks.mjs --headBranch=dev --baseBranch=staging",
+    "deploy-prod": "zx ../scripts/auto_merge_no_checks.mjs --headBranch=dev --baseBranch=main"
   },
   "dependencies": {
     "@atomictech/xlsx-write-stream": "^2.0.2",
