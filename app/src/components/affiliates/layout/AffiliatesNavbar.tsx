@@ -10,19 +10,22 @@ import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import { useProSidebar } from "react-pro-sidebar";
-import { useMediaQuery } from "usehooks-ts";
 import NotificationDropDown from "../../Dropdowns/NotificationDropdown";
 
 interface Props {
+  isDesktop: boolean;
   collapseShow: boolean;
   setCollapseShow: Dispatch<SetStateAction<boolean>>;
 }
 
-const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
+const AffiliatesNavbar = ({
+  isDesktop,
+  collapseShow,
+  setCollapseShow,
+}: Props) => {
   const [selectLanguageItem, setSelectLanguageItem] =
     useState<LanguageOption | null>(null);
   const { collapseSidebar, toggleSidebar } = useProSidebar();
-  const desktop = useMediaQuery("(min-width: 768px)");
 
   return (
     <>
@@ -34,7 +37,7 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
               <a
                 onClick={(e) => {
                   e.preventDefault();
-                  desktop ? collapseSidebar() : toggleSidebar();
+                  isDesktop ? collapseSidebar() : toggleSidebar();
                   setCollapseShow(!collapseShow);
                 }}
               >
