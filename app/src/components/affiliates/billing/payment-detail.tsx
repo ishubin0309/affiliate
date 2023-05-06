@@ -78,6 +78,7 @@ interface payments_details {
   reason: string;
 }
 interface Props {
+  billingLogoPath: string;
   merchant: string;
   affiliatesDetail: affiliatesDetail;
   payments_details: payments_details[];
@@ -98,6 +99,7 @@ interface Props {
 }
 
 const PaymentDetail = ({
+  billingLogoPath,
   payments_paid,
   affiliatesDetail,
   payments_details,
@@ -167,7 +169,7 @@ const PaymentDetail = ({
           <div style={styles.page}>
             <View style={styles.section}>
               {/* eslint-disable-next-line jsx-a11y/alt-text */}
-              <Image style={styles.img} src={"/img/aff.png"} />
+              <Image style={styles.img} src={billingLogoPath} />
             </View>
             <View style={styles.section}>
               <Heading

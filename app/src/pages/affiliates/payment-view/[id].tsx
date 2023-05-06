@@ -16,8 +16,13 @@ const Page: MyPage = () => {
   const { data } = api.affiliates.getPaymentDetails.useQuery({
     paymentId: String(id),
   });
-  const { payments_paid, affiliatesDetail, merchants, payments_details } =
-    data || {};
+  const {
+    payments_paid,
+    affiliatesDetail,
+    merchants,
+    payments_details,
+    billingLogoPath,
+  } = data || {};
   console.log(data);
 
   return (
@@ -34,6 +39,7 @@ const Page: MyPage = () => {
         payments_details && (
           <PDFViewer height={window.innerHeight} width={window.innerWidth}>
             <PaymentDetail
+              billingLogoPath={billingLogoPath || ""}
               payments_paid={payments_paid}
               affiliatesDetail={affiliatesDetail}
               payments_details={payments_details}

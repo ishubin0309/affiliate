@@ -4,6 +4,8 @@ import { z } from "zod";
 import { addFreeTextSearchJSFilter } from "../../../../../prisma/prisma-utils";
 import { publicProcedure } from "../../trpc";
 import { affiliate_id } from "./const";
+import { getConfig } from "@/server/config";
+import { serverStoragePath } from "@/components/utils";
 
 export const getPaymentsPaid = publicProcedure
   .input(
@@ -71,13 +73,14 @@ export const getPaymentDetails = publicProcedure
       });
     }
 
-    const [payments_details, payments_paid] = await Promise.all([
+    const [payments_details, payments_paid, config] = await Promise.all([
       ctx.prisma.payments_details.findMany({
         where: { paymentID: paymentId },
       }),
       ctx.prisma.payments_paid.findUnique({
         where: { paymentID: paymentId },
       }),
+      getConfig(ctx.prisma),
     ]);
     const affiliatesDetail = await ctx.prisma.affiliates.findFirst({
       where: { id: payments_paid?.affiliate_id },
@@ -111,6 +114,10 @@ export const getPaymentDetails = publicProcedure
       },
     });
 
+    console.log(`muly:`, {
+      config,
+    });
+
     return {
       payments_details,
       payments_paid,
@@ -118,5 +125,6 @@ export const getPaymentDetails = publicProcedure
       bonusesDetail,
       merchants,
       commissionReport,
+      billingLogoPath: serverStoragePath(config.billingLogoPath),
     };
   });

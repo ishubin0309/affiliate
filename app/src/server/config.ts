@@ -3,7 +3,7 @@ import type { PrismaClient } from "@prisma/client";
 import { settingsModel } from "../../prisma/zod";
 import { env } from "@/env.mjs";
 
-const settingFullModel = settingsModel.extend({
+export const settingFullModel = settingsModel.extend({
   dashboard_host: z.string(),
   legacy_host: z.string(),
 });
