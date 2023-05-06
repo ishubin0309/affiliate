@@ -251,12 +251,6 @@
   margin-right: 15px;
 }
 
-.paginate-container {
-  max-width: 100%;
-  overflow: auto;
-  flex-wrap: wrap;
-}
-
 /* React paginate css ends */
 
 /* React date picker width starts */
