@@ -11,6 +11,7 @@ import type { queryRawId } from "../../../db-utils";
 import { sentEmailTemplate } from "../../../email";
 import { publicProcedure } from "../../trpc";
 import { affiliate_id } from "./const";
+import { z } from "zod";
 
 export const getAccount = publicProcedure.query(async ({ ctx }) => {
   const data = await ctx.prisma.affiliates.findUnique({
@@ -27,48 +28,46 @@ export const getAccount = publicProcedure.query(async ({ ctx }) => {
   return data;
 });
 
-export const getAdminInfo = publicProcedure.query(async ({ ctx }) => {
-  const account_data = await ctx.prisma.affiliates.findUnique({
-    where: { id: affiliate_id },
-  });
-
-  if (!account_data) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Affiliate account ${affiliate_id} not found.`,
+export const getAdminInfo = publicProcedure
+  .output(
+    z.object({
+      first_name: z.string().nullish(),
+      last_name: z.string().nullish(),
+      email: z.string().nullish(),
+      phone: z.string().nullish(),
+      IMUser: z.string().nullish(),
+      group_title: z.string().nullish(),
+      additionalLinkUrl: z.string().nullish(),
+      level: z.string().nullish(),
+    })
+  )
+  .query(async ({ ctx }) => {
+    const account_data = await ctx.prisma.affiliates.findUniqueOrThrow({
+      where: { id: affiliate_id },
     });
-  }
-  const group_id = account_data["group_id"];
-  const data = await ctx.prisma.admins.findFirst({
-    where: {
-      valid: 1,
-      group_id: group_id,
-      id: {
-        gt: 1,
-      },
-    },
-  });
-  return data;
-});
-export const getGroupInfo = publicProcedure.query(async ({ ctx }) => {
-  const account_data = await ctx.prisma.affiliates.findUnique({
-    where: { id: affiliate_id },
-  });
 
-  if (!account_data) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Affiliate account ${affiliate_id} not found.`,
-    });
-  }
-  const group_id = account_data["group_id"];
-  const data = await ctx.prisma.groups.findFirst({
-    where: {
-      id: group_id,
-    },
+    const group_id = account_data["group_id"];
+    const [admins, groups] = await Promise.all([
+      ctx.prisma.admins.findFirst({
+        where: {
+          valid: 1,
+          group_id: group_id,
+          id: {
+            gt: 1,
+          },
+        },
+      }),
+      ctx.prisma.groups.findFirst({
+        where: {
+          id: group_id,
+        },
+      }),
+    ]);
+
+    console.log(`muly:`, { admins, groups });
+
+    return { ...admins, group_title: groups?.title };
   });
-  return data;
-});
 
 export const updateAccount = publicProcedure
   .input(affiliatesModel.partial())

@@ -102,10 +102,6 @@ export const Dashboard = () => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
-  const { data: adminInfo } = api.affiliates.getAdminInfo.useQuery();
-
-  const { data: groupInfo } = api.affiliates.getGroupInfo.useQuery();
-
   // console.log("TT: ", adminInfo);
 
   const apiContext = api.useContext();
@@ -168,7 +164,6 @@ export const Dashboard = () => {
   ) {
     return <Loading />;
   }
-  console.log("adminInfo: ", adminInfo);
   return (
     <div className="pt-3.5">
       <div className="block text-base font-medium md:justify-between lg:flex">
@@ -249,16 +244,7 @@ export const Dashboard = () => {
       <div className="my-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
         <DeviceReport />
         <DashboardCountryReport />
-        <AccountManager
-          first_name={adminInfo?.first_name}
-          last_name={adminInfo?.last_name}
-          mail={adminInfo?.email}
-          phone={adminInfo?.phone}
-          skype={adminInfo?.IMUser}
-          group_title={groupInfo?.title}
-          link={adminInfo?.additionalLinkUrl}
-          level={adminInfo?.level}
-        />
+        <AccountManager />
       </div>
     </div>
   );

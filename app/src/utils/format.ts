@@ -15,7 +15,7 @@ export const isNumeric = (value?: number | string) => {
   v = v.replace("%", "");
   return !Number.isNaN(parseFloat(v));
 };
-export const firstLetterUpperCase = (string?: string) => {
+export const firstLetterUpperCase = (string?: string | null) => {
   if (!string) return "";
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
