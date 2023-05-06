@@ -1,5 +1,9 @@
 import { Loading } from "./Loading";
-import { DateRangeSelect } from "./DateRangeSelect";
+import {
+  DateRange,
+  dateRangeChoices,
+  DateRangeSelect,
+} from "./DateRangeSelect";
 import { Dialog } from "@/components/common/dialog";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +12,7 @@ import { schema } from "@/components/affiliates/profiles/Profiles";
 import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
 import { EditIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useTranslation } from "next-i18next";
+import { SelectInput as SelectInputComponent } from "@/components/common/select-input";
 
 const meta = {
   component: Loading,
@@ -18,11 +23,6 @@ export default meta;
 export const Component = {
   render: () => <Loading />,
   name: "Loading",
-};
-
-export const Test2 = {
-  render: () => <DateRangeSelect />,
-  name: "DateRangeSelect",
 };
 
 const SampleDialog = (props: any) => {
@@ -79,4 +79,31 @@ export const DialogForm = () => {
       }}
     />
   );
+};
+
+const SelectInputTest = () => {
+  const [value, setValue] = useState<string>("a");
+
+  return (
+    <div>
+      <SelectInputComponent
+        choices={["a", "b", "c"]}
+        value={value}
+        onChange={setValue}
+        placeholder="Select date range"
+      />
+      <div
+        className="h-96 w-96 bg-red-500"
+        onClick={() => {
+          console.log(`muly:click`, {});
+        }}
+      ></div>
+
+      <Button onClick={() => setValue("b")}>Set B</Button>
+    </div>
+  );
+};
+
+export const SelectInput = {
+  render: () => <SelectInputTest />,
 };

@@ -18,17 +18,7 @@ export const SearchContext = React.createContext<SearchContextInterface>({
 });
 
 export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
-  const { from, to } = useMemo(() => {
-    const now = startOfDay(new Date());
-    const from = format(sub(now, { months: 6 }), "yyyyMMdd");
-    const to = format(now, "yyyyMMdd");
-    return { from, to };
-  }, []);
-
-  const [values, setValues] = useState<SearchContextInterface["values"]>({
-    from,
-    to,
-  });
+  const [values, setValues] = useState<SearchContextInterface["values"]>({});
   const valueRef = useRef<SearchContextInterface["values"]>({});
 
   const setControlValue = (key: string, value: string) => {
@@ -39,7 +29,7 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
     setValues({ ...valueRef.current });
   };
 
-  console.log(`muly:SearchProvider`, { from, to });
+  console.log(`muly:SearchProvider`, { values, valuesRef: valueRef.current });
   return (
     <SearchContext.Provider
       value={{ values, controlValue: valueRef.current, setControlValue, apply }}

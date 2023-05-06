@@ -5,8 +5,10 @@ import { QuerySelect } from "../../../components/common/QuerySelect";
 import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { ProfileReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
+import { DateRangeSelect } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
+import { useDateRange } from "@/components/ui/date-range";
+import { SearchDateRange } from "@/components/common/search/search-date-range";
 
 export const ProfileReport = () => {
   const router = useRouter();
@@ -212,7 +214,7 @@ export const ProfileReport = () => {
         alignSelf="center"
       >
         <GridItem>
-          <DateRangeSelect />
+          <SearchDateRange />
         </GridItem>
         <GridItem>
           <QuerySelect
