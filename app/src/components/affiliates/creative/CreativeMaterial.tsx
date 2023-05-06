@@ -120,9 +120,7 @@ export const CreativeMaterial = () => {
       >
         {data?.map((item) => renderRow(item, gridView))}
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        <Pagination pagination={pagination} totalItems={data.length} />
-      </div>
+      <Pagination pagination={pagination} totalItems={data.length} />
     </div>
   ) : (
     <Loading />

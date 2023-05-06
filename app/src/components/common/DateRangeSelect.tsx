@@ -1,17 +1,14 @@
 import DatePicker from "react-datepicker";
 import {
-  endOfDay,
   endOfMonth,
   endOfYear,
-  format,
-  parse,
-  startOfDay,
   startOfMonth,
   startOfWeek,
   startOfYear,
   sub,
 } from "date-fns";
 import { SelectInput } from "@/components/common/select-input";
+import { Calendar } from "lucide-react";
 
 export type DateRange =
   | "today"
@@ -106,6 +103,7 @@ export const DateRangeSelect = ({ value, setValue }: Props) => {
             setValue(getPredefinedDateRange(value as DateRange));
           }}
           placeholder="Select date range"
+          icon={<Calendar className="ml-2 h-4 w-4 opacity-50" />}
         />
       </div>
 
