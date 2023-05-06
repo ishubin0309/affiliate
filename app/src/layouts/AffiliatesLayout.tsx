@@ -4,15 +4,12 @@ import React, { useState } from "react";
 import AffiliateFooter from "@/components/affiliates/layout/AffiliateFooter";
 import { SearchProvider } from "@/components/common/search/search-context";
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "usehooks-ts";
 import AffiliatesNavbar from "../components/affiliates/layout/AffiliatesNavbar";
 import Sidebar from "../components/affiliates/layout/Sidebar";
-import { PaginationProvider } from "@/components/common/data-table/paginagion-context";
-// import HeaderStats from "components/Headers/HeaderStats.js";
-// import FooterAdmin from "components/Footers/FooterAdmin.js";
+import { useMediaQuery } from "usehooks-ts";
 
 const AffiliatesLayout = ({ children }: PropsWithChildren) => {
-  const desktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   const [collapseShow, setCollapseShow] = React.useState(true);
   const [tempCollapseShow, setTempCollapseShow] =
     useState<boolean>(collapseShow);
@@ -42,11 +39,13 @@ const AffiliatesLayout = ({ children }: PropsWithChildren) => {
         }
       >
         <Sidebar
+          isDesktop={isDesktop}
           collapseShow={collapseShow}
           tempCollapseShow={tempCollapseShow}
           setTempCollapseShow={maybeSetTempCollapseShow}
         />
         <AffiliatesNavbar
+          isDesktop={isDesktop}
           collapseShow={tempCollapseShow}
           setCollapseShow={handleChangeCollapseShow}
         />

@@ -42,8 +42,14 @@ export const getTranslateReportFake = publicProcedure
         _count: {
           id: true,
         },
+        where: {
+          langENG: { contains: search },
+          // rdate: { gte: from, lte: to },
+        },
       }),
     ]);
+
+    console.log(`muly:country report `, { data: data.length, totals });
 
     return {
       data,

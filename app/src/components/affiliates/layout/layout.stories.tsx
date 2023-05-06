@@ -34,6 +34,7 @@ const SidebarTest = (props: any) => {
 
   return (
     <Sidebar
+      isDesktop={true}
       collapseShow={props.open}
       tempCollapseShow={tempCollapseShow}
       setTempCollapseShow={maybeSetTempCollapseShow}
@@ -54,6 +55,7 @@ const NavbarTest = (props: any) => {
   const navbarRef = useRef<HTMLDivElement>(null);
   return (
     <AffiliatesNavbar
+      isDesktop={true}
       collapseShow={collapseShow}
       setCollapseShow={setCollapseShow}
     />
