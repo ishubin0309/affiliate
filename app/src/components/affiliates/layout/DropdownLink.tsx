@@ -3,9 +3,9 @@ import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { MenuItem, SubMenu, useProSidebar } from "react-pro-sidebar";
-import { useMediaQuery } from "usehooks-ts";
 
 interface Props {
+  isDesktop: boolean;
   activeName: string;
   collapseShow: boolean;
   dropdown: string;
@@ -25,6 +25,7 @@ interface LinkName {
 }
 
 const DropdownLink = ({
+  isDesktop,
   setactiveName,
   setdropdown,
   setCollapseShow,
@@ -38,7 +39,6 @@ const DropdownLink = ({
   defaultLink,
 }: Props) => {
   const { toggleSidebar } = useProSidebar();
-  const desktop = useMediaQuery("(min-width: 768px)");
 
   const activeOnLink = (value: boolean) => {
     setonLink(value);
@@ -78,7 +78,7 @@ const DropdownLink = ({
               activeOnLink(true);
               setactiveName(value.link);
               setCollapseShow(false);
-              if (!desktop) {
+              if (!isDesktop) {
                 toggleSidebar();
               }
             }}

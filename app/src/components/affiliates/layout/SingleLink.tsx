@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import { MenuItem, useProSidebar } from "react-pro-sidebar";
-import { useMediaQuery } from "usehooks-ts";
 
 interface Props {
+  isDesktop: boolean;
   activeName: string;
   collapseShow: boolean;
   setCollapseShow: (value: boolean) => void;
@@ -15,6 +15,7 @@ interface Props {
 }
 
 const SingleLink = ({
+  isDesktop,
   setactiveName,
   setdropdown,
   activeName,
@@ -24,7 +25,6 @@ const SingleLink = ({
   linkName,
 }: Props) => {
   const { toggleSidebar } = useProSidebar();
-  const desktop = useMediaQuery("(min-width: 768px)");
 
   const activeLink = (value: string) => {
     setactiveName(value);
@@ -41,7 +41,7 @@ const SingleLink = ({
         activeLink(link);
         activeDropdown("");
         setCollapseShow(false);
-        if (!desktop) {
+        if (!isDesktop) {
           toggleSidebar();
         }
       }}
