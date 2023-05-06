@@ -12,6 +12,6 @@ export const TableRow = ({ data, columns }: TableRowProps) => (
       width: `${100 / columns}%`,
     }}
   >
-    <Heading style={styles.tableCell} title={data} />
+    <Heading style={styles.tableCell} title={data} is_table={true} />
   </View>
 );
