@@ -57,17 +57,19 @@ export const SubCreativeMaterial = () => {
       <PageHeader
         title="Marketing Tools"
         subTitle="Sub Creative Materials"
+        searchComponent={
+          <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
+            <SearchSelect
+              label="Creative Type"
+              varName="type"
+              choices={meta?.type}
+            />
+            <div className="flex-grow" />
+            <SearchText varName="search" />
+            <SearchApply isLoading={isRefetching} />
+          </div>
+        }
       ></PageHeader>
-      <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
-        <SearchSelect
-          label="Creative Type"
-          varName="type"
-          choices={meta?.type}
-        />
-        <div className="flex-grow" />
-        <SearchText varName="search" />
-        <SearchApply isLoading={isRefetching} />
-      </div>
       {data?.map(renderRow)}
       <Pagination pagination={pagination} totalItems={data.length} />
     </div>

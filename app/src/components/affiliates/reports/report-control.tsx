@@ -90,7 +90,18 @@ export const ReportControl = <Data extends object>({
 
   return report ? (
     <div className="flex w-full flex-col gap-2">
-      <PageHeader title="Reports" subTitle={reportName}>
+      <PageHeader
+        title="Reports"
+        subTitle={reportName}
+        searchComponent={
+          <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
+            <SearchDateRange />
+            {children}
+            <div className="flex-grow" />
+            <SearchApply isLoading={isRefetching} />
+          </div>
+        }
+      >
         <div className="flex flex-row gap-2">
           <ExportButton onExport={handleExport} />
           <Button
@@ -107,13 +118,6 @@ export const ReportControl = <Data extends object>({
           </Button>
         </div>
       </PageHeader>
-
-      <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
-        <SearchDateRange />
-        {children}
-        <div className="flex-grow" />
-        <SearchApply isLoading={isRefetching} />
-      </div>
 
       <div
         className={`mt-4 overflow-hidden transition-all duration-500	 ${
