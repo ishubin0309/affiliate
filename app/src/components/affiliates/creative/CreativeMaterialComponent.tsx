@@ -80,7 +80,7 @@ export const CreativeMaterialComponent = ({
         </div>
         <div className="col-span-2 w-full rounded-xl">
           <div className=" bg-[#F5F8FA] p-4 md:px-8">
-            <div className="justify-between md:flex">
+            <div className="flex-wrap justify-between md:flex">
               <div className="mt-2 flex justify-between truncate md:block">
                 <label className="mb-1 block text-sm font-bold text-gray-700">
                   {values[0]?.title}
@@ -132,7 +132,7 @@ export const CreativeMaterialComponent = ({
             <div
               className={
                 "justify-between pt-1 md:pt-4 " +
-                (gridView ? "grid grid-cols-2" : " md:flex ")
+                (gridView ? "grid grid-cols-1" : " lg:flex ")
               }
             >
               <div className="mt-2 hidden md:block">

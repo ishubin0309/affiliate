@@ -238,9 +238,7 @@ export const CommissionReport = () => {
                   Report Display
                 </span>
               </div>
-              <div className="hidden lg:block">
-                <DateRangeSelect />
-              </div>
+              <div className="hidden lg:block"></div>
               <div className="flex space-x-2 lg:hidden">
                 <Button variant="primary">Show Reports</Button>
                 <Button variant="primary-outline">Reset Search</Button>

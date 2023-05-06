@@ -32,6 +32,10 @@ export const getTranslateReportFake = publicProcedure
       prisma.translate.findMany({
         take: pageParams.pageSize,
         skip: offset,
+        where: {
+          langENG: { contains: search },
+          // rdate: { gte: from, lte: to },
+        },
       }),
 
       prisma.translate.aggregate({

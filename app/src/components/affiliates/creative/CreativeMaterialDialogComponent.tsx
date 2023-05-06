@@ -17,7 +17,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
 import { Code2Icon, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "../../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import { AddDynamicParameter } from "./AddDynamicParameter";
@@ -66,10 +66,9 @@ export const CreativeMaterialDialogComponent = ({
     refetchOnWindowFocus: false,
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [parameterFirstValues, setParameterFirstValues] = useState("");
   const [codesValues, setCodesValues] = useState<CodeProps>(initialCodeProps);
 
-  const [params, setParams] = useState<string[]>([]);
+  const [params, setParams] = useState<string[]>([""]);
   const [profile_id, setProfile_id] = useState<number>();
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -166,7 +165,7 @@ export const CreativeMaterialDialogComponent = ({
         </DialogHeader>
         <form className="w-full pt-5">
           <div className="justify-between md:flex md:space-x-4">
-            <div className="w-full md:w-1/4">
+            <div className="w-full md:w-2/4 lg:w-1/4">
               <div className="mb-11 mb-12 h-[calc(100%-43px)] justify-between md:flex md:space-x-4">
                 <div className="w-full">
                   <div className="mb-3">
@@ -177,7 +176,7 @@ export const CreativeMaterialDialogComponent = ({
                       Profile
                     </label>
                     <div className="flex">
-                      <div className="relative flex w-full items-center ">
+                      <div className="relative flex w-full items-center overflow-auto">
                         <Select
                           defaultValue={String(profile_id)}
                           onValueChange={(value) => {
@@ -205,11 +204,11 @@ export const CreativeMaterialDialogComponent = ({
                         </Select>
                       </div>
                     </div>
-                    <div>
-                      {errorMessage && (
-                        <p className="text-red-500">{errorMessage}</p>
+                    <label className="label">
+                      {!errorMessage ? null : (
+                        <p className="text-sm text-red-500">{errorMessage}</p>
                       )}
-                    </div>
+                    </label>
                   </div>
                   <div className="w-full">
                     <label
@@ -220,7 +219,10 @@ export const CreativeMaterialDialogComponent = ({
                     </label>
                     <div className="flex flex-wrap">
                       <div className="relative flex w-full flex-wrap items-center justify-between ">
-                        <AddDynamicParameter />
+                        <AddDynamicParameter
+                          inputValues={params}
+                          setInputValues={setParams}
+                        />
                       </div>
                     </div>
                   </div>
@@ -237,7 +239,7 @@ export const CreativeMaterialDialogComponent = ({
                 </Button>
               </div>
             </div>
-            <div className="w-full md:w-3/4">
+            <div className="w-full md:w-2/4 lg:w-3/4">
               {" "}
               <div className="h-full">
                 <Tabs defaultValue="HtmlCode" className="h-full">
@@ -249,7 +251,10 @@ export const CreativeMaterialDialogComponent = ({
                       Direct Link Code
                     </TabsTrigger>
                   </TabsList>
-                  <TabsContent className="h-full border-0 p-0" value="HtmlCode">
+                  <TabsContent
+                    className="h-full min-h-[260px] border-0 p-0"
+                    value="HtmlCode"
+                  >
                     <div className="-mx-3 flex h-full flex-wrap">
                       <div className="h-full w-full px-3">
                         <textarea

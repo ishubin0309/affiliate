@@ -1,5 +1,5 @@
 export const formatPrice = (value?: number) => {
-  let v = parseFloat((value || 0).toFixed(2));
+  const v = parseFloat((value || 0).toFixed(2));
 
   return v && v < 0
     ? `($${performanceFormatter(-v)})`

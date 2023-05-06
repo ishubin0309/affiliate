@@ -11,13 +11,6 @@ import {
   SelectValue,
 } from "./select";
 
-export const useDateRange = (defaultRange?: any) => {
-  const router = useRouter();
-  const { from, to } = router.query;
-
-  return { from, to };
-};
-
 interface Props {
   setFrom: React.Dispatch<React.SetStateAction<Date>>;
   setTo: React.Dispatch<React.SetStateAction<Date>>;
@@ -192,4 +185,12 @@ export const DateRangeSelect = () => {
       </div>
     </div>
   );
+};
+
+// TODO remove
+export const useDateRange = () => {
+  return {
+    from: new Date("2023-01-01"),
+    to: new Date("2023-05-01"),
+  };
 };

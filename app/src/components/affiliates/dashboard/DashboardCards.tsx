@@ -79,7 +79,7 @@ const DashboardCards = ({
   return (
     <Link
       href={"/affiliates/" + link}
-      className="relative mb-1 rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
+      className="relative mb-1 block rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
       key={idx}
     >
       {selectColumnsMode && (
