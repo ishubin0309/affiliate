@@ -11,6 +11,7 @@ import {
   useSearchContext,
 } from "@/components/common/search/search-context";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { getDateRange } from "@/components/common/search/search-date-range";
 
 const columnHelper = createColumnHelper<CountryReportType>();
 const createColumn = (id: keyof CountryReportType, header: string) =>
@@ -45,18 +46,18 @@ const columns = [
 
 export const CountryReports = () => {
   const {
-    values: { merchant_id, from, to },
+    values: { merchant_id, dates },
   } = useSearchContext();
   const pagination = usePagination();
+  const { name, ...dateRange } = getDateRange(dates);
 
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery(
     undefined,
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
-  const { data, isLoading } = api.affiliates.getCountryReport.useQuery(
+  const { data, isRefetching } = api.affiliates.getCountryReport.useQuery(
     {
-      from: getDateParam(from),
-      to: getDateParam(to),
+      ...dateRange,
       merchant_id: getNumberParam(merchant_id),
       pageParams: pagination.pageParams,
     },
@@ -71,7 +72,7 @@ export const CountryReports = () => {
       report={data}
       columns={columns}
       pagination={pagination}
-      isRefetching={isLoading}
+      isRefetching={isRefetching}
       handleExport={(exportType: ExportType) => Promise.resolve("ok")}
     >
       <SearchSelect

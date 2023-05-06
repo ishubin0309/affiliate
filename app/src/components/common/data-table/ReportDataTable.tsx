@@ -105,17 +105,17 @@ export function ReportDataTable<Data extends object>({
           ))}
         </tbody>
 
-        {footerData && (
-          <tfoot className="px-3 py-3">
-            <tr className="py-5">
-              <td>Total</td>
-              {footerData.length > 0 &&
-                Object.values(footerData[0]).map((item: any, key) => {
-                  return <td key={key}>{item}</td>;
-                })}
-            </tr>
-          </tfoot>
-        )}
+        {/*{footerData && (*/}
+        {/*  <tfoot className="px-3 py-3">*/}
+        {/*    <tr className="py-5">*/}
+        {/*      <td>Total</td>*/}
+        {/*      {footerData.length > 0 &&*/}
+        {/*        Object.values(footerData[0]).map((item: any, key) => {*/}
+        {/*          return <td key={key}>{item}</td>;*/}
+        {/*        })}*/}
+        {/*    </tr>*/}
+        {/*  </tfoot>*/}
+        {/*)}*/}
       </table>
     </div>
   );

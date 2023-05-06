@@ -11,12 +11,7 @@ import {
   startOfYear,
   sub,
 } from "date-fns";
-import { Calendar } from "lucide-react";
-import { queryTypes, useQueryState } from "next-usequerystate";
-import { useRouter } from "next/router";
-import { useState } from "react";
 import { SelectInput } from "@/components/common/select-input";
-// import { DatePicker } from "./datepicker/Datepicker";
 
 export type DateRange =
   | "today"
@@ -42,17 +37,9 @@ export const dateRangeChoices = [
   { id: "custom", title: "Custom" },
 ];
 
-const formatValueDateRange = (
-  from: Date | null | undefined,
-  to: Date | null | undefined
-) => {
-  return `${format(
-    from || sub(new Date(), { months: 6 }),
-    "yyyyMMdd"
-  )}-${format(to || new Date(), "yyyyMMdd")}`;
-};
-
-const getPredefinedDateRange = (value?: string | null) => {
+export const getPredefinedDateRange = (
+  value?: string | null
+): DateRangeValue => {
   const setRange = (value: CustomDateRange, from: Date, to: Date) => ({
     name: value,
     from,
@@ -96,154 +83,56 @@ const getPredefinedDateRange = (value?: string | null) => {
   return range;
 };
 
-export const getDateRange = (value?: string) => {
-  let range;
-  const regex = /^(\d{8})-(\d{8})$/gm;
-
-  if (value && regex.exec(value)) {
-    // console.log(`muly:getDateRange parse dates, are they? ${value}`, {
-    //   re: regex.exec(value),
-    // });
-    const [fromS, toS] = (value || "").split("-");
-
-    const from = parse(fromS || "", "yyyyMMdd", new Date());
-    const to = parse(toS || "", "yyyyMMdd", new Date());
-
-    if (isNaN(from.getTime()) || isNaN(to.getTime())) {
-      range = getPredefinedDateRange("last-6-month");
-    } else {
-      range = {
-        name: "custom",
-        from,
-        to,
-      };
-    }
-  } else {
-    range = getPredefinedDateRange(value);
-  }
-
-  return {
-    name: range.name,
-    from: startOfDay(range.from),
-    to: endOfDay(range.to),
-  };
+export type DateRangeValue = {
+  from: Date;
+  to: Date;
+  name: string;
 };
 
 interface Props {
-  range?: DateRange;
+  value: DateRangeValue;
+  setValue: (value: DateRangeValue) => void;
 }
 
-export const useDateRange = (defaultRange?: DateRange) => {
-  const router = useRouter();
-  const { dates } = router.query;
-
-  const value = String(dates);
-  // console.log(value);
-  return getDateRange(value || defaultRange || "last-6-month");
-};
-
-export const useDateRangeDefault = (defaultRange?: string) => {
-  // const router = useRouter();
-  // const { dates } = router.query;
-  // const value = String(dates);
-  return getDateRange(defaultRange);
-};
-
-export const DateRangeSelect = ({ range: defaultRange }: Props) => {
-  const range = defaultRange || "last-6-month";
-  const [value, setValue] = useQueryState(
-    "dates",
-    queryTypes.string.withDefault(range)
-  );
-
-  const { name, from, to } = getDateRange(value);
-
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState(new Date());
-
-  const setDateRange = async (from: Date | null, to: Date | null) => {
-    return setValue(formatValueDateRange(from, to));
-  };
-
-  const handleOnchage = async (fromDate: Date, toDate: Date) => {
-    await setDateRange(fromDate, toDate);
-  };
-
-  const handleSelectDateRange = async (value: DateRange) => {
-    console.log(value);
-
-    await setValue(value);
-  };
-
-  // console.log(`muly:DateRangeSelect render ${name}`, { from, to });
-
-  const month: string[] = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
+export const DateRangeSelect = ({ value, setValue }: Props) => {
+  console.log(`muly:DateRangeSelect`, { value });
   return (
-    <>
-      <div>
-        <div className="relative my-1 mr-2 inline-block lg:my-0">
-          <SelectInput
-            choices={dateRangeChoices}
-            value={name}
-            onChange={(value) => {
-              if (value !== "custom") {
-                void handleSelectDateRange(value as DateRange);
-              }
-            }}
-            placeholder="Select date range"
-            icon={<Calendar className="h-4 w-4 opacity-50 ml-2" />}
-          />
-        </div>
+    <div>
+      <div className="relative my-1 mr-2 inline-block lg:my-0">
+        <SelectInput
+          choices={dateRangeChoices}
+          value={value.name}
+          onChange={(value) => {
+            setValue(getPredefinedDateRange(value as DateRange));
+          }}
+          placeholder="Select date range"
+        />
+      </div>
 
-        {/* <div
-              className="ml-2 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-base"
-              onClick={onOpen}
-            >
-              {from.getDate()} {month[from.getMonth()]} {from.getFullYear()}{" "}
-              &nbsp;&nbsp; TO &nbsp;&nbsp;
-              {to.getDate()} {month[to.getMonth()]} {to.getFullYear()}
-            </div> */}
-
+      <div className="inline-block">
         <div className="inline-block">
-          <div className="inline-block">
-            <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-sm lg:my-0">
-              <DatePicker
-                selected={from}
-                onChange={async (date: Date) => {
-                  setFromDate(date);
-                  await handleOnchage(date, to);
-                }}
-              ></DatePicker>
-            </div>
+          <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-sm lg:my-0">
+            <DatePicker
+              selected={value.from}
+              onChange={(date: Date) => {
+                setValue({ ...value, from: date, name: "custom" });
+              }}
+            ></DatePicker>
           </div>
-          <label className="px-1 text-sm text-[#525252]">To</label>
-          <div className="inline-block">
-            <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-sm lg:my-0">
-              <DatePicker
-                selected={to}
-                onChange={async (date: Date) => {
-                  setToDate(date);
-                  await handleOnchage(from, date);
-                }}
-              ></DatePicker>
-            </div>
+        </div>
+        <label className="px-1 text-sm text-[#525252]">To</label>
+        <div className="inline-block">
+          <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-sm lg:my-0">
+            <DatePicker
+              selected={value.to}
+              onChange={(date: Date) => {
+                console.log(`muly:date picker change`, { date });
+                setValue({ ...value, to: date, name: "custom" });
+              }}
+            ></DatePicker>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
