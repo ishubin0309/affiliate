@@ -11,6 +11,7 @@ import { api } from "../../../utils/api";
 import { CreativeMaterialComponent } from "./CreativeMaterialComponent";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
 import { Pagination } from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 
 const renderRow = (item: MerchantCreativeType, gridView: boolean) => {
   const values = [
@@ -113,15 +114,14 @@ export const CreativeMaterial = () => {
         <SearchApply isLoading={isRefetching} />
       </div>
       <div
-        className={"grid gap-4 " + (gridView ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" : "grid-cols-1")}
+        className={cn("grid grid-cols-1 gap-4", {
+          "md:grid-cols-2 lg:grid-cols-4": gridView,
+        })}
       >
         {data?.map((item) => renderRow(item, gridView))}
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <Pagination
-          pagination={pagination}
-          totalItems={data.length}
-        />
+        <Pagination pagination={pagination} totalItems={data.length} />
       </div>
     </div>
   ) : (

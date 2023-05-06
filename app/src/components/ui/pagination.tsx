@@ -63,7 +63,7 @@ export const Pagination = ({
 
       <div className="mt-0">
         <Select onValueChange={handleChange} value={String(pageSize)}>
-          <SelectTrigger >
+          <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
