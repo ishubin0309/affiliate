@@ -9,8 +9,7 @@ import DeviceReport from "./DeviceReport";
 import type { TopMerchantCreativeType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 
-import { Loading } from "@/components/common/Loading";
-import { Home, SaveIcon } from "lucide-react";
+import { SaveIcon } from "lucide-react";
 import Affiliates from "../../../layouts/AffiliatesLayout";
 import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
@@ -128,6 +127,8 @@ export const Dashboard = () => {
     keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
+
+  // console.log("TT: ", adminInfo);
 
   const apiContext = api.useContext();
   const { data: reportsColumns } = api.affiliates.getReportsColumns.useQuery(
@@ -261,16 +262,12 @@ export const Dashboard = () => {
             conversionChart={conversionChart || []}
           />
         </div>
+      </div>
 
-        <div className="my-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
-          <DeviceReport />
-          <DashboardCountryReport />
-          <AccountManager
-            first_name={account?.first_name}
-            last_name={account?.last_name}
-            mail={account?.mail}
-          />
-        </div>
+      <div className="my-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <DeviceReport />
+        <DashboardCountryReport />
+        <AccountManager />
       </div>
     </>
   );

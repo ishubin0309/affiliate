@@ -4,6 +4,7 @@ import {
   recoverPassword,
   registerAccount,
   updateAccount,
+  getAdminInfo,
 } from "./account";
 import { getPaymentDetails, getPaymentsPaid } from "./billing";
 import { getMerchantCreative, getMerchantCreativeMeta } from "./creative";
@@ -89,6 +90,7 @@ export const affiliatesRouter = createTRPCRouter({
   updateAccount,
   registerAccount,
   recoverPassword,
+  getAdminInfo,
 
   getPaymentsPaid,
   getPaymentDetails,

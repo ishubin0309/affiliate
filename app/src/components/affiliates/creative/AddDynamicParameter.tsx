@@ -17,8 +17,7 @@ export function AddDynamicParameter({ inputValues, setInputValues }: Props) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   React.useEffect(() => {
-    const newIndex = inputValues.length - 1;
-    inputRefs.current[newIndex]?.focus();
+    inputRefs.current[inputValuesCount - 1]?.focus();
   }, [inputValuesCount]);
 
   const addInput = () => {
