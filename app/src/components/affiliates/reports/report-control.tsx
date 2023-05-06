@@ -157,14 +157,10 @@ export const ReportControl = <Data extends object>({
           No results to display.
         </div>
       )}
-      {report.pageInfo.totalItems > report.pageInfo.pageSize && (
-        <div className="grid grid-cols-2 gap-2">
-          <Pagination
-            pagination={pagination}
-            totalItems={report.pageInfo.totalItems}
-          />
-        </div>
-      )}
+      <Pagination
+        pagination={pagination}
+        totalItems={report.pageInfo.totalItems}
+      />
     </div>
   ) : (
     <Loading />

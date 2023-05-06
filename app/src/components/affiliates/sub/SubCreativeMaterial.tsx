@@ -69,12 +69,7 @@ export const SubCreativeMaterial = () => {
         <SearchApply isLoading={isRefetching} />
       </div>
       {data?.map(renderRow)}
-      <div>
-        <Pagination
-          pagination={pagination}
-          totalItems={data.length}
-        />
-      </div>
+      <Pagination pagination={pagination} totalItems={data.length} />
     </div>
   ) : (
     <Loading />
