@@ -9,9 +9,7 @@ import DeviceReport from "./DeviceReport";
 import type { TopMerchantCreativeType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 
-import { Loading } from "@/components/common/Loading";
-import { useToast } from "@/components/ui/use-toast";
-import { Home, SaveIcon } from "lucide-react";
+import { SaveIcon } from "lucide-react";
 import Affiliates from "../../../layouts/AffiliatesLayout";
 import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
@@ -264,6 +262,7 @@ export const Dashboard = () => {
             conversionChart={conversionChart || []}
           />
         </div>
+      </div>
 
       <div className="my-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
         <DeviceReport />
