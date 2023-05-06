@@ -42,7 +42,7 @@ export const Pagination = ({
   };
 
   return (
-    <nav className="flex items-center justify-start space-x-0 paginate-container">
+    <nav className="flex items-center justify-start space-x-0 max-w-full overflow-auto flex-wrap">
       <ReactPaginate
         breakLabel="..."
         nextLabel={<ChevronsRight />}
