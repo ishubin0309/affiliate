@@ -109,7 +109,7 @@ export const ReportControl = <Data extends object>({
       </PageHeader>
 
       <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
-        <SearchDateRange varName="dateRange" />
+        <SearchDateRange />
         {children}
         <div className="flex-grow" />
         <SearchApply isLoading={isRefetching} />
@@ -144,19 +144,27 @@ export const ReportControl = <Data extends object>({
           ))}
         </div>
       </div>
-      <ReportDataTable
-        report={report}
-        columns={columns.filter((item: any) =>
-          reportsColumns?.includes(item.accessorKey)
-        )}
-        footerData={footerData}
-      />
-      <div className="grid grid-cols-2 gap-2">
-        <Pagination
-          pagination={pagination}
-          totalItems={report.pageInfo.totalItems}
+      {report.pageInfo.totalItems > 0 ? (
+        <ReportDataTable
+          report={report}
+          columns={columns.filter((item: any) =>
+            reportsColumns?.includes(item.accessorKey)
+          )}
+          footerData={footerData}
         />
-      </div>
+      ) : (
+        <div className="flex h-40 items-center justify-center">
+          No results to display.
+        </div>
+      )}
+      {report.pageInfo.totalItems > report.pageInfo.pageSize && (
+        <div className="grid grid-cols-2 gap-2">
+          <Pagination
+            pagination={pagination}
+            totalItems={report.pageInfo.totalItems}
+          />
+        </div>
+      )}
     </div>
   ) : (
     <Loading />

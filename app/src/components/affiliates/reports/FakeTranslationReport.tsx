@@ -21,6 +21,7 @@ import {
 import { parse, sub } from "date-fns";
 import { DateColumn } from "@/components/common/data-table/available-column";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { getDateRange } from "@/components/common/search/search-date-range";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -51,14 +52,14 @@ const columns = [
 
 export const FakeTranslationReport = () => {
   const {
-    values: { from, to, search },
+    values: { search, dates },
   } = useSearchContext();
   const pagination = usePagination();
+  const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isLoading } = api.affiliates.getTranslateReportFake.useQuery(
+  const { data, isRefetching } = api.affiliates.getTranslateReportFake.useQuery(
     {
-      from: getDateParam(from),
-      to: getDateParam(to),
+      ...dateRange,
       search,
       pageParams: pagination.pageParams,
     },
@@ -72,7 +73,7 @@ export const FakeTranslationReport = () => {
       report={data}
       columns={columns}
       pagination={pagination}
-      isRefetching={isLoading}
+      isRefetching={isRefetching}
       handleExport={(exportType: ExportType) => Promise.resolve("ok")}
     >
       <SearchText label="Search" varName="search" />
