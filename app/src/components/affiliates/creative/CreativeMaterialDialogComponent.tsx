@@ -70,7 +70,6 @@ export const CreativeMaterialDialogComponent = ({
 
   const [params, setParams] = useState<string[]>([""]);
   const [profile_id, setProfile_id] = useState<number>();
-  const [errorMessage, setErrorMessage] = useState("");
 
   const generateBannerCode = api.affiliates.generateBannerCode.useMutation();
 
@@ -82,12 +81,6 @@ export const CreativeMaterialDialogComponent = ({
         params,
         profile_id,
       });
-
-      if (!profile_id) {
-        // TODO: Show error that need to select profile
-        setErrorMessage("Please select a profile");
-        return;
-      }
 
       const codes = await generateBannerCode.mutateAsync({
         creative_id,
@@ -181,7 +174,6 @@ export const CreativeMaterialDialogComponent = ({
                           defaultValue={String(profile_id)}
                           onValueChange={(value) => {
                             setProfile_id(Number(value));
-                            setErrorMessage("");
                           }}
                         >
                           <SelectTrigger className="border px-4 py-3  text-xs ">
@@ -204,11 +196,6 @@ export const CreativeMaterialDialogComponent = ({
                         </Select>
                       </div>
                     </div>
-                    <label className="label">
-                      {!errorMessage ? null : (
-                        <p className="text-sm text-red-500">{errorMessage}</p>
-                      )}
-                    </label>
                   </div>
                   <div className="w-full">
                     <label

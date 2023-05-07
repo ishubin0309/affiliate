@@ -48,7 +48,7 @@ export const CreativeMaterial = () => {
   } = useSearchContext();
   const pagination = usePagination();
 
-  const [gridView, setGridView] = React.useState(false);
+  const [gridView, setGridView] = React.useState(true);
 
   const { data: meta } = api.affiliates.getMerchantCreativeMeta.useQuery(
     undefined,

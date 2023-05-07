@@ -140,6 +140,7 @@ const clicksReport = async (
   // limit " . $start_limit. ", " . $end_limit;
 
   // DONE missing order by and limits
+
   const traficDataFull = await prisma.traffic.findMany({
     orderBy: orderBy,
     skip: offset,
@@ -220,6 +221,24 @@ const clicksReport = async (
     _count: {
       id: true,
     },
+    where: {
+      ...type_filter,
+      affiliate_id: affiliate_id,
+      merchant_id: merchant_id,
+      uid: unique_id,
+      rdate: {
+        gte: from,
+        lte: to,
+      },
+    },
+  });
+
+  console.log(`muly:clicksReport:findMany`, {
+    totalRecords,
+    traficDataFull: traficDataFull.length,
+    orderBy: orderBy,
+    skip: offset,
+    take: pageParams.pageSize,
     where: {
       ...type_filter,
       affiliate_id: affiliate_id,
