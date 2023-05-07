@@ -214,5 +214,6 @@
   "You must accept the terms of service": "You must accept the terms of service",
   "Expected 'lead' | 'account' | 'sale' | 'qftd', received null": "Expected 'lead' | 'account' | 'sale' | 'qftd', received null",
   "Expected string, received object": "Expected string, received object",
-  "Expected boolean, received null": "Expected boolean, received null"
+  "Expected boolean, received null": "Expected boolean, received null",
+  "Search": "Search"
 }
