@@ -14,10 +14,15 @@ export const CreativeReport = () => {
   const { merchant_id } = router.query;
   const { from, to } = useDateRange();
   const [traderID, setTraderID] = useState<string>("");
+  const { currentPage, itemsPerPage } = router.query;
 
   const { data, isLoading } = api.affiliates.getCreativeReport.useQuery({
     from,
     to,
+    pageParams: {
+      pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
+      pageNumber: currentPage ? Number(currentPage) : 1,
+    },
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<CreativeReportType>();
