@@ -145,23 +145,6 @@ export const ComissionIcon = ({ width, height, fill }: Props) => {
   );
 };
 
-export const UpwardArrowIcon = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="12"
-      height="13"
-      viewBox="0 0 12 13"
-      fill="none"
-    >
-      <path
-        d="M6.66685 13.0001L6.66685 3.27612L10.1955 6.80479L11.1382 5.86212L6.00018 0.724121L0.862183 5.86212L1.80485 6.80479L5.33352 3.27612L5.33352 13.0001L6.66685 13.0001Z"
-        fill="#50B8B6"
-      />
-    </svg>
-  );
-};
-
 export const PhoneNumberIcon = () => {
   return (
     <svg
