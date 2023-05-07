@@ -341,13 +341,13 @@ export const getCountryReport = publicProcedure
     const userInfo = { level: "all" };
 
     const countryData = await countryReport(prisma, pageParams, {
-      from: sub(new Date(from), { years: 2 }),
+      from,
       to,
       userInfo,
-      affiliate_id: 557,
+      affiliate_id,
       merchant_id,
     });
 
-    debugSaveData("countryData", countryData);
+    debugSaveData("countryData", { countryData });
     return countryData;
   });

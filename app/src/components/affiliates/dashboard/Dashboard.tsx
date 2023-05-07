@@ -50,6 +50,7 @@ const allColumns: CardInfo[] = [
   { id: "ChargeBack", title: "ChargeBack", link: "reports/clicks-report" },
   { id: "ActiveTrader", title: "Active Trader", link: "reports/trader-report" },
   { id: "Commission", title: "Commission", link: "reports/quick-summary" },
+  { id: "NetDeposit", title: "Deposit", link: "reports/quick-summary" },
 ];
 
 const columnHelper = createColumnHelper<TopMerchantCreativeType>();

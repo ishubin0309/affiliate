@@ -27,6 +27,7 @@ const AccountManager = () => {
   const onClickOpenTicket = () => {
     window.open(additionalLinkUrl || undefined, "_blank");
   };
+
   return (
     <div className="rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
       <div className="mb-3 text-xl font-bold text-[#2262C6]">

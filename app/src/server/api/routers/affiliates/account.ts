@@ -52,9 +52,6 @@ export const getAdminInfo = publicProcedure
         where: {
           valid: 1,
           group_id: group_id,
-          id: {
-            gt: 1,
-          },
         },
       }),
       ctx.prisma.groups.findFirst({
@@ -64,7 +61,7 @@ export const getAdminInfo = publicProcedure
       }),
     ]);
 
-    console.log(`muly:`, { admins, groups });
+    console.log(`muly:getAdminInfo`, { group_id, admins, groups });
 
     return { ...admins, group_title: groups?.title };
   });

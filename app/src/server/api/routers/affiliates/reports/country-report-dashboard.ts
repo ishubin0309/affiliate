@@ -87,10 +87,10 @@ export const getCountryReportDashboard = publicProcedure
       prisma,
       from: startOfDay(sub(to, { days: lastDays })),
       to,
-      affiliate_id: 557,
+      affiliate_id,
       value,
     });
 
-    console.log(`muly:countryData`, { countryData });
+    console.log(`muly:countryData`, { countryData, affiliate_id, value });
     return countryData;
   });
