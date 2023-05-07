@@ -110,6 +110,6 @@ export const getPaymentDetails = publicProcedure
       bonusesDetail,
       merchants,
       commissionReport,
-      billingLogoPath: serverStoragePath(config.billingLogoPath),
+      billingLogoPath: config.billingLogoPath,
     };
   });
