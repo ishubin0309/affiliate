@@ -39,6 +39,7 @@ export const getAdminInfo = publicProcedure
       group_title: z.string().nullish(),
       additionalLinkUrl: z.string().nullish(),
       level: z.string().nullish(),
+      group_id: z.number().nullish(),
     })
   )
   .query(async ({ ctx }) => {
@@ -46,12 +47,12 @@ export const getAdminInfo = publicProcedure
       where: { id: affiliate_id },
     });
 
-    const group_id = account_data["group_id"];
+    const group_id = account_data.group_id;
     const [admins, groups] = await Promise.all([
       ctx.prisma.admins.findFirst({
         where: {
           valid: 1,
-          group_id: group_id,
+          group_id,
         },
       }),
       ctx.prisma.groups.findFirst({
@@ -63,7 +64,7 @@ export const getAdminInfo = publicProcedure
 
     console.log(`muly:getAdminInfo`, { group_id, admins, groups });
 
-    return { ...admins, group_title: groups?.title };
+    return { ...admins, group_title: groups?.title, group_id };
   });
 
 export const updateAccount = publicProcedure
