@@ -10,11 +10,6 @@ import type {
 import type { ZodType } from "zod/lib/types";
 import { affiliate_id, merchant_id } from "./const";
 import { SelectSchema } from "../../../db-schema-utils";
-import {
-  addFreeTextSearchJSFilter,
-  addFreeTextSearchWhere,
-} from "../../../../../prisma/prisma-utils";
-
 export const getMerchantSubCreativeMeta = publicProcedure
   .output(
     z.object({
@@ -55,7 +50,7 @@ export const getMerchantSubCreative = publicProcedure
       // merchant_id,
       valid: 1,
       type: type ? (type as sub_banners_type) : undefined,
-      ...addFreeTextSearchWhere("title", search),
+      title: { contains: search },
     };
 
     const [stats, sub] = await Promise.all([
@@ -67,13 +62,9 @@ export const getMerchantSubCreative = publicProcedure
           views: true,
         },
       }),
-      addFreeTextSearchJSFilter(
-        await ctx.prisma.sub_banners.findMany({
-          where,
-        }),
-        "title",
-        search
-      ),
+      await ctx.prisma.sub_banners.findMany({
+        where,
+      }),
     ]);
 
     const statDict = indexBy("banner_id", stats);

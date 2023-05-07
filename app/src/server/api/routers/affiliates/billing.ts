@@ -1,7 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { indexBy, map } from "rambda";
 import { z } from "zod";
-import { addFreeTextSearchJSFilter } from "../../../../../prisma/prisma-utils";
 import { publicProcedure } from "../../trpc";
 import { affiliate_id } from "./const";
 import { getConfig } from "@/server/config";
@@ -15,9 +14,9 @@ export const getPaymentsPaid = publicProcedure
   )
   .query(async ({ ctx, input: { search } }) => {
     const where = {
-      // affiliate_id,
-      // valid: 1,
-      // ...addFreeTextSearchWhere("paymentID", search),
+      affiliate_id,
+      valid: 1,
+      paymentID: { contains: search },
     };
 
     const [payments_details, payments_paid] = await Promise.all([
@@ -31,27 +30,13 @@ export const getPaymentsPaid = publicProcedure
           id: true,
         },
       }),
-      addFreeTextSearchJSFilter(
-        await ctx.prisma.payments_paid.findMany({
-          where,
-          orderBy: [{ id: "desc" }],
-        }),
-        "paymentID",
-        search
-      ),
+      await ctx.prisma.payments_paid.findMany({
+        where,
+        orderBy: [{ id: "desc" }],
+      }),
     ]);
 
     const detailDict = indexBy("paymentID", payments_details);
-    console.log(`muly:where`, {
-      where,
-      payments_details: payments_details.map((a) => ({
-        ...a,
-        // sum: a._sum.amount,
-      })),
-      // payments_paid,
-      search,
-      t: typeof search,
-    });
     return map(
       ({ paymentID, ...data }) => ({
         paymentID,
