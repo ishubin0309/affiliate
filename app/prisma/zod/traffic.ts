@@ -46,12 +46,12 @@ export const trafficModel = z.object({
 })
 
 export interface Completetraffic extends z.infer<typeof trafficModel> {
-  merchant: Completemerchants
-  affiliate: Completeaffiliates
-  merchant_creative: Completemerchants_creative
-  affiliates_profiles: Completeaffiliates_profiles
-  language: Completelanguages
-  country: Completecountries
+  merchant?: Completemerchants | null
+  affiliate?: Completeaffiliates | null
+  merchant_creative?: Completemerchants_creative | null
+  affiliates_profiles?: Completeaffiliates_profiles | null
+  language?: Completelanguages | null
+  country?: Completecountries | null
 }
 
 /**
@@ -60,10 +60,10 @@ export interface Completetraffic extends z.infer<typeof trafficModel> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedtrafficModel: z.ZodSchema<Completetraffic> = z.lazy(() => trafficModel.extend({
-  merchant: RelatedmerchantsModel,
-  affiliate: RelatedaffiliatesModel,
-  merchant_creative: Relatedmerchants_creativeModel,
-  affiliates_profiles: Relatedaffiliates_profilesModel,
-  language: RelatedlanguagesModel,
-  country: RelatedcountriesModel,
+  merchant: RelatedmerchantsModel.nullish(),
+  affiliate: RelatedaffiliatesModel.nullish(),
+  merchant_creative: Relatedmerchants_creativeModel.nullish(),
+  affiliates_profiles: Relatedaffiliates_profilesModel.nullish(),
+  language: RelatedlanguagesModel.nullish(),
+  country: RelatedcountriesModel.nullish(),
 }))

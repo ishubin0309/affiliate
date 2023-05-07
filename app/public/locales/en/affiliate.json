@@ -1,3 +1,18 @@
 {
-  "Search": "Search"
+  "Search": "Search",
+  "name": {
+    "label": "Profile Name"
+  },
+  "url": {
+    "label": "URL"
+  },
+  "description": {
+    "label": "Description"
+  },
+  "source_traffic": {
+    "label": "Traffic Source"
+  },
+  "valid": {
+    "label": "Available"
+  }
 }

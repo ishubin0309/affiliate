@@ -11,7 +11,7 @@ const AccountManager = () => {
     refetchOnWindowFocus: false,
   });
 
-  console.log(`muly:AccountManager`, { data });
+  console.log(`AccountManager`, { data });
 
   const {
     first_name,
