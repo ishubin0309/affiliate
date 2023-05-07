@@ -42,7 +42,7 @@ export const languageDropDown: LanguageOption[] = [
     language: "zh",
   },
   {
-    title: "Portugese",
+    title: "Portuguese",
     icon: "PT",
     language: "pt",
   },

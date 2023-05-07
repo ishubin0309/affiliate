@@ -34,6 +34,7 @@ const renderLink = (
   if (item.type === "single") {
     return (
       <SingleLink
+        key={index}
         isDesktop={isDesktop}
         setactiveName={setActiveName}
         setdropdown={setDropdown}
@@ -47,6 +48,7 @@ const renderLink = (
   } else if (item.type === "dropdown") {
     return (
       <DropdownLink
+        key={index}
         isDesktop={isDesktop}
         setactiveName={setActiveName}
         setCollapseShow={setCollapseShow}
