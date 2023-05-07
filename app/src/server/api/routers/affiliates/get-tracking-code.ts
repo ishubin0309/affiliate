@@ -13,7 +13,7 @@ import QRCode from "qrcode";
 
 const Input = z.object({
   creative_id: z.number(),
-  profile_id: z.number(),
+  profile_id: z.number().nullish(),
   params: z.array(z.string()),
 });
 
@@ -30,7 +30,7 @@ const _generateBannerCode = async (
   affiliate_id: number,
   creativeType: "product" | "creative",
   creative_id: number,
-  profile_id: number,
+  profile_id: number | undefined,
   params: string[],
   // typeURL: number,
   prisma: PrismaClient
@@ -176,7 +176,9 @@ const _generateBannerCode = async (
     .map((p: string, index) => `&p${index + 1}=${p}`)
     .join("");
 
-  const tag = `a${affiliate_id}-b${ww["id"]}${productTagPart}-p${profile_id}${freeParam}`; // Creat CTag
+  const tag = `a${affiliate_id}-b${ww["id"]}${productTagPart}-${
+    profile_id ? `p${profile_id}` : ""
+  }${freeParam}`; // Creat CTag
   // const webAddress = typeURL === 2 ? webAddressHttps : webAddress;
 
   let htmlCode = "";
@@ -264,7 +266,7 @@ export const generateBannerCode = publicProcedure
       affiliate_id,
       "creative",
       creative_id,
-      profile_id,
+      profile_id || undefined,
       params,
       ctx.prisma
     );
