@@ -7,6 +7,8 @@ import { api } from "../../../utils/api";
 import { SearchSelect } from "../../common/search/search-select";
 import { SearchText } from "../../common/search/search-text";
 import { CreativeMaterialComponent } from "../creative/CreativeMaterialComponent";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { Pagination } from "@/components/ui/pagination";
 
 const renderRow = (item: MerchantSubCreativeType) => {
   const values = [
@@ -38,6 +40,7 @@ export const SubCreativeMaterial = () => {
   const {
     values: { creative: search, type },
   } = useSearchContext();
+  const pagination = usePagination();
 
   const { data: meta } = api.affiliates.getMerchantSubCreativeMeta.useQuery();
 
@@ -54,18 +57,21 @@ export const SubCreativeMaterial = () => {
       <PageHeader
         title="Marketing Tools"
         subTitle="Sub Creative Materials"
+        searchComponent={
+          <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
+            <SearchSelect
+              label="Creative Type"
+              varName="type"
+              choices={meta?.type}
+            />
+            <div className="flex-grow" />
+            <SearchText varName="search" />
+            <SearchApply isLoading={isRefetching} />
+          </div>
+        }
       ></PageHeader>
-      <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
-        <SearchSelect
-          label="Creative Type"
-          varName="type"
-          choices={meta?.type}
-        />
-        <div className="flex-grow" />
-        <SearchText varName="search" />
-        <SearchApply isLoading={isRefetching} />
-      </div>
       {data?.map(renderRow)}
+      <Pagination pagination={pagination} totalItems={data.length} />
     </div>
   ) : (
     <Loading />

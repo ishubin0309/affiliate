@@ -3,10 +3,9 @@ import { Heading } from "./heading";
 import { styles } from "./styles";
 interface TableHeaderProps {
   columnName: string;
-  key: number;
   columns: number;
 }
-export const TableHeader = ({ columnName, key, columns }: TableHeaderProps) => {
+export const TableHeader = ({ columnName, columns }: TableHeaderProps) => {
   console.log(`${100 / columns}%`);
 
   return (
@@ -15,7 +14,6 @@ export const TableHeader = ({ columnName, key, columns }: TableHeaderProps) => {
         ...styles.tableHeadingCol,
         width: `${100 / columns}%`,
       }}
-      key={key}
     >
       <Heading style={styles.tableCell} title={columnName} />
     </View>

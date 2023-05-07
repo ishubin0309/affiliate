@@ -4,10 +4,6 @@ import type {
   Prisma,
 } from "@prisma/client";
 import { z } from "zod";
-import {
-  addFreeTextSearchJSFilter,
-  addFreeTextSearchWhere,
-} from "../../../../../prisma/prisma-utils";
 import { pixel_monitorModel } from "../../../../../prisma/zod";
 import { upsertSchema } from "../../../../../prisma/zod-add-schema";
 import { publicProcedure } from "../../trpc";
@@ -99,19 +95,6 @@ export const getPixelMonitor = publicProcedure
       // ...addFreeTextSearchWhere("pixelCode", pixel_code),
     };
 
-    // return addFreeTextSearchJSFilter(
-    //   await ctx.prisma.pixel_monitor.findMany({
-    //     where,
-    //     include: {
-    //       merchant: {
-    //         select: { name: true },
-    //       },
-    //     },
-    //   }),
-    //   "pixelCode",
-    //   pixel_code
-    // );
-
     const answer = await ctx.prisma.pixel_monitor.findMany({
       where,
       include: {
@@ -130,7 +113,6 @@ export const getPixelMonitor = publicProcedure
       ...rest,
     }));
 
-    // console.log(`muly:Answer":pixel`, { m });
     return m;
   });
 

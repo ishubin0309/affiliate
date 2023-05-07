@@ -1,63 +1,87 @@
 #!/usr/bin/env zx
 
-const { _, step, service, prod: deployProd } = argv;
+// ./deploy-process.mjs --step=secret
+// ./deploy-process.mjs --step=verify --prod
+// ./deploy-process.mjs --step=dns
+// ./deploy-process.mjs --step=secret --prod
+// ./deploy-process.mjs --step=secret
 
-const sites = [
-  {
-    name: "freevpnplanet",
-    LEGACY_PHP_URL: "affiliate.freevpnplanet.com",
-    prod: {
-      domain: "go.freevpnplanet.com",
-      TXT: "google-site-verification=SdFxnRU5WfBxM63I1Do4sRztOPOu7T3TgkfCdCLQyG8",
-    },
-    dev: {
-      TXT: "google-site-verification=ao3QP3TLFk6kg_tTuHEC8poESgK4cOpJkEujEMSiPVs",
-    },
-  },
-  {
-    name: "bi-winning",
-    LEGACY_PHP_URL: "partners.bi-winning.org",
-    prod: {},
-    dev: {
-      TXT: "google-site-verification=gHbtaFsW6cjA1BDSgUTysmEYP2BViiduU5RiyC7A2fs",
-    },
-  },
-  {
-    name: "fivestars-market",
-    LEGACY_PHP_URL: "partners.fivestars-markets.com",
-    dev: {
-      TXT: "google-site-verification=ySNJ6xA4irl1Wjfv_B5fSdejwoQGk2lVOccKnOQfN1o",
-    },
-  },
-  {
-    name: "focusoption",
-    LEGACY_PHP_URL: "partners.focusoption.com",
-    dev: {
-      TXT: "google-site-verification=dQrcg_qZ9DlT_RHnwckPqBKtu3hmpvc1ZIzQBeY-8aQ",
-    },
-  },
-];
+import { sites } from "./deploy.secrets.mjs";
+
+const { _, step, service, prod: deployProd } = argv;
 
 console.log(`muly:STEP`, { _, step, service });
 
 let out = "";
+
+async function updateGcpSecret(secretName, secretValue) {
+  try {
+    // Check if the secret exists
+    await $`gcloud secrets describe ${secretName}`;
+  } catch (error) {
+    // If the secret does not exist, create it
+    await $`gcloud secrets create ${secretName} --replication-policy="automatic"`;
+  }
+
+  // Create a temporary file
+  const tmpDir = os.tmpdir();
+  const tmpFile = path.join(tmpDir, `gcp_secret_${secretName}_tmp.txt`);
+
+  // Write the secret value to the temporary file
+  await fs.writeFile(tmpFile, secretValue, "utf8");
+
+  // Add a new version to the secret or update the existing secret
+  await $`gcloud secrets versions add ${secretName} --data-file=${tmpFile}`;
+
+  // Remove the temporary file
+  await fs.unlink(tmpFile);
+
+  console.log(
+    `New version of secret "${secretName}" added with value: "${secretValue}"`
+  );
+}
 
 for (const site of sites) {
   if (service && site.service !== service) {
     continue;
   }
 
-  const { domain, name, dev = {}, prod, LEGACY_PHP_URL } = site;
+  const {
+    domain,
+    name,
+    dev = {},
+    prod,
+    LEGACY_PHP_URL,
+    user,
+    password,
+    db,
+  } = site;
+
   if (deployProd) {
+    if (!prod) {
+      continue;
+    }
     prod.service = `${name}-prod`;
   }
   if (!deployProd) {
     dev.service = `${name}-dev`;
     dev.domain = `${name}.staging.affiliatets.com`;
   }
+  const databaseUrl = `mysql://${user}:${password}@35.204.215.28:3306/${db}`;
+  const secretName = `${
+    deployProd ? "PROD" : "DEV"
+  }_${name.toUpperCase()}_DATABASE_URL`;
 
   const val = deployProd ? prod : dev;
   let txt = "";
+
+  if (step === "secret-list") {
+    await $`gcloud secrets describe ${secretName}`;
+  }
+  if (step === "secret") {
+    console.log(`Create secret ${secretName}`);
+    await updateGcpSecret(secretName, databaseUrl);
+  }
 
   if (step === "create") {
     if (deployProd) {
@@ -125,6 +149,9 @@ for (const site of sites) {
   }
 
   if (step === "verify") {
+    console.log(
+      `Will open GCP page, select namecheap and verify, copy TXT to deploy.secrets.mjs`
+    );
     await $`gcloud domains verify ${val.domain}`;
     // console.log(
     //   `not working need to do it manually. see docs/deploy/new-customer-deploy.md ##Verify domain"
@@ -138,9 +165,8 @@ for (const site of sites) {
 
   if (step === "dns") {
     console.log(`DOMAIN: ${val.domain}
-Add the TXT record below to the DNS configuration for ${val.domain}.
-${val.TXT}
-
+TXT: ${val.TXT}
+CNAME: ghs.googlehosted.com
 `);
   }
 }

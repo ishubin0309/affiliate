@@ -1,3 +1,4 @@
+import { useDateRange } from "@/components/ui/date-range";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Calendar } from "lucide-react";
 import { useRouter } from "next/router";
@@ -5,7 +6,6 @@ import { useState } from "react";
 import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
 import type { TraderReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { useDateRange } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
 import { Button } from "../../ui/button";
 

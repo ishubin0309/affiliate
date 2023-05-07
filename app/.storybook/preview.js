@@ -2,6 +2,9 @@ import "../src/styles/globals.css";
 import "react-datepicker/dist/react-datepicker.css";
 import i18n from "./i18next";
 import { withI18next } from "./decorators";
+import { initialize, mswDecorator } from "msw-storybook-addon";
+
+initialize();
 
 const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -20,7 +23,7 @@ const parameters = {
   },
 };
 
-const decorators = [withI18next];
+const decorators = [mswDecorator, withI18next];
 
 const preview = {
   parameters: parameters,

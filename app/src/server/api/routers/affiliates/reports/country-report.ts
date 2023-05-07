@@ -329,7 +329,10 @@ export const countryReport = async (
     }
   });
 
-  return splitToPages(countryArray, pageParams);
+  return splitToPages(
+    countryArray.map(convertPrismaResultsToNumbers),
+    pageParams
+  );
 };
 
 export const getCountryReport = publicProcedure
@@ -340,14 +343,22 @@ export const getCountryReport = publicProcedure
 
     const userInfo = { level: "all" };
 
-    const countryData = await countryReport(prisma, pageParams, {
-      from: sub(new Date(from), { years: 2 }),
+    console.log(`muly:call countryReport`, {
+      from,
       to,
       userInfo,
-      affiliate_id: 557,
+      affiliate_id,
       merchant_id,
     });
 
-    debugSaveData("countryData", countryData);
+    const countryData = await countryReport(prisma, pageParams, {
+      from,
+      to,
+      userInfo,
+      affiliate_id,
+      merchant_id,
+    });
+
+    // debugSaveData("countryData", { countryData });
     return countryData;
   });
