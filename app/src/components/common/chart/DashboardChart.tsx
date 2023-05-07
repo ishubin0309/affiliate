@@ -65,53 +65,16 @@ export const data = {
 };
 
 interface Props {
-  performanceChartData: performanceChartDataType[];
-  value: string;
+  chartValues: number[];
 }
 
-interface performanceChartDataType {
-  Clicks: number | null;
-  Impressions: number | null;
-  Install: number | null;
-  Leads: number | null;
-  Demo: number | null;
-  RealAccount: number | null;
-  FTD: number | null;
-  FTDAmount: number | null;
-  Deposits: number | null;
-  DepositsAmount: number | null;
-  Bonus: number | null;
-  RawFTD: number | null;
-  RawFTDAmount: number | null;
-  Withdrawal: number | null;
-  ChargeBack: number | null;
-  NetDeposit: number | null;
-  PNL: number | null;
-  ActiveTrader: number | null;
-  Commission: number | null;
-  PendingDeposits: number | null;
-  PendingDepositsAmount: number | null;
-  date: string;
-}
-
-const DashboardChart = ({ performanceChartData, value }: Props) => {
-  const dataValue = performanceChartData?.map((field, i) => {
-    interface Sum {
-      [index: string]: number;
-    }
-
-    const fieldObject = field as unknown as Sum;
-    const fieldValue = fieldObject ? fieldObject[value] : 0;
-
-    return fieldValue;
-  });
-
+const DashboardChart = ({ chartValues }: Props) => {
   const data = {
     labels,
     datasets: [
       {
         label: "",
-        data: dataValue,
+        data: chartValues,
         backgroundColor: "#2262C6",
       },
     ],
