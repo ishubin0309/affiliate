@@ -9,6 +9,7 @@ import { useSearchContext } from "@/components/common/search/search-context";
 import { DateColumn } from "@/components/common/data-table/available-column";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
 import { getDateRange } from "@/components/common/search/search-date-range";
+import { useTranslation } from "next-i18next";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -38,6 +39,7 @@ const columns = [
 ];
 
 export const FakeTranslationReport = () => {
+  const { t } = useTranslation("affiliate");
   const {
     values: { search, dates },
   } = useSearchContext();
@@ -65,7 +67,7 @@ export const FakeTranslationReport = () => {
       isRefetching={isRefetching}
       handleExport={(exportType: ExportType) => Promise.resolve("ok")}
     >
-      <SearchText label="Search" varName="search" />
+      <SearchText label={t("Search")} varName="search" />
     </ReportControl>
   );
 };
