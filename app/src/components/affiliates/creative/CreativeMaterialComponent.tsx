@@ -19,7 +19,7 @@ interface valueProps {
 }
 
 interface ImageWithFallbackProps {
-  src?: string;
+  src: string;
   alt: string;
 }
 
