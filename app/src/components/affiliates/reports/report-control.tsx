@@ -7,17 +7,14 @@ import {
   ColumnSelect,
   getColumnsBySetup,
 } from "@/components/common/data-table/column-select";
+import { ColumnSelectButton } from "@/components/common/data-table/column-select-button";
 import type { usePagination } from "@/components/common/data-table/pagination-hook";
 import { PageHeader } from "@/components/common/page/page-header";
 import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { SearchDateRange } from "@/components/common/search/search-date-range";
-import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
-import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
-import { SaveIcon, SettingsIcon } from "lucide-react";
 import React, { useState } from "react";
-import { ColumnSelectButton } from "@/components/common/data-table/column-select-button";
 
 interface Props<Data extends object> extends ReportDataTableProps<Data> {
   reportName: string;
@@ -79,6 +76,7 @@ export const ReportControl = <Data extends object>({
 
       <ColumnSelect
         columns={columns}
+        reportName={reportName}
         reportsColumns={reportsColumns}
         selectColumnsMode={selectColumnsMode}
         setSelectColumnsMode={setSelectColumnsMode}

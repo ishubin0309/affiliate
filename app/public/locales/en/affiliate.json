@@ -14,5 +14,11 @@
   },
   "valid": {
     "label": "Available"
+  },
+  "username": {
+    "label": "Username"
+  },
+  "password": {
+    "label": "Password"
   }
 }
