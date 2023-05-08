@@ -69,6 +69,7 @@ const DropdownLink = ({
             }
           />
         }
+        className="truncate text-base font-medium tracking-wide"
       >
         {linkName.map((value, index) => (
           <div
