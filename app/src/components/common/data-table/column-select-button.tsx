@@ -18,7 +18,7 @@ export const ColumnSelectButton = ({
   reportName,
   reportsColumns,
 }: Props) => {
-  const handleSelectMode = async () => {
+  const handleSelectMode = () => {
     if (!selectColumnsMode) {
       /// reverse logic
       const selected: SelectedColumnList = {};
