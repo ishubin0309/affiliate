@@ -48,7 +48,7 @@ export const CreativeMaterial = () => {
   } = useSearchContext();
   const pagination = usePagination();
 
-  const [gridView, setGridView] = React.useState(false);
+  const [gridView, setGridView] = React.useState(true);
 
   const { data: meta } = api.affiliates.getMerchantCreativeMeta.useQuery(
     undefined,
@@ -78,7 +78,39 @@ export const CreativeMaterial = () => {
 
   return data ? (
     <div className="w-full">
-      <PageHeader title="Marketing Tools" subTitle="Creative Materials">
+      <PageHeader
+        title="Marketing Tools"
+        subTitle="Creative Materials"
+        searchComponent={
+          <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
+            <SearchSelect
+              label="Creative Type"
+              varName="type"
+              choices={meta?.type}
+            />
+            <SearchSelect
+              label="Category"
+              varName="category"
+              choices={meta?.merchants_creative_categories}
+            />
+            <SearchSelect
+              label="Language"
+              varName="language"
+              choices={meta?.language}
+            />
+            <SearchSelect label="Size" varName="size" choices={meta?.size} />
+            <SearchSelect
+              label="Promotion"
+              varName="promotion"
+              emptyTitle="General"
+              choices={meta?.merchants_promotions}
+            />
+            <div className="flex-grow" />
+            <SearchText varName="creative" />
+            <SearchApply isLoading={isRefetching} />
+          </div>
+        }
+      >
         <div
           onClick={handleChangeGridView}
           className="hidden cursor-pointer md:block"
@@ -86,33 +118,7 @@ export const CreativeMaterial = () => {
           {gridView ? <TableToggleIcon /> : <GridToggleIcon />}
         </div>
       </PageHeader>
-      <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
-        <SearchSelect
-          label="Creative Type"
-          varName="type"
-          choices={meta?.type}
-        />
-        <SearchSelect
-          label="Category"
-          varName="category"
-          choices={meta?.merchants_creative_categories}
-        />
-        <SearchSelect
-          label="Language"
-          varName="language"
-          choices={meta?.language}
-        />
-        <SearchSelect label="Size" varName="size" choices={meta?.size} />
-        <SearchSelect
-          label="Promotion"
-          varName="promotion"
-          emptyTitle="General"
-          choices={meta?.merchants_promotions}
-        />
-        <div className="flex-grow" />
-        <SearchText varName="creative" />
-        <SearchApply isLoading={isRefetching} />
-      </div>
+
       <div
         className={cn("grid grid-cols-1 gap-4", {
           "md:grid-cols-2 lg:grid-cols-4": gridView,
@@ -120,9 +126,7 @@ export const CreativeMaterial = () => {
       >
         {data?.map((item) => renderRow(item, gridView))}
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        <Pagination pagination={pagination} totalItems={data.length} />
-      </div>
+      <Pagination pagination={pagination} totalItems={data.length} />
     </div>
   ) : (
     <Loading />

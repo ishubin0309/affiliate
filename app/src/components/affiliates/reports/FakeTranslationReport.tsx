@@ -1,27 +1,15 @@
-import { fakeTraderReportData } from "@/components/affiliates/reports/fake-trader-report-data";
 import { createColumnHelper } from "@tanstack/react-table";
-import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import type {
-  TraderReportType,
-  TranslateReportFakeType,
-} from "../../../server/db-types";
+import type { TranslateReportFakeType } from "../../../server/db-types";
 import { ReportControl } from "@/components/affiliates/reports/report-control";
-import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { creativeType } from "@/components/affiliates/reports/TraderReports";
 import { api } from "@/utils/api";
-import { ClicksReportType } from "../../../server/db-types";
-import {
-  getDateParam,
-  getNumberParam,
-  useSearchContext,
-} from "@/components/common/search/search-context";
-import { parse, sub } from "date-fns";
+import { useSearchContext } from "@/components/common/search/search-context";
 import { DateColumn } from "@/components/common/data-table/available-column";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
 import { getDateRange } from "@/components/common/search/search-date-range";
+import { useTranslation } from "next-i18next";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -51,6 +39,7 @@ const columns = [
 ];
 
 export const FakeTranslationReport = () => {
+  const { t } = useTranslation("affiliate");
   const {
     values: { search, dates },
   } = useSearchContext();
@@ -66,6 +55,8 @@ export const FakeTranslationReport = () => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
+  console.log(`muly:FakeTranslationReport`, { data, pagination });
+
   return (
     <ReportControl
       reportName="Fake Translation Report"
@@ -76,7 +67,7 @@ export const FakeTranslationReport = () => {
       isRefetching={isRefetching}
       handleExport={(exportType: ExportType) => Promise.resolve("ok")}
     >
-      <SearchText label="Search" varName="search" />
+      <SearchText label={t("Search")} varName="search" />
     </ReportControl>
   );
 };

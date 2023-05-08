@@ -18,7 +18,8 @@ export const Primary = {
     thisMonth: 212000,
     lastMonth: 40000,
     value: 23000,
-    performanceChartData: undefined,
+    upDown: true,
+    chartValues: [10, 10, 4, 5, 2, 3],
     selectColumnsMode: false,
     isChecked: false,
     handleCheckboxChange: (id: any, checkedStatus: boolean) => {
@@ -38,6 +39,7 @@ export const LargeNumbers = {
     ...Primary.args,
     thisMonth: 2_125_464,
     lastMonth: 12_125_464,
+    upDown: false,
     value: 125_464,
   },
 };
@@ -49,6 +51,7 @@ export const LargeNumbers2 = {
     thisMonth: 200_125_464,
     lastMonth: 12_125_464,
     value: 125_464,
+    upDown: null,
   },
 };
 

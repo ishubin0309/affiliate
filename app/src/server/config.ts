@@ -2,8 +2,10 @@ import * as z from "zod";
 import type { PrismaClient } from "@prisma/client";
 import { settingsModel } from "../../prisma/zod";
 import { env } from "@/env.mjs";
+import { serverStoragePath } from "@/components/utils";
+import { isDev } from "@/utils/nextjs-utils";
 
-const settingFullModel = settingsModel.extend({
+export const settingFullModel = settingsModel.extend({
   dashboard_host: z.string(),
   legacy_host: z.string(),
 });
@@ -17,10 +19,20 @@ export const getConfig = async (prisma: PrismaClient): Promise<Settings> => {
   const legacy_host = env.LEGACY_PHP_URL;
 
   if (!settings) {
+    const dev = isDev();
+    const { logoPath, faviconPath, billingLogoPath, ...dbConfig } =
+      await prisma.settings.findFirstOrThrow();
+
     settings = {
-      ...(await prisma.settings.findFirstOrThrow()),
+      ...dbConfig,
       dashboard_host,
       legacy_host,
+
+      logoPath: dev ? "/img/logo.png" : serverStoragePath(logoPath) || "",
+      faviconPath: dev ? "/favicon.ico" : serverStoragePath(faviconPath) || "",
+      billingLogoPath: dev
+        ? "/img/logo.png"
+        : serverStoragePath(billingLogoPath) || "",
     };
   }
 

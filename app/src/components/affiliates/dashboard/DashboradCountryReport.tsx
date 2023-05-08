@@ -3,7 +3,6 @@ import { api } from "../../../utils/api";
 import CountryChart from "../../common/chart/CountryChart";
 import { SelectInput } from "@/components/common/select-input";
 import type { DashboardCountryReportType } from "../../../server/db-types";
-import { getCountryReportDashboard } from "@/server/api/routers/affiliates/reports/country-report-dashboard";
 import type { DashboardCountryReportInputType } from "../../../server/db-types";
 
 export const reportDropDown = ["Clicks", "Accounts", "FTD"];

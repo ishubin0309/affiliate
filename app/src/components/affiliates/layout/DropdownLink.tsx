@@ -2,9 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
-import { MenuItem, SubMenu } from "react-pro-sidebar";
+import { MenuItem, SubMenu, useProSidebar } from "react-pro-sidebar";
 
 interface Props {
+  isDesktop: boolean;
   activeName: string;
   collapseShow: boolean;
   dropdown: string;
@@ -24,6 +25,7 @@ interface LinkName {
 }
 
 const DropdownLink = ({
+  isDesktop,
   setactiveName,
   setdropdown,
   setCollapseShow,
@@ -36,23 +38,11 @@ const DropdownLink = ({
   parentLink,
   defaultLink,
 }: Props) => {
-  const activeLink = (value: string) => {
-    setactiveName(value);
-  };
-
-  const activeDropdown = (value: string) => {
-    setdropdown(value);
-  };
-
-  const activeDropdownVector = (value: boolean) => {
-    setdropdownVector(value);
-  };
+  const { toggleSidebar } = useProSidebar();
 
   const activeOnLink = (value: boolean) => {
     setonLink(value);
   };
-
-  const [dropdownVector, setdropdownVector] = useState(true);
 
   const [onLink, setonLink] = useState(false);
 
@@ -79,6 +69,7 @@ const DropdownLink = ({
             }
           />
         }
+        className="truncate text-base font-medium tracking-wide"
       >
         {linkName.map((value, index) => (
           <div
@@ -88,6 +79,9 @@ const DropdownLink = ({
               activeOnLink(true);
               setactiveName(value.link);
               setCollapseShow(false);
+              if (!isDesktop) {
+                toggleSidebar();
+              }
             }}
             key={index}
           >

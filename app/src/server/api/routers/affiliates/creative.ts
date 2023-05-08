@@ -2,10 +2,6 @@ import { z } from "zod";
 
 import type { merchants_creative_type, Prisma } from "@prisma/client";
 import { countBy, map, sortBy, uniq, uniqBy } from "rambda";
-import {
-  addFreeTextSearchJSFilter,
-  addFreeTextSearchWhere,
-} from "../../../../../prisma/prisma-utils";
 import { SelectSchema } from "../../../db-schema-utils";
 import { publicProcedure } from "../../trpc";
 import { affiliate_id, merchant_id } from "./const";
@@ -136,35 +132,23 @@ export const getMerchantCreative = publicProcedure
         type: type ? (type as merchants_creative_type) : undefined,
         width,
         height,
-        ...addFreeTextSearchWhere("title", search),
-      };
-
-      console.log(`muly:merchants_creative:findMany`, {
-        where,
-        select: {
-          language: {
-            select: { title: true },
-          },
-          merchants_creative_categories: { select: { categoryname: true } },
+        title: {
+          contains: search,
         },
-      });
+      };
 
       const answer = map(
         ({ file, ...data }) => ({ ...data, file: serverStoragePath(file) }),
-        addFreeTextSearchJSFilter(
-          await ctx.prisma.merchants_creative.findMany({
-            take: 10,
-            where,
-            include: {
-              language: {
-                select: { title: true },
-              },
-              category: { select: { categoryname: true } },
+        await ctx.prisma.merchants_creative.findMany({
+          take: 10,
+          where,
+          include: {
+            language: {
+              select: { title: true },
             },
-          }),
-          "title",
-          search
-        )
+            category: { select: { categoryname: true } },
+          },
+        })
       );
 
       return answer;

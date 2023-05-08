@@ -10,19 +10,33 @@ import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import { useProSidebar } from "react-pro-sidebar";
-import { useMediaQuery } from "usehooks-ts";
 import NotificationDropDown from "../../Dropdowns/NotificationDropdown";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 interface Props {
+  isDesktop: boolean;
   collapseShow: boolean;
   setCollapseShow: Dispatch<SetStateAction<boolean>>;
 }
 
-const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
-  const [selectLanguageItem, setSelectLanguageItem] =
-    useState<LanguageOption | null>(null);
+const AffiliatesNavbar = ({
+  isDesktop,
+  collapseShow,
+  setCollapseShow,
+}: Props) => {
+  const router = useRouter();
+  const { t, i18n } = useTranslation("affiliates");
+  const language = router.locale || "en";
+
+  // const [selectLanguageItem, setSelectLanguageItem] =
+  //   useState<LanguageOption | null>(null);
   const { collapseSidebar, toggleSidebar } = useProSidebar();
-  const desktop = useMediaQuery("(min-width: 768px)");
+
+  const setSelectLanguageItem = async (language: string) => {
+    const { pathname, asPath, query } = router;
+    await router.push({ pathname, query }, asPath, { locale: language });
+  };
 
   return (
     <>
@@ -34,7 +48,7 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
               <a
                 onClick={(e) => {
                   e.preventDefault();
-                  desktop ? collapseSidebar() : toggleSidebar();
+                  isDesktop ? collapseSidebar() : toggleSidebar();
                   setCollapseShow(!collapseShow);
                 }}
               >
@@ -92,8 +106,8 @@ const AffiliatesNavbar = ({ collapseShow, setCollapseShow }: Props) => {
           {/* User */}
           <ul className="flex list-none flex-row items-center">
             <LanguageSelector
-              onLanguageChange={(val) => setSelectLanguageItem(val)}
-              selectedOption={selectLanguageItem}
+              onLanguageChange={(language) => setSelectLanguageItem(language)}
+              language={language}
               options={languageDropDown}
             />
             <NotificationDropDown />
