@@ -6,9 +6,10 @@ import { QuerySelect } from "../../../components/common/QuerySelect";
 import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { PixelLogsReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
+import { DateRangeSelect } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
 import { creativeType } from "@/components/affiliates/reports/TraderReports";
+import { useDateRange } from "@/components/ui/date-range";
 
 export const PixelLogReports = () => {
   const router = useRouter();
@@ -124,9 +125,7 @@ export const PixelLogReports = () => {
         alignItems={"center"}
         alignSelf="center"
       >
-        <GridItem>
-          <DateRangeSelect />
-        </GridItem>
+        <GridItem></GridItem>
         <GridItem>
           <QuerySelect
             label="Merchant"

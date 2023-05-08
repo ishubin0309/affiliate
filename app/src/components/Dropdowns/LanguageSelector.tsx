@@ -10,12 +10,13 @@ import Flags from "country-flag-icons/react/3x2";
 export interface LanguageOption {
   title: string;
   icon: string;
+  language: string;
 }
 
 interface Props {
   options: LanguageOption[];
-  selectedOption?: LanguageOption | null;
-  onLanguageChange: (value: LanguageOption | null) => void;
+  language: string;
+  onLanguageChange: (language: string) => void;
 }
 
 const renderSelectedOption = (selectedOption: LanguageOption) => {
@@ -43,7 +44,7 @@ const renderDropdownMenu = (
     return (
       <DropdownMenuItem
         key={index.toString()}
-        onClick={() => onLanguageChange(option)}
+        onClick={() => onLanguageChange(option.language)}
       >
         <FlagComponent className="mr-2 h-5 w-5" />
         <span className="pl-2 font-semibold text-[#303134]">
@@ -56,18 +57,19 @@ const renderDropdownMenu = (
 
 export const LanguageSelector = ({
   options,
-  selectedOption,
+  language,
   onLanguageChange,
 }: Props) => {
+  const selected =
+    options.find((item) => item.language === language) || options[0]!;
+
   return (
     <>
       <div className="text-blueGray-500 block md:pr-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button size={"sm"} className="px-2 md:px-3" variant="ghost">
-              {renderSelectedOption(
-                selectedOption || { title: "English", icon: "US" }
-              )}
+              {renderSelectedOption(selected)}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-48">

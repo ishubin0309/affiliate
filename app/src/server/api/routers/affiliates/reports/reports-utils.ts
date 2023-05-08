@@ -4,6 +4,7 @@ import { z } from "zod";
 import { exportCSVReport } from "../config/exportCSV";
 import { exportJSON } from "../config/exportJson";
 import { exportXLSX } from "../config/exportXLSX";
+import { env } from "@/env.mjs";
 
 // Common params for all reports
 export const PageParamsSchema = z.object({
@@ -142,5 +143,7 @@ export const exportReportLoop = async (
 // };
 
 export const debugSaveData = (name: string, data: any) => {
-  writeFileSync(`./tmp/${name}.json`, JSON.stringify(data, null, 2));
+  if (env.NODE_ENV !== "production") {
+    writeFileSync(`./tmp/${name}.json`, JSON.stringify(data, null, 2));
+  }
 };

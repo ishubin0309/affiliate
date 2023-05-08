@@ -1,8 +1,7 @@
 import DashboardChart from "@/components/common/chart/DashboardChart";
-import { UpwardArrowIcon } from "@/components/icons";
 
 import { format } from "d3-format";
-import { CheckIcon, XIcon } from "lucide-react";
+import { ArrowBigDown, ArrowBigUp, CheckIcon, XIcon } from "lucide-react";
 import { Bar } from "react-chartjs-2";
 import Link from "next/link";
 
@@ -14,7 +13,8 @@ interface Props {
   thisMonth: number | undefined;
   lastMonth: number | undefined;
   value: number;
-  performanceChartData: any;
+  upDown: boolean | null;
+  chartValues: number[];
   selectColumnsMode: boolean;
   handleCheckboxChange: (fieldName: string, checked: boolean) => void;
   isChecked: boolean;
@@ -28,7 +28,8 @@ const DashboardCards = ({
   thisMonth,
   lastMonth,
   value,
-  performanceChartData,
+  upDown,
+  chartValues,
   selectColumnsMode,
   handleCheckboxChange,
   isChecked,
@@ -76,10 +77,17 @@ const DashboardCards = ({
     ],
   };
 
+  let arrow = null;
+  if (upDown === true) {
+    arrow = <ArrowBigUp className="text-green-700" />;
+  } else if (upDown === false) {
+    arrow = <ArrowBigDown className="text-red-700" />;
+  }
+
   return (
     <Link
       href={"/affiliates/" + link}
-      className="relative mb-1 rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
+      className="relative mb-1 block rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
       key={idx}
     >
       {selectColumnsMode && (
@@ -122,20 +130,15 @@ const DashboardCards = ({
       <div className="flex justify-between">
         <div className="flex-1">
           <div className="flex h-12 items-center">
-            <div className="flex items-center">
-              <UpwardArrowIcon />
-            </div>
+            <div className="flex items-center">{arrow}</div>
             <span className="ml-1 text-xl font-bold md:ml-3">
               {format("~s")(value as number | { valueOf(): number })}
             </span>
           </div>
         </div>
         <div className="flex flex-1 justify-end">
-          {performanceChartData ? (
-            <DashboardChart
-              performanceChartData={performanceChartData}
-              value={fieldName}
-            />
+          {chartValues.length ? (
+            <DashboardChart chartValues={chartValues} />
           ) : (
             <Bar width={"100%"} height={"50px"} options={options} data={data} />
           )}

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Copy, Download } from "lucide-react";
+import { Copy, Download, Image } from "lucide-react";
 import React from "react";
 import { CreativeMaterialDialogComponent } from "./CreativeMaterialDialogComponent";
 
@@ -19,7 +19,7 @@ interface valueProps {
 }
 
 interface ImageWithFallbackProps {
-  src: string | undefined | null;
+  src?: string;
   alt: string;
 }
 
@@ -33,15 +33,21 @@ export const CreativeMaterialComponent = ({
 }: Props) => {
   const { toast } = useToast();
   const ImageWithFallback = ({ src, alt }: ImageWithFallbackProps) => {
-    const [image, setImage] = React.useState(src ?? "/img/fallback.jpg");
+    const [imagePlaceHolder, setImagePlaceHolder] = React.useState(false);
 
     const handleImageError = (): void => {
-      setImage("/img/fallback.jpg");
+      setImagePlaceHolder(true);
     };
 
-    return (
+    return imagePlaceHolder ? (
+      <Image
+        color="#2262C6"
+        size={256}
+        className="mx-auto my-0 max-h-64 w-full rounded-xl bg-cover opacity-40"
+      />
+    ) : (
       <img
-        src={image}
+        src={src}
         alt={alt}
         onError={handleImageError}
         className="mx-auto my-0 max-h-64 rounded-xl bg-cover"
@@ -80,7 +86,7 @@ export const CreativeMaterialComponent = ({
         </div>
         <div className="col-span-2 w-full rounded-xl">
           <div className=" bg-[#F5F8FA] p-4 md:px-8">
-            <div className="justify-between md:flex">
+            <div className="flex-wrap justify-between md:flex">
               <div className="mt-2 flex justify-between truncate md:block">
                 <label className="mb-1 block text-sm font-bold text-gray-700">
                   {values[0]?.title}
@@ -132,7 +138,7 @@ export const CreativeMaterialComponent = ({
             <div
               className={
                 "justify-between pt-1 md:pt-4 " +
-                (gridView ? "grid grid-cols-2" : " md:flex ")
+                (gridView ? "grid grid-cols-1" : " lg:flex ")
               }
             >
               <div className="mt-2 hidden md:block">

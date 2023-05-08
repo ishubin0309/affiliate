@@ -3,16 +3,17 @@ import type { OnExport } from "@/components/affiliates/reports/utils";
 import { Loading } from "@/components/common/Loading";
 import type { ReportDataTableProps } from "@/components/common/data-table/ReportDataTable";
 import { ReportDataTable } from "@/components/common/data-table/ReportDataTable";
-import ColumnSelect from "@/components/common/data-table/column-select";
+import {
+  ColumnSelect,
+  getColumnsBySetup,
+} from "@/components/common/data-table/column-select";
+import { ColumnSelectButton } from "@/components/common/data-table/column-select-button";
 import type { usePagination } from "@/components/common/data-table/pagination-hook";
 import { PageHeader } from "@/components/common/page/page-header";
 import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { SearchDateRange } from "@/components/common/search/search-date-range";
-import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
-import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
-import { SaveIcon, SettingsIcon } from "lucide-react";
 import React, { useState } from "react";
 
 interface Props<Data extends object> extends ReportDataTableProps<Data> {
@@ -33,25 +34,10 @@ export const ReportControl = <Data extends object>({
   footerData,
   handleExport,
 }: Props<Data>) => {
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectColumnsMode, setSelectColumnsMode] = useState<string[] | null>(
-    null
-  );
+  const [selectColumnsMode, setSelectColumnsMode] = useState<{
+    [name: string]: boolean;
+  } | null>(null);
 
-  const handleColumnChange = (fieldName: string, checked: boolean) => {
-    if (selectColumnsMode) {
-      if (checked) {
-        setSelectColumnsMode([...selectColumnsMode, fieldName]);
-      } else {
-        setSelectColumnsMode(
-          selectColumnsMode.filter((item) => item !== fieldName)
-        );
-      }
-    }
-  };
-
-  const apiContext = api.useContext();
   const { data: reportsColumns } = api.affiliates.getReportsColumns.useQuery(
     { level: "affiliate", report: reportName },
     {
@@ -60,80 +46,57 @@ export const ReportControl = <Data extends object>({
     }
   );
 
-  const upsertReportsColumns =
-    api.affiliates.upsertReportsColumns.useMutation();
-
-  const handleSelectMode = async () => {
-    setIsLoading(true);
-    try {
-      if (selectColumnsMode) {
-        const columns = await upsertReportsColumns.mutateAsync({
-          level: "affiliate",
-          report: reportName,
-          fields: selectColumnsMode || [],
-        });
-
-        apiContext.affiliates.getReportsColumns.setData(
-          { level: "affiliate", report: reportName },
-          columns
-        );
-      }
-      setSelectColumnsMode(selectColumnsMode ? null : reportsColumns || []);
-      toast({
-        title: "Saved " + reportName + " Setup",
-        duration: 5000,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  console.log(`muly:ReportControl`, { reportsColumns });
 
   return report ? (
     <div className="flex w-full flex-col gap-2">
-      <PageHeader title="Reports" subTitle={reportName}>
+      <PageHeader
+        title="Reports"
+        subTitle={reportName}
+        searchComponent={
+          <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
+            <SearchDateRange />
+            {children}
+            <div className="flex-grow" />
+            <SearchApply isLoading={isRefetching} />
+          </div>
+        }
+      >
         <div className="flex flex-row gap-2">
           <ExportButton onExport={handleExport} />
-          <Button
-            variant="primary"
-            size="rec"
-            onClick={handleSelectMode}
-            isLoading={isLoading}
-          >
-            {selectColumnsMode ? (
-              <SaveIcon className="w-4" />
-            ) : (
-              <SettingsIcon />
-            )}
-          </Button>
+          <ColumnSelectButton
+            columns={columns}
+            reportName={reportName}
+            reportsColumns={reportsColumns}
+            selectColumnsMode={selectColumnsMode}
+            setSelectColumnsMode={setSelectColumnsMode}
+          />
         </div>
       </PageHeader>
 
-      <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
-        <SearchDateRange varName="dateRange" />
-        {children}
-        <div className="flex-grow" />
-        <SearchApply isLoading={isRefetching} />
-      </div>
-
       <ColumnSelect
         columns={columns}
+        reportName={reportName}
+        reportsColumns={reportsColumns}
         selectColumnsMode={selectColumnsMode}
-        handleCheckboxChange={handleColumnChange}
+        setSelectColumnsMode={setSelectColumnsMode}
       />
 
-      <ReportDataTable
-        report={report}
-        columns={columns.filter((item: any) =>
-          reportsColumns?.includes(item.accessorKey)
-        )}
-        footerData={footerData}
-      />
-      <div className="grid grid-cols-2 gap-2">
-        <Pagination
-          pagination={pagination}
-          totalItems={report.pageInfo.totalItems}
+      {report.pageInfo.totalItems > 0 ? (
+        <ReportDataTable
+          report={report}
+          columns={getColumnsBySetup(columns, reportsColumns)}
+          footerData={footerData}
         />
-      </div>
+      ) : (
+        <div className="flex h-40 items-center justify-center">
+          No results to display.
+        </div>
+      )}
+      <Pagination
+        pagination={pagination}
+        totalItems={report.pageInfo.totalItems}
+      />
     </div>
   ) : (
     <Loading />

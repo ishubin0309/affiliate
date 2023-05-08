@@ -209,6 +209,7 @@
   justify-content: center;
   font-weight: bolder;
   width: 40px;
+  min-width: 40px;
 }
 
 .paginate-disabled-page {
@@ -237,8 +238,9 @@
   justify-content: center;
   list-style-type: none;
   position: relative;
+  flex-wrap: wrap;
   /* width: 1000px; */
-  max-width: 60vw;
+  /* max-width: 60vw; */
 }
 
 .paginate-pagination-page {
@@ -258,8 +260,8 @@
 /* React date picker width starts */
 
 .customDatePickerStyling > div > div.react-datepicker__input-container > input {
-  width: 5rem;
+  width: 5.4rem;
   font-size: 0.875rem;
-  line-height: 1.25rem;
+  line-height: 1.4rem;
 }
 /* React date picker width ends */

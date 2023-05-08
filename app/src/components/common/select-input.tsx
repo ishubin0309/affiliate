@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ChoiceType } from "@/utils/zod-meta";
+import type { ReactElement } from "react";
 
 interface Props {
   value: string;
@@ -15,6 +16,7 @@ interface Props {
   placeholder?: string;
 
   choices: ChoiceType[];
+  icon?: ReactElement;
 }
 
 export const SelectInput = ({
@@ -22,10 +24,14 @@ export const SelectInput = ({
   value,
   placeholder,
   choices,
+  icon,
 }: Props) => {
   return (
     <Select defaultValue={value} onValueChange={onChange}>
-      <SelectTrigger className="pr-2 text-sm font-light text-black">
+      <SelectTrigger
+        className="bg-white py-3 pr-2 text-sm font-light text-black"
+        icon={icon}
+      >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className="pr-2 text-xs font-light text-black">

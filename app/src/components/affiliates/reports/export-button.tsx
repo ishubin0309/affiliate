@@ -86,7 +86,6 @@ export const ExportButton = ({ onExport }: Props) => {
           {renderDropdownMenu(exportOptions, onExport)}
         </DropdownMenuContent>
       </DropdownMenu>
-      <div className="text-red-500">TBD</div>
     </div>
   );
 };

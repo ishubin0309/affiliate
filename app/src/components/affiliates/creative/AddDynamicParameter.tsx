@@ -3,22 +3,22 @@ import { Input } from "@/components/ui/input";
 import { Minus, Plus } from "lucide-react";
 import React, { useRef, useState } from "react";
 
-interface IProps {
-  setParametersValue?: (value: string[]) => void;
+interface Props {
+  inputValues: string[];
+  setInputValues: (values: string[]) => void;
 }
 
-export function AddDynamicParameter({ setParametersValue }: IProps) {
+export function AddDynamicParameter({ inputValues, setInputValues }: Props) {
   const [dynamicParameterDisabled, setDynamicParameterDisabled] =
     useState<boolean>(false);
 
-  const [inputValues, setInputValues] = useState<string[]>([""]);
+  const inputValuesCount = inputValues.length;
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   React.useEffect(() => {
-    const newIndex = inputValues.length - 1;
-    inputRefs.current[newIndex]?.focus();
-  }, [inputValues]);
+    inputRefs.current[inputValuesCount - 1]?.focus();
+  }, [inputValuesCount]);
 
   const addInput = () => {
     // Check if there is any empty field
@@ -67,7 +67,7 @@ export function AddDynamicParameter({ setParametersValue }: IProps) {
       />
       {index >= 1 && (
         <Button
-          variant="primary"
+          variant="outline"
           className="ml-2 h-10 w-10"
           size="rec"
           onClick={() => removeInput(index)}
@@ -78,7 +78,7 @@ export function AddDynamicParameter({ setParametersValue }: IProps) {
       {index === 0 && (
         <Button
           disabled={dynamicParameterDisabled}
-          variant="primary"
+          variant="outline"
           className="ml-2 h-10 w-10"
           size="rec"
           onClick={addInput}

@@ -32,14 +32,24 @@ export const getTranslateReportFake = publicProcedure
       prisma.translate.findMany({
         take: pageParams.pageSize,
         skip: offset,
+        where: {
+          langENG: { contains: search },
+          // rdate: { gte: from, lte: to },
+        },
       }),
 
       prisma.translate.aggregate({
         _count: {
           id: true,
         },
+        where: {
+          langENG: { contains: search },
+          // rdate: { gte: from, lte: to },
+        },
       }),
     ]);
+
+    console.log(`muly:country report `, { data: data.length, totals });
 
     return {
       data,

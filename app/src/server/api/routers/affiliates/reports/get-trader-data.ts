@@ -58,6 +58,18 @@ export const getReportTraderData = async (
 
   const ReportTradersDataItems: Record<string, ReportTraderDataItem> = {};
 
+  console.log(`muly:getReportTraderData`, {
+    ReportTradersData: ReportTradersData.length,
+    where: {
+      Date: {
+        gte: from,
+      },
+      ClickDetails: {
+        in: uid,
+      },
+    },
+  });
+
   for (const item of ReportTradersData) {
     const clickDetails = item.ClickDetails;
 
