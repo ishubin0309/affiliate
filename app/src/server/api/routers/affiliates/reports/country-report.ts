@@ -92,7 +92,7 @@ export const countryReport = async (
   const userLevel: string = userInfo.level;
   const group_id = userLevel === "manager" ? userInfo.group_id : null;
 
-  let where = Prisma.sql`1 = 1`; // Set a default where condition to retrieve all data
+  const where = Prisma.sql`1 = 1`; // Set a default where condition to retrieve all data
   let whereDashboard = Prisma.sql`1 = 1`; // Set a default where condition for dashboard data
   let install_main = Prisma.sql`1 = 1`;
   let traders_main = Prisma.sql`1 = 1`;
