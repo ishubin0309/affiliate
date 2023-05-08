@@ -1,4 +1,4 @@
-import { LanguageOption } from "@/components/Dropdowns/LanguageSelector";
+import type { LanguageOption } from "@/components/Dropdowns/LanguageSelector";
 
 export const languageDropDown: LanguageOption[] = [
   {
