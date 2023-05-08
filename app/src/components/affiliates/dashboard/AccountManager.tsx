@@ -1,4 +1,8 @@
-import { PhoneNumberIcon, SupportIcon } from "@/components/icons";
+import {
+  BlankUserIcon,
+  PhoneNumberIcon,
+  SupportIcon,
+} from "@/components/icons";
 import { firstLetterUpperCase } from "@/utils/format";
 import { Mail } from "lucide-react";
 import Link from "next/link";
@@ -33,7 +37,7 @@ const AccountManager = () => {
         Your Account Manager
       </div>
       <div className="align-center mb-2 flex justify-center">
-        <img width="100" src="/img/icons/user.png" alt="worldmap" />
+        <img width="100" src="/img/icons/user-circle-2.svg" alt="worldmap" />
       </div>
       <div className="align-center mb-5 text-center text-base">
         <div className="font-bold text-black">
@@ -76,14 +80,13 @@ const AccountManager = () => {
 
       <div className="mt-5 px-4">
         {additionalLinkUrl != "" && (
-          <Button
-            className="w-full"
-            variant="outline"
-            size="lg"
-            onClick={onClickOpenTicket}
+          <Link
+            className="inline-block w-full rounded-lg border border-solid pb-3 pt-3 text-center text-sm duration-100 ease-in hover:bg-gray-100 "
+            // variant="outline"
+            href={additionalLinkUrl ? additionalLinkUrl : ""}
           >
             Open a Ticket
-          </Button>
+          </Link>
         )}
       </div>
     </div>
