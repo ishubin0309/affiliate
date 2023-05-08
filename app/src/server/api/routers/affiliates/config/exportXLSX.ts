@@ -1,5 +1,5 @@
-import XLSXWriteStream from "@atomictech/xlsx-write-stream";
-import fs from "fs";
+import path from "path";
+import XLSX from "xlsx";
 
 export const exportXLSX = (
   columns: Array<string>,
@@ -7,14 +7,21 @@ export const exportXLSX = (
   localFileName: string
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const xlsxWriter = new XLSXWriteStream({ header: true, columns });
-  const writeStream = fs.createWriteStream(localFileName);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  xlsxWriter.pipe(writeStream);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  xlsxWriter.write(rows);
+  const path_name = path.join(
+    __dirname,
+    "../../../../../src/server/api/routers/affiliates/config/generated/" +
+      localFileName
+  );
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  xlsxWriter.end();
+  const binaryWS = XLSX.utils.json_to_sheet(rows);
+
+  // Create a new Workbook
+  const wb = XLSX.utils.book_new();
+
+  // Name your sheet
+  XLSX.utils.book_append_sheet(wb, binaryWS, "Fake Report");
+
+  // export your excel
+  XLSX.writeFile(wb, path_name);
 };

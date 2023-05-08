@@ -1,10 +1,9 @@
-import type { CommissionReportType } from "@/server/db-types";
+import { env } from "@/env.mjs";
 import { writeFileSync } from "fs";
 import { z } from "zod";
 import { exportCSVReport } from "../config/exportCSV";
 import { exportJSON } from "../config/exportJson";
 import { exportXLSX } from "../config/exportXLSX";
-import { env } from "@/env.mjs";
 
 // Common params for all reports
 export const PageParamsSchema = z.object({
@@ -58,7 +57,7 @@ export const exportReportLoop = async (
   const items_per_page = 5000;
   let hasMoreData = true;
   while (hasMoreData) {
-    console.log("generic file name ------->", page, items_per_page);
+    // console.log("generic file name ------->", page, items_per_page);
     const { data, pageInfo } = await getPage(page, items_per_page);
     // TODO: write data to to csv, xlsx, json based on exportType
 
@@ -81,6 +80,23 @@ export const exportReportLoop = async (
     hasMoreData = data.length >= items_per_page;
     page++;
   }
+};
+
+export const convertArrayOfObjectsToCSV = (arr: any) => {
+  const separator = ",";
+  const keys = Object.keys(arr[0]);
+  const csvHeader = keys.join(separator);
+  const csvRows = arr.map((obj) => {
+    return keys
+      .map((key) => {
+        return obj[key];
+      })
+      .join(separator);
+  });
+
+  const filtered_data = [];
+  filtered_data.push(csvRows.join("\n"));
+  return filtered_data;
 };
 
 // export const filterData = (data: any[], report_type: string) => {
