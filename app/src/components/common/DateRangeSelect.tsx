@@ -112,9 +112,11 @@ export const DateRangeSelect = ({ value, setValue }: Props) => {
             <CalendarDatePicker
               selected={value.from}
               handleDateChange={(date: Date) => {
+                console.log(`muly:handleDateChange`, { date, value });
                 setValue({ ...value, from: date, name: "custom" });
               }}
               allowTyping={true}
+              showIcon={false}
             ></CalendarDatePicker>
           </div>
         </div>
@@ -128,6 +130,7 @@ export const DateRangeSelect = ({ value, setValue }: Props) => {
                 setValue({ ...value, to: date, name: "custom" });
               }}
               allowTyping={true}
+              showIcon={false}
             ></CalendarDatePicker>
           </div>
         </div>
