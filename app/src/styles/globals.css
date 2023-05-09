@@ -153,20 +153,24 @@
 
 @layer components {
   .scrollbar-thin::-webkit-scrollbar,
-  body::-webkit-scrollbar {
+  body::-webkit-scrollbar,
+  .ps-sidebar-container::-webkit-scrollbar {
     width: 4px; /* Adjust the width of the scrollbar */
     height: 4px; /* Adjust the height of the scrollbar */
   }
   .scrollbar-thin::-webkit-scrollbar-track,
-  body::-webkit-scrollbar-track {
+  body::-webkit-scrollbar-track,
+  .ps-sidebar-container::-webkit-scrollbar-track {
     @apply rounded bg-gray-200;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb,
-  body::-webkit-scrollbar-thumb {
+  body::-webkit-scrollbar-thumb,
+  .ps-sidebar-container::-webkit-scrollbar-thumb {
     @apply rounded bg-gray-500;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover,
-  body::-webkit-scrollbar-thumb:hover {
+  body::-webkit-scrollbar-thumb:hover,
+  .ps-sidebar-container::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-700;
   }
 }
@@ -255,12 +259,9 @@
 
 /* React date picker width starts */
 
-.customDatePickerStyling > div > input,
-.customDatePickerStyling > button {
-  width: 7rem;
+.customDatePickerStyling > div > div.react-datepicker__input-container > input {
+  width: 5.4rem;
   font-size: 0.875rem;
   line-height: 1.4rem;
-  height: 2.45rem;
 }
-
 /* React date picker width ends */

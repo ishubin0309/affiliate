@@ -2,6 +2,9 @@
 
 // ./deploy-process.mjs --step=secret
 // ./deploy-process.mjs --step=verify --prod
+// ./deploy-process.mjs --step=verify --prod --service=freevpnplanet
+// ./deploy-process.mjs --step=create --prod --service=fxoro
+// ./deploy-process.mjs --step=secret --prod --service=fxoro
 // ./deploy-process.mjs --step=dns
 // ./deploy-process.mjs --step=secret --prod
 // ./deploy-process.mjs --step=secret
@@ -42,7 +45,7 @@ async function updateGcpSecret(secretName, secretValue) {
 }
 
 for (const site of sites) {
-  if (service && site.service !== service) {
+  if (service && site.name !== service) {
     continue;
   }
 

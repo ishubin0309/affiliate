@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
-import { MenuItem } from "react-pro-sidebar";
+import { MenuItem, useProSidebar } from "react-pro-sidebar";
 
 interface Props {
+  isDesktop: boolean;
   activeName: string;
   collapseShow: boolean;
   setCollapseShow: (value: boolean) => void;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 const SingleLink = ({
+  isDesktop,
   setactiveName,
   setdropdown,
   activeName,
@@ -22,6 +24,8 @@ const SingleLink = ({
   link,
   linkName,
 }: Props) => {
+  const { toggleSidebar } = useProSidebar();
+
   const activeLink = (value: string) => {
     setactiveName(value);
   };
@@ -37,6 +41,9 @@ const SingleLink = ({
         activeLink(link);
         activeDropdown("");
         setCollapseShow(false);
+        if (!isDesktop) {
+          toggleSidebar();
+        }
       }}
     >
       <MenuItem

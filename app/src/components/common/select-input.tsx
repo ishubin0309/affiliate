@@ -29,7 +29,7 @@ export const SelectInput = ({
   return (
     <Select defaultValue={value} onValueChange={onChange}>
       <SelectTrigger
-        className="bg-white pr-2 text-sm font-light text-black py-3"
+        className="bg-white py-3 pr-2 text-sm font-light text-black"
         icon={icon}
       >
         <SelectValue placeholder={placeholder} />

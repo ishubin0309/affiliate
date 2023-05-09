@@ -18,7 +18,13 @@ import {
   getDateRange,
   SearchDateRange,
 } from "@/components/common/search/search-date-range";
-import { endOfMonth, endOfToday, startOfMonth, sub } from "date-fns";
+import {
+  differenceInDays,
+  endOfMonth,
+  endOfToday,
+  startOfMonth,
+  sub,
+} from "date-fns";
 import {
   getDateParam,
   useSearchContext,
@@ -44,6 +50,7 @@ const allColumns: CardInfo[] = [
   { id: "ChargeBack", title: "ChargeBack", link: "reports/clicks-report" },
   { id: "ActiveTrader", title: "Active Trader", link: "reports/trader-report" },
   { id: "Commission", title: "Commission", link: "reports/quick-summary" },
+  { id: "NetDeposit", title: "Deposit", link: "reports/quick-summary" },
 ];
 
 const columnHelper = createColumnHelper<TopMerchantCreativeType>();
@@ -60,8 +67,17 @@ export const Dashboard = () => {
     values: { dates },
   } = useSearchContext();
   const { name, ...dateRange } = getDateRange(dates);
+
+  // Current time frame weight compared to last six month
+  const timeFrameFactor =
+    (differenceInDays(dateRange.to, dateRange.from) + 1) /
+    (differenceInDays(
+      endOfMonth(sub(today, { months: 1 })),
+      startOfMonth(sub(today, { months: 6 }))
+    ) +
+      1);
+
   const { values: context } = useSearchContext();
-  console.log(`muly:Dashboard`, { context });
 
   const [isLoading, setIsLoading] = useState(false);
   const [selectColumnsMode, setSelectColumnsMode] = useState<string[] | null>(
@@ -209,6 +225,22 @@ export const Dashboard = () => {
     ) as Sum;
     const thisMonth = thisMonthObject ? thisMonthObject[id] : 0;
 
+    let total = 0;
+    const chartValues: number[] =
+      allPerformanceChart?.map((field, i) => {
+        interface Sum {
+          [index: string]: number;
+        }
+
+        const fieldObject = field as unknown as Sum;
+        const fieldValue = fieldObject ? fieldObject[id] || 0 : 0;
+
+        total += fieldValue;
+        return fieldValue;
+      }) || [];
+
+    const upDown = timeFrameFactor < 1 ? value > total * timeFrameFactor : null;
+
     return (
       <DashboardCards
         key={idx}
@@ -219,7 +251,8 @@ export const Dashboard = () => {
         lastMonth={lastMonth}
         thisMonth={thisMonth}
         value={value}
-        performanceChartData={allPerformanceChart}
+        upDown={upDown}
+        chartValues={chartValues}
         selectColumnsMode={!!selectColumnsMode}
         isChecked={!selectColumnsMode?.includes(id)}
         handleCheckboxChange={handleColumnChange}

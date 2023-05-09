@@ -46,7 +46,7 @@ export const countryReport = async ({
             Date <= ${to} AND
             AffiliateID = ${affiliate_id}
             GROUP BY CountryID
-            ORDER BY value
+            ORDER BY value DESC
             LIMIT 5`;
   } else if (value === "Accounts") {
     return prisma.$queryRaw<CountryDataType[]>`SELECT country,
@@ -58,7 +58,7 @@ export const countryReport = async ({
         ReportTraders.RegistrationDate <= ${to} AND
         AffiliateID = ${affiliate_id}
         GROUP BY Country
-        ORDER BY value
+        ORDER BY value DESC
         LIMIT 5`;
   } else {
     return prisma.$queryRaw<CountryDataType[]>`SELECT country,
@@ -70,7 +70,7 @@ export const countryReport = async ({
         ReportTraders.RegistrationDate <= ${to} AND
         AffiliateID = ${affiliate_id}
         GROUP BY Country
-        ORDER BY value
+        ORDER BY value DESC
         LIMIT 5`;
   }
 };
@@ -87,10 +87,10 @@ export const getCountryReportDashboard = publicProcedure
       prisma,
       from: startOfDay(sub(to, { days: lastDays })),
       to,
-      affiliate_id: 557,
+      affiliate_id,
       value,
     });
 
-    console.log(`muly:countryData`, { countryData });
-    return countryData;
+    console.log(`muly:countryData`, { countryData, affiliate_id, value });
+    return countryData.map(convertPrismaResultsToNumbers);
   });

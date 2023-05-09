@@ -1,7 +1,6 @@
-import { QuerySelect } from "@/components/common/QuerySelect";
-import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { useDateRange } from "@/components/ui/date-range";
 import { createColumnHelper } from "@tanstack/react-table";
-import { Calendar, Download, Settings } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
@@ -9,7 +8,6 @@ import type { TraderReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { Loading } from "../../common/Loading";
 import { Button } from "../../ui/button";
-import { useDateRange } from "@/components/ui/date-range";
 
 export const creativeType = [
   {

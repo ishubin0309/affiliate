@@ -1,8 +1,7 @@
 import { PhoneNumberIcon, SupportIcon } from "@/components/icons";
 import { firstLetterUpperCase } from "@/utils/format";
-import { Mail } from "lucide-react";
+import { Mail, User } from "lucide-react";
 import Link from "next/link";
-import { Button } from "../../ui/button";
 import { api } from "@/utils/api";
 
 const AccountManager = () => {
@@ -11,7 +10,7 @@ const AccountManager = () => {
     refetchOnWindowFocus: false,
   });
 
-  console.log(`muly:AccountManager`, { data });
+  console.log(`AccountManager`, { data });
 
   const {
     first_name,
@@ -24,16 +23,15 @@ const AccountManager = () => {
     level,
   } = data || {};
 
-  const onClickOpenTicket = () => {
-    window.open(additionalLinkUrl || undefined, "_blank");
-  };
+  console.log(`muly:AccountManager`, { data });
+
   return (
     <div className="rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
       <div className="mb-3 text-xl font-bold text-[#2262C6]">
         Your Account Manager
       </div>
       <div className="align-center mb-2 flex justify-center">
-        <img width="100" src="/img/icons/user.png" alt="worldmap" />
+        <User size={72} />
       </div>
       <div className="align-center mb-5 text-center text-base">
         <div className="font-bold text-black">
@@ -75,15 +73,14 @@ const AccountManager = () => {
       </div>
 
       <div className="mt-5 px-4">
-        {additionalLinkUrl != "" && (
-          <Button
-            className="w-full"
-            variant="outline"
-            size="lg"
-            onClick={onClickOpenTicket}
+        {additionalLinkUrl && (
+          <Link
+            className="inline-block w-full rounded-lg border border-solid pb-3 pt-3 text-center text-sm duration-100 ease-in hover:bg-gray-100 "
+            // variant="outline"
+            href={additionalLinkUrl ? additionalLinkUrl : ""}
           >
             Open a Ticket
-          </Button>
+          </Link>
         )}
       </div>
     </div>

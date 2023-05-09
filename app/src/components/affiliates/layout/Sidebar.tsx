@@ -14,6 +14,7 @@ import DropdownLink from "./DropdownLink";
 import SingleLink from "./SingleLink";
 
 interface Props {
+  isDesktop: boolean;
   collapseShow: boolean;
   tempCollapseShow: boolean;
   setTempCollapseShow: (value: boolean) => void;
@@ -22,6 +23,7 @@ interface Props {
 const renderLink = (
   item: NavigationLinkData,
   index: number,
+  isDesktop: boolean,
   setActiveName: React.Dispatch<React.SetStateAction<string>>,
   setDropdown: React.Dispatch<React.SetStateAction<string>>,
   activeName: string,
@@ -32,6 +34,8 @@ const renderLink = (
   if (item.type === "single") {
     return (
       <SingleLink
+        key={index}
+        isDesktop={isDesktop}
         setactiveName={setActiveName}
         setdropdown={setDropdown}
         activeName={activeName}
@@ -44,6 +48,8 @@ const renderLink = (
   } else if (item.type === "dropdown") {
     return (
       <DropdownLink
+        key={index}
+        isDesktop={isDesktop}
         setactiveName={setActiveName}
         setCollapseShow={setCollapseShow}
         setdropdown={setDropdown}
@@ -61,6 +67,7 @@ const renderLink = (
 };
 
 const Sidebar: React.FC<Props> = ({
+  isDesktop,
   collapseShow,
   tempCollapseShow,
   setTempCollapseShow,
@@ -95,6 +102,7 @@ const Sidebar: React.FC<Props> = ({
                 renderLink(
                   item,
                   index,
+                  isDesktop,
                   setActiveName,
                   setDropdown,
                   activeName,
