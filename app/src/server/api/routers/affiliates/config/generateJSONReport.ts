@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-export const exportJSON = (
+export const generateJSONReport = (
   columns: Array<string>,
   rows: Array<number>,
   localFileName: string

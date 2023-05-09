@@ -82,6 +82,7 @@
     "i18next-http-backend": "^2.2.0",
     "js-file-download": "^0.4.12",
     "js-file-downloader": "^1.1.24",
+    "json2csv": "^6.0.0-alpha.2",
     "lucide-react": "^0.171.0",
     "markdown-wasm": "^1.2.0",
     "md5": "^2.3.0",
@@ -115,6 +116,7 @@
     "tailwindcss-animate": "^1.0.5",
     "trpc-playground": "^1.0.4",
     "usehooks-ts": "^2.9.1",
+    "xlsx": "^0.18.5",
     "zod": "^3.20.2"
   },
   "devDependencies": {
@@ -133,6 +135,7 @@
     "@types/chart.js": "^2.9.37",
     "@types/d3-format": "^3.0.1",
     "@types/formidable": "^2.0.5",
+    "@types/json2csv": "^5.0.3",
     "@types/md5": "^2.3.2",
     "@types/node": "^18.11.18",
     "@types/prettier": "^2.7.2",
