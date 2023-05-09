@@ -76,10 +76,10 @@ export const CreativeMaterialComponent = ({
             : "md:grid md:grid-cols-3 md:gap-4")
         }
       >
-        <div className="relative mx-auto mb-5 h-64 w-full rounded-xl">
+        <div className="relative mx-auto mb-5 flex h-64 w-full items-center rounded-xl">
           <ImageWithFallback src={file} alt={alt} />
           <div className="absolute right-0 top-0">
-            <Button variant="primary-outline" size="rec">
+            <Button variant="primary-outline" className="bg-white" size="rec">
               <Download className="w-4" />
             </Button>
           </div>
