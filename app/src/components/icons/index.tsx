@@ -1,6 +1,5 @@
 import { convertToNumber } from "@/utils/format";
 
-const UserCircle2Icon = "/icons/user-circle-2.svg";
 interface Props {
   width?: string | number;
   height?: string | number;
@@ -451,39 +450,5 @@ export const TableToggleIcon = () => {
         <path d="m577.73 46.668h-455.47c-8.8672 0-16.801 7.9336-16.801 16.801v33.133c0 8.8672 7.9336 16.801 16.801 16.801h455.46c8.8672 0 16.801-7.9336 16.801-16.801v-33.133c0.003906-8.8672-7.9297-16.801-16.797-16.801z" />
       </g>
     </svg>
-  );
-};
-
-export const BlankUserIcon = ({ width, height, fill }: Props) => {
-  // it's not working code, will delete after approvement.
-
-  const _width = width ? convertToNumber(width) : 50;
-  const _height = height ? convertToNumber(height) : 50;
-  const _color = fill ? fill : "#0050D1";
-  return (
-    <div
-      dangerouslySetInnerHTML={{
-        __html: `<svg
-      xmlns="http://www.w3.org/2000/svg"
-      // width="24"
-      // height="24"
-      // viewBox="0 0 24 24"
-      fill="none"
-      stroke="#0050D1"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      className="lucide lucide-user-circle-2"
-      width="100%"
-      height="100%"
-      preserveAspectRatio="none"
-    >
-      <path d="M18 20a6 6 0 0 0-12 0"></path>
-      <circle cx="12" cy="10" r="4"></circle>
-      <circle cx="12" cy="12" r="10"></circle>
-    </svg>`,
-      }}
-      style={{ width: `${_width}px`, height: `${_height}px` }}
-    ></div>
   );
 };
