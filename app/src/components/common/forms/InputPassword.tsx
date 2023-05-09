@@ -24,6 +24,7 @@ export const InputPassword = () => {
         onChange={(e) => {
           field.onChange(e.target.value);
         }}
+        className="pr-10"
       />
       <label
         onClick={() => setShowPassword(!showPassword)}
