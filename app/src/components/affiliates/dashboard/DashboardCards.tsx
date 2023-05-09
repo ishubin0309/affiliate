@@ -1,13 +1,12 @@
 import DashboardChart from "@/components/common/chart/DashboardChart";
 
 import { format } from "d3-format";
-import { ArrowBigDown, ArrowBigUp, CheckIcon, XIcon } from "lucide-react";
-import { Bar } from "react-chartjs-2";
+import { ArrowBigDown, ArrowBigUp } from "lucide-react";
 import Link from "next/link";
+import { Bar } from "react-chartjs-2";
 
 interface Props {
   idx: number | undefined;
-  fieldName: string;
   title: string;
   link: string;
   thisMonth: number | undefined;
@@ -15,14 +14,10 @@ interface Props {
   value: number;
   upDown: boolean | null;
   chartValues: number[];
-  selectColumnsMode: boolean;
-  handleCheckboxChange: (fieldName: string, checked: boolean) => void;
-  isChecked: boolean;
 }
 
 const DashboardCards = ({
   idx,
-  fieldName,
   title,
   link,
   thisMonth,
@@ -30,9 +25,6 @@ const DashboardCards = ({
   value,
   upDown,
   chartValues,
-  selectColumnsMode,
-  handleCheckboxChange,
-  isChecked,
 }: Props) => {
   const options = {
     responsive: false,
@@ -90,36 +82,6 @@ const DashboardCards = ({
       className="relative mb-1 block rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
       key={idx}
     >
-      {selectColumnsMode && (
-        <div className="absolute inset-0 bg-gray-300  opacity-75"></div>
-      )}
-
-      {selectColumnsMode && isChecked && (
-        <div className="absolute inset-0 flex items-center justify-center bg-transparent">
-          <CheckIcon className="h-12 w-auto text-green-600" />
-        </div>
-      )}
-
-      {selectColumnsMode && !isChecked && (
-        <div className="absolute inset-0 flex items-center justify-center bg-transparent">
-          <XIcon className="h-10 w-auto text-red-600" />
-        </div>
-      )}
-
-      {selectColumnsMode && (
-        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-          <input
-            className="scale-[25] opacity-0"
-            type="checkbox"
-            checked={isChecked}
-            onChange={(e) => {
-              console.log(`muly:click`, { fieldName, c: e.target.checked });
-              handleCheckboxChange(fieldName, e.target.checked);
-            }}
-          />
-        </div>
-      )}
-
       <div className="text-sm font-semibold text-[#2262C6] md:text-base">
         {title}
         <span className="hidden text-xs font-normal text-[#B9B9B9] md:inline-flex md:text-sm">

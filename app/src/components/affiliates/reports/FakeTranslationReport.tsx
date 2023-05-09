@@ -66,7 +66,16 @@ export const FakeTranslationReport = () => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
-  // console.log(`muly:FakeTranslationReport`, { data, pagination });
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportTranslateReportFake.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      search,
+      exportType,
+    });
+  console.log(`muly:FakeTranslationReport`, { data, pagination });
 
   return (
     <ReportControl
@@ -76,7 +85,7 @@ export const FakeTranslationReport = () => {
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}
-      handleExport={(exportType: ExportType) => Promise.resolve("ok")}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
     >
       <SearchText label={t("Search")} varName="search" />
     </ReportControl>

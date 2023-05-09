@@ -1,7 +1,5 @@
-import { SettingsIcon } from "@chakra-ui/icons";
 import { createColumnHelper } from "@tanstack/react-table";
-import React, { useState } from "react";
-import { Button } from "../../ui/button";
+import { useState } from "react";
 import AccountManager from "./AccountManager";
 import { DashboardCountryReport } from "./DashboradCountryReport";
 import DeviceReport from "./DeviceReport";
@@ -9,11 +7,11 @@ import DeviceReport from "./DeviceReport";
 import type { TopMerchantCreativeType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 
-import { SaveIcon } from "lucide-react";
-import Affiliates from "../../../layouts/AffiliatesLayout";
-import DashboardCards from "./DashboardCards";
-import DashboardCharts from "./DashboardCharts";
-import { useToast } from "@/components/ui/use-toast";
+import { ColumnSelect } from "@/components/common/data-table/column-select";
+import { ColumnSelectButton } from "@/components/common/data-table/column-select-button";
+import { PageHeader } from "@/components/common/page/page-header";
+import { SearchApply } from "@/components/common/search/saerch-apply-button";
+import { useSearchContext } from "@/components/common/search/search-context";
 import {
   getDateRange,
   SearchDateRange,
@@ -25,12 +23,9 @@ import {
   startOfMonth,
   sub,
 } from "date-fns";
-import {
-  getDateParam,
-  useSearchContext,
-} from "@/components/common/search/search-context";
-import { PageHeader } from "@/components/common/page/page-header";
-import { SearchApply } from "@/components/common/search/saerch-apply-button";
+import Affiliates from "../../../layouts/AffiliatesLayout";
+import DashboardCards from "./DashboardCards";
+import DashboardCharts from "./DashboardCharts";
 
 interface CardInfo {
   id: string;
@@ -61,7 +56,6 @@ export interface ItemType {
   isChecked: boolean;
 }
 export const Dashboard = () => {
-  const { toast } = useToast();
   const today = endOfToday();
   const {
     values: { dates },
@@ -79,10 +73,9 @@ export const Dashboard = () => {
 
   const { values: context } = useSearchContext();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectColumnsMode, setSelectColumnsMode] = useState<string[] | null>(
-    null
-  );
+  const [selectColumnsMode, setSelectColumnsMode] = useState<{
+    [name: string]: boolean;
+  } | null>(null);
 
   const { data, isRefetching: isRefetchingData } =
     api.affiliates.getDashboard.useQuery(
@@ -146,7 +139,6 @@ export const Dashboard = () => {
 
   // console.log("TT: ", adminInfo);
 
-  const apiContext = api.useContext();
   const { data: reportsColumns } = api.affiliates.getReportsColumns.useQuery(
     { level: "affiliate", report: "dashStatCols" },
     {
@@ -154,45 +146,6 @@ export const Dashboard = () => {
       refetchOnWindowFocus: false,
     }
   );
-  const upsertReportsColumns =
-    api.affiliates.upsertReportsColumns.useMutation();
-
-  const handleColumnChange = (fieldName: string, checked: boolean) => {
-    if (selectColumnsMode) {
-      if (checked) {
-        setSelectColumnsMode(
-          selectColumnsMode.filter((item) => item !== fieldName)
-        );
-      } else {
-        setSelectColumnsMode([...selectColumnsMode, fieldName]);
-      }
-    }
-  };
-
-  const handleSelectMode = async () => {
-    setIsLoading(true);
-    try {
-      if (selectColumnsMode) {
-        const columns = await upsertReportsColumns.mutateAsync({
-          level: "affiliate",
-          report: "dashStatCols",
-          fields: selectColumnsMode || [],
-        });
-
-        apiContext.affiliates.getReportsColumns.setData(
-          { level: "affiliate", report: "dashStatCols" },
-          columns
-        );
-      }
-      setSelectColumnsMode(selectColumnsMode ? null : reportsColumns || []);
-      toast({
-        title: "Saved dashboard setup",
-        duration: 5000,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const isRefetching =
     isRefetchingData ||
@@ -245,7 +198,6 @@ export const Dashboard = () => {
       <DashboardCards
         key={idx}
         idx={idx}
-        fieldName={id}
         title={title}
         link={link}
         lastMonth={lastMonth}
@@ -253,9 +205,6 @@ export const Dashboard = () => {
         value={value}
         upDown={upDown}
         chartValues={chartValues}
-        selectColumnsMode={!!selectColumnsMode}
-        isChecked={!selectColumnsMode?.includes(id)}
-        handleCheckboxChange={handleColumnChange}
       />
     );
   };
@@ -265,21 +214,23 @@ export const Dashboard = () => {
       <PageHeader title="Dashboard">
         <SearchDateRange />
         <SearchApply isLoading={isRefetching} />
-        <Button
-          size="rec"
-          variant="secondary"
-          onClick={handleSelectMode}
-          isLoading={isLoading}
-        >
-          {selectColumnsMode ? (
-            <SaveIcon className="w-4" />
-          ) : (
-            <SettingsIcon className="w-4" />
-          )}
-        </Button>
+        <ColumnSelectButton
+          columns={allColumns.map((item) => ({ header: item.id }))}
+          reportName={"dashStatCols"}
+          reportsColumns={reportsColumns}
+          selectColumnsMode={selectColumnsMode}
+          setSelectColumnsMode={setSelectColumnsMode}
+        />
       </PageHeader>
       <div>
-        <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <ColumnSelect
+          columns={allColumns.map((item) => ({ header: item.id }))}
+          reportName={"dashStatCols"}
+          reportsColumns={reportsColumns}
+          selectColumnsMode={selectColumnsMode}
+          setSelectColumnsMode={setSelectColumnsMode}
+        />
+        <div className="mt-4 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {!!reportsColumns &&
             allColumns
               .filter(

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { api } from "@/utils/api";
 import type { ColumnDef } from "@tanstack/react-table";
 import { SaveIcon } from "lucide-react";
-import { useState } from "react";
+import React, { useRef, useState } from "react";
 export type SelectedColumnList = Record<string, boolean>;
 
 interface Props<Data extends object> {
@@ -25,7 +25,7 @@ export const ColumnSelect = <Data extends object>({
 }: Props<Data>) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-
+  const elementRef = useRef<HTMLDivElement>(null);
   const upsertReportsColumns =
     api.affiliates.upsertReportsColumns.useMutation();
 
@@ -77,11 +77,24 @@ export const ColumnSelect = <Data extends object>({
     }
   };
 
+  React.useEffect(() => {
+    const element = elementRef.current;
+    if (element !== null) {
+      if (selectColumnsMode) {
+        const contentHeight = element.scrollHeight + 33;
+        element.style.height = `${contentHeight}px`;
+      } else {
+        element.style.height = `${0}px`;
+      }
+    }
+  }, [selectColumnsMode]);
+
   return (
     <div
+      ref={elementRef}
       className={cn(
         "mt-4 overflow-hidden bg-white shadow-md transition-all duration-500",
-        { "h-52 p-4 md:h-44 lg:h-36 xl:h-28": !!selectColumnsMode },
+        { "p-4": !!selectColumnsMode },
         { "h-0": !selectColumnsMode }
       )}
     >
@@ -109,7 +122,7 @@ export const ColumnSelect = <Data extends object>({
           );
         })}
       </div>
-      <div className={"items-end justify-end md:flex"}>
+      <div className={"mt-4 items-end justify-end md:flex"}>
         <div className="flex items-end justify-center md:justify-end">
           <div className="ml-2">
             <Button
