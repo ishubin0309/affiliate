@@ -1,9 +1,9 @@
 import { env } from "@/env.mjs";
 import { writeFileSync } from "fs";
 import { z } from "zod";
-import { exportCSVReport } from "../config/exportCSV";
-import { exportJSON } from "../config/exportJson";
-import { exportXLSX } from "../config/exportXLSX";
+import { generateCSVReport } from "../config/exportCSV";
+import { generateJSONReport } from "../config/generateJSONReport";
+import { generateXLSXReport } from "../config/generateXLSXReport";
 
 // Common params for all reports
 export const PageParamsSchema = z.object({
@@ -70,11 +70,11 @@ export const exportReportLoop = async (
     const json_filename = `${generic_filename}.${exportType}`;
 
     if (exportType === "xlsx") {
-      exportXLSX(columns, data_rows, xlsx_filename);
+      generateXLSXReport(columns, data_rows, xlsx_filename);
     } else if (exportType === "csv") {
-      exportCSVReport(columns, data_rows, csv_filename);
+      generateCSVReport(columns, data_rows, csv_filename);
     } else {
-      exportJSON(columns, data, json_filename);
+      generateJSONReport(columns, data, json_filename);
     }
 
     hasMoreData = data.length >= items_per_page;
@@ -82,22 +82,22 @@ export const exportReportLoop = async (
   }
 };
 
-export const convertArrayOfObjectsToCSV = (arr: any) => {
-  const separator = ",";
-  const keys = Object.keys(arr[0]);
-  const csvHeader = keys.join(separator);
-  const csvRows = arr.map((obj) => {
-    return keys
-      .map((key) => {
-        return obj[key];
-      })
-      .join(separator);
-  });
-
-  const filtered_data = [];
-  filtered_data.push(csvRows.join("\n"));
-  return filtered_data;
-};
+// export const convertArrayOfObjectsToCSV = (arr: object[]) => {
+//   const separator = ",";
+//   const keys = Object.keys(arr[0]);
+//   const csvHeader = keys.join(separator);
+//   const csvRows = arr.map((obj) => {
+//     return keys
+//       .map((key) => {
+//         return obj[key];
+//       })
+//       .join(separator);
+//   });
+//
+//   const filtered_data = [];
+//   filtered_data.push(csvRows.join("\n"));
+//   return filtered_data;
+// };
 
 // export const filterData = (data: any[], report_type: string) => {
 //   const data_rows = [] as number[];

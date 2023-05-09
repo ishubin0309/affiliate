@@ -1,7 +1,7 @@
 import path from "path";
 import XLSX from "xlsx";
 
-export const exportXLSX = (
+export const generateXLSXReport = (
   columns: Array<string>,
   rows: Array<number>,
   localFileName: string

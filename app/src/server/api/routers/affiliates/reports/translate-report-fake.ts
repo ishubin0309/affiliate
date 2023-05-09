@@ -69,7 +69,7 @@ export const getTranslateReportFake = publicProcedure
 
 export const exportTranslateReportFake = publicProcedure
   .input(Input.extend({ exportType }))
-  .mutation(async function ({ ctx, input }) {
+  .mutation(async ({ ctx, input }) => {
     const { exportType, ...params } = input;
 
     const columns = [
