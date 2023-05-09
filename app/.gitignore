@@ -56,3 +56,4 @@ api-front-dashbord-a4ee8aec074c.json
 /tmp/
 trader-report*.json
 deploy.secrets.mjs
+/generated/*
