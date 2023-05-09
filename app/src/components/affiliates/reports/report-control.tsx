@@ -87,6 +87,7 @@ export const ReportControl = <Data extends object>({
           report={report}
           columns={getColumnsBySetup(columns, reportsColumns)}
           footerData={footerData}
+          pagination={pagination}
         />
       ) : (
         <div className="flex h-40 items-center justify-center">

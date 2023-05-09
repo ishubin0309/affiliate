@@ -3,24 +3,22 @@ import { z } from "zod";
 import { translateModel } from "../../../../../../prisma/zod";
 import {
   getPageOffset,
+  getSortingInfo,
   pageInfo,
   PageParamsSchema,
+  SortingParamSchema,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 const Input = z.object({
   from: z.date(),
   to: z.date(),
   search: z.string().optional(),
-  sorting: z
-    .object({
-      id: z.string(),
-      desc: z.boolean(),
-    })
-    .array()
-    .optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const TranslateReportFakeResultSchema = z.object({
   data: z.array(translateModel),
@@ -31,43 +29,40 @@ const TranslateReportFakeResultSchema = z.object({
 export const getTranslateReportFake = publicProcedure
   .input(InputWithPageInfo)
   .output(TranslateReportFakeResultSchema)
-  .query(async ({ ctx, input: { from, to, search, pageParams, sorting } }) => {
-    const { prisma } = ctx;
-    const offset = getPageOffset(pageParams);
-    const _sorting = sorting?.map((x) => {
-      let res: {
-        [key: string]: string;
-      } = {};
-      res[x.id] = x.desc ? "desc" : "asc";
-      return res;
-    });
-    const [data, totals] = await Promise.all([
-      prisma.translate.findMany({
-        take: pageParams.pageSize,
-        skip: offset,
-        where: {
-          langENG: { contains: search },
-          // rdate: { gte: from, lte: to },
-        },
-        orderBy: _sorting,
-      }),
+  .query(
+    async ({ ctx, input: { from, to, search, pageParams, sortingParam } }) => {
+      const { prisma } = ctx;
+      const offset = getPageOffset(pageParams);
+      const _sorting = getSortingInfo(sortingParam);
 
-      prisma.translate.aggregate({
-        _count: {
-          id: true,
-        },
-        where: {
-          langENG: { contains: search },
-          // rdate: { gte: from, lte: to },
-        },
-      }),
-    ]);
+      const [data, totals] = await Promise.all([
+        prisma.translate.findMany({
+          take: pageParams.pageSize,
+          skip: offset,
+          where: {
+            langENG: { contains: search },
+            // rdate: { gte: from, lte: to },
+          },
+          orderBy: _sorting,
+        }),
 
-    console.log(`muly:country report `, { data: data.length, totals });
+        prisma.translate.aggregate({
+          _count: {
+            id: true,
+          },
+          where: {
+            langENG: { contains: search },
+            // rdate: { gte: from, lte: to },
+          },
+        }),
+      ]);
 
-    return {
-      data,
-      pageInfo: { ...pageParams, totalItems: totals._count.id },
-      totals: undefined,
-    };
-  });
+      console.log(`muly:country report `, { data: data.length, totals });
+
+      return {
+        data,
+        pageInfo: { ...pageParams, totalItems: totals._count.id },
+        totals: undefined,
+      };
+    }
+  );

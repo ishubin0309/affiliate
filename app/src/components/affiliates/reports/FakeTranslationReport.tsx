@@ -14,6 +14,7 @@ import {
 import { useTranslation } from "next-i18next";
 import "react-datepicker/dist/react-datepicker.css";
 import type { TranslateReportFakeType } from "../../../server/db-types";
+import { deserializeSorting } from "@/utils/format";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -48,20 +49,19 @@ const columns = [
 export const FakeTranslationReport = () => {
   const { t } = useTranslation("affiliate");
   const {
-    values: { search, dates, sorting },
+    values: { search, dates },
   } = useSearchContext();
   const pagination = usePagination();
   const { name, ...dateRange } = getDateRange(dates);
-  const _sorting: SortingState =
-    sorting && sorting !== undefined
-      ? JSON.parse(sorting).map((x: ColumnSort) => x)
-      : [];
+  console.log("*************************PAGE INFO: ", pagination.pageParams);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
+
   const { data, isRefetching } = api.affiliates.getTranslateReportFake.useQuery(
     {
       ...dateRange,
       search,
       pageParams: pagination.pageParams,
-      sorting: _sorting,
+      sortingParam: _sorting,
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );

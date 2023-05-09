@@ -13,7 +13,8 @@ import {
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import * as React from "react";
-import { useSearchContext } from "../search/search-context";
+import { usePagination } from "./pagination-hook";
+import { deserializeSorting, serializeSorting } from "@/utils/format";
 
 export type ReportDataTableProps<Data extends object> = {
   report:
@@ -22,28 +23,36 @@ export type ReportDataTableProps<Data extends object> = {
     | undefined;
   columns: ColumnDef<Data, any>[];
   footerData?: any;
+  pagination: ReturnType<typeof usePagination>;
 };
 
 export function ReportDataTable<Data extends object>({
   report,
   columns,
   footerData = [],
+  pagination: {
+    pageParams: { sortInfo, pageNumber, pageSize },
+    setPageParams,
+  },
 }: ReportDataTableProps<Data>) {
-  const { setControlValue, controlValue, apply } = useSearchContext();
-  const sorting = React.useMemo(() => {
-    const _sorting: SortingState =
-      controlValue.sorting && controlValue.sorting !== undefined
-        ? JSON.parse(controlValue.sorting).map((x: ColumnSort) => x)
-        : [];
-    return _sorting;
-  }, [controlValue.sorting]);
+  const pagination = usePagination();
 
-  const onSortingChange = (sortingInfo: any) => {
-    const cur_sorting = sortingInfo();
-    let existing_sorting = [...sorting];
-    let new_sorting: ColumnSort[] = [];
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const contextSorting = React.useMemo(() => {
+    return deserializeSorting(sortInfo);
+  }, [sortInfo]);
+
+  React.useEffect(() => {
+    onSortingChange(sorting);
+  }, [sorting]);
+
+  const onSortingChange = (sortingInfo: SortingState) => {
+    const cur_sorting = sortingInfo;
+    let existing_sorting = [...contextSorting];
+    let new_sorting: SortingState = [];
+
     const matched_sort_index = existing_sorting.findIndex(
-      (x) => x.id === cur_sorting[0].id
+      (x) => x.id === cur_sorting[0]?.id
     );
     // console.log(matched_sort_index);
     if (matched_sort_index >= 0) {
@@ -63,19 +72,26 @@ export function ReportDataTable<Data extends object>({
     }
 
     // console.log("**********NEW SORTING", JSON.stringify(new_sorting));
-    setControlValue("sorting", JSON.stringify(new_sorting));
-    apply();
+    setPageParams({
+      ...pagination.pageParams,
+      sortInfo: serializeSorting(new_sorting),
+    });
   };
 
   const { getHeaderGroups, getRowModel } = useReactTable({
     columns,
     data: report?.data ?? [],
     getCoreRowModel: getCoreRowModel(),
-    onSortingChange: onSortingChange,
+    onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     // state: {
-    //   sorting: sorting,
+    //   sorting: contextSorting,
     // },
+    // manualSorting: true,
+    // enableSorting: true,
+    // enableSortingRemoval: true,
+    // maxMultiSortColCount: 3,
+    // enableMultiSort: true,
     // manualPagination: true,
     // initialState: { pagination: { pageSize: 50, pageIndex: 0 } },
   });
@@ -94,7 +110,7 @@ export function ReportDataTable<Data extends object>({
                 // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
                 const meta = header.column.columnDef.meta;
                 headers.push(header.column.columnDef.header);
-                const matched_sort = sorting.find(
+                const matched_sort = contextSorting.find(
                   (x) => x.id === header.column.id
                 );
                 let sorted = "";
