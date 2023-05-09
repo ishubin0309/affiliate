@@ -18,14 +18,19 @@ export const Primary = {
     thisMonth: 212000,
     lastMonth: 40000,
     value: 23000,
-    performanceChartData: undefined,
+    upDown: true,
+    chartValues: [10, 10, 4, 5, 2, 3],
     selectColumnsMode: false,
     isChecked: false,
     handleCheckboxChange: (id: any, checkedStatus: boolean) => {
       console.log(`muly:handleCheckboxChange`, {});
     },
   },
-  render: (args: any) => <DashboardCards {...args} />,
+  render: (args: any) => (
+    <div className="max-w-sm">
+      <DashboardCards {...args} />
+    </div>
+  ),
 };
 
 export const LargeNumbers = {
@@ -34,30 +39,42 @@ export const LargeNumbers = {
     ...Primary.args,
     thisMonth: 2_125_464,
     lastMonth: 12_125_464,
+    upDown: false,
     value: 125_464,
   },
 };
 
-export const SelectModeSelected = {
+export const LargeNumbers2 = {
   ...Primary,
   args: {
     ...Primary.args,
-    thisMonth: 2_125_464,
+    thisMonth: 200_125_464,
     lastMonth: 12_125_464,
     value: 125_464,
-    selectColumnsMode: true,
-    isChecked: true,
+    upDown: null,
   },
 };
 
-export const SelectModeUnSelected = {
-  ...Primary,
-  args: {
-    ...Primary.args,
-    thisMonth: 2_125_464,
-    lastMonth: 12_125_464,
-    value: 125_464,
-    selectColumnsMode: true,
-    isChecked: false,
-  },
-};
+// export const SelectModeSelected = {
+//   ...Primary,
+//   args: {
+//     ...Primary.args,
+//     thisMonth: 2_125_464,
+//     lastMonth: 12_125_464,
+//     value: 125_464,
+//     selectColumnsMode: true,
+//     isChecked: true,
+//   },
+// };
+//
+// export const SelectModeUnSelected = {
+//   ...Primary,
+//   args: {
+//     ...Primary.args,
+//     thisMonth: 2_125_462,
+//     lastMonth: 12_125_464,
+//     value: 125_464,
+//     selectColumnsMode: true,
+//     isChecked: false,
+//   },
+// };

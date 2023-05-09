@@ -6,13 +6,13 @@ import SelectUserDropdown from "@/components/Dropdowns/SelectUserDropdown";
 
 const DropdownComponent = () => {
   const [selectLanguageItem, setSelectLanguageItem] =
-    React.useState<LanguageOption | null>(null);
+    React.useState<string>("en");
 
   return (
     <div className="mt-4 flex">
       <LanguageSelector
         onLanguageChange={(val) => setSelectLanguageItem(val)}
-        selectedOption={selectLanguageItem}
+        language={selectLanguageItem}
         options={languageDropDown}
       />
     </div>

@@ -58,12 +58,12 @@ const ClickReportItem = trafficModel
   })
   .merge(ReportTraderDataItemSchema.partial())
   .extend({
-    country: z.string(),
-    banner_title: z.string(),
-    banner_url: z.string(),
-    merchant_name: z.string(),
-    affiliate_name: z.string(),
-    profile_name: z.string(),
+    country: z.string().nullish(),
+    banner_title: z.string().nullish(),
+    banner_url: z.string().nullish(),
+    merchant_name: z.string().nullish(),
+    affiliate_name: z.string().nullish(),
+    profile_name: z.string().nullish(),
   });
 
 const clickReportResultSchema = z.object({
@@ -140,6 +140,7 @@ const clicksReport = async (
   // limit " . $start_limit. ", " . $end_limit;
 
   // DONE missing order by and limits
+
   const traficDataFull = await prisma.traffic.findMany({
     orderBy: orderBy,
     skip: offset,
@@ -232,6 +233,24 @@ const clicksReport = async (
     },
   });
 
+  console.log(`muly:clicksReport:findMany`, {
+    totalRecords,
+    traficDataFull: traficDataFull.length,
+    orderBy: orderBy,
+    skip: offset,
+    take: pageParams.pageSize,
+    where: {
+      ...type_filter,
+      affiliate_id: affiliate_id,
+      merchant_id: merchant_id,
+      uid: unique_id,
+      rdate: {
+        gte: from,
+        lte: to,
+      },
+    },
+  });
+
   const ReportTradersDataItems = await getReportTraderData(prisma, from, uid);
   const clickArray = traficDataFull.map((item) => {
     const {
@@ -250,12 +269,12 @@ const clicksReport = async (
       uid,
       banner_id,
       ...restItem,
-      country: country.title,
-      banner_title: merchant_creative.title,
-      banner_url: merchant_creative.url,
-      merchant_name: merchant.name,
-      affiliate_name: affiliate.username,
-      profile_name: affiliates_profiles.name,
+      country: country?.title,
+      banner_title: merchant_creative?.title,
+      banner_url: merchant_creative?.url,
+      merchant_name: merchant?.name,
+      affiliate_name: affiliate?.username,
+      profile_name: affiliates_profiles?.name,
       ...traderData,
     };
   });

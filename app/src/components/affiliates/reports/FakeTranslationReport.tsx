@@ -1,26 +1,15 @@
-import { fakeTraderReportData } from "@/components/affiliates/reports/fake-trader-report-data";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
-import type {
-  TraderReportType,
-  TranslateReportFakeType,
-} from "../../../server/db-types";
 import { ReportControl } from "@/components/affiliates/reports/report-control";
-import { SearchSelect } from "@/components/common/search/search-select";
-import { SearchText } from "@/components/common/search/search-text";
-import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { creativeType } from "@/components/affiliates/reports/TraderReports";
-import { api } from "@/utils/api";
-import { ClicksReportType } from "../../../server/db-types";
-import {
-  getDateParam,
-  getNumberParam,
-  useSearchContext,
-} from "@/components/common/search/search-context";
-import { parse, sub } from "date-fns";
 import { DateColumn } from "@/components/common/data-table/available-column";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { useSearchContext } from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
+import { SearchText } from "@/components/common/search/search-text";
+import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { api } from "@/utils/api";
+import { createColumnHelper } from "@tanstack/react-table";
+import { useTranslation } from "next-i18next";
+import "react-datepicker/dist/react-datepicker.css";
+import type { TranslateReportFakeType } from "../../../server/db-types";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -50,20 +39,33 @@ const columns = [
 ];
 
 export const FakeTranslationReport = () => {
+  const { t } = useTranslation("affiliate");
   const {
-    values: { from, to, search },
+    values: { search, dates },
   } = useSearchContext();
   const pagination = usePagination();
+  const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isLoading } = api.affiliates.getTranslateReportFake.useQuery(
+  const { data, isRefetching } = api.affiliates.getTranslateReportFake.useQuery(
     {
-      from: getDateParam(from),
-      to: getDateParam(to),
+      ...dateRange,
       search,
       pageParams: pagination.pageParams,
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
+
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportTranslateReportFake.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      search,
+      pageParams: pagination.pageParams,
+      exportType,
+    });
+  console.log(`muly:FakeTranslationReport`, { data, pagination });
 
   return (
     <ReportControl
@@ -72,10 +74,10 @@ export const FakeTranslationReport = () => {
       report={data}
       columns={columns}
       pagination={pagination}
-      isRefetching={isLoading}
-      handleExport={(exportType: ExportType) => Promise.resolve("ok")}
+      isRefetching={isRefetching}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
     >
-      <SearchText label="Search" varName="search" />
+      <SearchText label={t("Search")} varName="search" />
     </ReportControl>
   );
 };

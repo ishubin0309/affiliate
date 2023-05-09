@@ -152,6 +152,21 @@ export const CheckboxBoolean = {
   },
 };
 
+// export const CheckboxOptional = {
+//   ...FormTest,
+//   args: {
+//     schema: z.object({
+//       gender: customerModel.shape.gender.describe("Gender").meta({
+//         control: "RadioGroup",
+//         choices: [
+//           { id: "male", title: "Male" },
+//           { id: "female", title: "Female" },
+//         ],
+//       }),
+//     }),
+//   },
+// };
+
 export const CheckboxWithDefault = {
   ...FormTest,
   args: {

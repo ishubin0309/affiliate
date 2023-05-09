@@ -1,6 +1,5 @@
-import AccountManager from "./AccountManager";
-import { DashboardCountryReport } from "./DashboradCountryReport";
 import DashboardCharts from "./DashboardCharts";
+import { DashboardCountryReport } from "./DashboradCountryReport";
 import DeviceReport from "./DeviceReport";
 
 const performanceChart = [
@@ -80,21 +79,21 @@ export const CountryReport = {
   },
 };
 
-export const AccountManagers = {
-  render: () => (
-    <AccountManager
-      first_name={report.first_name}
-      last_name={report.last_name}
-      mail={report.mail}
-    />
-  ),
-  parameters: {
-    design: {
-      type: "figma",
-      url: "https://www.figma.com/file/0JFoPEDsqew7pF100tiCOT/affiliate-dashboard-v2?node-id=1210-28142&t=ljE9QCN43WSsoBp3-0",
-    },
-  },
-};
+// export const AccountManagers = {
+//   render: () => (
+//     <AccountManager
+//       first_name={report.first_name}
+//       last_name={report.last_name}
+//       mail={report.mail}
+//     />
+//   ),
+//   parameters: {
+//     design: {
+//       type: "figma",
+//       url: "https://www.figma.com/file/0JFoPEDsqew7pF100tiCOT/affiliate-dashboard-v2?node-id=1210-28142&t=ljE9QCN43WSsoBp3-0",
+//     },
+//   },
+// };
 export const Charts = {
   render: () => (
     <DashboardCharts

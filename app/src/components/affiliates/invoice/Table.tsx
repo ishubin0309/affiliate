@@ -15,9 +15,16 @@ interface tableData {
   quantity: string;
   price: string;
 }
+interface paymentTableData {
+  merchant: string;
+  deal: string;
+  quantity: string;
+  total_price: string;
+}
+
 interface TableProps {
   columns: string[];
-  data?: tableData[];
+  data?: tableData[] | paymentTableData[];
   footers: footer[];
 }
 export const Table = ({ columns, data, footers }: TableProps) => (
@@ -29,12 +36,15 @@ export const Table = ({ columns, data, footers }: TableProps) => (
         ))}
       </View>
       {data &&
-        data.map((i: tableData, index: number) => (
-          <View style={styles.tableRow} key={index}>
+        data.map((i: tableData | paymentTableData, index: number) => (
+          <View
+            style={styles.tableRow}
+            key={`${typeof i}-${i["deal"]}-${index}`}
+          >
             {Object.keys(i).map((item) => (
               <TableRow
-                key={index}
-                data={i[item as keyof tableData]}
+                key={`${typeof i}-${i["deal"]}-${index}-${item}`}
+                data={i[item as keyof (tableData | paymentTableData)]}
                 columns={columns.length}
               />
             ))}

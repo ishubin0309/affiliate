@@ -2,10 +2,10 @@ import { ReportControl } from "@/components/affiliates/reports/report-control";
 import { DateColumn } from "@/components/common/data-table/available-column";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
 import {
-  getDateParam,
   getNumberParam,
   useSearchContext,
 } from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
 import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
@@ -70,14 +70,14 @@ const typeOptions = [
 
 export const ClicksReport = () => {
   const {
-    values: { merchant_id, from, to, trader_id, unique_id, type },
+    values: { merchant_id, dates, trader_id, unique_id, type },
   } = useSearchContext();
   const pagination = usePagination();
+  const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isLoading } = api.affiliates.getClicksReport.useQuery(
+  const { data, isRefetching } = api.affiliates.getClicksReport.useQuery(
     {
-      from: getDateParam(from),
-      to: getDateParam(to),
+      ...dateRange,
       type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
       merchant_id: getNumberParam(merchant_id),
       trader_id,
@@ -86,9 +86,6 @@ export const ClicksReport = () => {
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
-
-  // const { mutateAsync: reportExport } =
-  //   api.affiliates.exportClicksReport.useMutation();
 
   const handleExport = async (exportType: ExportType) => {
     return Promise.resolve("ok");
@@ -112,7 +109,7 @@ export const ClicksReport = () => {
       report={data}
       columns={columns}
       pagination={pagination}
-      isRefetching={isLoading}
+      isRefetching={isRefetching}
       handleExport={async (exportType: ExportType) => handleExport(exportType)}
     >
       <SearchSelect

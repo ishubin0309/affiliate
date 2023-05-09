@@ -6,18 +6,24 @@ import { QuerySelect } from "../../../components/common/QuerySelect";
 import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { CreativeReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
+import { DateRangeSelect } from "../../common/DateRangeSelect";
 import { Loading } from "../../common/Loading";
+import { useDateRange } from "@/components/ui/date-range";
 
 export const CreativeReport = () => {
   const router = useRouter();
   const { merchant_id } = router.query;
   const { from, to } = useDateRange();
   const [traderID, setTraderID] = useState<string>("");
+  const { currentPage, itemsPerPage } = router.query;
 
   const { data, isLoading } = api.affiliates.getCreativeReport.useQuery({
     from,
     to,
+    pageParams: {
+      pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
+      pageNumber: currentPage ? Number(currentPage) : 1,
+    },
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<CreativeReportType>();
@@ -129,9 +135,6 @@ export const CreativeReport = () => {
         alignItems={"center"}
         alignSelf="center"
       >
-        <GridItem>
-          <DateRangeSelect />
-        </GridItem>
         <GridItem>
           <QuerySelect
             label="Merchant"
