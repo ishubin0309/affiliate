@@ -23,6 +23,8 @@ const AccountManager = () => {
     level,
   } = data || {};
 
+  console.log(`muly:AccountManager`, { data });
+
   return (
     <div className="rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
       <div className="mb-3 text-xl font-bold text-[#2262C6]">
@@ -71,7 +73,7 @@ const AccountManager = () => {
       </div>
 
       <div className="mt-5 px-4">
-        {additionalLinkUrl != "" && (
+        {additionalLinkUrl && (
           <Link
             className="inline-block w-full rounded-lg border border-solid pb-3 pt-3 text-center text-sm duration-100 ease-in hover:bg-gray-100 "
             // variant="outline"

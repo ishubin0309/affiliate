@@ -62,9 +62,12 @@ export const getAdminInfo = publicProcedure
       }),
     ]);
 
-    console.log(`muly:getAdminInfo`, { group_id, admins, groups });
-
-    return { ...admins, group_title: groups?.title, group_id };
+    return {
+      ...admins,
+      additionalLinkUrl: "/affiliates/support",
+      group_title: groups?.title,
+      group_id,
+    };
   });
 
 export const updateAccount = publicProcedure
