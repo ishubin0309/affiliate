@@ -86,29 +86,29 @@ export const CreativeMaterialComponent = ({
         </div>
         <div className="col-span-2 w-full rounded-xl">
           <div className=" bg-[#F5F8FA] p-4 md:px-8">
-            <div className="flex-wrap justify-between md:flex">
+            <div className="justify-between md:flex">
               <div className="mt-2 flex justify-between truncate md:block">
-                <label className="mb-1 block text-sm font-bold text-gray-700">
+                <label className="mb-1 block truncate text-sm font-bold text-gray-700">
                   {values[0]?.title}
                 </label>
                 <div className="truncate text-sm text-[#353535] md:text-base">
                   {values[0]?.value}
                 </div>
               </div>
-              <div className="mt-2 flex justify-between md:block">
+              <div className="mt-2 flex min-w-[48px] justify-between md:block">
                 <div>
-                  <label className="mb-1 block text-sm font-bold text-gray-700">
+                  <label className="mb-1 block truncate text-sm font-bold text-gray-700">
                     {values[1]?.title}
                   </label>
-                  <div className="text-sm text-[#353535] md:text-base">
+                  <div className="truncate text-sm text-[#353535] md:text-base">
                     {values[1]?.value}
                   </div>
                 </div>
-                <div className="md:hidden">
-                  <label className="mb-1 block text-sm font-bold text-gray-700">
+                <div className="truncate md:hidden">
+                  <label className="mb-1 block truncate text-sm font-bold text-gray-700">
                     {values[2]?.title}
                   </label>
-                  <div className="text-sm text-[#353535] md:text-base">
+                  <div className="truncate text-sm text-[#353535] md:text-base">
                     {values[2]?.value}
                   </div>
                 </div>
@@ -141,45 +141,45 @@ export const CreativeMaterialComponent = ({
                 (gridView ? "grid grid-cols-1" : " lg:flex ")
               }
             >
-              <div className="mt-2 hidden md:block">
-                <label className="mb-1 block text-sm font-bold text-gray-700">
+              <div className="mt-2 hidden truncate md:block">
+                <label className="mb-1 block truncate text-sm font-bold text-gray-700">
                   {values[2]?.title}
                 </label>
-                <div className="text-sm text-[#353535] md:text-base">
+                <div className="truncate text-sm text-[#353535] md:text-base">
                   {values[2]?.value}
                 </div>
               </div>
-              <div className="mt-2">
-                <label className="mb-1 block text-sm font-bold text-gray-700">
+              <div className="mt-2 truncate">
+                <label className="mb-1 block truncate text-sm font-bold text-gray-700">
                   {values[3]?.title}
                 </label>
-                <div className="text-sm text-[#353535] md:text-base">
+                <div className="truncate text-sm text-[#353535] md:text-base">
                   {values[3]?.value}
                 </div>
               </div>
-              <div className="mt-2 flex justify-between md:block">
+              <div className="mt-2 flex justify-between truncate md:block">
                 <div>
-                  <label className="mb-1 block text-sm font-bold text-gray-700">
+                  <label className="mb-1 block truncate text-sm font-bold text-gray-700">
                     {values[4]?.title}
                   </label>
-                  <div className="text-sm text-[#353535] md:text-base">
+                  <div className="truncate text-sm text-[#353535] md:text-base">
                     {!values[4]?.value ? values[4]?.value : 0}
                   </div>
                 </div>
-                <div className="md:hidden">
-                  <label className="mb-1 block text-sm font-bold text-gray-700">
+                <div className="truncate md:hidden">
+                  <label className="mb-1 block truncate text-sm font-bold text-gray-700">
                     {values[5]?.title}
                   </label>
-                  <div className="text-sm text-[#353535] md:text-base">
+                  <div className="truncate text-sm text-[#353535] md:text-base">
                     {values[5]?.value}
                   </div>
                 </div>
               </div>
-              <div className="mt-2 hidden md:block">
-                <label className="mb-1 block text-sm font-bold text-gray-700">
+              <div className="mt-2 hidden truncate md:block">
+                <label className="mb-1 block truncate text-sm font-bold text-gray-700">
                   {values[5]?.title}
                 </label>
-                <div className="text-sm text-[#353535] md:text-base">
+                <div className="truncate text-sm text-[#353535] md:text-base">
                   {values[5]?.value}
                 </div>
               </div>
