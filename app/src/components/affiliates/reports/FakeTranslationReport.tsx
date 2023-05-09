@@ -6,15 +6,11 @@ import { getDateRange } from "@/components/common/search/search-date-range";
 import { SearchText } from "@/components/common/search/search-text";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { api } from "@/utils/api";
-import {
-  ColumnSort,
-  SortingState,
-  createColumnHelper,
-} from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
 import "react-datepicker/dist/react-datepicker.css";
 import type { TranslateReportFakeType } from "../../../server/db-types";
-import { deserializeSorting } from "@/utils/format";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>

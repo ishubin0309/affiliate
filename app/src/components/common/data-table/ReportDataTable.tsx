@@ -14,7 +14,10 @@ import {
 import { ArrowDown, ArrowUp } from "lucide-react";
 import * as React from "react";
 import { usePagination } from "./pagination-hook";
-import { deserializeSorting, serializeSorting } from "@/utils/format";
+import {
+  deserializeSorting,
+  serializeSorting,
+} from "@/components/common/data-table/sorting";
 
 export type ReportDataTableProps<Data extends object> = {
   report:
