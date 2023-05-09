@@ -1,15 +1,19 @@
-import { createColumnHelper } from "@tanstack/react-table";
-import "react-datepicker/dist/react-datepicker.css";
-import type { TranslateReportFakeType } from "../../../server/db-types";
 import { ReportControl } from "@/components/affiliates/reports/report-control";
+import { DateColumn } from "@/components/common/data-table/available-column";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { useSearchContext } from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
 import { SearchText } from "@/components/common/search/search-text";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { api } from "@/utils/api";
-import { useSearchContext } from "@/components/common/search/search-context";
-import { DateColumn } from "@/components/common/data-table/available-column";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
-import { getDateRange } from "@/components/common/search/search-date-range";
+import {
+  ColumnSort,
+  SortingState,
+  createColumnHelper,
+} from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
+import "react-datepicker/dist/react-datepicker.css";
+import type { TranslateReportFakeType } from "../../../server/db-types";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -37,25 +41,32 @@ const columns = [
   createColumn("langPOR", "Lang POR"),
   createColumn("langJAP", "Lang JAP"),
 ];
-
+// interface SortType {
+//   id: string;
+//   desc: boolean;
+// }
 export const FakeTranslationReport = () => {
   const { t } = useTranslation("affiliate");
   const {
-    values: { search, dates },
+    values: { search, dates, sorting },
   } = useSearchContext();
   const pagination = usePagination();
   const { name, ...dateRange } = getDateRange(dates);
-
+  const _sorting: SortingState =
+    sorting && sorting !== undefined
+      ? JSON.parse(sorting).map((x: ColumnSort) => x)
+      : [];
   const { data, isRefetching } = api.affiliates.getTranslateReportFake.useQuery(
     {
       ...dateRange,
       search,
       pageParams: pagination.pageParams,
+      sorting: _sorting,
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
-  console.log(`muly:FakeTranslationReport`, { data, pagination });
+  // console.log(`muly:FakeTranslationReport`, { data, pagination });
 
   return (
     <ReportControl

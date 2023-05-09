@@ -11,6 +11,13 @@ const Input = z.object({
   from: z.date(),
   to: z.date(),
   search: z.string().optional(),
+  sorting: z
+    .object({
+      id: z.string(),
+      desc: z.boolean(),
+    })
+    .array()
+    .optional(),
 });
 
 const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
@@ -24,10 +31,16 @@ const TranslateReportFakeResultSchema = z.object({
 export const getTranslateReportFake = publicProcedure
   .input(InputWithPageInfo)
   .output(TranslateReportFakeResultSchema)
-  .query(async ({ ctx, input: { from, to, search, pageParams } }) => {
+  .query(async ({ ctx, input: { from, to, search, pageParams, sorting } }) => {
     const { prisma } = ctx;
     const offset = getPageOffset(pageParams);
-
+    const _sorting = sorting?.map((x) => {
+      let res: {
+        [key: string]: string;
+      } = {};
+      res[x.id] = x.desc ? "desc" : "asc";
+      return res;
+    });
     const [data, totals] = await Promise.all([
       prisma.translate.findMany({
         take: pageParams.pageSize,
@@ -36,6 +49,7 @@ export const getTranslateReportFake = publicProcedure
           langENG: { contains: search },
           // rdate: { gte: from, lte: to },
         },
+        orderBy: _sorting,
       }),
 
       prisma.translate.aggregate({
