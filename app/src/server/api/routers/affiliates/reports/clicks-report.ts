@@ -58,12 +58,12 @@ const ClickReportItem = trafficModel
   })
   .merge(ReportTraderDataItemSchema.partial())
   .extend({
-    country: z.string(),
-    banner_title: z.string(),
-    banner_url: z.string(),
-    merchant_name: z.string(),
-    affiliate_name: z.string(),
-    profile_name: z.string(),
+    country: z.string().nullish(),
+    banner_title: z.string().nullish(),
+    banner_url: z.string().nullish(),
+    merchant_name: z.string().nullish(),
+    affiliate_name: z.string().nullish(),
+    profile_name: z.string().nullish(),
   });
 
 const clickReportResultSchema = z.object({
@@ -269,12 +269,12 @@ const clicksReport = async (
       uid,
       banner_id,
       ...restItem,
-      country: country.title,
-      banner_title: merchant_creative.title,
-      banner_url: merchant_creative.url,
-      merchant_name: merchant.name,
-      affiliate_name: affiliate.username,
-      profile_name: affiliates_profiles.name,
+      country: country?.title,
+      banner_title: merchant_creative?.title,
+      banner_url: merchant_creative?.url,
+      merchant_name: merchant?.name,
+      affiliate_name: affiliate?.username,
+      profile_name: affiliates_profiles?.name,
       ...traderData,
     };
   });

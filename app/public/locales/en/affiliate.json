@@ -1,35 +1,33 @@
 {
   "Search": "Search",
-  "merchant_id": {
-    "label": "Select Merchants"
+  "name": {
+    "label": "Profile Name"
   },
-  "type": {
-    "choices": {
-      "0": "lead",
-      "1": "account",
-      "2": "sale",
-      "3": "qftd"
-    },
-    "label": "Type"
+  "url": {
+    "label": "URL"
   },
-  "all_creative": {
-    "label": "All Creative"
+  "description": {
+    "label": "Description"
   },
-  "banner_id": {
-    "label": "Creative"
-  },
-  "pixelCode": {
-    "label": "Pixel Code"
-  },
-  "method": {
-    "choices": {
-      "0": "post",
-      "1": "get",
-      "2": "client"
-    },
-    "label": "Method"
+  "source_traffic": {
+    "label": "Traffic Source"
   },
   "valid": {
-    "label": "Enable"
+    "label": "Available"
+  },
+  "username": {
+    "label": "Username"
+  },
+  "password": {
+    "label": "Password"
+  },
+  "subject": {
+    "label": "Ticket Subject"
+  },
+  "reply_email": {
+    "label": "Your Email"
+  },
+  "text": {
+    "label": "Ticket Content"
   }
 }

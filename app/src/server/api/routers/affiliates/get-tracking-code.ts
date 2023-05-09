@@ -261,7 +261,7 @@ const _generateBannerCode = async (
 export const generateBannerCode = publicProcedure
   .input(Input)
   .output(BannerCode)
-  .mutation(async ({ ctx, input: { profile_id, params, creative_id } }) => {
+  .query(async ({ ctx, input: { profile_id, params, creative_id } }) => {
     return _generateBannerCode(
       affiliate_id,
       "creative",
