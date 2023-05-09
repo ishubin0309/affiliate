@@ -20,5 +20,14 @@
   },
   "password": {
     "label": "Password"
+  },
+  "subject": {
+    "label": "Ticket Subject"
+  },
+  "reply_email": {
+    "label": "Your Email"
+  },
+  "text": {
+    "label": "Ticket Content"
   }
 }
