@@ -13,33 +13,43 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 interface IProps {
-  allowTyping: boolean;
+  allowTyping?: boolean;
+  showIcon?: boolean;
+  selected?: Date;
+  handleDateChange?: (date: Date) => void;
 }
 
-export function CalendarDatePicker({ allowTyping }: IProps) {
-  const [date, setDate] = React.useState<Date>(new Date());
-  const [inputValue, setInputValue] = React.useState<string>("");
+export function CalendarDatePicker({
+  allowTyping,
+  showIcon = true,
+  selected = new Date(),
+  handleDateChange,
+}: IProps) {
+  const [date, setDate] = React.useState<Date>(selected);
+  const [inputValue, setInputValue] = React.useState<string>(
+    formatDate(selected)
+  );
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     let value = event.target.value;
     if (/\D\/$/.test(value)) value = value.substring(0, value.length - 3);
-    let values = value.split("/").map(function (v) {
+    const values = value.split("/").map(function (v) {
       return v.replace(/\D/g, "");
     });
     if (values[0]) values[0] = checkValue(values[0], 12);
     if (values[1]) values[1] = checkValue(values[1], 31);
-    let output = values.map(function (v: any, i) {
+    const output = values.map(function (v: string, i) {
       const d = new Date().getFullYear() % 100;
       if (i == 0 && v.length == 2) {
         return v + " / ";
       } else if (i == 1 && v.length == 2) {
         return v + " / ";
       } else if (i == 2 && v.length == 2 && Number(v) > d + 5) {
-        return 19 + v;
+        return "19" + v;
       } else if (i == 2 && v.length == 2 && Number(v) < d + 5 && v !== "20") {
-        return 20 + v;
+        return "20" + v;
       } else if (i == 2 && v.length == 4 && Number(v?.slice(2, 4)) > d + 5) {
-        return new Date().getFullYear() + 5;
+        return String(new Date().getFullYear() + 5);
       } else {
         return v;
       }
@@ -51,9 +61,11 @@ export function CalendarDatePicker({ allowTyping }: IProps) {
       value = output.join("").substring(0, 14);
     }
     setInputValue(value);
+    console.log("abc");
     if (value.length > 9) {
       const checkDate = new Date(value);
       setDate(checkDate);
+      handleDateChange && handleDateChange(checkDate);
     } else {
       console.log("Invalid input value format");
     }
@@ -61,21 +73,21 @@ export function CalendarDatePicker({ allowTyping }: IProps) {
 
   function checkValue(str: string, max: number) {
     if (str.charAt(0) !== "0" || str == "00") {
-      var num = parseInt(str);
+      let num = parseInt(str);
       if (isNaN(num) || num <= 0 || num > max) num = 1;
       str =
         num > parseInt(max.toString().charAt(0)) && num.toString().length == 1
-          ? "0" + num
+          ? "0" + num.toString()
           : num.toString();
     }
     return str;
   }
 
   function formatDate(date: Date) {
-    var d = new Date(date),
-      month = "" + (d.getMonth() + 1),
-      day = "" + d.getDate(),
+    const d = new Date(date),
+      month = "" + (d.getMonth() + 1).toString(),
       year = d.getFullYear();
+    let day = "" + d.getDate().toString();
 
     if (day.length < 2) day = "0" + day;
 
@@ -89,6 +101,12 @@ export function CalendarDatePicker({ allowTyping }: IProps) {
     }
   }
 
+  React.useEffect(() => {
+    console.log("inputValue: " + inputValue);
+    setDate(selected);
+    setInputValue(formatDate(selected));
+  }, [selected]);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -100,11 +118,11 @@ export function CalendarDatePicker({ allowTyping }: IProps) {
               !date && "text-muted-foreground"
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            {showIcon && <CalendarIcon className="mr-2 h-4 w-4" />}
             {date ? format(date, "PPP") : <span>Pick a date</span>}
           </Button>
         ) : (
-          <div style={{ position: "relative" }}>
+          <div className="relative w-fit">
             <Input
               type="text"
               id="day-picker-input"
@@ -115,15 +133,17 @@ export function CalendarDatePicker({ allowTyping }: IProps) {
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
             />
-            <CalendarIcon
-              className="mr-2 h-4 w-4"
-              style={{
-                position: "absolute",
-                right: "0",
-                top: "13px",
-                cursor: "pointer",
-              }}
-            />
+            {showIcon && (
+              <CalendarIcon
+                className="mr-2 h-4 w-4"
+                style={{
+                  position: "absolute",
+                  right: "0",
+                  top: "11px",
+                  cursor: "pointer",
+                }}
+              />
+            )}
           </div>
         )}
       </PopoverTrigger>
@@ -136,6 +156,7 @@ export function CalendarDatePicker({ allowTyping }: IProps) {
           onSelect={(event: any) => {
             const d = formatDate(event);
             event ? setInputValue(d) : setInputValue("");
+            handleDateChange && handleDateChange(event);
             setDate(event);
           }}
           initialFocus
