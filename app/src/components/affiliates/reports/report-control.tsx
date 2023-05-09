@@ -76,6 +76,7 @@ export const ReportControl = <Data extends object>({
 
       <ColumnSelect
         columns={columns}
+        reportName={reportName}
         reportsColumns={reportsColumns}
         selectColumnsMode={selectColumnsMode}
         setSelectColumnsMode={setSelectColumnsMode}

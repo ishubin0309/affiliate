@@ -92,7 +92,7 @@ export const countryReport = async (
   const userLevel: string = userInfo.level;
   const group_id = userLevel === "manager" ? userInfo.group_id : null;
 
-  let where = Prisma.sql`1 = 1`; // Set a default where condition to retrieve all data
+  const where = Prisma.sql`1 = 1`; // Set a default where condition to retrieve all data
   let whereDashboard = Prisma.sql`1 = 1`; // Set a default where condition for dashboard data
   let install_main = Prisma.sql`1 = 1`;
   let traders_main = Prisma.sql`1 = 1`;
@@ -108,16 +108,13 @@ export const countryReport = async (
     return where;
   };
 
-  where = appendCondition(where, "group_id", group_id);
   install_main = appendCondition(install_main, "group_id", group_id);
   traders_main = appendCondition(traders_main, "group_id", group_id);
 
-  where = appendCondition(where, "merchant_id", merchant_id);
   install_main = appendCondition(install_main, "merchant_id", merchant_id);
   traders_main = appendCondition(traders_main, "merchant_id", merchant_id);
   whereDashboard = appendCondition(whereDashboard, "merchant_id", merchant_id);
 
-  where = appendCondition(where, "affiliate_id", affiliate_id);
   install_main = appendCondition(install_main, "affiliate_id", affiliate_id);
   traders_main = appendCondition(traders_main, "AffiliateID", affiliate_id);
   whereDashboard = appendCondition(
@@ -126,7 +123,6 @@ export const countryReport = async (
     affiliate_id
   );
 
-  where = appendCondition(where, "country_id", country_id);
   install_main = appendCondition(install_main, "country_id", country_id);
   traders_main = appendCondition(traders_main, "country_id", country_id);
   whereDashboard = appendCondition(whereDashboard, "CountryID", country_id);
@@ -298,6 +294,12 @@ export const countryReport = async (
         ${traders_main}
         GROUP BY Country`;
 
+  console.log(`muly:countryReport before merge`, {
+    ReportTradersDataItems: ReportTradersDataItems.length,
+    baseCountryArray: Object.keys(baseCountryArray),
+    countries: ReportTradersDataItems.map((item) => item.country),
+  });
+
   const countryArray: CountryDataType[] = [];
   ReportTradersDataItems.map(convertPrismaResultsToNumbers).forEach((item) => {
     const country = item["country"] || "-";
@@ -357,6 +359,11 @@ export const getCountryReport = publicProcedure
       userInfo,
       affiliate_id,
       merchant_id,
+    });
+
+    console.log(`muly:call countryReport after`, {
+      countryData: countryData.data.length,
+      pageInfo: countryData.pageInfo,
     });
 
     // debugSaveData("countryData", { countryData });
