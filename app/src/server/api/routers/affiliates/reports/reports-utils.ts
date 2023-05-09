@@ -24,7 +24,7 @@ export const getPageOffset = (pageParams: PageParam) =>
 
 export const getSortingInfo = (sortingParam: SortingParam) => {
   return sortingParam?.map((x) => {
-    let res: {
+    const res: {
       [key: string]: string;
     } = {};
     res[x.id] = x.desc ? "desc" : "asc";

@@ -311,6 +311,7 @@ export const QuickSummaryReport = () => {
         </div>
 
         <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
+          {/* @ts-ignore */}
           <ReportDataTable
             report={data}
             columns={columns}

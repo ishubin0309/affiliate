@@ -1,4 +1,4 @@
-import { ColumnSort } from "@tanstack/react-table";
+import type { ColumnSort } from "@tanstack/react-table";
 
 export const formatPrice = (value?: number) => {
   const v = parseFloat((value || 0).toFixed(2));
@@ -48,7 +48,7 @@ export const serializeSorting = (sorting: ColumnSort[]) => {
 export const deserializeSorting = (sort_string?: string): ColumnSort[] => {
   let res: ColumnSort[] = [];
   if (sort_string && sort_string !== "") {
-    let split_info = sort_string.split(",").map((x) => {
+    const split_info = sort_string.split(",").map((x) => {
       const sort_info = x.split("-");
       if (sort_info.length == 1) {
         if (sort_info[0] === "") {

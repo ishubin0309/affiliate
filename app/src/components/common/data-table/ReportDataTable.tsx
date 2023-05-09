@@ -56,7 +56,7 @@ export function ReportDataTable<Data extends object>({
     );
     // console.log(matched_sort_index);
     if (matched_sort_index >= 0) {
-      let matched_sort = { ...existing_sorting[matched_sort_index] };
+      const matched_sort = { ...existing_sorting[matched_sort_index] };
       existing_sorting = existing_sorting.filter(
         (x, index) => index !== matched_sort_index
       );
