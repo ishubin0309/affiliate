@@ -2,12 +2,12 @@ import fs from "fs";
 import { Parser } from "json2csv";
 import path from "path";
 
-export const exportCSVReport = (
+export const generateCSVReport = (
   header: Array<string>,
   data: Array<number>,
   fileName: string
 ) => {
-  const opts = { header, excelString: true };
+  const opts = { header: true, excelString: true };
   const parser = new Parser(opts);
   const csv = parser.parse(data);
 

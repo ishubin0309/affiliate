@@ -62,7 +62,6 @@ export const FakeTranslationReport = () => {
     reportExport({
       ...dateRange,
       search,
-      pageParams: pagination.pageParams,
       exportType,
     });
   console.log(`muly:FakeTranslationReport`, { data, pagination });

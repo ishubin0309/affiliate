@@ -135,6 +135,7 @@
     "@types/chart.js": "^2.9.37",
     "@types/d3-format": "^3.0.1",
     "@types/formidable": "^2.0.5",
+    "@types/json2csv": "^5.0.3",
     "@types/md5": "^2.3.2",
     "@types/node": "^18.11.18",
     "@types/prettier": "^2.7.2",

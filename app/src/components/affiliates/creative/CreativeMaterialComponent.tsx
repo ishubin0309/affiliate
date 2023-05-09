@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Copy, Download, Image } from "lucide-react";
+import { Copy, Download, Image as ImageIcon } from "lucide-react";
 import React from "react";
 import { CreativeMaterialDialogComponent } from "./CreativeMaterialDialogComponent";
 
@@ -40,7 +40,7 @@ export const CreativeMaterialComponent = ({
     };
 
     return imagePlaceHolder ? (
-      <Image
+      <ImageIcon
         color="#2262C6"
         size={256}
         className="mx-auto my-0 max-h-64 w-full rounded-xl bg-cover opacity-40"

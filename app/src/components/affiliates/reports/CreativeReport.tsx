@@ -1,3 +1,5 @@
+//
+
 import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
@@ -17,152 +19,150 @@ export const CreativeReport = () => {
   const [traderID, setTraderID] = useState<string>("");
   const { currentPage, itemsPerPage } = router.query;
 
-  const { data, isLoading } = api.affiliates.getCreativeReport.useQuery({
-    from,
-    to,
-    pageParams: {
-      pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
-      pageNumber: currentPage ? Number(currentPage) : 1,
-    },
-  });
-  const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
-  const columnHelper = createColumnHelper<CreativeReportType>();
+  // const { data, isLoading } = api.affiliates.getCreativeReport.useQuery({
+  //   from,
+  //   to,
+  //   pageParams: {
+  //     pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
+  //     pageNumber: currentPage ? Number(currentPage) : 1,
+  //   },
+  // });
+  // const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
+  // const columnHelper = createColumnHelper<CreativeReportType>();
+  //
+  // console.log("Install render", {
+  //   data,
+  //   merchants,
+  //   isLoading,
+  //   from,
+  //   to,
+  //   merchant_id,
+  // });
+  //
+  // if (isLoading) {
+  //   return <Loading />;
+  // }
+  //
+  // const divCol = (
+  //   val: number | null | undefined,
+  //   div: number | null | undefined
+  // ) => {
+  //   return val ? (
+  //     <span>{((val / (div || 1)) * 100).toFixed(2)}%</span>
+  //   ) : (
+  //     <span></span>
+  //   );
+  // };
+  //
+  // const columns = [
+  //   columnHelper.accessor("banner_id", {
+  //     cell: (info) => info.getValue() as number,
+  //     header: "Creative ID",
+  //   }),
+  //   columnHelper.accessor("title", {
+  //     cell: (info) => info.getValue() as string,
+  //     header: "Creative Name",
+  //   }),
+  //   columnHelper.accessor("name", {
+  //     cell: (info) => info.getValue() as string,
+  //     header: "Merchant",
+  //   }),
+  //   columnHelper.accessor("type", {
+  //     cell: (info) => info.getValue() as string,
+  //     header: "Type",
+  //   }),
+  //   columnHelper.accessor("totalViews", {
+  //     cell: (info) => info.getValue() as string,
+  //     header: "Impressions",
+  //   }),
+  //   columnHelper.accessor("totalClicks", {
+  //     cell: (info) => info.getValue() as string,
+  //     header: "Clicks",
+  //   }),
+  //   columnHelper.accessor("cpi_amount", {
+  //     cell: (info) => info.getValue() as number,
+  //     header: "Installation",
+  //   }),
+  //   columnHelper.accessor("ctr" as any, {
+  //     cell: ({ row }) =>
+  //       divCol(row?.original?.totalClicks, row.original.totalViews),
+  //     header: "Click Through Ratio (CTR)",
+  //   }),
+  //   columnHelper.accessor("click-to-account" as any, {
+  //     cell: ({ row }) =>
+  //       divCol(row?.original?.total_real, row.original.totalClicks),
+  //     header: "Click to Account",
+  //   }),
+  //   columnHelper.accessor("click-to-sale" as any, {
+  //     cell: ({ row }) => divCol(row?.original?.ftd, row.original.totalClicks),
+  //     header: "Click to Sale",
+  //   }),
+  //   columnHelper.accessor("leads", {
+  //     cell: (info) => info.getValue() as number,
+  //     header: "Leads",
+  //   }),
+  //   columnHelper.accessor("demo", {
+  //     cell: (info) => info.getValue() as string,
+  //     header: "Demo",
+  //   }),
+  //   columnHelper.accessor("accounts", {
+  //     cell: (info) => info.getValue() as string,
+  //     header: "Accounts",
+  //   }),
+  //   columnHelper.accessor("ftd", {
+  //     cell: (info) => info.getValue() as string,
+  //     header: "FTD",
+  //   }),
+  //   columnHelper.accessor("volume", {
+  //     cell: (info) => info.getValue() as string,
+  //     header: "Volume",
+  //   }),
+  //   columnHelper.accessor("withdrawal", {
+  //     cell: (info) => info.getValue() as string,
+  //     header: "Withdrawal Amount",
+  //   }),
+  //   columnHelper.accessor("chargeback", {
+  //     cell: (info) => info.getValue() as string,
+  //     header: "ChargeBack Amount",
+  //   }),
+  // ];
+  //
+  // return (
+  //   <>
+  //     <Grid
+  //       templateColumns="repeat(4, 1fr)"
+  //       gap={6}
+  //       alignContent={"center"}
+  //       width="90%"
+  //       alignItems={"center"}
+  //       alignSelf="center"
+  //     >
+  //       <GridItem>
+  //         <QuerySelect
+  //           label="Merchant"
+  //           choices={merchants}
+  //           varName="merchant_id"
+  //         />
+  //       </GridItem>
+  //       <GridItem>
+  //         <FormLabel>Trader ID</FormLabel>
+  //         <Input
+  //           value={traderID}
+  //           onChange={(event) => setTraderID(event.target.value)}
+  //         />
+  //       </GridItem>
+  //     </Grid>
+  //     <h2>Creative Report</h2>
+  //     <Grid
+  //       alignContent={"center"}
+  //       alignItems={"center"}
+  //       width="100%"
+  //       alignSelf="center"
+  //     >
+  //       <DataTable data={data} columns={columns} footerData={[]} />
+  //     </Grid>
+  //   </>
+  // );
 
-  console.log("Install render", {
-    data,
-    merchants,
-    isLoading,
-    from,
-    to,
-    merchant_id,
-  });
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  const divCol = (
-    val: number | null | undefined,
-    div: number | null | undefined
-  ) => {
-    return val ? (
-      <span>{((val / (div || 1)) * 100).toFixed(2)}%</span>
-    ) : (
-      <span></span>
-    );
-  };
-
-  const columns = [
-    columnHelper.accessor("banner_id", {
-      cell: (info) => info.getValue() as number,
-      header: "Creative ID",
-    }),
-    columnHelper.accessor("title", {
-      cell: (info) => info.getValue() as string,
-      header: "Creative Name",
-    }),
-    columnHelper.accessor("name", {
-      cell: (info) => info.getValue() as string,
-      header: "Merchant",
-    }),
-    columnHelper.accessor("type", {
-      cell: (info) => info.getValue() as string,
-      header: "Type",
-    }),
-    columnHelper.accessor("totalViews", {
-      cell: (info) => info.getValue() as string,
-      header: "Impressions",
-    }),
-    columnHelper.accessor("totalClicks", {
-      cell: (info) => info.getValue() as string,
-      header: "Clicks",
-    }),
-    columnHelper.accessor("cpi_amount", {
-      cell: (info) => info.getValue() as number,
-      header: "Installation",
-    }),
-    columnHelper.accessor("ctr" as any, {
-      cell: ({ row }) =>
-        divCol(row?.original?.totalClicks, row.original.totalViews),
-      header: "Click Through Ratio (CTR)",
-    }),
-    columnHelper.accessor("click-to-account" as any, {
-      cell: ({ row }) =>
-        divCol(row?.original?.total_real, row.original.totalClicks),
-      header: "Click to Account",
-    }),
-    columnHelper.accessor("click-to-sale" as any, {
-      cell: ({ row }) => divCol(row?.original?.ftd, row.original.totalClicks),
-      header: "Click to Sale",
-    }),
-    columnHelper.accessor("leads", {
-      cell: (info) => info.getValue() as number,
-      header: "Leads",
-    }),
-    columnHelper.accessor("demo", {
-      cell: (info) => info.getValue() as string,
-      header: "Demo",
-    }),
-    columnHelper.accessor("accounts", {
-      cell: (info) => info.getValue() as string,
-      header: "Accounts",
-    }),
-    columnHelper.accessor("ftd", {
-      cell: (info) => info.getValue() as string,
-      header: "FTD",
-    }),
-    columnHelper.accessor("volume", {
-      cell: (info) => info.getValue() as string,
-      header: "Volume",
-    }),
-    columnHelper.accessor("withdrawal", {
-      cell: (info) => info.getValue() as string,
-      header: "Withdrawal Amount",
-    }),
-    columnHelper.accessor("chargeback", {
-      cell: (info) => info.getValue() as string,
-      header: "ChargeBack Amount",
-    }),
-  ];
-
-  return (
-    <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        width="90%"
-        alignItems={"center"}
-        alignSelf="center"
-      >
-        <GridItem>
-          <QuerySelect
-            label="Merchant"
-            choices={merchants}
-            varName="merchant_id"
-          />
-        </GridItem>
-        <GridItem>
-          <FormLabel>Trader ID</FormLabel>
-          <Input
-            value={traderID}
-            onChange={(event) => setTraderID(event.target.value)}
-          />
-        </GridItem>
-      </Grid>
-      <h2>Creative Report</h2>
-      <Grid
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-        alignSelf="center"
-      >
-        <DataTable
-          data={Object.values(data || {})}
-          columns={columns}
-          footerData={[]}
-        />
-      </Grid>
-    </>
-  );
+  return null;
 };
