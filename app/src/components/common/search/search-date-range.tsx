@@ -68,6 +68,8 @@ export const SearchDateRange = ({ varName = "dates", label }: Props) => {
         ? formatValueDateRange(value.from, value.to)
         : value.name;
 
+    console.log(`muly:handleChangeDateRange`, { textValue });
+
     setValue(textValue);
     setControlValue(varName, textValue);
   };

@@ -27,7 +27,7 @@ export const SelectInput = ({
   icon,
 }: Props) => {
   return (
-    <Select defaultValue={value} onValueChange={onChange}>
+    <Select value={value} onValueChange={onChange}>
       <SelectTrigger
         className="bg-white py-3 pr-2 text-sm font-light text-black"
         icon={icon}

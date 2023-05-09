@@ -1,4 +1,4 @@
-import DatePicker from "react-datepicker";
+import { CalendarDatePicker } from "@/components/ui/date-input";
 import {
   endOfMonth,
   endOfYear,
@@ -108,25 +108,30 @@ export const DateRangeSelect = ({ value, setValue }: Props) => {
 
       <div className="inline-block">
         <div className="inline-block">
-          <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-sm lg:my-0">
-            <DatePicker
+          <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-0 text-xs md:text-sm lg:my-0">
+            <CalendarDatePicker
               selected={value.from}
-              onChange={(date: Date) => {
+              handleDateChange={(date: Date) => {
+                console.log(`muly:handleDateChange`, { date, value });
                 setValue({ ...value, from: date, name: "custom" });
               }}
-            ></DatePicker>
+              allowTyping={true}
+              showIcon={false}
+            ></CalendarDatePicker>
           </div>
         </div>
         <label className="px-1 text-sm text-[#525252]">To</label>
         <div className="inline-block">
-          <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-2 text-xs md:px-4 md:text-sm lg:my-0">
-            <DatePicker
+          <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-0 text-xs md:text-sm lg:my-0">
+            <CalendarDatePicker
               selected={value.to}
-              onChange={(date: Date) => {
+              handleDateChange={(date: Date) => {
                 console.log(`muly:date picker change`, { date });
                 setValue({ ...value, to: date, name: "custom" });
               }}
-            ></DatePicker>
+              allowTyping={true}
+              showIcon={false}
+            ></CalendarDatePicker>
           </div>
         </div>
       </div>
