@@ -8,6 +8,7 @@ import type { TraderReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { Loading } from "../../common/Loading";
 import { Button } from "../../ui/button";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 
 export const creativeType = [
   {
@@ -51,6 +52,7 @@ export const creativeType = [
 export const TraderReports = () => {
   const router = useRouter();
   const { merchant_id } = router.query;
+  const pagination = usePagination();
   const { from, to } = useDateRange();
   const [traderID, setTraderID] = useState<string>("");
   const [reportFields, setReportFields] = useState<
@@ -196,6 +198,7 @@ export const TraderReports = () => {
           <ReportDataTable
             report={data}
             columns={columns}
+            pagination={pagination}
             // reportFields={reportFields}
           />
         </div>

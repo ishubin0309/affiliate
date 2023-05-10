@@ -42,16 +42,16 @@ export function ReportDataTable<Data extends object>({
   const contextSorting = deserializeSorting(sortInfo);
 
   const onSortingChange = (sort_id: string) => {
-    console.log(`muly:onSortingChange cur_sorting`, { sort_id });
+    // console.log(`muly:onSortingChange cur_sorting`, { sort_id });
     let existing_sorting = [...contextSorting];
     let new_sorting: SortingState = [];
 
     const matched_sort_index = existing_sorting.findIndex(
       (x) => x.id === sort_id
     );
-    // console.log(matched_sort_index);
     if (matched_sort_index >= 0) {
       const matched_sort = { ...existing_sorting[matched_sort_index] };
+      // console.log("xian: matched_sort_index", matched_sort);
       existing_sorting = existing_sorting.filter(
         (x, index) => index !== matched_sort_index
       );
@@ -63,7 +63,7 @@ export function ReportDataTable<Data extends object>({
         new_sorting = existing_sorting;
       }
     } else {
-      new_sorting = [{ id: sort_id, desc: true }, ...existing_sorting];
+      new_sorting = [{ id: sort_id, desc: false }, ...existing_sorting];
     }
 
     // console.log("**********NEW SORTING", JSON.stringify(new_sorting));
