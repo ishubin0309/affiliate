@@ -80,6 +80,7 @@ export const ReportControl = <Data extends object>({
         reportsColumns={reportsColumns}
         selectColumnsMode={selectColumnsMode}
         setSelectColumnsMode={setSelectColumnsMode}
+        btnText="Save"
       />
 
       {report.pageInfo.totalItems > 0 ? (
