@@ -16,3 +16,10 @@ export const exportOptions: { id: ExportType; title: string }[] = [
 ];
 
 export type OnExport = (exportType: ExportType) => Promise<string | undefined>;
+
+export const filterReportColumns = (data: any[]) => {
+  const report_column = data.map((item) => {
+    return item?.header;
+  });
+  return report_column;
+};

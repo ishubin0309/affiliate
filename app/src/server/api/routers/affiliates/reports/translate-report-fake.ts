@@ -1,5 +1,6 @@
 import {
   PageParamsSchema,
+  exportColumns,
   exportReportLoop,
   exportType,
   getPageOffset,
@@ -10,7 +11,6 @@ import type { PrismaClient } from "@prisma/client";
 import path from "path";
 import { z } from "zod";
 import { translateModel } from "../../../../../../prisma/zod";
-import { uploadFile } from "../config";
 
 const Input = z.object({
   from: z.date(),
@@ -68,36 +68,26 @@ export const getTranslateReportFake = publicProcedure
   .query(({ ctx, input }) => translateReportFake(ctx.prisma, input));
 
 export const exportTranslateReportFake = publicProcedure
-  .input(Input.extend({ exportType }))
-  .mutation(async ({ ctx, input }) => {
-    const { exportType, ...params } = input;
-
-    const columns = [
-      "id",
-      "rdate",
-      "source",
-      "langENG",
-      "langRUS",
-      "langGER",
-      "langFRA",
-      "langITA",
-      "langESP",
-      "langHEB",
-      "langARA",
-      "langCHI",
-      "langPOR",
-      "langJAP",
-    ];
+  .input(Input.extend({ exportType, exportColumns }))
+  .mutation(async function ({ ctx, input }) {
+    const { exportType, exportColumns, ...params } = input;
 
     const file_date = new Date().toISOString();
     const fake_report = "fake-translate-report";
     const generic_filename = `${fake_report}${file_date}`;
 
-    // console.log("export type ---->", exportType);
-    await exportReportLoop(
+    console.log("exportType ---->", exportType);
+    console.log("export columns ---->", exportColumns);
+    const bucketName = "reports-download-tmp";
+    const serviceKey = path.join(
+      __dirname,
+      "../../../../../api-front-dashbord-a4ee8aec074c.json"
+    );
+    const url = await exportReportLoop(
+      "api-front-dashbord",
+      serviceKey,
       exportType || "csv",
-      columns,
-      generic_filename,
+      exportColumns,
       fake_report,
       async (pageNumber: number, pageSize: number) =>
         translateReportFake(ctx.prisma, {
@@ -106,18 +96,13 @@ export const exportTranslateReportFake = publicProcedure
         })
     );
 
-    const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
-
-    const public_url = uploadFile(
-      serviceKey,
-      "api-front-dashbord",
-      bucketName,
-      generic_filename,
-      exportType ? exportType : "json"
-    );
-    return public_url;
+    // console.log("url ------>", url);
+    // const public_url = uploadFile(
+    //   serviceKey,
+    //   "api-front-dashbord",
+    //   bucketName,
+    //   generic_filename,
+    //   exportType ? exportType : "json"
+    // );
+    return url;
   });

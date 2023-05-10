@@ -1,5 +1,7 @@
 import { env } from "@/env.mjs";
+import { Storage } from "@google-cloud/storage";
 import { writeFileSync } from "fs";
+import json2csv from "json2csv";
 import { z } from "zod";
 import { generateCSVReport } from "../config/exportCSV";
 import { generateJSONReport } from "../config/generateJSONReport";
@@ -42,62 +44,74 @@ export const splitToPages = <Row>(data: Row[], pageParams: PageParam) => {
 // Common params for all reports export
 export const exportType = z.enum(["csv", "xlsx", "json"]);
 
+export const exportColumns = z.array(z.string().optional());
+
 export type ExportType = z.infer<typeof exportType>;
+
+export type exportColumnsType = z.infer<typeof exportColumns>;
 
 // Generic function to export data in csv, xlsx, json format
 // Can be used for all reports
+
 export const exportReportLoop = async (
+  GCP_PROJECT_ID: string,
+  GCP_KEY_FILE_PATH: string,
   exportType: ExportType,
-  columns: string[], // TODO: define better type, see what is needed for export
-  generic_filename: string,
-  report_type: string,
-  getPage: (page: number, items_per_page: number) => Promise<PageResult>
-) => {
+  columns: string[],
+  reportName: string,
+  getPage: (page: number, pageSize: number) => Promise<PageResult>
+): Promise<string> => {
+  const storage = new Storage({
+    projectId: GCP_PROJECT_ID,
+    keyFilename: GCP_KEY_FILE_PATH,
+  });
+  console.log("GCP_PROJECT_ID", GCP_PROJECT_ID);
+  console.log("GCP_KEY_FILE_PATH", GCP_KEY_FILE_PATH);
+
+  const bucketName = "reports-download-tmp";
+  const bucket = storage.bucket(bucketName);
+  const fileExtension = `.${exportType}`;
+
+  const file = bucket.file(`${reportName}${fileExtension}`);
+  const writeStream = file.createWriteStream({ resumable: false });
+
   let page = 1;
-  const items_per_page = 5000;
+  const pageSize = 5000;
   let hasMoreData = true;
+
   while (hasMoreData) {
-    // console.log("generic file name ------->", page, items_per_page);
-    const { data, pageInfo } = await getPage(page, items_per_page);
-    // TODO: write data to to csv, xlsx, json based on exportType
-
-    // console.log("data ----->", data);
-    // TODO: should not be needed
-    const data_rows = data; // filterData(data, report_type);
-
-    const xlsx_filename = `${generic_filename}.${exportType}`;
-    const csv_filename = `${generic_filename}.${exportType}`;
-    const json_filename = `${generic_filename}.${exportType}`;
+    const { data, pageInfo } = await getPage(page, pageSize);
 
     if (exportType === "xlsx") {
-      generateXLSXReport(columns, data_rows, xlsx_filename);
+      generateXLSXReport(columns, data, writeStream);
     } else if (exportType === "csv") {
-      generateCSVReport(columns, data_rows, csv_filename);
+      generateCSVReport(columns, data, writeStream);
     } else {
-      generateJSONReport(columns, data, json_filename);
+      generateJSONReport(columns, data, writeStream);
     }
 
-    hasMoreData = data.length >= items_per_page;
+    hasMoreData = data.length >= pageSize;
     page++;
   }
+
+  return new Promise((resolve, reject) => {
+    writeStream.on("error", (err) => {
+      reject(err);
+    });
+
+    writeStream.on("finish", () => {
+      const publicUrl = `https://storage.googleapis.com/${bucketName}/${reportName}${fileExtension}`;
+      resolve(publicUrl);
+    });
+  });
 };
 
-// export const convertArrayOfObjectsToCSV = (arr: object[]) => {
-//   const separator = ",";
-//   const keys = Object.keys(arr[0]);
-//   const csvHeader = keys.join(separator);
-//   const csvRows = arr.map((obj) => {
-//     return keys
-//       .map((key) => {
-//         return obj[key];
-//       })
-//       .join(separator);
-//   });
-//
-//   const filtered_data = [];
-//   filtered_data.push(csvRows.join("\n"));
-//   return filtered_data;
-// };
+export function generateCsv(jsonData: any) {
+  const parser = json2csv.parse;
+  const fields = Object.keys(jsonData[0]); // Get the field names from the first object in the array
+  const csvData = parser(jsonData, { fields }); // Convert the JSON data to CSV format
+  return csvData;
+}
 
 // export const filterData = (data: any[], report_type: string) => {
 //   const data_rows = [] as number[];

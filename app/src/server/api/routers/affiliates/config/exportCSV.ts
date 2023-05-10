@@ -1,23 +1,15 @@
-import fs from "fs";
 import { Parser } from "json2csv";
-import path from "path";
+
+import type { Transform } from "stream";
 
 export const generateCSVReport = (
-  header: Array<string>,
-  data: Array<number>,
-  fileName: string
+  columns: string[],
+  data: any[],
+  writeStream: Transform
 ) => {
-  const opts = { header: true, excelString: true };
+  const opts = { fields: columns };
   const parser = new Parser(opts);
   const csv = parser.parse(data);
 
-  const path_name = path.join(
-    __dirname,
-    "../../../../../src/server/api/routers/affiliates/config/generated/" +
-      fileName
-  );
-  fs.writeFile(path_name, csv, function (err) {
-    if (err) throw err;
-    console.log("file saved");
-  });
+  writeStream.write(csv);
 };

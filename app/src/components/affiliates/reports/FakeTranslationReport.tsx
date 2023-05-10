@@ -10,6 +10,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
 import "react-datepicker/dist/react-datepicker.css";
 import type { TranslateReportFakeType } from "../../../server/db-types";
+import { filterReportColumns } from "./utils";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -63,8 +64,11 @@ export const FakeTranslationReport = () => {
       ...dateRange,
       search,
       exportType,
+      exportColumns: filterReportColumns(columns),
     });
-  console.log(`muly:FakeTranslationReport`, { data, pagination });
+
+  // console.log("report column ------>", filterReportColumns(columns));
+  // console.log(`muly:FakeTranslationReport`, { data, pagination });
 
   return (
     <ReportControl
