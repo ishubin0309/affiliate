@@ -108,7 +108,7 @@ export const DateRangeSelect = ({ value, setValue }: Props) => {
 
       <div className="inline-block">
         <div className="inline-block">
-          <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-0 text-xs md:text-sm lg:my-0">
+          <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#e5e7eb] bg-white p-0 text-xs md:text-sm lg:my-0">
             <CalendarDatePicker
               selected={value.from}
               handleDateChange={(date: Date) => {
@@ -122,7 +122,7 @@ export const DateRangeSelect = ({ value, setValue }: Props) => {
         </div>
         <label className="px-1 text-sm text-[#525252]">To</label>
         <div className="inline-block">
-          <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#D7D7D7] bg-white p-0 text-xs md:text-sm lg:my-0">
+          <div className="customDatePickerStyling my-1 flex cursor-pointer items-center justify-center rounded border border-[#e5e7eb] bg-white p-0 text-xs md:text-sm lg:my-0">
             <CalendarDatePicker
               selected={value.to}
               handleDateChange={(date: Date) => {
