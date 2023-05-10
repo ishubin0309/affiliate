@@ -5,10 +5,10 @@ interface PageParams {
   pageSize: number;
 }
 
-export const usePagination = () => {
+export const usePagination = (defaultPageSize = 10) => {
   const [pageParams, setPageParams] = useState<PageParams>({
     pageNumber: 1,
-    pageSize: 10,
+    pageSize: defaultPageSize,
   });
 
   return { pageParams, setPageParams };
