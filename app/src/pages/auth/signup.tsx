@@ -1,11 +1,10 @@
-import { type NextPage } from "next";
-import Head from "next/head";
-import type { MyPage } from "@/components/common/types";
 import { FormSignup } from "@/components/affiliates/account/FormSignup";
-import AuthenticationFooter from "../../components/common/footer/AuthenticationFooter";
-import { useAuth } from "@/hooks/useAuth";
 import { Loading } from "@/components/common/Loading";
 import AuthenticationHeader from "@/components/common/header/AuthenticationHeader";
+import type { MyPage } from "@/components/common/types";
+import { useAuth } from "@/hooks/useAuth";
+import Head from "next/head";
+import AuthenticationFooter from "../../components/common/footer/AuthenticationFooter";
 
 const Page: MyPage = () => {
   const redirected = useAuth();
@@ -19,7 +18,7 @@ const Page: MyPage = () => {
       <Head>
         <title>Affiliates create account</title>
         <meta name="description" content="Affiliates Creative Materials" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <main className="flex min-h-screen flex-col items-center px-5">
         <AuthenticationHeader>

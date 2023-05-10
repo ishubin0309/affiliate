@@ -8,7 +8,7 @@ const Page: MyPage = () => {
       <Head>
         <title>Affiliates Documents</title>
         <meta name="description" content="Affiliates Documents" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <Documents />
     </>

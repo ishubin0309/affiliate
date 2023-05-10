@@ -7,7 +7,7 @@ const Page: MyPage = () => {
       <Head>
         <title>Sub Affiliate Report</title>
         <meta name="description" content="Sub Affiliate Report" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <SubAffiliateReport />
     </>

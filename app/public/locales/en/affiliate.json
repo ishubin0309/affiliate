@@ -29,5 +29,33 @@
   },
   "text": {
     "label": "Ticket Content"
+  },
+  "first_name": {
+    "label": "First Name"
+  },
+  "last_name": {
+    "label": "Last Name"
+  },
+  "mail": {
+    "label": "Email"
+  },
+  "phone": {
+    "label": "Phone Number"
+  },
+  "IMUserType": {
+    "label": "Instant Message Type",
+    "placeholder": "Choose IM Type"
+  },
+  "IMUser": {
+    "label": "IM Account"
+  },
+  "lang": {
+    "label": "Language"
+  },
+  "company": {
+    "label": "Company Name"
+  },
+  "website": {
+    "label": "Website"
   }
 }
