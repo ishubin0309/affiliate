@@ -11,8 +11,26 @@ export const PageParamsSchema = z.object({
   pageSize: z.number().int(),
 });
 
+export const SortingParamSchema = z
+  .object({
+    id: z.string(),
+    desc: z.boolean(),
+  })
+  .array()
+  .optional();
+
 export const getPageOffset = (pageParams: PageParam) =>
   (pageParams.pageNumber - 1) * pageParams.pageSize;
+
+export const getSortingInfo = (sortingParam: SortingParam) => {
+  return sortingParam?.map((x) => {
+    const res: {
+      [key: string]: string;
+    } = {};
+    res[x.id] = x.desc ? "desc" : "asc";
+    return res;
+  });
+};
 
 export const pageInfo = z.object({
   pageNumber: z.number().int(),
@@ -22,6 +40,7 @@ export const pageInfo = z.object({
 
 export type PageParam = z.infer<typeof PageParamsSchema>;
 export type PageInfo = z.infer<typeof pageInfo>;
+export type SortingParam = z.infer<typeof SortingParamSchema>;
 
 export interface PageResult {
   data: any[];
