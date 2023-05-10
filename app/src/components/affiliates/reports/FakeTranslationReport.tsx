@@ -71,7 +71,7 @@ export const FakeTranslationReport = () => {
       search,
       exportType,
     });
-  console.log(`muly:FakeTranslationReport`, { data, pagination });
+  console.log(`muly:FakeTranslationReport`, { data, pagination, _sorting });
 
   return (
     <ReportControl

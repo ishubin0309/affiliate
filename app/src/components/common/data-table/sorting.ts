@@ -1,4 +1,4 @@
-import { ColumnSort } from "@tanstack/react-table";
+import type { ColumnSort } from "@tanstack/react-table";
 
 export const serializeSorting = (sorting: ColumnSort[]) => {
   return sorting.map(({ id, desc }) => `${desc ? "-" : ""}${id}`).join(",");

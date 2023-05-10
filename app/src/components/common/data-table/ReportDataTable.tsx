@@ -4,6 +4,7 @@ import type {
   ColumnDef,
   ColumnSort,
   SortingState,
+  Updater,
 } from "@tanstack/react-table";
 import {
   flexRender,
@@ -39,18 +40,16 @@ export function ReportDataTable<Data extends object>({
   },
 }: ReportDataTableProps<Data>) {
   const pagination = usePagination();
+  const contextSorting = deserializeSorting(sortInfo);
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const contextSorting = React.useMemo(() => {
-    return deserializeSorting(sortInfo);
-  }, [sortInfo]);
-
-  React.useEffect(() => {
-    onSortingChange(sorting);
-  }, [sorting]);
-
-  const onSortingChange = (sortingInfo: SortingState) => {
+  const onSortingChange = (
+    sortingInfo: Updater<SortingState> | SortingState
+  ) => {
+    if (typeof sortingInfo === "function") {
+      sortingInfo = sortingInfo(contextSorting);
+    }
     const cur_sorting = sortingInfo;
+    console.log(`muly:onSortingChange cur_sorting`, { cur_sorting });
     let existing_sorting = [...contextSorting];
     let new_sorting: SortingState = [];
 
@@ -85,7 +84,7 @@ export function ReportDataTable<Data extends object>({
     columns,
     data: report?.data ?? [],
     getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
+    onSortingChange,
     getSortedRowModel: getSortedRowModel(),
     // state: {
     //   sorting: contextSorting,

@@ -33,10 +33,17 @@ const TranslateReportFakeResultSchema = z.object({
 
 const translateReportFake = async (
   prisma: PrismaClient,
-  { from, to, search, pageParams }: z.infer<typeof InputWithPageInfo>
+  {
+    from,
+    to,
+    search,
+    pageParams,
+    sortingParam,
+  }: z.infer<typeof InputWithPageInfo>
 ) => {
   const offset = getPageOffset(pageParams);
 
+  const orderBy = getSortingInfo(sortingParam);
   const [data, totals] = await Promise.all([
     prisma.translate.findMany({
       take: pageParams.pageSize,
@@ -45,6 +52,7 @@ const translateReportFake = async (
         langENG: { contains: search },
         // rdate: { gte: from, lte: to },
       },
+      orderBy,
     }),
 
     prisma.translate.aggregate({
