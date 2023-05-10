@@ -43,8 +43,8 @@ export const CreativeMaterialComponent = ({
     return imagePlaceHolder || !src ? (
       <ImageIcon
         color="#2262C6"
-        size={300}
-        className="mx-auto my-0 max-h-64 rounded-xl bg-cover opacity-40"
+        size={256}
+        className="mx-auto my-0 max-h-64 w-full rounded-xl bg-cover opacity-40"
       />
     ) : (
       <img
