@@ -12,6 +12,7 @@ import { Button } from "../../ui/button";
 import { ExportButton } from "@/components/affiliates/reports/export-button";
 import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { Calendar, Download, Settings } from "lucide-react";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 
 const fields = [
   "Impressions",
@@ -33,6 +34,7 @@ export interface ItemProps {
 
 export const QuickSummaryReport = () => {
   const router = useRouter();
+  const pagination = usePagination();
   const { merchant_id, display } = router.query;
   const [reportFields, setReportFields] = useState<
     { id: number; title: string; value: string; isChecked: boolean }[]
@@ -311,9 +313,11 @@ export const QuickSummaryReport = () => {
         </div>
 
         <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
+          {/* @ts-ignore */}
           <ReportDataTable
             report={data}
             columns={columns}
+            pagination={pagination}
             // reportFields={reportFields}
           />
         </div>
