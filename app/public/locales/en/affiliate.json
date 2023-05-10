@@ -29,5 +29,8 @@
   },
   "text": {
     "label": "Ticket Content"
+  },
+  "newsletter": {
+    "label": "Yes, I would like to receive the Affiliate newsletter"
   }
 }
