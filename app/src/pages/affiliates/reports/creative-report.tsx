@@ -3,6 +3,10 @@ import { CreativeReport } from "../../../components/affiliates/reports/CreativeR
 
 import type { MyPage } from "../../../components/common/types";
 
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
+
 const Page: MyPage = () => {
   return (
     <>
