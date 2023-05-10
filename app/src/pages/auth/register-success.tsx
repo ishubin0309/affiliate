@@ -3,8 +3,8 @@ import AuthenticationHeader from "@/components/common/header/AuthenticationHeade
 import type { MyPage } from "@/components/common/types";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
-import AuthenticationFooter from "../../components/common/footer/AuthenticationFooter";
 import { RegisterSuccess } from "../../components/affiliates/account/register-success";
+import AuthenticationFooter from "../../components/common/footer/AuthenticationFooter";
 
 const Page: MyPage = () => {
   const redirected = useAuth();
@@ -18,7 +18,7 @@ const Page: MyPage = () => {
       <Head>
         <title>Affiliates register Success</title>
         <meta name="description" content="Affiliates Creative Materials" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <main className="flex min-h-screen flex-col items-center px-5">
         <AuthenticationHeader></AuthenticationHeader>

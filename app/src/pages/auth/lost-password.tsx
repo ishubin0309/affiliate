@@ -1,12 +1,11 @@
-import { type NextPage } from "next";
+import { Loading } from "@/components/common/Loading";
+import AuthenticationFooter from "@/components/common/footer/AuthenticationFooter";
+import AuthenticationHeader from "@/components/common/header/AuthenticationHeader";
+import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
+import React from "react";
 import { RecoverLostPassword } from "../../components/affiliates/account/RecoverLostPassword";
 import type { MyPage } from "../../components/common/types";
-import { useAuth } from "@/hooks/useAuth";
-import { Loading } from "@/components/common/Loading";
-import AuthenticationHeader from "@/components/common/header/AuthenticationHeader";
-import AuthenticationFooter from "@/components/common/footer/AuthenticationFooter";
-import React, { useEffect } from "react";
 const Page: MyPage = () => {
   const redirected = useAuth();
   const [isSent, setIsSent] = React.useState(false);
@@ -21,7 +20,7 @@ const Page: MyPage = () => {
       <Head>
         <title>Affiliates Tickets</title>
         <meta name="description" content="Affiliates Tickets" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <main className="flex min-h-screen items-center justify-center px-5">
         <div className="m-auto min-h-full items-center justify-center py-12">

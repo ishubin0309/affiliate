@@ -10,7 +10,7 @@ const Page: MyPage = () => {
       <Head>
         <title>Landing Page Report</title>
         <meta name="description" content="Creative Report" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <LandingPageReport />
     </>

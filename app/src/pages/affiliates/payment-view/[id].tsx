@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
-import { payments_details } from "@prisma/client";
 
 const PDFViewer = dynamic(
   () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
@@ -30,7 +29,7 @@ const Page: MyPage = () => {
       <Head>
         <title>PaymentView</title>
         <meta name="description" content="PaymentView" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       {/* <main className={styles.main}> */}
       {typeof window !== "undefined" &&
