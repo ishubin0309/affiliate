@@ -61,7 +61,6 @@ export function CalendarDatePicker({
       value = output.join("").substring(0, 14);
     }
     setInputValue(value);
-    console.log("abc");
     if (value.length > 9) {
       const checkDate = new Date(value);
       setDate(checkDate);
@@ -101,11 +100,11 @@ export function CalendarDatePicker({
     }
   }
 
-  React.useEffect(() => {
-    console.log("inputValue: " + inputValue);
-    setDate(selected);
-    setInputValue(formatDate(selected));
-  }, [selected]);
+  // React.useEffect(() => {
+  //   console.log("inputValue: " + inputValue);
+  //   setDate(selected);
+  //   setInputValue(formatDate(selected));
+  // }, [selected]);
 
   return (
     <Popover>
