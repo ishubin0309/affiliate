@@ -32,14 +32,15 @@ export const CreativeMaterialComponent = ({
   creative_id,
 }: Props) => {
   const { toast } = useToast();
-  const ImageWithFallback = ({ src, alt }: ImageWithFallbackProps) => {
-    const [imagePlaceHolder, setImagePlaceHolder] = React.useState(false);
 
+  const [imagePlaceHolder, setImagePlaceHolder] = React.useState(false);
+
+  const ImageWithFallback = ({ src, alt }: ImageWithFallbackProps) => {
     const handleImageError = (): void => {
       setImagePlaceHolder(true);
     };
 
-    return imagePlaceHolder ? (
+    return imagePlaceHolder || !src ? (
       <ImageIcon
         color="#2262C6"
         size={256}
@@ -72,17 +73,19 @@ export const CreativeMaterialComponent = ({
         className={
           "items-start " +
           (gridView
-            ? "md:grid md:grid-cols-1 md:gap-4"
+            ? "md:grid md:grid-cols-1"
             : "md:grid md:grid-cols-3 md:gap-4")
         }
       >
         <div className="relative mx-auto mb-5 flex h-64 w-full items-center rounded-xl">
           <ImageWithFallback src={file} alt={alt} />
-          <div className="absolute right-0 top-0">
-            <Button variant="primary-outline" className="bg-white" size="rec">
-              <Download className="w-4" />
-            </Button>
-          </div>
+          {!imagePlaceHolder && file && (
+            <div className="absolute right-0 top-0">
+              <Button variant="primary-outline" className="bg-white" size="rec">
+                <Download className="w-4" />
+              </Button>
+            </div>
+          )}
         </div>
         <div className="col-span-2 w-full rounded-xl">
           <div className=" bg-[#F5F8FA] p-4 md:px-8">

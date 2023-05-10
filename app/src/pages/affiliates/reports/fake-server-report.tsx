@@ -1,7 +1,7 @@
 import { FakeTranslationReport } from "@/components/affiliates/reports/FakeTranslationReport";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
 import Head from "next/head";
 import type { MyPage } from "../../../components/common/types";
-import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
 
 export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
 
@@ -11,7 +11,7 @@ const Page: MyPage = () => {
       <Head>
         <title>Trader Report</title>
         <meta name="description" content="FakeTranslationReport" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <FakeTranslationReport />
     </>

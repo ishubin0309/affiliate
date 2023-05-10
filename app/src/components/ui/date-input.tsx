@@ -61,7 +61,6 @@ export function CalendarDatePicker({
       value = output.join("").substring(0, 14);
     }
     setInputValue(value);
-    console.log("abc");
     if (value.length > 9) {
       const checkDate = new Date(value);
       setDate(checkDate);
@@ -101,11 +100,11 @@ export function CalendarDatePicker({
     }
   }
 
-  React.useEffect(() => {
-    console.log("inputValue: " + inputValue);
-    setDate(selected);
-    setInputValue(formatDate(selected));
-  }, [selected]);
+  // React.useEffect(() => {
+  //   console.log("inputValue: " + inputValue);
+  //   setDate(selected);
+  //   setInputValue(formatDate(selected));
+  // }, [selected]);
 
   return (
     <Popover>
@@ -114,7 +113,7 @@ export function CalendarDatePicker({
           <Button
             variant={"outline"}
             className={cn(
-              "w-[280px] justify-start text-left font-normal",
+              "w-[280px] justify-start text-left font-normal border border-[#e5e7eb]",
               !date && "text-muted-foreground"
             )}
           >
@@ -127,7 +126,7 @@ export function CalendarDatePicker({
               type="text"
               id="day-picker-input"
               placeholder="MM/DD/YYYY"
-              className={cn(" w-[280px] justify-start text-left font-normal")}
+              className={cn(" w-[280px] justify-start text-left font-normal border border-[#e5e7eb]")}
               style={{ wordSpacing: "-3px" }}
               value={inputValue}
               onChange={handleInputChange}
