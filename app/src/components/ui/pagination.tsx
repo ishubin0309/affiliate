@@ -16,7 +16,7 @@ import {
 } from "./select";
 import { useSearchContext } from "@/components/common/search/search-context";
 import { usePaginationContext } from "@/components/common/data-table/paginagion-context";
-import type { usePagination } from "@/components/common/data-table/pagination-hook";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 
 export interface Props {
   pagination: ReturnType<typeof usePagination>;
@@ -25,20 +25,31 @@ export interface Props {
 
 export const Pagination = ({
   pagination: {
-    pageParams: { pageNumber, pageSize },
+    pageParams: { sortInfo, pageNumber, pageSize },
     setPageParams,
   },
   totalItems,
 }: Props) => {
+  const pagination = usePagination();
+  // const sortInfo = pagination.pageParams.sortInfo;
+
   const handleChange = (value: string) => {
-    void setPageParams({ pageNumber: 1, pageSize: Number(value) });
+    void setPageParams({
+      sortInfo,
+      pageNumber: 1,
+      pageSize: Number(value),
+    });
   };
 
   const pageCount = Math.ceil(totalItems / pageSize);
 
   const handlePageClick = ({ selected }: { selected: number }) => {
     const pageNumber = selected + 1;
-    setPageParams({ pageNumber, pageSize });
+    setPageParams({
+      sortInfo,
+      pageNumber,
+      pageSize,
+    });
   };
 
   if (totalItems > pageSize) {

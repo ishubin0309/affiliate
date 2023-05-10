@@ -21,7 +21,7 @@ import "@etchteam/next-pagination/dist/index.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { ProSidebarProvider } from "react-pro-sidebar";
 import "../styles/globals.css";
-
+import Head from "next/head";
 // import { Inter as FontSans } from "next/font/google";
 //
 // const fontSans = FontSans({
@@ -43,9 +43,13 @@ const MyApp = ({
   const flagBag = useFlags({});
 
   const Layout = Layouts[Component.Layout] ?? ((page) => page);
-
+  const { data: config } = api.misc.getConfig.useQuery();
+  const faviconPath = config?.faviconPath;
   return (
     <>
+      <Head>
+        <link rel="icon" href={faviconPath ? faviconPath : "/favicon.ico"} />
+      </Head>
       {/*<style jsx global>{`*/}
       {/*	:root {*/}
       {/*		--font-sans: ${fontSans.style.fontFamily};*/}
