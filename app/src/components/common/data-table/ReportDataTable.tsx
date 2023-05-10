@@ -14,7 +14,7 @@ import {
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import * as React from "react";
-import { usePagination } from "./pagination-hook";
+import type { usePagination } from "./pagination-hook";
 import {
   deserializeSorting,
   serializeSorting,
