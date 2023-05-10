@@ -58,7 +58,7 @@ export const CreativeMaterial = () => {
     }
   );
 
-  const { data: createiveReport, isRefetching } =
+  const { data: creativeReport, isRefetching } =
     api.affiliates.getMerchantCreative.useQuery(
       {
         type: type ? String(type) : undefined,
@@ -72,13 +72,13 @@ export const CreativeMaterial = () => {
       { keepPreviousData: true, refetchOnWindowFocus: false }
     );
 
-  console.log("createiveReport*********", createiveReport);
+  console.log("creativeReport*********", creativeReport);
 
   const handleChangeGridView = () => {
     setGridView(!gridView);
   };
 
-  return createiveReport ? (
+  return creativeReport ? (
     <div className="w-full">
       <PageHeader
         title="Marketing Tools"
@@ -126,11 +126,11 @@ export const CreativeMaterial = () => {
           "md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ": gridView,
         })}
       >
-        {createiveReport.data.map((item) => renderRow(item, gridView))}
+        {creativeReport.data.map((item) => renderRow(item, gridView))}
       </div>
       <Pagination
         pagination={pagination}
-        totalItems={createiveReport.pageInfo.totalItems}
+        totalItems={creativeReport.pageInfo.totalItems}
       />
     </div>
   ) : (

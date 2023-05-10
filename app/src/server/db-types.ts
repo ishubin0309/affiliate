@@ -15,7 +15,7 @@ export type MerchantCreativeType =
   RouterOutput["affiliates"]["getMerchantCreative"]["data"][0];
 
 export type MerchantSubCreativeType =
-  RouterOutput["affiliates"]["getMerchantSubCreative"][0];
+  RouterOutput["affiliates"]["getMerchantSubCreative"]["data"][0];
 
 export type AffiliateAccountType = RouterOutput["affiliates"]["getAccount"];
 export type AffiliateAccountUpdateType =
