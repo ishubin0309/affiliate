@@ -1,13 +1,16 @@
 import Head from "next/head";
 import { SubAffiliateReport } from "../../../components/affiliates/reports/SubAffiliateReport";
 import type { MyPage } from "../../../components/common/types";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
 const Page: MyPage = () => {
   return (
     <>
       <Head>
         <title>Sub Affiliate Report</title>
         <meta name="description" content="Sub Affiliate Report" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <SubAffiliateReport />
     </>

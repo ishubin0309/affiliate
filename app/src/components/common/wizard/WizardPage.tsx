@@ -1,9 +1,8 @@
 // Not used in affiliate project
 
-import React from "react";
-import type { WizardControlProps } from "./useWizardFlow";
-import Head from "next/head";
 import { WizardForm } from "@/components/common/wizard/WizardForm";
+import Head from "next/head";
+import type { WizardControlProps } from "./useWizardFlow";
 // import { PageHeader } from "@/components/layout/page-header";
 // import { Footer } from "@/components/layout/footer";
 
@@ -29,7 +28,7 @@ export const WizardPage = ({
       <Head>
         <title>Smapy</title>
         <meta name="description" content="Smapy" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       {/*<PageHeader />*/}
       <main className="align- flex flex-col items-center gap-8">

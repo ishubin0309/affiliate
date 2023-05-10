@@ -1,7 +1,10 @@
 import Head from "next/head";
 
-import type { MyPage } from "../../components/common/types";
 import { Tickets } from "@/components/affiliates/tickets/Tickets";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
+import type { MyPage } from "../../components/common/types";
 
 const Page: MyPage = () => {
   return (
@@ -9,7 +12,7 @@ const Page: MyPage = () => {
       <Head>
         <title>Supporrt - FAQ</title>
         <meta name="description" content="Privacy" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <Tickets />
     </>
