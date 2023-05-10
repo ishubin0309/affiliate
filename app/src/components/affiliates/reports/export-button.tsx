@@ -1,5 +1,5 @@
-import type { ItemProps } from "@/components/affiliates/reports/QuickSummaryReport";
 import type { OnExport } from "@/components/affiliates/reports/utils";
+import { CSVIcon, ExcelIcon, JSONIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,8 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import JsFileDownloader from "js-file-downloader";
-import React, { useState } from "react";
-import { CSVIcon, ExcelIcon, JSONIcon } from "@/components/icons";
+import { useState } from "react";
 
 interface ExportOption {
   id: ExportType;

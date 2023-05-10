@@ -1,10 +1,10 @@
 import { createTRPCRouter } from "../../trpc";
 import {
   getAccount,
+  getAdminInfo,
   recoverPassword,
   registerAccount,
   updateAccount,
-  getAdminInfo,
 } from "./account";
 import { getPaymentDetails, getPaymentsPaid } from "./billing";
 import { getMerchantCreative, getMerchantCreativeMeta } from "./creative";
@@ -56,7 +56,10 @@ import {
 } from "@/server/api/routers/affiliates/reports/quick-summary";
 import { getSubAffiliateReport } from "@/server/api/routers/affiliates/reports/sub-affiliate-report";
 import { getTraderReport } from "@/server/api/routers/affiliates/reports/trader-report";
-import { getTranslateReportFake } from "@/server/api/routers/affiliates/reports/translate-report-fake";
+import {
+  exportTranslateReportFake,
+  getTranslateReportFake,
+} from "@/server/api/routers/affiliates/reports/translate-report-fake";
 import { getCommissions } from "./commission";
 import { getDocuments } from "./document";
 import {
@@ -109,6 +112,7 @@ export const affiliatesRouter = createTRPCRouter({
   exportCommissionReport,
   getClicksReport,
   getTranslateReportFake,
+  exportTranslateReportFake,
   exportClicksReport,
   getCountryReport,
   getDocuments,

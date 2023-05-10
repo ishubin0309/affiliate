@@ -1,3 +1,5 @@
+import type { ColumnSort } from "@tanstack/react-table";
+
 export const formatPrice = (value?: number) => {
   const v = parseFloat((value || 0).toFixed(2));
 
@@ -36,6 +38,3 @@ export const convertToNumber = (value: number | string): number => {
 export const performanceFormatter = (number: number) => {
   return Intl.NumberFormat("us").format(number).toString();
 };
-
-export const conversionFormatter = (number: number) =>
-  `${Intl.NumberFormat("us").format(number).toString()}%`;

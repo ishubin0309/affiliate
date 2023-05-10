@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { api } from "@/utils/api";
 import type { ColumnDef } from "@tanstack/react-table";
 import { SaveIcon } from "lucide-react";
-import { useState } from "react";
+import React, { useRef, useState } from "react";
 export type SelectedColumnList = Record<string, boolean>;
 
 interface Props<Data extends object> {
@@ -14,6 +14,7 @@ interface Props<Data extends object> {
   columns: ColumnDef<any, any>[];
   selectColumnsMode: SelectedColumnList | null;
   setSelectColumnsMode: (selectedStatus: SelectedColumnList | null) => void;
+  btnText?: string;
 }
 
 export const ColumnSelect = <Data extends object>({
@@ -22,10 +23,11 @@ export const ColumnSelect = <Data extends object>({
   setSelectColumnsMode,
   reportName,
   selectColumnsMode,
+  btnText,
 }: Props<Data>) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-
+  const elementRef = useRef<HTMLDivElement>(null);
   const upsertReportsColumns =
     api.affiliates.upsertReportsColumns.useMutation();
 
@@ -79,37 +81,40 @@ export const ColumnSelect = <Data extends object>({
 
   return (
     <div
+      ref={elementRef}
       className={cn(
-        "mt-4 overflow-hidden bg-white shadow-md transition-all duration-500",
-        { "h-52 p-4 md:h-44 lg:h-36 xl:h-28": !!selectColumnsMode },
+        "mt-4 overflow-auto bg-white shadow-md transition-all duration-500",
+        { "p-4": !!selectColumnsMode },
         { "h-0": !selectColumnsMode }
       )}
     >
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-8">
+      <div className="grid auto-cols-min grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {columns.map((item) => {
           const name = String(item.header);
           return (
-            <div className="flex items-center space-x-2" key={name}>
-              <Checkbox
-                className="h-[18px] w-[18px] whitespace-nowrap"
-                id={name}
-                name={name}
-                checked={!!selectColumnsMode && !!selectColumnsMode[name]}
-                onCheckedChange={(checked: boolean) => {
-                  handleColumnChange(name, checked);
-                }}
-              />
-              <label
-                htmlFor={name}
-                className="cursor-pointer text-sm font-medium leading-none"
-              >
-                {name}
-              </label>
+            <div key={name}>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  className="h-[18px] w-[18px] whitespace-nowrap"
+                  id={name}
+                  name={name}
+                  checked={!!selectColumnsMode && !!selectColumnsMode[name]}
+                  onCheckedChange={(checked: boolean) => {
+                    handleColumnChange(name, checked);
+                  }}
+                />
+                <label
+                  htmlFor={name}
+                  className="cursor-pointer whitespace-nowrap text-sm font-medium leading-none"
+                >
+                  {name}
+                </label>
+              </div>
             </div>
           );
         })}
       </div>
-      <div className={"items-end justify-end md:flex"}>
+      <div className={"mt-8 items-end justify-end md:flex"}>
         <div className="flex items-end justify-center md:justify-end">
           <div className="ml-2">
             <Button
@@ -118,6 +123,7 @@ export const ColumnSelect = <Data extends object>({
               onClick={handleSelectMode}
               isLoading={isLoading}
             >
+              {btnText && <span className="mr-2">{btnText}</span>}
               <SaveIcon className="w-4" />
             </Button>
           </div>
