@@ -2,6 +2,9 @@ import Head from "next/head";
 import { CommissionReport } from "../../../components/affiliates/reports/CommissionReport";
 
 import type { MyPage } from "../../../components/common/types";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
 
 const Page: MyPage = () => {
   return (

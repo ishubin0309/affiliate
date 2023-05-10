@@ -7,6 +7,9 @@ import { Loading } from "@/components/common/Loading";
 import AuthenticationHeader from "@/components/common/header/AuthenticationHeader";
 import AuthenticationFooter from "@/components/common/footer/AuthenticationFooter";
 import React, { useEffect } from "react";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
 const Page: MyPage = () => {
   const redirected = useAuth();
   const [isSent, setIsSent] = React.useState(false);

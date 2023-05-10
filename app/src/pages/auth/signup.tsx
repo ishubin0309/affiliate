@@ -6,6 +6,9 @@ import AuthenticationFooter from "../../components/common/footer/AuthenticationF
 import { useAuth } from "@/hooks/useAuth";
 import { Loading } from "@/components/common/Loading";
 import AuthenticationHeader from "@/components/common/header/AuthenticationHeader";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
 
 const Page: MyPage = () => {
   const redirected = useAuth();

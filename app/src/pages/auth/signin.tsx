@@ -5,6 +5,9 @@ import { FormSignin } from "../../components/affiliates/account/FormSignin";
 import AuthenticationFooter from "../../components/common/footer/AuthenticationFooter";
 import type { MyPage } from "../../components/common/types";
 import AuthenticationHeader from "@/components/common/header/AuthenticationHeader";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
 
 const Page: MyPage = () => {
   const redirected = useAuth();

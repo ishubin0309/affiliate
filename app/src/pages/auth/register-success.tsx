@@ -5,6 +5,9 @@ import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
 import AuthenticationFooter from "../../components/common/footer/AuthenticationFooter";
 import { RegisterSuccess } from "../../components/affiliates/account/register-success";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
 
 const Page: MyPage = () => {
   const redirected = useAuth();

@@ -1,4 +1,7 @@
 import Head from "next/head";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
 
 import { AccountPaymentDetails } from "../../components/affiliates/account/AccountPaymentDetails";
 import type { MyPage } from "../../components/common/types";
