@@ -43,11 +43,12 @@ const MyApp = ({
   const flagBag = useFlags({});
 
   const Layout = Layouts[Component.Layout] ?? ((page) => page);
-
+  const { data: config } = api.misc.getConfig.useQuery();
+  const faviconPath = config?.faviconPath;
   return (
     <>
       <Head>
-        <link rel="icon" href="/favicon-test.ico" />
+        <link rel="icon" href={faviconPath ? faviconPath : "/favicon.ico"} />
       </Head>
       {/*<style jsx global>{`*/}
       {/*	:root {*/}
