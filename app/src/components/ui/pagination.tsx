@@ -35,7 +35,7 @@ export const Pagination = ({
 
   const handleChange = (value: string) => {
     void setPageParams({
-      ...pagination.pageParams,
+      sortInfo,
       pageNumber: 1,
       pageSize: Number(value),
     });
@@ -46,7 +46,7 @@ export const Pagination = ({
   const handlePageClick = ({ selected }: { selected: number }) => {
     const pageNumber = selected + 1;
     setPageParams({
-      ...pagination.pageParams,
+      sortInfo,
       pageNumber,
       pageSize,
     });

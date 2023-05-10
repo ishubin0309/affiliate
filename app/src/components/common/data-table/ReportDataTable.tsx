@@ -39,22 +39,15 @@ export function ReportDataTable<Data extends object>({
     setPageParams,
   },
 }: ReportDataTableProps<Data>) {
-  const pagination = usePagination();
   const contextSorting = deserializeSorting(sortInfo);
 
-  const onSortingChange = (
-    sortingInfo: Updater<SortingState> | SortingState
-  ) => {
-    if (typeof sortingInfo === "function") {
-      sortingInfo = sortingInfo(contextSorting);
-    }
-    const cur_sorting = sortingInfo;
-    console.log(`muly:onSortingChange cur_sorting`, { cur_sorting });
+  const onSortingChange = (sort_id: string) => {
+    console.log(`muly:onSortingChange cur_sorting`, { sort_id });
     let existing_sorting = [...contextSorting];
     let new_sorting: SortingState = [];
 
     const matched_sort_index = existing_sorting.findIndex(
-      (x) => x.id === cur_sorting[0]?.id
+      (x) => x.id === sort_id
     );
     // console.log(matched_sort_index);
     if (matched_sort_index >= 0) {
@@ -63,29 +56,31 @@ export function ReportDataTable<Data extends object>({
         (x, index) => index !== matched_sort_index
       );
 
-      if (matched_sort?.desc === false) {
+      if (matched_sort.desc === false) {
         matched_sort.desc = true;
         new_sorting = [{ ...matched_sort } as ColumnSort, ...existing_sorting];
       } else {
         new_sorting = existing_sorting;
       }
     } else {
-      new_sorting = [...cur_sorting, ...existing_sorting];
+      new_sorting = [{ id: sort_id, desc: true }, ...existing_sorting];
     }
 
     // console.log("**********NEW SORTING", JSON.stringify(new_sorting));
     setPageParams({
-      ...pagination.pageParams,
+      pageNumber,
+      pageSize,
       sortInfo: serializeSorting(new_sorting),
     });
   };
 
+  // will not use sort feature.
   const { getHeaderGroups, getRowModel } = useReactTable({
     columns,
     data: report?.data ?? [],
     getCoreRowModel: getCoreRowModel(),
-    onSortingChange,
-    getSortedRowModel: getSortedRowModel(),
+    // onSortingChange,
+    // getSortedRowModel: getSortedRowModel(),
     // state: {
     //   sorting: contextSorting,
     // },
@@ -117,14 +112,15 @@ export function ReportDataTable<Data extends object>({
                 );
                 let sorted = "";
                 if (matched_sort) {
-                  sorted = matched_sort.desc == true ? "desc" : "asc";
+                  sorted = matched_sort.desc === true ? "desc" : "asc";
                 } else {
                   sorted = "";
                 }
                 return (
                   <th
                     key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
+                    // onClick={header.column.getToggleSortingHandler()}
+                    onClick={() => onSortingChange(header.column.id)}
                     className="border"
                   >
                     <div className="text=[#323232] flex p-2 text-sm">
