@@ -127,7 +127,7 @@ export function CalendarDatePicker({
               type="text"
               id="day-picker-input"
               placeholder="MM/DD/YYYY"
-              className={cn(" w-[280px] justify-start text-left font-normal")}
+              className={cn(" w-[280px] justify-start text-left font-normal border-0")}
               style={{ wordSpacing: "-3px" }}
               value={inputValue}
               onChange={handleInputChange}
