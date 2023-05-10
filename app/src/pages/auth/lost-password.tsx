@@ -3,13 +3,8 @@ import AuthenticationFooter from "@/components/common/footer/AuthenticationFoote
 import AuthenticationHeader from "@/components/common/header/AuthenticationHeader";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
-import React from "react";
 import { RecoverLostPassword } from "../../components/affiliates/account/RecoverLostPassword";
 import type { MyPage } from "../../components/common/types";
-import { useAuth } from "@/hooks/useAuth";
-import { Loading } from "@/components/common/Loading";
-import AuthenticationHeader from "@/components/common/header/AuthenticationHeader";
-import AuthenticationFooter from "@/components/common/footer/AuthenticationFooter";
 import React, { useEffect } from "react";
 import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
 
