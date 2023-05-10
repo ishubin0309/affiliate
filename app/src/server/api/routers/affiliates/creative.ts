@@ -24,52 +24,47 @@ const Input = z.object({
   search: z.string().optional(),
 });
 const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
-// const MerchantCreativeResultSchema = z.object({
-//   data: z.array(translateModel),
-//   pageInfo,
-//   totals: z.any(),
-// });
 
-const MerchantCreativeResultSchema = z
-  .object({
-    data: z.array(
-      z.object({
-        id: z.number().optional(),
-        rdate: z.date().optional(),
-        last_update: z.date().optional(),
-        valid: z.number().optional(),
-        admin_id: z.number().optional(),
-        merchant_id: z.number().optional(),
-        product_id: z.number().optional(),
-        language_id: z.number().optional(),
-        promotion_id: z.number().optional(),
-        title: z.string().optional(),
-        type: z.string().optional(),
-        width: z.number().optional(),
-        height: z.number().optional(),
-        url: z.string().optional(),
-        iframe_url: z.string().optional(),
-        alt: z.string().optional(),
-        scriptCode: z.string().optional(),
-        affiliate_id: z.number().optional(),
-        category_id: z.number().optional(),
-        featured: z.number().optional(),
-        affiliateReady: z.number().optional(),
-        language: z
-          .object({
-            title: z.string().optional(),
-          })
-          .optional(),
-        category: z.object({
-          categoryname: z.string().optional(),
-        }),
-        file: z.string().optional(),
-      })
-    ),
-    pageInfo,
-    totals: z.any(),
-  })
-  .array();
+const MerchantCreativeModel = z.object({
+  id: z.number(),
+  rdate: z.date().optional(),
+  last_update: z.date().optional(),
+  valid: z.number().optional(),
+  admin_id: z.number().optional(),
+  merchant_id: z.number().optional(),
+  product_id: z.number().optional(),
+  language_id: z.number().optional(),
+  promotion_id: z.number().optional(),
+  title: z.string().optional(),
+  type: z.string().optional(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+  url: z.string(),
+  iframe_url: z.string().optional(),
+  alt: z.string(),
+  scriptCode: z.string().optional(),
+  affiliate_id: z.number().optional(),
+  category_id: z.number().optional(),
+  featured: z.number().optional(),
+  affiliateReady: z.number().optional(),
+  language: z
+    .object({
+      title: z.string(),
+    })
+    .optional(),
+  category: z
+    .object({
+      categoryname: z.string(),
+    })
+    .nullable(),
+  file: z.string().optional().nullable(),
+});
+
+const MerchantCreativeResultSchema = z.object({
+  data: z.array(MerchantCreativeModel),
+  pageInfo,
+  totals: z.any(),
+});
 
 export const getMerchantCreativeMeta = publicProcedure
   .output(
@@ -231,5 +226,5 @@ const translateMerchantCreative = async (
 
 export const getMerchantCreative = publicProcedure
   .input(InputWithPageInfo)
-  // .output(MerchantCreativeResultSchema)
+  .output(MerchantCreativeResultSchema)
   .query(({ ctx, input }) => translateMerchantCreative(ctx.prisma, input));
