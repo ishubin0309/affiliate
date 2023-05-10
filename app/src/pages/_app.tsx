@@ -21,7 +21,7 @@ import "@etchteam/next-pagination/dist/index.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { ProSidebarProvider } from "react-pro-sidebar";
 import "../styles/globals.css";
-
+import Head from "next/head";
 // import { Inter as FontSans } from "next/font/google";
 //
 // const fontSans = FontSans({
@@ -46,6 +46,9 @@ const MyApp = ({
 
   return (
     <>
+      <Head>
+        <link rel="icon" href="/favicon-test.ico" />
+      </Head>
       {/*<style jsx global>{`*/}
       {/*	:root {*/}
       {/*		--font-sans: ${fontSans.style.fontFamily};*/}
