@@ -12,7 +12,7 @@ const DashboardPage: MyPage = () => {
       <Head>
         <title>Affiliates Dashboard</title>
         <meta name="description" content="Affiliates Dashboard" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <Dashboard />
     </>

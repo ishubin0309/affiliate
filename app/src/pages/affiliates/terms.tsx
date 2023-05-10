@@ -12,7 +12,7 @@ const TermsPage: MyPage = () => {
       <Head>
         <title>Terms & Condition</title>
         <meta name="description" content="Terms" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <Terms />
     </>

@@ -33,7 +33,7 @@ const Page: MyPage = () => {
       <Head>
         <title>PaymentView</title>
         <meta name="description" content="PaymentView" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       {/* <main className={styles.main}> */}
       {typeof window !== "undefined" &&

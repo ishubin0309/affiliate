@@ -8,6 +8,7 @@ import {
   profileColumns,
   sampleData,
 } from "@/components/common/data-table/data-table-sample-profile-data";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 
 const meta = {
   component: DataTable,
@@ -54,8 +55,20 @@ export const DataTableComponent = {
   },
 };
 
+const TestReportDataTable = () => {
+  const pagination = usePagination();
+
+  return (
+    <ReportDataTable
+      report={report}
+      columns={profileColumns}
+      pagination={pagination}
+    />
+  );
+};
+
 export const ReportDataTableComponent = {
-  render: () => <ReportDataTable report={report} columns={profileColumns} />,
+  render: () => <TestReportDataTable />,
   name: "ReportDataTable",
   parameters: {
     design: {

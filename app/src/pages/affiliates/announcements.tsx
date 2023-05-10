@@ -12,7 +12,7 @@ const Page: MyPage = () => {
       <Head>
         <title>Announcements</title>
         <meta name="description" content="Privacy" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <Announcements />
     </>

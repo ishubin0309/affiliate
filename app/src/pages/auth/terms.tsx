@@ -23,7 +23,7 @@ const Page: MyPage = () => {
       <Head>
         <title>Affiliates account terms</title>
         <meta name="description" content="Affiliates Creative Materials" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <main className="m-auto flex min-h-screen max-w-4xl flex-col items-center px-5">
         <AuthenticationHeader></AuthenticationHeader>
