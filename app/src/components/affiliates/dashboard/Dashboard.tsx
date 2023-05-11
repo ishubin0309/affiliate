@@ -114,7 +114,8 @@ export const Dashboard = () => {
     isRefetching: isRefetchingAllPerformanceChart,
   } = api.affiliates.getAllPerformanceChart.useQuery(
     {
-      ...dateRange,
+      from: startOfMonth(sub(today, { months: 6 })),
+      to: endOfMonth(sub(today, { months: 1 })),
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );

@@ -38,10 +38,7 @@ const columns = [
   createColumn("langPOR", "Lang POR"),
   createColumn("langJAP", "Lang JAP"),
 ];
-// interface SortType {
-//   id: string;
-//   desc: boolean;
-// }
+
 export const FakeTranslationReport = () => {
   const { t } = useTranslation("affiliate");
   const {
@@ -74,7 +71,6 @@ export const FakeTranslationReport = () => {
       exportType,
       reportColumns: headers,
     });
-
   console.log(`muly:FakeTranslationReport`, { data, pagination, _sorting });
 
   return (

@@ -46,8 +46,6 @@ export const filterReportColumns = (data: Columns): string[] => {
   const report_column = data.map((item) => {
     return item.header;
   });
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return report_column;
 };
-
-export const conversionFormatter = (number: number) =>
-  `${Intl.NumberFormat("us").format(number).toString()}%`;
