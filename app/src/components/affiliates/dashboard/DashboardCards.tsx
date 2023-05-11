@@ -1,4 +1,5 @@
 import DashboardChart from "@/components/common/chart/DashboardChart";
+import { useConfigContext } from "@/components/common/config/config-context";
 import { api } from "@/utils/api";
 import { VALUE_FORMAT, formatPrice } from "@/utils/format";
 
@@ -30,6 +31,7 @@ const DashboardCards = ({
   chartValues,
   value_format,
 }: Props) => {
+  const { config } = useConfigContext();
   const options = {
     responsive: false,
     plugins: {
@@ -79,7 +81,6 @@ const DashboardCards = ({
   } else if (upDown === false) {
     arrow = <ArrowBigDown className="text-red-700" />;
   }
-  const { data: config } = api.misc.getConfig.useQuery();
   const currency = config?.currency;
 
   return (
