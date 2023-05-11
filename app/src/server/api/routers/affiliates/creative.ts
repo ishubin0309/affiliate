@@ -161,7 +161,7 @@ export const getMerchantCreativeMeta = publicProcedure
     };
   });
 
-const translateMerchantCreative = async (
+const merchantCreativeQuery = async (
   prisma: PrismaClient,
   {
     category,
@@ -227,4 +227,4 @@ const translateMerchantCreative = async (
 export const getMerchantCreative = publicProcedure
   .input(InputWithPageInfo)
   .output(MerchantCreativeResultSchema)
-  .query(({ ctx, input }) => translateMerchantCreative(ctx.prisma, input));
+  .query(({ ctx, input }) => merchantCreativeQuery(ctx.prisma, input));

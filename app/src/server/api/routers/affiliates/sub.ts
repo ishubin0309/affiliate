@@ -66,7 +66,7 @@ export const getMerchantSubCreativeMeta = publicProcedure
     };
   });
 
-const translateMerchantSubCreative = async (
+const merchantSubCreativeQuery = async (
   prisma: PrismaClient,
   { type, search, pageParams }: z.infer<typeof InputWithPageInfo>
 ) => {
@@ -119,5 +119,5 @@ const translateMerchantSubCreative = async (
 export const getMerchantSubCreative = publicProcedure
   .input(InputWithPageInfo)
   .output(MerchantSubCreativeResultSchema)
-  .query(({ ctx, input }) => translateMerchantSubCreative(ctx.prisma, input));
+  .query(({ ctx, input }) => merchantSubCreativeQuery(ctx.prisma, input));
 //
