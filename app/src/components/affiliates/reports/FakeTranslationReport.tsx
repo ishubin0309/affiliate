@@ -1,6 +1,7 @@
 import { ReportControl } from "@/components/affiliates/reports/report-control";
 import { DateColumn } from "@/components/common/data-table/available-column";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 import { useSearchContext } from "@/components/common/search/search-context";
 import { getDateRange } from "@/components/common/search/search-date-range";
 import { SearchText } from "@/components/common/search/search-text";
@@ -10,7 +11,6 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
 import "react-datepicker/dist/react-datepicker.css";
 import type { TranslateReportFakeType } from "../../../server/db-types";
-import { filterReportColumns } from "./utils";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -38,7 +38,10 @@ const columns = [
   createColumn("langPOR", "Lang POR"),
   createColumn("langJAP", "Lang JAP"),
 ];
-
+// interface SortType {
+//   id: string;
+//   desc: boolean;
+// }
 export const FakeTranslationReport = () => {
   const { t } = useTranslation("affiliate");
   const {
@@ -46,12 +49,15 @@ export const FakeTranslationReport = () => {
   } = useSearchContext();
   const pagination = usePagination();
   const { name, ...dateRange } = getDateRange(dates);
+  console.log("*************************PAGE INFO: ", pagination.pageParams);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
   const { data, isRefetching } = api.affiliates.getTranslateReportFake.useQuery(
     {
       ...dateRange,
       search,
       pageParams: pagination.pageParams,
+      sortingParam: _sorting,
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
@@ -66,9 +72,7 @@ export const FakeTranslationReport = () => {
       exportType,
       exportColumns: filterReportColumns(columns),
     });
-
-  // console.log("report column ------>", filterReportColumns(columns));
-  // console.log(`muly:FakeTranslationReport`, { data, pagination });
+  console.log(`muly:FakeTranslationReport`, { data, pagination, _sorting });
 
   return (
     <ReportControl

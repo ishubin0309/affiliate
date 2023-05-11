@@ -23,3 +23,5 @@ export const filterReportColumns = (data: any[]) => {
   });
   return report_column;
 };
+export const conversionFormatter = (number: number) =>
+  `${Intl.NumberFormat("us").format(number).toString()}%`;

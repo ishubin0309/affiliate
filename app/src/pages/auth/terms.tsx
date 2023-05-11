@@ -6,6 +6,9 @@ import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
 import { useState } from "react";
 import AuthenticationFooter from "../../components/common/footer/AuthenticationFooter";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
 
 const Page: MyPage = () => {
   const redirected = useAuth();
@@ -20,7 +23,7 @@ const Page: MyPage = () => {
       <Head>
         <title>Affiliates account terms</title>
         <meta name="description" content="Affiliates Creative Materials" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <main className="m-auto flex min-h-screen max-w-4xl flex-col items-center px-5">
         <AuthenticationHeader></AuthenticationHeader>

@@ -13,11 +13,10 @@ import {
   SelectValue,
 } from "../../ui/select";
 
-import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
 import { Code2Icon, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "../../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import { AddDynamicParameter } from "./AddDynamicParameter";
@@ -221,7 +220,7 @@ export const CreativeMaterialDialogComponent = ({
                     </TabsTrigger>
                   </TabsList>
                   <TabsContent
-                    className="h-full min-h-[260px] border-0 p-0"
+                    className="h-full min-h-[380px] border-0 p-0"
                     value="HtmlCode"
                   >
                     <div className="-mx-3 flex h-full flex-wrap">
@@ -246,7 +245,10 @@ export const CreativeMaterialDialogComponent = ({
                       </div>
                     </div>
                   </TabsContent>
-                  <TabsContent className="h-full border-0 p-0" value="JSCode">
+                  <TabsContent
+                    className="h-full min-h-[380px] border-0 p-0"
+                    value="JSCode"
+                  >
                     <div className="-mx-3 flex h-full flex-wrap">
                       <div className="h-full w-full px-3">
                         <textarea
@@ -269,7 +271,10 @@ export const CreativeMaterialDialogComponent = ({
                       </div>
                     </div>
                   </TabsContent>
-                  <TabsContent className="h-full border-0 p-0" value="QrCode">
+                  <TabsContent
+                    className="h-full min-h-[380px] border-0 p-0"
+                    value="QrCode"
+                  >
                     <div className="-mx-3 flex h-full flex-wrap">
                       <div className="mb-3 mt-1.5 flex h-48 w-full items-center px-3 md:mb-12 md:h-[calc(100%-100px)]">
                         {codesValues?.qrCode && (
@@ -297,7 +302,7 @@ export const CreativeMaterialDialogComponent = ({
                     </div>
                   </TabsContent>
                   <TabsContent
-                    className="h-full border-0 p-0"
+                    className="h-full min-h-[380px] border-0 p-0"
                     value="DirectLinkCode"
                   >
                     <div className="-mx-3 flex h-full flex-wrap">
