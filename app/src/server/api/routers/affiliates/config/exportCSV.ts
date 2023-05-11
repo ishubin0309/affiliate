@@ -1,11 +1,12 @@
 import { Parser } from "json2csv";
 
-import type { Transform } from "stream";
+import type { Writable } from "stream";
 
 export const generateCSVReport = (
   columns: string[],
   data: any[],
-  writeStream: Transform
+  writeStream: Writable,
+  localFileName: string
 ) => {
   const opts = { fields: columns };
   const parser = new Parser(opts);

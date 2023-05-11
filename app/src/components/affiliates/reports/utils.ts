@@ -17,11 +17,37 @@ export const exportOptions: { id: ExportType; title: string }[] = [
 
 export type OnExport = (exportType: ExportType) => Promise<string | undefined>;
 
-export const filterReportColumns = (data: any[]) => {
+type RowData = {
+  id: string;
+  rdate: Date;
+  source: string;
+  langENG: string;
+  langRUS: string;
+  langGER: string;
+  langFRA: string;
+  langITA: string;
+  langESP: string;
+  langHEB: string;
+  langARA: string;
+  langCHI: string;
+  langPOR: string;
+  langJAP: string;
+};
+
+type Column = {
+  accessor: keyof RowData;
+  header: string;
+  cell?: (info: { getValue: () => any }) => React.ReactNode;
+};
+
+type Columns = Column[];
+
+export const filterReportColumns = (data: Columns): string[] => {
   const report_column = data.map((item) => {
-    return item?.header;
+    return item.header;
   });
   return report_column;
 };
+
 export const conversionFormatter = (number: number) =>
   `${Intl.NumberFormat("us").format(number).toString()}%`;

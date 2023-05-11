@@ -1,9 +1,11 @@
 import path from "path";
+import type { Writable } from "stream";
 import XLSX from "xlsx";
 
 export const generateXLSXReport = (
   columns: Array<string>,
   rows: Array<number>,
+  writeStream: Writable,
   localFileName: string
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call

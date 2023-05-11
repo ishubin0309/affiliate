@@ -245,10 +245,15 @@ export const exportTraderReport = publicProcedure
 
     // console.log("export type ---->", exportType);
     const trader_report = "trader-report";
+    const serviceKey = path.join(
+      __dirname,
+      "../../../../../api-front-dashbord-a4ee8aec074c.json"
+    );
     await exportReportLoop(
+      "api-front-dashbord",
+      serviceKey,
       exportType || "csv",
       columns,
-      generic_filename,
       trader_report,
       async (pageNumber, pageSize) =>
         traderReport(ctx.prisma, {
@@ -258,10 +263,6 @@ export const exportTraderReport = publicProcedure
     );
 
     const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
 
     const public_url = uploadFile(
       serviceKey,

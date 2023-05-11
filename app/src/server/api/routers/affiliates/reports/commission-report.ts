@@ -1,9 +1,7 @@
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import { publicProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
-import type { Simplify } from "@trpc/server";
 import path from "path";
-import paginator from "prisma-paginate";
 import { z } from "zod";
 import { uploadFile } from "../config";
 import {
@@ -118,10 +116,15 @@ export const exportCommissionReport = publicProcedure
 
     console.log("export type ---->", exportType);
     const commission_report = "commission-report";
+    const serviceKey = path.join(
+      __dirname,
+      "../../../../../api-front-dashbord-a4ee8aec074c.json"
+    );
     await exportReportLoop(
+      "api-front-dashbord",
+      serviceKey,
       exportType || "csv",
       columns,
-      generic_filename,
       commission_report,
       async (pageNumber, pageSize) =>
         commissionSummary(ctx.prisma, {
@@ -131,10 +134,6 @@ export const exportCommissionReport = publicProcedure
     );
 
     const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
 
     const public_url = uploadFile(
       serviceKey,

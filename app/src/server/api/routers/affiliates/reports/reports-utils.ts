@@ -63,11 +63,11 @@ export const splitToPages = <Row>(data: Row[], pageParams: PageParam) => {
 // Common params for all reports export
 export const exportType = z.enum(["csv", "xlsx", "json"]);
 
-export const exportColumns = z.array(z.string().optional());
+export const reportColumns = z.array(z.string());
 
 export type ExportType = z.infer<typeof exportType>;
 
-export type exportColumnsType = z.infer<typeof exportColumns>;
+export type ColumnsType = z.infer<typeof reportColumns>;
 
 // Generic function to export data in csv, xlsx, json format
 // Can be used for all reports
@@ -102,11 +102,11 @@ export const exportReportLoop = async (
     const { data, pageInfo } = await getPage(page, pageSize);
 
     if (exportType === "xlsx") {
-      generateXLSXReport(columns, data, writeStream);
+      generateXLSXReport(columns, data, writeStream, "");
     } else if (exportType === "csv") {
-      generateCSVReport(columns, data, writeStream);
+      generateCSVReport(columns, data, writeStream, "");
     } else {
-      generateJSONReport(columns, data, writeStream);
+      generateJSONReport(columns, data, writeStream, "");
     }
 
     hasMoreData = data.length >= pageSize;

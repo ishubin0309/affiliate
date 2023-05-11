@@ -60,7 +60,11 @@ export const uploadFile = async (
   }
 };
 
-export async function uploadCsvToGcs(bucketName, filePath, csvData) {
+export async function uploadCsvToGcs(
+  bucketName: string,
+  filePath: string,
+  csvData: any
+) {
   const storage = new Storage();
   const bucket = storage.bucket(bucketName);
   const file = bucket.file(filePath);

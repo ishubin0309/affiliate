@@ -1,9 +1,11 @@
 import fs from "fs";
 import path from "path";
+import type { Writable } from "stream";
 
 export const generateJSONReport = (
   columns: Array<string>,
   rows: Array<number>,
+  writeStream: Writable,
   localFileName: string
 ) => {
   const path_name = path.join(

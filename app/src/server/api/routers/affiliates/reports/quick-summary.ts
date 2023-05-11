@@ -4,16 +4,15 @@ import {
 } from "@/server/api/routers/affiliates/const";
 import { QuickReportSummarySchema } from "@/server/api/routers/affiliates/reports";
 import {
+  PageParamsSchema,
   exportReportLoop,
   exportType,
   getPageOffset,
   pageInfo,
-  PageParamsSchema,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { publicProcedure } from "@/server/api/trpc";
 import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
 import { Prisma, PrismaClient } from "@prisma/client";
-import type { Simplify } from "@trpc/server";
 import { formatISO } from "date-fns";
 import path from "path";
 import paginator from "prisma-paginate";
@@ -157,12 +156,17 @@ export const exportQuickSummaryReport = publicProcedure
     console.log("export type ---->", exportType);
     const quick_summary = "quick-summary";
 
+    const serviceKey = path.join(
+      __dirname,
+      "../../../../../api-front-dashbord-a4ee8aec074c.json"
+    );
     await exportReportLoop(
+      "api-front-dashbord",
+      serviceKey,
       exportType || "csv",
       columns,
-      generic_filename,
       quick_summary,
-      async (pageNumber, pageSize) =>
+      async (pageNumber: number, pageSize: number) =>
         quickReportSummary(ctx.prisma, {
           ...params,
           pageParams: { pageNumber, pageSize },
@@ -170,10 +174,6 @@ export const exportQuickSummaryReport = publicProcedure
     );
 
     const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
 
     const public_url = uploadFile(
       serviceKey,

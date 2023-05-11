@@ -93,7 +93,7 @@ const clicksReport = async (
   if (type === "views") {
     type_filter = {
       views: {
-        gt: 0,
+        gte: 0,
       },
     };
   } else if (type === "clicks") {
@@ -141,6 +141,7 @@ const clicksReport = async (
 
   // DONE missing order by and limits
 
+  console.log("traffic data ----->", type_filter);
   const traficDataFull = await prisma.traffic.findMany({
     orderBy: orderBy,
     skip: offset,
@@ -331,10 +332,15 @@ export const exportClicksReport = publicProcedure
     console.log("export type ---->", exportType);
     const clicks_report = "clicks-report";
 
+    const serviceKey = path.join(
+      __dirname,
+      "../../../../../api-front-dashbord-a4ee8aec074c.json"
+    );
     await exportReportLoop(
+      "api-front-dashbord",
+      serviceKey,
       exportType || "csv",
       columns,
-      generic_filename,
       clicks_report,
       async (pageNumber, pageSize) =>
         clicksReport(ctx.prisma, {
@@ -344,10 +350,6 @@ export const exportClicksReport = publicProcedure
     );
 
     const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
 
     const public_url = uploadFile(
       serviceKey,

@@ -65,13 +65,16 @@ export const FakeTranslationReport = () => {
   const { mutateAsync: reportExport } =
     api.affiliates.exportTranslateReportFake.useMutation();
 
+  const headers = columns.map((column) => column.header || "");
+
   const handleExport = async (exportType: ExportType) =>
     reportExport({
       ...dateRange,
       search,
       exportType,
-      exportColumns: filterReportColumns(columns),
+      reportColumns: headers,
     });
+
   console.log(`muly:FakeTranslationReport`, { data, pagination, _sorting });
 
   return (
