@@ -16,14 +16,17 @@ export const exportOptions: { id: ExportType; title: string }[] = [
   },
 ];
 
-export type OnExport = (exportType: ExportType) => Promise<string | undefined>;
-
 export const conversionFormatter = (number: number) =>
   `${Intl.NumberFormat("us").format(number).toString()}%`;
 
+export type OnExport = (exportType: ExportType) => Promise<string | undefined>;
+
+// TODO: refactor this, remove eslint disable and have strong typing
 export const filterReportColumns = (data: any[]) => {
   const report_column = data.map((item) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return item?.header;
   });
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return report_column;
 };

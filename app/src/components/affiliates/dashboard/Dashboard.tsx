@@ -114,7 +114,8 @@ export const Dashboard = () => {
     isRefetching: isRefetchingAllPerformanceChart,
   } = api.affiliates.getAllPerformanceChart.useQuery(
     {
-      ...dateRange,
+      from: startOfMonth(sub(today, { months: 6 })),
+      to: endOfMonth(sub(today, { months: 1 })),
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
@@ -229,7 +230,7 @@ export const Dashboard = () => {
           reportsColumns={reportsColumns}
           selectColumnsMode={selectColumnsMode}
           setSelectColumnsMode={setSelectColumnsMode}
-          btnText='Apply'
+          btnText="Apply"
         />
         <div className="mt-4 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {!!reportsColumns &&
