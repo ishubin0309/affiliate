@@ -1,11 +1,17 @@
 import type { ColumnSort } from "@tanstack/react-table";
 
-export const formatPrice = (value?: number) => {
-  const v = parseFloat((value || 0).toFixed(2));
+export const VALUE_FORMAT = {
+  CURRENCY: "currency",
+  NUMBER: "number",
+  STRING: "string",
+};
 
+export const formatPrice = (value?: number, currency?: string) => {
+  const v = parseFloat((value || 0).toFixed(2));
+  const _currency = currency ? currency : "$";
   return v && v < 0
-    ? `($${performanceFormatter(-v)})`
-    : `$${performanceFormatter(v)}`;
+    ? `(${_currency}${performanceFormatter(-v)})`
+    : `${_currency}${performanceFormatter(v)}`;
 };
 
 export const isNumeric = (value?: number | string) => {
