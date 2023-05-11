@@ -6,11 +6,11 @@ interface PageParams {
   sortInfo?: string;
 }
 
-export const usePagination = () => {
+export const usePagination = (defaultPageSize = 10) => {
   const [pageParams, setPageParams] = useState<PageParams>({
     pageNumber: 1,
-    pageSize: 10,
-    sortInfo: "",
+    pageSize: defaultPageSize,
+    sortInfo: ""
   });
 
   return { pageParams, setPageParams };
