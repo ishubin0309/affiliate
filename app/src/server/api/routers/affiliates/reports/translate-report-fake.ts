@@ -4,7 +4,9 @@ import {
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   pageInfo,
+  SortingParamSchema,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { publicProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
@@ -18,7 +20,10 @@ const Input = z.object({
   search: z.string().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const TranslateReportFakeResultSchema = z.object({
   data: z.array(translateModel),
@@ -28,10 +33,17 @@ const TranslateReportFakeResultSchema = z.object({
 
 const translateReportFake = async (
   prisma: PrismaClient,
-  { from, to, search, pageParams }: z.infer<typeof InputWithPageInfo>
+  {
+    from,
+    to,
+    search,
+    pageParams,
+    sortingParam,
+  }: z.infer<typeof InputWithPageInfo>
 ) => {
   const offset = getPageOffset(pageParams);
 
+  const orderBy = getSortingInfo(sortingParam);
   const [data, totals] = await Promise.all([
     prisma.translate.findMany({
       take: pageParams.pageSize,
@@ -40,6 +52,7 @@ const translateReportFake = async (
         langENG: { contains: search },
         // rdate: { gte: from, lte: to },
       },
+      orderBy,
     }),
 
     prisma.translate.aggregate({

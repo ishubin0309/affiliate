@@ -1,4 +1,5 @@
 import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { ColumnSort } from "@tanstack/react-table";
 
 export const exportOptions: { id: ExportType; title: string }[] = [
   {
@@ -16,6 +17,9 @@ export const exportOptions: { id: ExportType; title: string }[] = [
 ];
 
 export type OnExport = (exportType: ExportType) => Promise<string | undefined>;
+
+export const conversionFormatter = (number: number) =>
+  `${Intl.NumberFormat("us").format(number).toString()}%`;
 
 export const filterReportColumns = (data: any[]) => {
   const report_column = data.map((item) => {

@@ -80,6 +80,7 @@ export const ReportControl = <Data extends object>({
         reportsColumns={reportsColumns}
         selectColumnsMode={selectColumnsMode}
         setSelectColumnsMode={setSelectColumnsMode}
+        btnText="Save"
       />
 
       {report.pageInfo.totalItems > 0 ? (
@@ -87,6 +88,7 @@ export const ReportControl = <Data extends object>({
           report={report}
           columns={getColumnsBySetup(columns, reportsColumns)}
           footerData={footerData}
+          pagination={pagination}
         />
       ) : (
         <div className="flex h-40 items-center justify-center">
