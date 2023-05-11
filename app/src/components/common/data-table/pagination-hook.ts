@@ -10,7 +10,7 @@ export const usePagination = (defaultPageSize = 10) => {
   const [pageParams, setPageParams] = useState<PageParams>({
     pageNumber: 1,
     pageSize: defaultPageSize,
-    sortInfo: ""
+    sortInfo: "",
   });
 
   return { pageParams, setPageParams };

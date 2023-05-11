@@ -113,7 +113,7 @@ export function CalendarDatePicker({
           <Button
             variant={"outline"}
             className={cn(
-              "w-[280px] justify-start text-left font-normal border border-[#e5e7eb]",
+              "w-[280px] justify-start border border-[#e5e7eb] text-left font-normal",
               !date && "text-muted-foreground"
             )}
           >
@@ -126,7 +126,9 @@ export function CalendarDatePicker({
               type="text"
               id="day-picker-input"
               placeholder="MM/DD/YYYY"
-              className={cn(" w-[280px] justify-start text-left font-normal border border-[#e5e7eb]")}
+              className={cn(
+                " w-[280px] justify-start border border-[#e5e7eb] text-left font-normal"
+              )}
               style={{ wordSpacing: "-3px" }}
               value={inputValue}
               onChange={handleInputChange}
