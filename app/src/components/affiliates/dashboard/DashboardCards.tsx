@@ -1,7 +1,7 @@
 import DashboardChart from "@/components/common/chart/DashboardChart";
 
 import { format } from "d3-format";
-import { ArrowBigDown, ArrowBigUp } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { Bar } from "react-chartjs-2";
 
@@ -71,9 +71,9 @@ const DashboardCards = ({
 
   let arrow = null;
   if (upDown === true) {
-    arrow = <ArrowBigUp className="text-green-700" />;
+    arrow = <ArrowUp className="text-green-700" />;
   } else if (upDown === false) {
-    arrow = <ArrowBigDown className="text-red-700" />;
+    arrow = <ArrowDown className="text-red-700" />;
   }
 
   return (
@@ -82,7 +82,7 @@ const DashboardCards = ({
       className="relative mb-1 block rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
       key={idx}
     >
-      <div className="text-sm font-semibold text-[#2262C6] md:text-base">
+      <div className="text-sm font-semibold text-[#2262C6] md:text-base whitespace-nowrap">
         {title}
         <span className="hidden text-xs font-normal text-[#B9B9B9] md:inline-flex md:text-sm">
           {" "}
