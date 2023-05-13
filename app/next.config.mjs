@@ -27,6 +27,10 @@ const config = {
   sentry: {
     hideSourceMaps: true,
   },
+
+  images: {
+    domains: ["go.best-brokers-partners.com"],
+  },
 };
 
 const sentryWebpackPluginOptions = {
