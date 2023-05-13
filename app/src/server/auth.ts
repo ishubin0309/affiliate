@@ -8,6 +8,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./db";
 import { loginAccount } from "./auth-affiliates-login";
 import { castError } from "../utils/errors";
+import { env } from "@/env.mjs";
+import { loginAccountCallToRemote } from "@/server/auth-affiliates-login-call-remote";
 
 export type AuthUser = {
   id: string;
@@ -96,11 +98,16 @@ export const authOptions: NextAuthOptions = {
 
         if (credentials) {
           try {
-            const user = await loginAccount(
-              prisma,
-              credentials.username,
-              credentials.password
-            );
+            const user = await (env.NEXT_PUBLIC_API
+              ? loginAccountCallToRemote(
+                  credentials.username,
+                  credentials.password
+                )
+              : loginAccount(
+                  prisma,
+                  credentials.username,
+                  credentials.password
+                ));
 
             console.log(`muly:authorize`, { user, credentials });
             return user;

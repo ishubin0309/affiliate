@@ -11,6 +11,7 @@ const ImageWithFallback = (props: ImageWithFallbackProps) => {
   const [imgSrc, setImgSrc] = useState(src);
 
   return (
+    // eslint-disable-next-line jsx-a11y/alt-text
     <Image
       {...rest}
       src={imgSrc}
