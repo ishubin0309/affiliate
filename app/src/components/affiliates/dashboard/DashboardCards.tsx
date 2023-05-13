@@ -1,4 +1,7 @@
 import DashboardChart from "@/components/common/chart/DashboardChart";
+import { useConfigContext } from "@/components/common/config/config-context";
+import { api } from "@/utils/api";
+import { VALUE_FORMAT, formatPrice } from "@/utils/format";
 
 import { format } from "d3-format";
 import { ArrowDown, ArrowUp } from "lucide-react";
@@ -12,6 +15,7 @@ interface Props {
   thisMonth: number | undefined;
   lastMonth: number | undefined;
   value: number;
+  value_format?: string;
   upDown: boolean | null;
   chartValues: number[];
 }
@@ -25,7 +29,9 @@ const DashboardCards = ({
   value,
   upDown,
   chartValues,
+  value_format,
 }: Props) => {
+  const { config } = useConfigContext();
   const options = {
     responsive: false,
     plugins: {
@@ -75,6 +81,7 @@ const DashboardCards = ({
   } else if (upDown === false) {
     arrow = <ArrowDown className="text-red-700" />;
   }
+  const currency = config?.currency;
 
   return (
     <Link
@@ -94,7 +101,9 @@ const DashboardCards = ({
           <div className="flex h-12 items-center">
             <div className="flex items-center">{arrow}</div>
             <span className="ml-1 text-xl font-bold md:ml-3">
-              {format("~s")(value as number | { valueOf(): number })}
+              {value_format === VALUE_FORMAT.CURRENCY
+                ? formatPrice(value, currency)
+                : format("~s")(value as number | { valueOf(): number })}
             </span>
           </div>
         </div>
@@ -110,14 +119,18 @@ const DashboardCards = ({
         <div>
           <p className="mt-1 text-xs text-[#404040]">Last Month</p>
           <p className="text-center text-sm font-bold text-[#1A1A1A]">
-            {format("~s")(lastMonth as number | { valueOf(): number })}
+            {value_format === VALUE_FORMAT.CURRENCY
+              ? formatPrice(lastMonth, currency)
+              : format("~s")(lastMonth as number | { valueOf(): number })}
           </p>
         </div>
         <div className="border-r "></div>
         <div>
           <p className="mt-1 text-xs text-[#404040]">This Month</p>
           <p className="text-center text-sm font-bold text-[#1A1A1A]">
-            {format("~s")(thisMonth as number | { valueOf(): number })}
+            {value_format === VALUE_FORMAT.CURRENCY
+              ? formatPrice(thisMonth, currency)
+              : format("~s")(thisMonth as number | { valueOf(): number })}
           </p>
         </div>
       </div>
