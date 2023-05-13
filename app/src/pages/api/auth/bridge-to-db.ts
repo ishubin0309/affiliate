@@ -8,7 +8,7 @@ const UserSchema = z.object({
   password: z.string(),
 });
 
-export async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(404).end();
   if (req.headers["x-api-key"] !== process.env.ADMIN_SECRET) {
     throw new Error("Bad api-key");
@@ -20,5 +20,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   console.log(`muly:handler`, { user });
 
-  return user;
+  res.status(200).json(user);
 }
+
+export default handler;
