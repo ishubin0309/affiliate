@@ -1,11 +1,70 @@
 import { z } from "zod";
 
-import type { merchants_creative_type, Prisma } from "@prisma/client";
+import type {
+  merchants_creative_type,
+  Prisma,
+  PrismaClient,
+} from "@prisma/client";
 import { countBy, map, sortBy, uniq, uniqBy } from "rambda";
 import { SelectSchema } from "../../../db-schema-utils";
 import { publicProcedure } from "../../trpc";
 import { affiliate_id, merchant_id } from "./const";
 import { serverStoragePath } from "../../../../components/utils";
+import {
+  getPageOffset,
+  pageInfo,
+  PageParamsSchema,
+} from "./reports/reports-utils";
+const Input = z.object({
+  category: z.number().optional(),
+  promotion: z.number().optional(),
+  language: z.number().optional(),
+  type: z.string().optional(), //merchants_creativeModel.shape.type.nullish(),
+  size: z.string().optional(),
+  search: z.string().optional(),
+});
+const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+
+const MerchantCreativeModel = z.object({
+  id: z.number(),
+  rdate: z.date().optional(),
+  last_update: z.date().optional(),
+  valid: z.number().optional(),
+  admin_id: z.number().optional(),
+  merchant_id: z.number().optional(),
+  product_id: z.number().optional(),
+  language_id: z.number().optional(),
+  promotion_id: z.number().optional(),
+  title: z.string().optional(),
+  type: z.string().optional(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+  url: z.string(),
+  iframe_url: z.string().optional(),
+  alt: z.string(),
+  scriptCode: z.string().optional(),
+  affiliate_id: z.number().optional(),
+  category_id: z.number().optional(),
+  featured: z.number().optional(),
+  affiliateReady: z.number().optional(),
+  language: z
+    .object({
+      title: z.string(),
+    })
+    .optional(),
+  category: z
+    .object({
+      categoryname: z.string(),
+    })
+    .nullable(),
+  file: z.string().optional().nullable(),
+});
+
+const MerchantCreativeResultSchema = z.object({
+  data: z.array(MerchantCreativeModel),
+  pageInfo,
+  totals: z.any(),
+});
 
 export const getMerchantCreativeMeta = publicProcedure
   .output(
@@ -102,56 +161,70 @@ export const getMerchantCreativeMeta = publicProcedure
     };
   });
 
-export const getMerchantCreative = publicProcedure
-  .input(
-    z.object({
-      category: z.number().optional(),
-      promotion: z.number().optional(),
-      language: z.number().optional(),
-      type: z.string().optional(), //merchants_creativeModel.shape.type.nullish(),
-      size: z.string().optional(),
-      search: z.string().optional(),
-    })
-  )
-  .query(
-    async ({
-      ctx,
-      input: { category, promotion, language, type, size, search },
-    }) => {
-      const [width, height] = size
-        ? size.split("x").map(Number)
-        : [undefined, undefined];
+const merchantCreativeQuery = async (
+  prisma: PrismaClient,
+  {
+    category,
+    promotion,
+    language,
+    type,
+    size,
+    search,
+    pageParams,
+  }: z.infer<typeof InputWithPageInfo>
+) => {
+  const [width, height] = size
+    ? size.split("x").map(Number)
+    : [undefined, undefined];
+  const offset = getPageOffset(pageParams);
 
-      const where: Prisma.merchants_creativeWhereInput = {
-        merchant_id,
-        product_id: 0,
-        valid: 1,
-        category_id: category,
-        promotion_id: promotion,
-        language_id: language,
-        type: type ? (type as merchants_creative_type) : undefined,
-        width,
-        height,
-        title: {
-          contains: search,
-        },
-      };
+  const where: Prisma.merchants_creativeWhereInput = {
+    merchant_id,
+    product_id: 0,
+    valid: 1,
+    category_id: category,
+    promotion_id: promotion,
+    language_id: language,
+    type: type ? (type as merchants_creative_type) : undefined,
+    width,
+    height,
+    title: {
+      contains: search,
+    },
+  };
 
-      const answer = map(
-        ({ file, ...data }) => ({ ...data, file: serverStoragePath(file) }),
-        await ctx.prisma.merchants_creative.findMany({
-          take: 10,
-          where,
-          include: {
-            language: {
-              select: { title: true },
-            },
-            category: { select: { categoryname: true } },
+  const [data, totals] = await Promise.all([
+    map(
+      ({ file, ...data }) => ({ ...data, file: serverStoragePath(file) }),
+      await prisma.merchants_creative.findMany({
+        take: pageParams.pageSize,
+        skip: offset,
+        where,
+        include: {
+          language: {
+            select: { title: true },
           },
-        })
-      );
+          category: { select: { categoryname: true } },
+        },
+      })
+    ),
 
-      return answer;
-    }
-  );
-//
+    prisma.merchants_creative.aggregate({
+      _count: {
+        id: true,
+      },
+      where,
+    }),
+  ]);
+
+  return {
+    data: data,
+    pageInfo: { ...pageParams, totalItems: totals._count.id },
+    totals: undefined,
+  };
+};
+
+export const getMerchantCreative = publicProcedure
+  .input(InputWithPageInfo)
+  .output(MerchantCreativeResultSchema)
+  .query(({ ctx, input }) => merchantCreativeQuery(ctx.prisma, input));

@@ -49,19 +49,21 @@ export const SubCreativeMaterial = () => {
 
   const { data: meta } = api.affiliates.getMerchantSubCreativeMeta.useQuery();
 
-  const { data, isRefetching } = api.affiliates.getMerchantSubCreative.useQuery(
-    {
-      type: type ? String(type) : undefined,
-      search: search ? String(search) : undefined,
-    },
-    { keepPreviousData: true }
-  );
+  const { data: subCreativeReport, isRefetching } =
+    api.affiliates.getMerchantSubCreative.useQuery(
+      {
+        type: type ? String(type) : undefined,
+        search: search ? String(search) : undefined,
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true }
+    );
 
   const handleChangeGridView = () => {
     setGridView(!gridView);
   };
-
-  return data ? (
+  console.log("********subCreativeReport: ", subCreativeReport);
+  return subCreativeReport ? (
     <div className="w-full">
       <PageHeader
         title="Marketing Tools"
@@ -91,9 +93,12 @@ export const SubCreativeMaterial = () => {
           "md:grid-cols-2 lg:grid-cols-4": gridView,
         })}
       >
-        {data?.map((item) => renderRow(item, gridView))}
+        {subCreativeReport.data.map((item) => renderRow(item, gridView))}
       </div>
-      <Pagination pagination={pagination} totalItems={data.length} />
+      <Pagination
+        pagination={pagination}
+        totalItems={subCreativeReport.pageInfo.totalItems}
+      />
     </div>
   ) : (
     <Loading />
