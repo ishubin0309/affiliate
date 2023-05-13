@@ -88,7 +88,7 @@ export const ColumnSelect = <Data extends object>({
         { "h-0": !selectColumnsMode }
       )}
     >
-      <div className="grid auto-cols-min grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid auto-cols-min grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {columns.map((item) => {
           const name = String(item.header);
           return (
