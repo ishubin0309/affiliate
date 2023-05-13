@@ -84,7 +84,7 @@ const DashboardCards = ({
   const currency = config?.currency;
 
   function countDecimals(value: number) {
-    // Check if floating point is .5 then return 2 which will return same value 
+    // Check if floating point is .5 then return 2 which will return same value
     // otherwise decrease floating point number
     if (value % 1 === 0.5) {
       return 2;
@@ -124,7 +124,7 @@ const DashboardCards = ({
       className="relative mb-1 block rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
       key={idx}
     >
-      <div className="text-sm font-semibold text-[#2262C6] md:text-base whitespace-nowrap">
+      <div className="whitespace-nowrap text-sm font-semibold text-[#2262C6] md:text-base">
         {title}
         <span className="hidden text-xs font-normal text-[#B9B9B9] md:inline-flex md:text-sm">
           {" "}
@@ -138,7 +138,7 @@ const DashboardCards = ({
             <span className="ml-1 text-xl font-bold md:ml-3">
               {value_format === VALUE_FORMAT.CURRENCY
                 ? formatPrice(value, currency)
-                : formatNumber(value )}
+                : formatNumber(value)}
             </span>
           </div>
         </div>

@@ -57,3 +57,4 @@ api-front-dashbord-a4ee8aec074c.json
 ./src/server/api/routers/affiliates/config/generated/*
 ./**/generated/*
 deploy.secrets.mjs
+*.ovpn
