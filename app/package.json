@@ -124,6 +124,7 @@
   "devDependencies": {
     "@babel/core": "^7.21.3",
     "@meza/storybook-react-i18next": "^1.1.12",
+    "@replayio/sourcemap-upload-webpack-plugin": "^1.0.9",
     "@storybook/addon-actions": "^7.0.0-rc.5",
     "@storybook/addon-essentials": "^7.0.0-rc.5",
     "@storybook/addon-interactions": "^7.0.0-rc.5",

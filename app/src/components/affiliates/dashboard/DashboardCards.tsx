@@ -88,13 +88,14 @@ const DashboardCards = ({
       const formattedValue =
         value >= 10 || Number.isInteger(value)
           ? Math.round(value)
-          : value.toPrecision(2);
+          : Math.round(value * 10) / 10;
       return formattedValue.toString() + suffix;
     };
 
-    if (num >= 1000000) {
+    const rnum = Math.round(num);
+    if (rnum >= 1000000) {
       return formatWithSuffix(num / 1000000, "M");
-    } else if (num >= 1000) {
+    } else if (rnum >= 1000) {
       return formatWithSuffix(num / 1000, "K");
     } else {
       return formatWithSuffix(num, "");

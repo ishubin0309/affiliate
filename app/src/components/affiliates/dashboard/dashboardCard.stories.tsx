@@ -56,165 +56,43 @@ export const LargeNumbers2 = {
 };
 
 export const test1 = {
+  ...Primary,
   args: {
-    idx: 0,
-    item: {
-      id: 0,
-      title: "title",
-      value: "RealAccount",
-      isChecked: false,
-    },
+    ...Primary.args,
     thisMonth: 0.5,
-    lastMonth: 0.5,
-    value: 0.5,
-    upDown: true,
-    chartValues: [10, 10, 4, 5, 2, 3],
-    selectColumnsMode: false,
-    isChecked: false,
-    handleCheckboxChange: (id: any, checkedStatus: boolean) => {
-      console.log(`muly:handleCheckboxChange`, {});
-    },
+    lastMonth: 0.46585,
+    value: 0.513232,
   },
-  render: (args: any) => (
-    <div className="max-w-sm">
-      <DashboardCards {...args} />
-    </div>
-  ),
 };
 
 export const test2 = {
+  ...Primary,
   args: {
-    idx: 0,
-    item: {
-      id: 0,
-      title: "title",
-      value: "RealAccount",
-      isChecked: false,
-    },
+    ...Primary.args,
     thisMonth: 1,
-    lastMonth: 1,
-    value: 1,
-    upDown: true,
-    chartValues: [10, 10, 4, 5, 2, 3],
-    selectColumnsMode: false,
-    isChecked: false,
-    handleCheckboxChange: (id: any, checkedStatus: boolean) => {
-      console.log(`muly:handleCheckboxChange`, {});
-    },
+    lastMonth: 1.67667,
+    value: 1.427474,
   },
-  render: (args: any) => (
-    <div className="max-w-sm">
-      <DashboardCards {...args} />
-    </div>
-  ),
-};
-
-export const test3 = {
-  args: {
-    idx: 0,
-    item: {
-      id: 0,
-      title: "title",
-      value: "RealAccount",
-      isChecked: false,
-    },
-    thisMonth: 3.87,
-    lastMonth: 3.87,
-    value: 3.87,
-    upDown: true,
-    chartValues: [10, 10, 4, 5, 2, 3],
-    selectColumnsMode: false,
-    isChecked: false,
-    handleCheckboxChange: (id: any, checkedStatus: boolean) => {
-      console.log(`muly:handleCheckboxChange`, {});
-    },
-  },
-  render: (args: any) => (
-    <div className="max-w-sm">
-      <DashboardCards {...args} />
-    </div>
-  ),
 };
 
 export const test4 = {
+  ...Primary,
   args: {
-    idx: 0,
-    item: {
-      id: 0,
-      title: "title",
-      value: "RealAccount",
-      isChecked: false,
-    },
-    thisMonth: 10,
-    lastMonth: 10,
-    value: 10,
-    upDown: true,
-    chartValues: [10, 10, 4, 5, 2, 3],
-    selectColumnsMode: false,
-    isChecked: false,
-    handleCheckboxChange: (id: any, checkedStatus: boolean) => {
-      console.log(`muly:handleCheckboxChange`, {});
-    },
+    ...Primary.args,
+    thisMonth: 10.47328947239,
+    lastMonth: 11.23636,
+    value: 9.64646,
   },
-  render: (args: any) => (
-    <div className="max-w-sm">
-      <DashboardCards {...args} />
-    </div>
-  ),
-};
-
-export const test5 = {
-  args: {
-    idx: 0,
-    item: {
-      id: 0,
-      title: "title",
-      value: "RealAccount",
-      isChecked: false,
-    },
-    thisMonth: 15.6,
-    lastMonth: 15.6,
-    value: 15.6,
-    upDown: true,
-    chartValues: [10, 10, 4, 5, 2, 3],
-    selectColumnsMode: false,
-    isChecked: false,
-    handleCheckboxChange: (id: any, checkedStatus: boolean) => {
-      console.log(`muly:handleCheckboxChange`, {});
-    },
-  },
-  render: (args: any) => (
-    <div className="max-w-sm">
-      <DashboardCards {...args} />
-    </div>
-  ),
 };
 
 export const test6 = {
+  ...Primary,
   args: {
-    idx: 0,
-    item: {
-      id: 0,
-      title: "title",
-      value: "RealAccount",
-      isChecked: false,
-    },
-    thisMonth: 999,
-    lastMonth: 999,
-    value: 999,
-    upDown: true,
-    chartValues: [10, 10, 4, 5, 2, 3],
-    selectColumnsMode: false,
-    isChecked: false,
-    handleCheckboxChange: (id: any, checkedStatus: boolean) => {
-      console.log(`muly:handleCheckboxChange`, {});
-    },
+    ...Primary.args,
+    thisMonth: 999.747744,
+    lastMonth: 1000,
+    value: 1227.327732,
   },
-  render: (args: any) => (
-    <div className="max-w-sm">
-      <DashboardCards {...args} />
-    </div>
-  ),
 };
 
 export const test7 = {

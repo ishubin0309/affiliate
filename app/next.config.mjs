@@ -2,6 +2,10 @@
 import { i18nConfig } from "./next-i18next.config.mjs";
 import { withSentryConfig } from "@sentry/nextjs";
 import { withContentlayer } from "next-contentlayer";
+
+const ReplaySourceMapUploadWebpackPlugin = require("@replayio/sourcemap-upload-webpack-plugin");
+
+
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
  * This is especially useful for Docker builds.
@@ -14,7 +18,30 @@ const config = {
   swcMinify: true,
   output: "standalone",
   productionBrowserSourceMaps: true,
+  webpack: (config, { buildId, dev, isServer }) => {
+    if (!dev && !isServer) {
+      config.plugins.push(
+        new ReplaySourceMapUploadWebpackPlugin({
+          // If you've configured a custom build directory, this should
+          // point to that directory.
+          filepaths: [".next/"],
+          // Potentially the 'buildId' argument here could be used.
+          group: process.env.VERCEL_GIT_COMMIT_SHA,
+        })
+      );
 
+      // 'productionBrowserSourceMaps' will output your sourcemaps
+      // into the build directory, which can expose them from your
+      // production server as well, so you will likely want to delete
+      // the .map files once they have been uploaded.
+      // config.plugins.push((compiler) =>
+      //   compiler.hooks.afterEmit.tapPromise("DeleteSourceMaps", () =>
+      //     findAndDeleteSourceMaps()
+      //   )
+      // );
+    }
+    return config;
+  },
 
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you
