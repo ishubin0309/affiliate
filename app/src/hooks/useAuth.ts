@@ -12,8 +12,8 @@ export const useAuth = () => {
     if (url.includes("/auth/")) {
       url = "/";
     }
-    console.log(`muly:useAuth NOT REDIRECT TO HELP DEBUG`, { url });
-    // void router.replace(url);
+    // console.log(`muly:useAuth NOT REDIRECT TO HELP DEBUG`, { url });
+    void router.replace(url);
     return true;
   }
 
