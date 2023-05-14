@@ -3,8 +3,7 @@ import { i18nConfig } from "./next-i18next.config.mjs";
 import { withSentryConfig } from "@sentry/nextjs";
 import { withContentlayer } from "next-contentlayer";
 
-const ReplaySourceMapUploadWebpackPlugin = require("@replayio/sourcemap-upload-webpack-plugin");
-
+import ReplaySourceMapUploadWebpackPlugin from "@replayio/sourcemap-upload-webpack-plugin";
 
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
