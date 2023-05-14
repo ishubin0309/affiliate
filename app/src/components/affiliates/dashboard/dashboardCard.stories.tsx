@@ -15,6 +15,7 @@ export const Primary = {
       value: "RealAccount",
       isChecked: false,
     },
+    title: "Title",
     thisMonth: 212000,
     lastMonth: 40000,
     value: 23000,

@@ -1,9 +1,8 @@
 import DashboardChart from "@/components/common/chart/DashboardChart";
 import { useConfigContext } from "@/components/common/config/config-context";
 import { api } from "@/utils/api";
-import { VALUE_FORMAT, formatPrice } from "@/utils/format";
+import { valueFormat, formatPrice, formatNumber } from "@/utils/format";
 
-import { format } from "d3-format";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { Bar } from "react-chartjs-2";
@@ -83,25 +82,6 @@ const DashboardCards = ({
   }
   const currency = config?.currency;
 
-  const formatNumber = (num: number) => {
-    const formatWithSuffix = (value: number, suffix: string) => {
-      const formattedValue =
-        value >= 10 || Number.isInteger(value)
-          ? Math.round(value)
-          : Math.round(value * 10) / 10;
-      return formattedValue.toString() + suffix;
-    };
-
-    const rnum = Math.round(num);
-    if (rnum >= 1000000) {
-      return formatWithSuffix(num / 1000000, "M");
-    } else if (rnum >= 1000) {
-      return formatWithSuffix(num / 1000, "K");
-    } else {
-      return formatWithSuffix(num, "");
-    }
-  };
-
   return (
     <Link
       href={"/affiliates/" + link}
@@ -110,9 +90,8 @@ const DashboardCards = ({
     >
       <div className="whitespace-nowrap text-sm font-semibold text-[#2262C6] md:text-base">
         {title}
-        <span className="hidden text-xs font-normal text-[#B9B9B9] md:inline-flex md:text-sm">
-          {" "}
-          ( Last 6 Month)
+        <span className="mx-2 align-super text-[9px]  font-normal text-[#B9B9B9] md:inline-flex">
+          Last 6 Month
         </span>
       </div>
       <div className="flex justify-between">
@@ -120,7 +99,7 @@ const DashboardCards = ({
           <div className="flex h-12 items-center">
             <div className="flex items-center">{arrow}</div>
             <span className="ml-1 text-xl font-bold md:ml-3">
-              {value_format === VALUE_FORMAT.CURRENCY
+              {value_format === valueFormat.CURRENCY
                 ? formatPrice(value, currency)
                 : formatNumber(value)}
             </span>
@@ -138,18 +117,18 @@ const DashboardCards = ({
         <div>
           <p className="mt-1 text-xs text-[#404040]">Last Month</p>
           <p className="text-center text-sm font-bold text-[#1A1A1A]">
-            {value_format === VALUE_FORMAT.CURRENCY
+            {value_format === valueFormat.CURRENCY
               ? formatPrice(lastMonth, currency)
-              : formatNumber(lastMonth as number)}
+              : formatNumber(lastMonth)}
           </p>
         </div>
         <div className="border-r "></div>
         <div>
           <p className="mt-1 text-xs text-[#404040]">This Month</p>
           <p className="text-center text-sm font-bold text-[#1A1A1A]">
-            {value_format === VALUE_FORMAT.CURRENCY
+            {value_format === valueFormat.CURRENCY
               ? formatPrice(thisMonth, currency)
-              : formatNumber(thisMonth as number)}
+              : formatNumber(thisMonth)}
           </p>
         </div>
       </div>
