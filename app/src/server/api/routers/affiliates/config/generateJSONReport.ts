@@ -1,9 +1,10 @@
 import fs from "fs";
 import path from "path";
 import type { Writable } from "stream";
+import { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export const generateJSONReport = (
-  columns: Array<string>,
+  columns: Array<ColumnsType>,
   rows: Array<number>,
   writeStream: Writable,
   localFileName: string

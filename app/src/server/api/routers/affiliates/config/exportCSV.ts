@@ -1,15 +1,20 @@
 import { Parser } from "json2csv";
 
 import type { Writable } from "stream";
+import { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export const generateCSVReport = (
-  columns: string[],
+  columns: ColumnsType[],
   data: any[],
   writeStream: Writable,
   localFileName: string
 ) => {
-  const opts = { fields: columns };
-  const parser = new Parser(opts);
+  const parser = new Parser({
+    fields: columns.map(({ header, accessorKey }) => ({
+      label: header,
+      value: accessorKey,
+    })),
+  });
   const csv = parser.parse(data);
 
   writeStream.write(csv);
