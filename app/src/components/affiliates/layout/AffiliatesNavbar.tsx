@@ -14,6 +14,7 @@ import NotificationDropDown from "../../Dropdowns/NotificationDropdown";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { api } from "@/utils/api";
+import ImageWithFallback from "@/components/common/image-fallback";
 
 interface Props {
   isDesktop: boolean;
@@ -29,8 +30,12 @@ const AffiliatesNavbar = ({
   const router = useRouter();
   const { t, i18n } = useTranslation("affiliates");
   const language = router.locale || "en";
-  const { data: config } = api.misc.getConfig.useQuery();
+  const { data: config } = api.misc.getConfig.useQuery(undefined, {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
   const logoPath = config?.logoPath;
+
   // const [selectLanguageItem, setSelectLanguageItem] =
   //   useState<LanguageOption | null>(null);
   const { collapseSidebar, toggleSidebar } = useProSidebar();
@@ -65,8 +70,15 @@ const AffiliatesNavbar = ({
 
               <Link href="/">
                 <span className="bg-blueGray-200 inline-flex h-10 w-16 items-center justify-center text-sm text-white md:h-12 md:w-32">
-                  <Image
+                  {/* <Image
                     src={logoPath ? logoPath : "/img/logo.png"}
+                    width="90"
+                    height="90"
+                    alt="logo"
+                  /> */}
+                  <ImageWithFallback
+                    src={logoPath ? logoPath : "/img/logo.png"}
+                    fallbackSrc={"/img/logo.png"}
                     width="90"
                     height="90"
                     alt="logo"

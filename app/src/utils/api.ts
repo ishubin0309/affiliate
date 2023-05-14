@@ -38,7 +38,9 @@ const trpcOption = {
         (opts.direction === "down" && opts.result instanceof Error),
     }),
     httpBatchLink({
-      url: `${getBaseUrl()}/api/trpc`,
+      url: !process.env.NEXT_PUBLIC_API
+        ? `${getBaseUrl()}/api/trpc`
+        : `${process.env.NEXT_PUBLIC_API}/api/trpc`,
     }),
   ],
 };

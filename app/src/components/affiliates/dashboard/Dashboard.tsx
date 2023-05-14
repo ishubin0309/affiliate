@@ -26,11 +26,14 @@ import {
 import Affiliates from "../../../layouts/AffiliatesLayout";
 import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
+import { valueFormat } from "@/utils/format";
+import { Loading } from "@/components/common/Loading";
 
 interface CardInfo {
   id: string;
   title: string;
   link: string;
+  value_format?: string;
 }
 
 const allColumns: CardInfo[] = [
@@ -41,11 +44,31 @@ const allColumns: CardInfo[] = [
   { id: "Demo", title: "Demo", link: "reports/clicks-report" },
   { id: "RealAccount", title: "Real Account", link: "reports/trader-report" },
   { id: "FTD", title: "FTD", link: "reports/trader-report" },
-  { id: "Withdrawal", title: "Withdrawal", link: "reports/trader-report" },
-  { id: "ChargeBack", title: "ChargeBack", link: "reports/clicks-report" },
+  {
+    id: "Withdrawal",
+    title: "Withdrawal",
+    link: "reports/trader-report",
+    value_format: valueFormat.CURRENCY,
+  },
+  {
+    id: "ChargeBack",
+    title: "ChargeBack",
+    link: "reports/clicks-report",
+    value_format: valueFormat.CURRENCY,
+  },
   { id: "ActiveTrader", title: "Active Trader", link: "reports/trader-report" },
-  { id: "Commission", title: "Commission", link: "reports/quick-summary" },
-  { id: "NetDeposit", title: "Deposit", link: "reports/quick-summary" },
+  {
+    id: "Commission",
+    title: "Commission",
+    link: "reports/quick-summary",
+    value_format: valueFormat.CURRENCY,
+  },
+  {
+    id: "NetDeposit",
+    title: "Deposit",
+    link: "reports/quick-summary",
+    value_format: valueFormat.CURRENCY,
+  },
 ];
 
 const columnHelper = createColumnHelper<TopMerchantCreativeType>();
@@ -162,7 +185,10 @@ export const Dashboard = () => {
   // !lastMonthData ||
   // !thisMonthData;
 
-  const drawDashboardCard = ({ id, title, link }: CardInfo, idx: number) => {
+  const drawDashboardCard = (
+    { id, title, link, value_format }: CardInfo,
+    idx: number
+  ) => {
     interface Sum {
       [index: string]: number;
     }
@@ -206,9 +232,14 @@ export const Dashboard = () => {
         value={value}
         upDown={upDown}
         chartValues={chartValues}
+        value_format={value_format}
       />
     );
   };
+
+  if (!reportsColumns) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -232,7 +263,7 @@ export const Dashboard = () => {
           setSelectColumnsMode={setSelectColumnsMode}
           btnText="Apply"
         />
-        <div className="mt-4 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-4 grid gap-5 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
           {!!reportsColumns &&
             allColumns
               .filter(
