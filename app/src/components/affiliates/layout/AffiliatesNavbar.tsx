@@ -30,7 +30,10 @@ const AffiliatesNavbar = ({
   const router = useRouter();
   const { t, i18n } = useTranslation("affiliates");
   const language = router.locale || "en";
-  const { data: config } = api.misc.getConfig.useQuery();
+  const { data: config } = api.misc.getConfig.useQuery(undefined, {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
   const logoPath = config?.logoPath;
 
   // const [selectLanguageItem, setSelectLanguageItem] =

@@ -11,7 +11,10 @@ export const ConfigContext = React.createContext<ConfigContextInterface>({
 });
 
 export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data: config } = api.misc.getConfig.useQuery();
+  const { data: config } = api.misc.getConfig.useQuery(undefined, {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
 
   return (
     <ConfigContext.Provider value={{ config: config ? config : {} }}>
