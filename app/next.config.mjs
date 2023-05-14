@@ -13,6 +13,8 @@ const config = {
   reactStrictMode: true,
   swcMinify: true,
   output: "standalone",
+  productionBrowserSourceMaps: true,
+
 
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you
