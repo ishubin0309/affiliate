@@ -11,6 +11,11 @@ import ReplaySourceMapUploadWebpackPlugin from "@replayio/sourcemap-upload-webpa
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env.mjs"));
 
+console.log(`muly:WEBPACK`, {
+  group: process.env.VERCEL_GIT_COMMIT_SHA,
+  RECORD_REPLAY_API_KEY: process.env.RECORD_REPLAY_API_KEY,
+});
+
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
@@ -21,8 +26,10 @@ const config = {
     if (!dev && !isServer) {
       config.plugins.push(
         new ReplaySourceMapUploadWebpackPlugin({
+          key: process.env.RECORD_REPLAY_API_KEY,
           // If you've configured a custom build directory, this should
           // point to that directory.
+
           filepaths: [".next/"],
           // Potentially the 'buildId' argument here could be used.
           group: process.env.VERCEL_GIT_COMMIT_SHA,
