@@ -23,4 +23,4 @@ yarn storybook
 - confirm has access to Figma and GitHub
 - confirm all run dev/storybook
 
-bumpx2
+bumpx4

@@ -83,40 +83,24 @@ const DashboardCards = ({
   }
   const currency = config?.currency;
 
-  function countDecimals(value: number) {
-    // Check if floating point is .5 then return 2 which will return same value
-    // otherwise decrease floating point number
-    if (value % 1 === 0.5) {
-      return 2;
-    } else {
-      if (Math.floor(value) === value) return 0;
-      return value.toString().split(".")[1]?.length || 0;
-    }
-  }
+  const formatNumber = (num: number) => {
+    const formatWithSuffix = (value: number, suffix: string) => {
+      const formattedValue =
+        value >= 10 || Number.isInteger(value)
+          ? Math.round(value)
+          : Math.round(value * 10) / 10;
+      return formattedValue.toString() + suffix;
+    };
 
-  function formatNumber(num: number) {
-    if (num >= 1000000) {
-      const formattedNum =
-        num / 1000000 >= 10
-          ? Math.round(num / 1000000)
-          : Number.isInteger(num / 1000000)
-          ? (num / 1000000).toString()
-          : (num / 1000000).toFixed(1);
-      return formattedNum.toString() + "M";
-    } else if (num >= 1000) {
-      const formattedNum =
-        num / 1000 >= 10
-          ? Math.round(num / 1000)
-          : Number.isInteger(num / 1000)
-          ? (num / 1000).toString()
-          : (num / 1000).toFixed(1);
-      return formattedNum.toString() + "K";
+    const rnum = Math.round(num);
+    if (rnum >= 1000000) {
+      return formatWithSuffix(num / 1000000, "M");
+    } else if (rnum >= 1000) {
+      return formatWithSuffix(num / 1000, "K");
     } else {
-      return Number.isInteger(num)
-        ? num.toString()
-        : num.toFixed(countDecimals(num) - 1);
+      return formatWithSuffix(num, "");
     }
-  }
+  };
 
   return (
     <Link

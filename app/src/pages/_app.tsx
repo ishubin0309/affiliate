@@ -44,7 +44,10 @@ const MyApp = ({
   const flagBag = useFlags({});
 
   const Layout = Layouts[Component.Layout] ?? ((page) => page);
-  const { data: config } = api.misc.getConfig.useQuery();
+  const { data: config } = api.misc.getConfig.useQuery(undefined, {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
   const faviconPath = config?.faviconPath;
   return (
     <>
