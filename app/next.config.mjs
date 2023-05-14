@@ -18,7 +18,7 @@ const config = {
   output: "standalone",
   productionBrowserSourceMaps: true,
   webpack: (config, { buildId, dev, isServer }) => {
-    if (!dev && !isServer) {
+    if (!dev && !isServer && !!process.env.RECORD_REPLAY_API_KEY) {
       config.plugins.push(
         new ReplaySourceMapUploadWebpackPlugin({
           // If you've configured a custom build directory, this should

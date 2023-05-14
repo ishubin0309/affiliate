@@ -26,7 +26,8 @@ import {
 import Affiliates from "../../../layouts/AffiliatesLayout";
 import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
-import { VALUE_FORMAT } from "@/utils/format";
+import { valueFormat } from "@/utils/format";
+import { Loading } from "@/components/common/Loading";
 
 interface CardInfo {
   id: string;
@@ -47,22 +48,27 @@ const allColumns: CardInfo[] = [
     id: "Withdrawal",
     title: "Withdrawal",
     link: "reports/trader-report",
-    value_format: VALUE_FORMAT.CURRENCY,
+    value_format: valueFormat.CURRENCY,
   },
   {
     id: "ChargeBack",
     title: "ChargeBack",
     link: "reports/clicks-report",
-    value_format: VALUE_FORMAT.CURRENCY,
+    value_format: valueFormat.CURRENCY,
   },
   { id: "ActiveTrader", title: "Active Trader", link: "reports/trader-report" },
   {
     id: "Commission",
     title: "Commission",
     link: "reports/quick-summary",
-    value_format: VALUE_FORMAT.CURRENCY,
+    value_format: valueFormat.CURRENCY,
   },
-  { id: "NetDeposit", title: "Deposit", link: "reports/quick-summary" },
+  {
+    id: "NetDeposit",
+    title: "Deposit",
+    link: "reports/quick-summary",
+    value_format: valueFormat.CURRENCY,
+  },
 ];
 
 const columnHelper = createColumnHelper<TopMerchantCreativeType>();
@@ -229,6 +235,10 @@ export const Dashboard = () => {
       />
     );
   };
+
+  if (!reportsColumns) {
+    return <Loading />;
+  }
 
   return (
     <>

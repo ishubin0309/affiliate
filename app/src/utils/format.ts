@@ -1,17 +1,47 @@
 import type { ColumnSort } from "@tanstack/react-table";
 
-export const VALUE_FORMAT = {
+export const valueFormat = {
   CURRENCY: "currency",
   NUMBER: "number",
   STRING: "string",
 };
 
-export const formatPrice = (value?: number, currency?: string) => {
-  const v = parseFloat((value || 0).toFixed(2));
-  const _currency = currency ? currency : "$";
-  return v && v < 0
-    ? `(${_currency}${performanceFormatter(-v)})`
-    : `${_currency}${performanceFormatter(v)}`;
+export const formatNumber = (num: number | undefined) => {
+  const formatWithSuffix = (value: number, suffix: string) => {
+    const formattedValue =
+      Math.abs(value) >= 10 || Number.isInteger(value)
+        ? Math.round(value)
+        : Math.round(value * 10) / 10;
+    return formattedValue.toString() + suffix;
+  };
+
+  if (num === undefined) {
+    return "";
+  }
+
+  const rnum = Math.abs(Math.round(num));
+  if (rnum >= 1000000) {
+    return formatWithSuffix(num / 1000000, "M");
+  } else if (rnum >= 1000) {
+    return formatWithSuffix(num / 1000, "K");
+  } else {
+    return formatWithSuffix(num, "");
+  }
+};
+
+export const formatPrice = (
+  value: number | undefined,
+  currencySymbol = "$"
+) => {
+  if (value === undefined) {
+    return "";
+  }
+
+  if (value >= 0) {
+    return `${currencySymbol}${formatNumber(value)}`;
+  } else {
+    return `(${currencySymbol}${formatNumber(Math.abs(value))})`;
+  }
 };
 
 export const isNumeric = (value?: number | string) => {

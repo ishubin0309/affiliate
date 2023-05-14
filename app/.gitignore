@@ -58,3 +58,5 @@ api-front-dashbord-a4ee8aec074c.json
 ./**/generated/*
 deploy.secrets.mjs
 *.ovpn
+
+.vercel
