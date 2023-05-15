@@ -4,6 +4,7 @@ import { Dashboard } from "@/components/affiliates/dashboard/Dashboard";
 import type { MyPage } from "@/components/common/types";
 
 const DashboardPage: MyPage = () => {
+  // console.log(`muly:DashboardPage LOADING`, {});
   return (
     <>
       <Head>

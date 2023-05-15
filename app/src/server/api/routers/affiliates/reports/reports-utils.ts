@@ -63,11 +63,16 @@ export const splitToPages = <Row>(data: Row[], pageParams: PageParam) => {
 // Common params for all reports export
 export const exportType = z.enum(["csv", "xlsx", "json"]);
 
-export const reportColumns = z.array(z.string());
+const ReportColumn = z.object({
+  header: z.string().optional(),
+  accessorKey: z.string(),
+});
+
+export const reportColumns = z.array(ReportColumn);
 
 export type ExportType = z.infer<typeof exportType>;
 
-export type ColumnsType = z.infer<typeof reportColumns>;
+export type ColumnsType = z.infer<typeof ReportColumn>;
 
 // Generic function to export data in csv, xlsx, json format
 // Can be used for all reports
@@ -76,7 +81,7 @@ export const exportReportLoop = async (
   GCP_PROJECT_ID: string,
   GCP_KEY_FILE_PATH: string,
   exportType: ExportType,
-  columns: string[],
+  columns: ColumnsType[],
   reportName: string,
   getPage: (page: number, pageSize: number) => Promise<PageResult>
 ): Promise<string> => {

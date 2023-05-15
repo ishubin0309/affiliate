@@ -1,7 +1,9 @@
 import DashboardChart from "@/components/common/chart/DashboardChart";
+import { useConfigContext } from "@/components/common/config/config-context";
+import { api } from "@/utils/api";
+import { valueFormat, formatPrice, formatNumber } from "@/utils/format";
 
-import { format } from "d3-format";
-import { ArrowBigDown, ArrowBigUp } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { Bar } from "react-chartjs-2";
 
@@ -12,6 +14,7 @@ interface Props {
   thisMonth: number | undefined;
   lastMonth: number | undefined;
   value: number;
+  value_format?: string;
   upDown: boolean | null;
   chartValues: number[];
 }
@@ -25,7 +28,9 @@ const DashboardCards = ({
   value,
   upDown,
   chartValues,
+  value_format,
 }: Props) => {
+  const { config } = useConfigContext();
   const options = {
     responsive: false,
     plugins: {
@@ -71,10 +76,11 @@ const DashboardCards = ({
 
   let arrow = null;
   if (upDown === true) {
-    arrow = <ArrowBigUp className="text-green-700" />;
+    arrow = <ArrowUp className="text-green-700" />;
   } else if (upDown === false) {
-    arrow = <ArrowBigDown className="text-red-700" />;
+    arrow = <ArrowDown className="text-red-700" />;
   }
+  const currency = config?.currency;
 
   return (
     <Link
@@ -82,11 +88,10 @@ const DashboardCards = ({
       className="relative mb-1 block rounded-2xl bg-white px-2 pt-3 shadow-sm md:px-6"
       key={idx}
     >
-      <div className="text-sm font-semibold text-[#2262C6] md:text-base">
+      <div className="whitespace-nowrap text-sm font-semibold text-[#2262C6] md:text-base">
         {title}
-        <span className="hidden text-xs font-normal text-[#B9B9B9] md:inline-flex md:text-sm">
-          {" "}
-          ( Last 6 Month)
+        <span className="mx-2 align-super text-[9px]  font-normal text-[#B9B9B9] md:inline-flex">
+          Last 6 Month
         </span>
       </div>
       <div className="flex justify-between">
@@ -94,7 +99,9 @@ const DashboardCards = ({
           <div className="flex h-12 items-center">
             <div className="flex items-center">{arrow}</div>
             <span className="ml-1 text-xl font-bold md:ml-3">
-              {format("~s")(value as number | { valueOf(): number })}
+              {value_format === valueFormat.CURRENCY
+                ? formatPrice(value, currency)
+                : formatNumber(value)}
             </span>
           </div>
         </div>
@@ -110,14 +117,18 @@ const DashboardCards = ({
         <div>
           <p className="mt-1 text-xs text-[#404040]">Last Month</p>
           <p className="text-center text-sm font-bold text-[#1A1A1A]">
-            {format("~s")(lastMonth as number | { valueOf(): number })}
+            {value_format === valueFormat.CURRENCY
+              ? formatPrice(lastMonth, currency)
+              : formatNumber(lastMonth)}
           </p>
         </div>
         <div className="border-r "></div>
         <div>
           <p className="mt-1 text-xs text-[#404040]">This Month</p>
           <p className="text-center text-sm font-bold text-[#1A1A1A]">
-            {format("~s")(thisMonth as number | { valueOf(): number })}
+            {value_format === valueFormat.CURRENCY
+              ? formatPrice(thisMonth, currency)
+              : formatNumber(thisMonth)}
           </p>
         </div>
       </div>

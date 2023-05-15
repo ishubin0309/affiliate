@@ -1,12 +1,13 @@
 import { api } from "@/utils/api";
 import Image from "next/image";
+import { useConfigContext } from "../config/config-context";
 
 interface Props {
   children?: React.ReactNode;
 }
 
 const AuthenticationHeader = ({ children }: Props) => {
-  const { data: config } = api.misc.getConfig.useQuery();
+  const { config } = useConfigContext();
   const logoPath = config?.logoPath;
   return (
     <header className="rounded-lg pb-6 pt-6 font-['Inter'] font-normal">

@@ -11,6 +11,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
 import "react-datepicker/dist/react-datepicker.css";
 import type { TranslateReportFakeType } from "../../../server/db-types";
+import { getColumns } from "@/components/affiliates/reports/utils";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -62,16 +63,19 @@ export const FakeTranslationReport = () => {
   const { mutateAsync: reportExport } =
     api.affiliates.exportTranslateReportFake.useMutation();
 
-  const headers = columns.map((column) => column.header || "");
-
   const handleExport = async (exportType: ExportType) =>
     reportExport({
       ...dateRange,
       search,
       exportType,
-      reportColumns: headers,
+      reportColumns: getColumns(columns),
     });
-  console.log(`muly:FakeTranslationReport`, { data, pagination, _sorting });
+  console.log(`muly:FakeTranslationReport`, {
+    data,
+    pagination,
+    _sorting,
+    columns,
+  });
 
   return (
     <ReportControl

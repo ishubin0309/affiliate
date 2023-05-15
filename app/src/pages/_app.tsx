@@ -12,6 +12,7 @@ import type { LayoutKeys } from "../layouts/Layouts";
 import { Layouts } from "../layouts/Layouts";
 
 import { Toaster } from "@/components/ui/toaster";
+import { ConfigProvider } from "@/components/common/config/config-context";
 import { FlagBagProvider } from "@happykit/flags/context";
 import { useFlags } from "../flags/client";
 import { missingKeyHandler } from "../utils/i18n-utils";
@@ -43,7 +44,10 @@ const MyApp = ({
   const flagBag = useFlags({});
 
   const Layout = Layouts[Component.Layout] ?? ((page) => page);
-  const { data: config } = api.misc.getConfig.useQuery();
+  const { data: config } = api.misc.getConfig.useQuery(undefined, {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
   const faviconPath = config?.faviconPath;
   return (
     <>
@@ -58,10 +62,12 @@ const MyApp = ({
       <ProSidebarProvider>
         <FlagBagProvider value={flagBag}>
           <SessionProvider session={session}>
-            <Layout>
-              <Component {...pageProps} />
-              <Toaster />
-            </Layout>
+            <ConfigProvider>
+              <Layout>
+                <Component {...pageProps} />
+                <Toaster />
+              </Layout>
+            </ConfigProvider>
           </SessionProvider>
         </FlagBagProvider>
       </ProSidebarProvider>

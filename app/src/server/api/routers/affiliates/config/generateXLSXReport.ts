@@ -1,9 +1,10 @@
 import path from "path";
 import type { Writable } from "stream";
 import XLSX from "xlsx";
+import { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export const generateXLSXReport = (
-  columns: Array<string>,
+  columns: Array<ColumnsType>,
   rows: Array<number>,
   writeStream: Writable,
   localFileName: string
