@@ -1,14 +1,20 @@
 #!/usr/bin/env zx
 
+// ./deploy-process.mjs --step=vercel-env --prod --service=gamingaffiliates
+// ./deploy-process.mjs --step=create-cr --prod --service=gamingaffiliates
+// ./deploy-process.mjs --step=dns --prod --service=gamingaffiliates
+
 // ./deploy-process.mjs --step=secret
 // ./deploy-process.mjs --step=verify --prod
-// ./deploy-process.mjs --step=verify --prod --service=fxoro
+// ./deploy-process.mjs --step=verify --prod --service=freevpnplanet
 // ./deploy-process.mjs --step=create --prod --service=fxoro
+// ./deploy-process.mjs --step=secret --prod --service=fxoro
+// ./deploy-process.mjs --step=dns --prod --service=fxoro
 // ./deploy-process.mjs --step=dns
 // ./deploy-process.mjs --step=secret --prod
 // ./deploy-process.mjs --step=secret
 
-import { sites } from "./deploy.secrets.mjs";
+import { envTemplate, sites } from "./deploy.secrets.mjs";
 
 const { _, step, service, prod: deployProd } = argv;
 
@@ -64,10 +70,11 @@ for (const site of sites) {
       continue;
     }
     prod.service = `${name}-prod`;
+    prod.cr_domain = `${name}.backend.affiliatets.com`;
   }
   if (!deployProd) {
     dev.service = `${name}-dev`;
-    dev.domain = `${name}.staging.affiliatets.com`;
+    dev.cr_domain = `${name}.stg-backend.affiliatets.com`;
   }
   const databaseUrl = `mysql://${user}:${password}@35.204.215.28:3306/${db}`;
   const secretName = `${
@@ -85,7 +92,7 @@ for (const site of sites) {
     await updateGcpSecret(secretName, databaseUrl);
   }
 
-  if (step === "create") {
+  if (step === "create-cr") {
     if (deployProd) {
       txt = `
       - id: "deploy_${name}"
@@ -104,7 +111,6 @@ for (const site of sites) {
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
           env_vars: |
             LEGACY_PHP_URL=${LEGACY_PHP_URL}
-            NEXTAUTH_URL=https://${prod.domain}
             NODE_ENV=production
           flags: |
             --allow-unauthenticated
@@ -133,7 +139,6 @@ for (const site of sites) {
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
           env_vars: |
             LEGACY_PHP_URL=${LEGACY_PHP_URL}
-            NEXTAUTH_URL=https://${dev.domain}
             NODE_ENV=production
           flags: |
             --allow-unauthenticated
@@ -154,7 +159,7 @@ for (const site of sites) {
     console.log(
       `Will open GCP page, select namecheap and verify, copy TXT to deploy.secrets.mjs`
     );
-    await $`gcloud domains verify ${val.domain}`;
+    await $`gcloud domains verify ${val.cr_domain}`;
     // console.log(
     //   `not working need to do it manually. see docs/deploy/new-customer-deploy.md ##Verify domain"
     //
@@ -166,10 +171,51 @@ for (const site of sites) {
   }
 
   if (step === "dns") {
-    console.log(`DOMAIN: ${val.domain}
-TXT: ${val.TXT}
+// TXT: ${val.TXT}
+    console.log(`DOMAIN: ${val.cr_domain}
 CNAME: ghs.googlehosted.com
+
+DOMAIN: ${val.domain}
+CNAME: cname.vercel-dns.com.
+
 `);
+  }
+
+  if (step === "vercel-env") {
+    const env = envTemplate;
+    await $`vercel link --scope=aff --project=${name} -y`;
+
+    async function setEnv(variableName, value, env = null) {
+      try {
+        await $`vercel env rm ${variableName} ${env || "production"} -y`;
+      } catch (e) {
+        // Ignore
+      }
+      await $`echo ${value} | vercel env add ${variableName} ${
+        env || "production"
+      }`;
+    }
+
+    await setEnv("DATABASE_URL", env.DATABASE_URL);
+    await setEnv("NEXTAUTH_SECRET", env.NEXTAUTH_SECRET);
+    await setEnv("LEGACY_PHP_ACCESS_TOKEN", env.LEGACY_PHP_ACCESS_TOKEN);
+    await setEnv(
+      "SENTRY_IGNORE_API_RESOLUTION_ERROR",
+      env.SENTRY_IGNORE_API_RESOLUTION_ERROR
+    );
+    await setEnv("SENDGRID_API_KEY", env.SENDGRID_API_KEY);
+    await setEnv(
+      "NEXT_PUBLIC_FLAGS_ENV_KEY",
+      env.NEXT_PUBLIC_FLAGS_ENV_KEY,
+      "production"
+    );
+    await setEnv(
+      "NEXT_PUBLIC_FLAGS_ENV_KEY",
+      env.NEXT_PUBLIC_FLAGS_ENV_KEY_PREVIEW,
+      "preview"
+    );
+    await setEnv("NEXT_PUBLIC_API", `https://${name}.backend.affiliatets.com`);
+    await setEnv("LEGACY_PHP_URL", LEGACY_PHP_URL);
   }
 }
 

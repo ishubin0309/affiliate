@@ -13,6 +13,8 @@ import { useProSidebar } from "react-pro-sidebar";
 import NotificationDropDown from "../../Dropdowns/NotificationDropdown";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { api } from "@/utils/api";
+import ImageWithFallback from "@/components/common/image-fallback";
 
 interface Props {
   isDesktop: boolean;
@@ -28,6 +30,11 @@ const AffiliatesNavbar = ({
   const router = useRouter();
   const { t, i18n } = useTranslation("affiliates");
   const language = router.locale || "en";
+  const { data: config } = api.misc.getConfig.useQuery(undefined, {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
+  const logoPath = config?.logoPath;
 
   // const [selectLanguageItem, setSelectLanguageItem] =
   //   useState<LanguageOption | null>(null);
@@ -63,8 +70,15 @@ const AffiliatesNavbar = ({
 
               <Link href="/">
                 <span className="bg-blueGray-200 inline-flex h-10 w-16 items-center justify-center text-sm text-white md:h-12 md:w-32">
-                  <Image
-                    src={"/img/logo.png"}
+                  {/* <Image
+                    src={logoPath ? logoPath : "/img/logo.png"}
+                    width="90"
+                    height="90"
+                    alt="logo"
+                  /> */}
+                  <ImageWithFallback
+                    src={logoPath ? logoPath : "/img/logo.png"}
+                    fallbackSrc={"/img/logo.png"}
                     width="90"
                     height="90"
                     alt="logo"
@@ -72,12 +86,12 @@ const AffiliatesNavbar = ({
                 </span>
               </Link>
 
-              <div className="hidden pl-16 md:block">
+              <div className="hidden pl-16 lg:block">
                 <span className="bg-blueGray-200 inline-flex h-8 w-10 items-center justify-center pr-2.5 text-sm text-white">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="mr-2 h-8 rounded-full bg-primary p-1"
+                    className="mr-2 h-fit rounded-full bg-primary p-1 hover:bg-primary"
                   >
                     <Facebook fill="#FFF" color="#FFF" className="h-5 w-5" />
                   </Button>
@@ -86,7 +100,7 @@ const AffiliatesNavbar = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="mr-2 h-8 rounded-full bg-primary p-1"
+                    className="mr-2 h-fit rounded-full bg-primary p-1 hover:bg-primary"
                   >
                     <Instagram color="#FFF" className="h-5 w-5" />
                   </Button>
@@ -95,7 +109,7 @@ const AffiliatesNavbar = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="mr-2 h-8 rounded-full bg-primary p-1"
+                    className="mr-2 h-fit rounded-full bg-primary p-1 hover:bg-primary"
                   >
                     <Twitter fill="#FFF" color="#FFF" className="h-5 w-5" />
                   </Button>

@@ -22,7 +22,7 @@ const server = z.object({
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
   // DISCORD_CLIENT_ID: z.string(),
   // DISCORD_CLIENT_SECRET: z.string(),
-
+  NEXT_PUBLIC_API: z.string().url().optional(),
   LEGACY_PHP_URL: z.string().url(),
   LEGACY_PHP_ACCESS_TOKEN: z.string(),
 
@@ -50,6 +50,7 @@ const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+  NEXT_PUBLIC_API: process.env.NEXT_PUBLIC_API,
 
   LEGACY_PHP_URL: process.env.LEGACY_PHP_URL,
   LEGACY_PHP_ACCESS_TOKEN: process.env.LEGACY_PHP_ACCESS_TOKEN,

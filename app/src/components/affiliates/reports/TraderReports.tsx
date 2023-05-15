@@ -1,7 +1,6 @@
-import { QuerySelect } from "@/components/common/QuerySelect";
-import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { useDateRange } from "@/components/ui/date-range";
 import { createColumnHelper } from "@tanstack/react-table";
-import { Calendar, Download, Settings } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
@@ -9,7 +8,7 @@ import type { TraderReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { Loading } from "../../common/Loading";
 import { Button } from "../../ui/button";
-import { useDateRange } from "@/components/ui/date-range";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 
 export const creativeType = [
   {
@@ -53,6 +52,7 @@ export const creativeType = [
 export const TraderReports = () => {
   const router = useRouter();
   const { merchant_id } = router.query;
+  const pagination = usePagination();
   const { from, to } = useDateRange();
   const [traderID, setTraderID] = useState<string>("");
   const [reportFields, setReportFields] = useState<
@@ -194,9 +194,11 @@ export const TraderReports = () => {
         </div>
 
         <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
+          {/* @ts-ignore */}
           <ReportDataTable
             report={data}
             columns={columns}
+            pagination={pagination}
             // reportFields={reportFields}
           />
         </div>

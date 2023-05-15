@@ -1,16 +1,20 @@
+import { api } from "@/utils/api";
 import Image from "next/image";
+import { useConfigContext } from "../config/config-context";
 
 interface Props {
   children?: React.ReactNode;
 }
 
 const AuthenticationHeader = ({ children }: Props) => {
+  const { config } = useConfigContext();
+  const logoPath = config?.logoPath;
   return (
     <header className="rounded-lg pb-6 pt-6 font-['Inter'] font-normal">
       <div className="mb-7 text-center text-4xl">
         <Image
           className="ml-1 mr-2 inline-block h-auto w-[115px]"
-          src="/img/logo.png"
+          src={logoPath ? logoPath : "/img/logo.png"}
           width="115"
           height={115}
           alt="logo"

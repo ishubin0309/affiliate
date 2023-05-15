@@ -1,7 +1,9 @@
+import { convertToNumber } from "@/utils/format";
+
 interface Props {
-  width: string;
-  height: string;
-  fill: string;
+  width?: string | number;
+  height?: string | number;
+  fill?: string;
 }
 
 export const ClicksIcon = ({ width, height, fill }: Props) => {

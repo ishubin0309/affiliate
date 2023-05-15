@@ -4,12 +4,13 @@ import { Dashboard } from "@/components/affiliates/dashboard/Dashboard";
 import type { MyPage } from "@/components/common/types";
 
 const DashboardPage: MyPage = () => {
+  // console.log(`muly:DashboardPage LOADING`, {});
   return (
     <>
       <Head>
         <title>Affiliates Dashboard</title>
         <meta name="description" content="Affiliates Dashboard" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <Dashboard />
     </>

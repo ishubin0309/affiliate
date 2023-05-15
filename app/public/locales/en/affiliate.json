@@ -20,5 +20,170 @@
   },
   "password": {
     "label": "Password"
+  },
+  "subject": {
+    "label": "Ticket Subject"
+  },
+  "reply_email": {
+    "label": "Your Email"
+  },
+  "text": {
+    "label": "Ticket Content"
+  },
+  "merchant_id": {
+    "label": "Select Merchants"
+  },
+  "type": {
+    "choices": {
+      "0": "lead",
+      "1": "account",
+      "2": "sale",
+      "3": "qftd"
+    },
+    "label": "Type"
+  },
+  "all_creative": {
+    "label": "All Creative"
+  },
+  "banner_id": {
+    "label": "Creative"
+  },
+  "pixelCode": {
+    "label": "Pixel Code"
+  },
+  "method": {
+    "choices": {
+      "0": "post",
+      "1": "get",
+      "2": "client"
+    },
+    "label": "Method"
+  },
+  "newsletter": {
+    "label": "Yes, I would like to receive the Affiliate newsletter"
+  },
+  "company": {
+    "label": "Company Name"
+  },
+  "gender": {
+    "choices": {
+      "male": "Mr.",
+      "female": "Ms."
+    },
+    "label": "Salutation"
+  },
+  "first_name": {
+    "label": "First Name"
+  },
+  "last_name": {
+    "label": "Last Name"
+  },
+  "mail": {
+    "label": "Email"
+  },
+  "phone": {
+    "label": "Phone Number"
+  },
+  "IMUserType": {
+    "label": "Instant Message Type",
+    "placeholder": "Choose IM Type"
+  },
+  "IMUser": {
+    "label": "Instant Message Account"
+  },
+  "street": {
+    "label": "Street"
+  },
+  "postalCode": {
+    "label": "Postal / Zip Code"
+  },
+  "city": {
+    "label": "City"
+  },
+  "country": {
+    "label": "Country"
+  },
+  "website": {
+    "label": "WebSite 1"
+  },
+  "website2": {
+    "label": "WebSite 2"
+  },
+  "website3": {
+    "label": "WebSite 3"
+  },
+  "paymentMethod": {
+    "choices": {
+      "bank": "Wire Transfer",
+      "skrill": "Skrill",
+      "paypal": "Paypal",
+      "neteller": "Neteller",
+      "webmoney": "WebMoney",
+      "chinaunionpay": "China Union Pay"
+    },
+    "label": "Payment Method"
+  },
+  "pay_firstname": {
+    "label": "First Name"
+  },
+  "pay_lastname": {
+    "label": "Last Name"
+  },
+  "pay_address1": {
+    "label": "Address 1"
+  },
+  "pay_address2": {
+    "label": "Address 2"
+  },
+  "pay_city": {
+    "label": "City"
+  },
+  "pay_zip": {
+    "label": "Zip Code"
+  },
+  "pay_country": {
+    "label": "Country"
+  },
+  "preferredCurrency": {
+    "label": "Preferred Currency"
+  },
+  "pay_info": {
+    "label": "More Information"
+  },
+  "pay_email": {
+    "label": "Payment Email"
+  },
+  "pay_account": {
+    "label": "Account"
+  },
+  "pay_bank": {
+    "label": "Bank Name"
+  },
+  "pay_iban": {
+    "label": "IBAN"
+  },
+  "pay_branch": {
+    "label": "Branch"
+  },
+  "pay_swift": {
+    "label": "Swift"
+  },
+  "account_name": {
+    "label": "Account Name"
+  },
+  "account_number": {
+    "label": "Account Number"
+  },
+  "documentType": {
+    "choices": {
+      "Passport_Driving_Licence": "Passport/Driving Licence",
+      "Address_Verification": "Address Verification",
+      "Company_Verification": "Company Verification"
+    },
+    "label": "Document Type",
+    "placeholder": "Select a Document Type"
+  },
+  "documentFile": {
+    "label": "Document File"
   }
 }

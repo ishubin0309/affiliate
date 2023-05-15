@@ -12,6 +12,7 @@ import type { LayoutKeys } from "../layouts/Layouts";
 import { Layouts } from "../layouts/Layouts";
 
 import { Toaster } from "@/components/ui/toaster";
+import { ConfigProvider } from "@/components/common/config/config-context";
 import { FlagBagProvider } from "@happykit/flags/context";
 import { useFlags } from "../flags/client";
 import { missingKeyHandler } from "../utils/i18n-utils";
@@ -21,7 +22,7 @@ import "@etchteam/next-pagination/dist/index.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { ProSidebarProvider } from "react-pro-sidebar";
 import "../styles/globals.css";
-
+import Head from "next/head";
 // import { Inter as FontSans } from "next/font/google";
 //
 // const fontSans = FontSans({
@@ -43,9 +44,16 @@ const MyApp = ({
   const flagBag = useFlags({});
 
   const Layout = Layouts[Component.Layout] ?? ((page) => page);
-
+  const { data: config } = api.misc.getConfig.useQuery(undefined, {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
+  const faviconPath = config?.faviconPath;
   return (
     <>
+      <Head>
+        <link rel="icon" href={faviconPath ? faviconPath : "/favicon.ico"} />
+      </Head>
       {/*<style jsx global>{`*/}
       {/*	:root {*/}
       {/*		--font-sans: ${fontSans.style.fontFamily};*/}
@@ -54,10 +62,12 @@ const MyApp = ({
       <ProSidebarProvider>
         <FlagBagProvider value={flagBag}>
           <SessionProvider session={session}>
-            <Layout>
-              <Component {...pageProps} />
-              <Toaster />
-            </Layout>
+            <ConfigProvider>
+              <Layout>
+                <Component {...pageProps} />
+                <Toaster />
+              </Layout>
+            </ConfigProvider>
           </SessionProvider>
         </FlagBagProvider>
       </ProSidebarProvider>

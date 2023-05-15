@@ -2,17 +2,16 @@ import { ReportControl } from "@/components/affiliates/reports/report-control";
 import { DateColumn } from "@/components/common/data-table/available-column";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
 import {
-  getDateParam,
   getNumberParam,
   useSearchContext,
 } from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
 import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import type { ClicksReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { getDateRange } from "@/components/common/search/search-date-range";
 
 const columnHelper = createColumnHelper<ClicksReportType>();
 const createColumn = (id: keyof ClicksReportType, header: string) =>
@@ -87,9 +86,6 @@ export const ClicksReport = () => {
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
-
-  // const { mutateAsync: reportExport } =
-  //   api.affiliates.exportClicksReport.useMutation();
 
   const handleExport = async (exportType: ExportType) => {
     return Promise.resolve("ok");

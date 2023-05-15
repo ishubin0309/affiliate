@@ -1,17 +1,17 @@
 import { Loading } from "@/components/common/Loading";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 import { PageHeader } from "@/components/common/page/page-header";
 import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { useSearchContext } from "@/components/common/search/search-context";
 import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
 import { GridToggleIcon, TableToggleIcon } from "@/components/icons";
+import { Pagination } from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 import type { MerchantCreativeType } from "@/server/db-types";
 import React from "react";
 import { api } from "../../../utils/api";
 import { CreativeMaterialComponent } from "./CreativeMaterialComponent";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
-import { Pagination } from "@/components/ui/pagination";
-import { cn } from "@/lib/utils";
 
 const renderRow = (item: MerchantCreativeType, gridView: boolean) => {
   const values = [
@@ -46,7 +46,7 @@ export const CreativeMaterial = () => {
   const {
     values: { creative: search, type, category, language, size, promotion },
   } = useSearchContext();
-  const pagination = usePagination();
+  const pagination = usePagination(12);
 
   const [gridView, setGridView] = React.useState(true);
 
@@ -58,25 +58,27 @@ export const CreativeMaterial = () => {
     }
   );
 
-  const { data, isRefetching } = api.affiliates.getMerchantCreative.useQuery(
-    {
-      type: type ? String(type) : undefined,
-      category: category ? Number(category) : undefined,
-      language: language ? Number(language) : undefined,
-      size: size ? String(size) : undefined,
-      promotion: promotion ? Number(promotion) : undefined,
-      search: search ? String(search) : undefined,
-    },
-    { keepPreviousData: true, refetchOnWindowFocus: false }
-  );
+  const { data: creativeReport, isRefetching } =
+    api.affiliates.getMerchantCreative.useQuery(
+      {
+        type: type ? String(type) : undefined,
+        category: category ? Number(category) : undefined,
+        language: language ? Number(language) : undefined,
+        size: size ? String(size) : undefined,
+        promotion: promotion ? Number(promotion) : undefined,
+        search: search ? String(search) : undefined,
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
 
-  console.log(data);
+  console.log("creativeReport*********", creativeReport);
 
   const handleChangeGridView = () => {
     setGridView(!gridView);
   };
 
-  return data ? (
+  return creativeReport ? (
     <div className="w-full">
       <PageHeader
         title="Marketing Tools"
@@ -121,12 +123,15 @@ export const CreativeMaterial = () => {
 
       <div
         className={cn("grid grid-cols-1 gap-4", {
-          "md:grid-cols-2 lg:grid-cols-4": gridView,
+          "md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ": gridView,
         })}
       >
-        {data?.map((item) => renderRow(item, gridView))}
+        {creativeReport.data.map((item) => renderRow(item, gridView))}
       </div>
-      <Pagination pagination={pagination} totalItems={data.length} />
+      <Pagination
+        pagination={pagination}
+        totalItems={creativeReport.pageInfo.totalItems}
+      />
     </div>
   ) : (
     <Loading />
