@@ -86,12 +86,12 @@ const AffiliatesNavbar = ({
                 </span>
               </Link>
 
-              <div className="hidden pl-16 md:block">
+              <div className="hidden pl-16 lg:block">
                 <span className="bg-blueGray-200 inline-flex h-8 w-10 items-center justify-center pr-2.5 text-sm text-white">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="mr-2 h-8 rounded-full bg-primary p-1"
+                    className="mr-2 h-fit rounded-full bg-primary p-1 hover:bg-primary"
                   >
                     <Facebook fill="#FFF" color="#FFF" className="h-5 w-5" />
                   </Button>
@@ -100,7 +100,7 @@ const AffiliatesNavbar = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="mr-2 h-8 rounded-full bg-primary p-1"
+                    className="mr-2 h-fit rounded-full bg-primary p-1 hover:bg-primary"
                   >
                     <Instagram color="#FFF" className="h-5 w-5" />
                   </Button>
@@ -109,7 +109,7 @@ const AffiliatesNavbar = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="mr-2 h-8 rounded-full bg-primary p-1"
+                    className="mr-2 h-fit rounded-full bg-primary p-1 hover:bg-primary"
                   >
                     <Twitter fill="#FFF" color="#FFF" className="h-5 w-5" />
                   </Button>
