@@ -67,6 +67,24 @@ export const CreativeMaterialComponent = ({
     });
   };
 
+  const handleDownload = async () => {
+    const imageUrl = file ? file : "";
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = values[0]?.value
+        ? values[0]?.value + ".jpg"
+        : "creative_image.jpg";
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading image:", error);
+    }
+  };
+
   return (
     <div className="mb-5 rounded-xl bg-white p-4 shadow">
       <div
@@ -81,7 +99,12 @@ export const CreativeMaterialComponent = ({
           <ImageWithFallback src={file} alt={alt} />
           {!imagePlaceHolder && file && (
             <div className="absolute right-0 top-0">
-              <Button variant="primary-outline" className="bg-white" size="rec">
+              <Button
+                variant="primary-outline"
+                className="bg-white"
+                size="rec"
+                onClick={handleDownload}
+              >
                 <Download className="w-4" />
               </Button>
             </div>
