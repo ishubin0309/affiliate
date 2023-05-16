@@ -3,6 +3,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Copy, Download, Image as ImageIcon } from "lucide-react";
 import React from "react";
 import { CreativeMaterialDialogComponent } from "./CreativeMaterialDialogComponent";
+import { saveAs } from "file-saver";
 
 interface Props {
   values: valueProps[];
@@ -69,20 +70,15 @@ export const CreativeMaterialComponent = ({
 
   const handleDownload = async () => {
     const imageUrl = file ? file : "";
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = values[0]?.value
-        ? values[0]?.value + ".jpg"
-        : "creative_image.jpg";
-      link.click();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error downloading image:", error);
-    }
+    fetch(imageUrl)
+      .then((response) => response.blob())
+      .then((blob) =>
+        saveAs(
+          blob,
+          values[0]?.value ? values[0]?.value + ".jpg" : "creative_image.jpg"
+        )
+      )
+      .catch((error) => console.error(error));
   };
 
   return (
