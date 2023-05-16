@@ -72,7 +72,7 @@ export const CreativeMaterialComponent = ({
     const imageUrl = file ? file : "";
     const response = await fetch(imageUrl);
     const blob = await response.blob();
-    await saveAs(
+    saveAs(
       blob,
       values[0]?.value ? values[0]?.value + ".jpg" : "creative_image.jpg"
     );
