@@ -70,15 +70,12 @@ export const CreativeMaterialComponent = ({
 
   const handleDownload = async () => {
     const imageUrl = file ? file : "";
-    fetch(imageUrl)
-      .then((response) => response.blob())
-      .then((blob) =>
-        saveAs(
-          blob,
-          values[0]?.value ? values[0]?.value + ".jpg" : "creative_image.jpg"
-        )
-      )
-      .catch((error) => console.error(error));
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    await saveAs(
+      blob,
+      values[0]?.value ? values[0]?.value + ".jpg" : "creative_image.jpg"
+    );
   };
 
   return (
