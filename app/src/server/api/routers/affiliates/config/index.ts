@@ -1,4 +1,5 @@
 import { Storage } from "@google-cloud/storage";
+import fs from "fs";
 import path from "path";
 export const uploadFile = async (
   keyFilename: string,
@@ -25,35 +26,20 @@ export const uploadFile = async (
       preconditionOpts: { ifGenerationMatch: generationMatchPrecondition },
     };
 
-    // console.log(
-    //   "bucket name,",
-    //   bucketName,
-    //   "local file path ---->",
-    //   generic_filename
-    // );
-
     const localFileName = path.join(
       __dirname,
       `../../../../../src/server/api/routers/affiliates/config/generated/${generic_filename}.${exportType}`
     );
 
-    console.log("local file name ----->", localFileName);
-    // const file_date = new Date().toISOString();
     const response = await storage.bucket(bucketName).upload(localFileName, {
       metadata: {
         cacheControl: "public, max-age=31536000",
       },
       destination: `/${generic_filename}.${exportType}`,
     });
+    fs.unlinkSync(localFileName);
     const public_url: string = response[0].metadata.mediaLink;
-    console.log("respobse ---->", response[0].metadata);
 
-    const publicUrl =
-      "https://storage.googleapis.com/" +
-      bucketName +
-      "/" +
-      `${generic_filename}.${exportType}`;
-    console.log("testing url", publicUrl);
     return public_url;
   } catch (error) {
     console.log(`Error uploading the file:${error}`);

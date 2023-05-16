@@ -14,7 +14,7 @@ export const generateCSVReport = (
   const path_name = path.join(
     __dirname,
     "../../../../../src/server/api/routers/affiliates/config/generated/" +
-      fileName
+    fileName
   );
   fs.writeFile(path_name, csv, function (err) {
     if (err) throw err;

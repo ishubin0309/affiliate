@@ -1,4 +1,3 @@
-import type { OnExport } from "@/components/affiliates/reports/utils";
 import { CSVIcon, ExcelIcon, JSONIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +17,7 @@ interface ExportOption {
 }
 
 interface Props {
-  onExport: OnExport;
+  onExport: (exportType: ExportType) => Promise<string | undefined>;
 }
 
 const exportOptions: { id: ExportType; title: string; icon: any }[] = [
