@@ -1,11 +1,12 @@
 #!/usr/bin/env zx
 
-// service=best-brokers-partners
-// service=freevpnplanet
-// service=fxoro
+// export service=best-brokers-partners
+// export service=freevpnplanet
+// export service=fxoro
 
-// ./deploy-process.mjs --step=create --prod --service=$service
-// ./deploy-process.mjs --step=dns --prod --service=$service
+// ./deploy-process.mjs --step=create --prod
+// ./deploy-process.mjs --step=dns --prod
+// ./deploy-process.mjs --step=secret --prod
 
 // ./deploy-process.mjs --step=secret
 // ./deploy-process.mjs --step=verify --prod
@@ -20,7 +21,14 @@
 
 import { sites } from "./deploy.secrets.mjs";
 
-const { _, step, service, prod: deployProd } = argv;
+const { _, step, service: serviceArg, prod: deployProd } = argv;
+
+const service = serviceArg || process.env.SERVICE;
+
+if (!service) {
+  console.log("Missing service name");
+  process.exit(1);
+}
 
 console.log(`muly:STEP`, { _, step, service });
 
@@ -79,7 +87,10 @@ for (const site of sites) {
     dev.service = `${name}-dev`;
     dev.domain = `${name}.staging.affiliatets.com`;
   }
-  const databaseUrl = `mysql://${user}:${password}@35.204.215.28:3306/${db}`;
+  const databaseUrl = `mysql://${user}:${encodeURIComponent(password).replace(
+    "@",
+    "%40"
+  )}@35.204.215.28:3306/${db}`;
   const secretName = `${
     deployProd ? "PROD" : "DEV"
   }_${name.toUpperCase()}_DATABASE_URL`;
