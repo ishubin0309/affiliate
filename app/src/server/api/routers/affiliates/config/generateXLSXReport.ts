@@ -1,4 +1,3 @@
-import path from "path";
 import XLSX from "xlsx";
 
 export const generateXLSXReport = (
@@ -7,12 +6,6 @@ export const generateXLSXReport = (
   localFileName: string
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-
-  const path_name = path.join(
-    __dirname,
-    "../../../../../src/server/api/routers/affiliates/config/generated/" +
-      localFileName
-  );
 
   const binaryWS = XLSX.utils.json_to_sheet(rows);
 
@@ -23,5 +16,5 @@ export const generateXLSXReport = (
   XLSX.utils.book_append_sheet(wb, binaryWS, "Fake Report");
 
   // export your excel
-  XLSX.writeFile(wb, path_name);
+  XLSX.writeFile(wb, localFileName);
 };

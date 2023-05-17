@@ -1,12 +1,17 @@
 #!/usr/bin/env zx
 
-// ./deploy-process.mjs --step=vercel-env --prod --service=gamingaffiliates
-// ./deploy-process.mjs --step=create-cr --prod --service=gamingaffiliates
-// ./deploy-process.mjs --step=dns --prod --service=gamingaffiliates
+// export service=best-brokers-partners
+// export service=freevpnplanet
+// export service=fxoro
+
+// ./deploy-process.mjs --step=create --prod
+// ./deploy-process.mjs --step=dns --prod
+// ./deploy-process.mjs --step=secret --prod
 
 // ./deploy-process.mjs --step=secret
 // ./deploy-process.mjs --step=verify --prod
 // ./deploy-process.mjs --step=verify --prod --service=freevpnplanet
+// ./deploy-process.mjs --step=dns --service=freevpnplanet
 // ./deploy-process.mjs --step=create --prod --service=fxoro
 // ./deploy-process.mjs --step=secret --prod --service=fxoro
 // ./deploy-process.mjs --step=dns --prod --service=fxoro
@@ -14,9 +19,16 @@
 // ./deploy-process.mjs --step=secret --prod
 // ./deploy-process.mjs --step=secret
 
-import { envTemplate, sites } from "./deploy.secrets.mjs";
+import { sites } from "./deploy.secrets.mjs";
 
-const { _, step, service, prod: deployProd } = argv;
+const { _, step, service: serviceArg, prod: deployProd } = argv;
+
+const service = serviceArg || process.env.SERVICE;
+
+if (!service) {
+  console.log("Missing service name");
+  process.exit(1);
+}
 
 console.log(`muly:STEP`, { _, step, service });
 
@@ -70,13 +82,15 @@ for (const site of sites) {
       continue;
     }
     prod.service = `${name}-prod`;
-    prod.cr_domain = `${name}.backend.affiliatets.com`;
   }
   if (!deployProd) {
     dev.service = `${name}-dev`;
-    dev.cr_domain = `${name}.stg-backend.affiliatets.com`;
+    dev.domain = `${name}.staging.affiliatets.com`;
   }
-  const databaseUrl = `mysql://${user}:${password}@35.204.215.28:3306/${db}`;
+  const databaseUrl = `mysql://${user}:${encodeURIComponent(password).replace(
+    "@",
+    "%40"
+  )}@35.204.215.28:3306/${db}`;
   const secretName = `${
     deployProd ? "PROD" : "DEV"
   }_${name.toUpperCase()}_DATABASE_URL`;
@@ -92,7 +106,7 @@ for (const site of sites) {
     await updateGcpSecret(secretName, databaseUrl);
   }
 
-  if (step === "create-cr") {
+  if (step === "create") {
     if (deployProd) {
       txt = `
       - id: "deploy_${name}"
@@ -110,7 +124,8 @@ for (const site of sites) {
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
           env_vars: |
-            LEGACY_PHP_URL=${LEGACY_PHP_URL}
+            LEGACY_PHP_URL=https://${LEGACY_PHP_URL}
+            NEXTAUTH_URL=https://${prod.domain}
             NODE_ENV=production
           flags: |
             --allow-unauthenticated
@@ -138,7 +153,8 @@ for (const site of sites) {
             NEXTAUTH_SECRET=DEV_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
           env_vars: |
-            LEGACY_PHP_URL=${LEGACY_PHP_URL}
+            LEGACY_PHP_URL=https://${LEGACY_PHP_URL}
+            NEXTAUTH_URL=https://${dev.domain}
             NODE_ENV=production
           flags: |
             --allow-unauthenticated
@@ -159,7 +175,7 @@ for (const site of sites) {
     console.log(
       `Will open GCP page, select namecheap and verify, copy TXT to deploy.secrets.mjs`
     );
-    await $`gcloud domains verify ${val.cr_domain}`;
+    await $`gcloud domains verify ${val.domain}`;
     // console.log(
     //   `not working need to do it manually. see docs/deploy/new-customer-deploy.md ##Verify domain"
     //
@@ -171,13 +187,9 @@ for (const site of sites) {
   }
 
   if (step === "dns") {
-// TXT: ${val.TXT}
-    console.log(`DOMAIN: ${val.cr_domain}
-CNAME: ghs.googlehosted.com
-
-DOMAIN: ${val.domain}
-CNAME: cname.vercel-dns.com.
-
+    console.log(`DOMAIN: ${val.domain}
+TXT: ${val.TXT}
+CNAME: ghs.googlehosted.com (Make sure to DISABLE proxy)
 `);
   }
 

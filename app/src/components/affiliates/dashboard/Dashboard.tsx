@@ -170,6 +170,8 @@ export const Dashboard = () => {
     }
   );
 
+  console.log("reportsColumns1: " + JSON.stringify(reportsColumns));
+
   const isRefetching =
     isRefetchingData ||
     isRefetchingPerformanceChart ||
@@ -255,7 +257,10 @@ export const Dashboard = () => {
       </PageHeader>
       <div>
         <ColumnSelect
-          columns={allColumns.map((item) => ({ header: item.id }))}
+          columns={allColumns.map((item) => ({
+            header: item.id,
+            label: item.title,
+          }))}
           reportName={"dashStatCols"}
           reportsColumns={reportsColumns}
           selectColumnsMode={selectColumnsMode}
@@ -267,7 +272,7 @@ export const Dashboard = () => {
             allColumns
               .filter(
                 ({ id, title, link }) =>
-                  selectColumnsMode || !reportsColumns.includes(title)
+                  selectColumnsMode || !reportsColumns.includes(id)
               )
               .map(drawDashboardCard)}
         </div>
