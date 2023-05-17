@@ -84,9 +84,20 @@ const clicksReport = async (
     sortOrder,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
-  console.log("from ----------->", from, " to ---------------->", to);
   const offset = getPageOffset(pageParams);
   const uid: string[] = [];
+
+  console.log("clicksReport: Input Parameters", {
+    from,
+    to,
+    unique_id,
+    trader_id,
+    type,
+    pageParams,
+    sortBy,
+    sortOrder,
+  });
+
   let type_filter = {};
 
   if (type === "views") {
@@ -139,6 +150,21 @@ const clicksReport = async (
   // limit " . $start_limit. ", " . $end_limit;
 
   // DONE missing order by and limits
+
+  console.log("clicksReport: Filter and Order Parameters", {
+    type_filter,
+    orderBy,
+    where: {
+      ...type_filter,
+      affiliate_id: affiliate_id,
+      merchant_id: merchant_id,
+      uid: unique_id,
+      rdate: {
+        gte: from,
+        lte: to,
+      },
+    },
+  });
 
   const traficDataFull = await prisma.traffic.findMany({
     orderBy: orderBy,
@@ -216,6 +242,11 @@ const clicksReport = async (
     uid.push(item.uid);
   }
 
+  console.log("clicksReport: Traffic Data", {
+    len: traficDataFull.length,
+    traficDataFull: traficDataFull.slice(0, 10),
+  });
+
   const totalRecords = await prisma.traffic.aggregate({
     _count: {
       id: true,
@@ -232,7 +263,7 @@ const clicksReport = async (
     },
   });
 
-  console.log(`muly:clicksReport:findMany`, {
+  console.log(`clicksReport:findMany`, {
     totalRecords,
     traficDataFull: traficDataFull.length,
     orderBy: orderBy,
@@ -251,6 +282,13 @@ const clicksReport = async (
   });
 
   const ReportTradersDataItems = await getReportTraderData(prisma, from, uid);
+
+  console.log("clicksReport:Report Trader Data (first 10 items)", {
+    ReportTradersDataItems: Object.fromEntries(
+      Object.entries(ReportTradersDataItems).slice(0, 10)
+    ),
+  });
+
   const clickArray = traficDataFull.map((item) => {
     const {
       uid,
