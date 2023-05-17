@@ -92,8 +92,6 @@ export const exportTranslateReportFake = publicProcedure
     const public_url: string | undefined = await exportReportLoop(
       exportType || "csv",
       reportColumns,
-      generic_filename,
-      fake_report,
       async (pageNumber: number, pageSize: number) =>
         translateReportFake(ctx.prisma, {
           ...params,

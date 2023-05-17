@@ -1,12 +1,13 @@
 import fs from "fs";
+import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export const generateJSONReport = (
-  columns: Array<string>,
-  rows: Array<number>,
+  columns: ColumnsType[],
+  data: any[],
   localFileName: string
 ) => {
-  fs.writeFile(localFileName, JSON.stringify(rows), function (err: unknown) {
-    if (err) throw err;
-    console.log("complete");
+  data.forEach((row) => {
+    fs.appendFileSync(localFileName, JSON.stringify(row));
+    fs.appendFileSync(localFileName, "\n");
   });
 };
