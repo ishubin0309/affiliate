@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import JsFileDownloader from "js-file-downloader";
 import { Copy, Download, Image as ImageIcon } from "lucide-react";
 import React from "react";
 import { CreativeMaterialDialogComponent } from "./CreativeMaterialDialogComponent";
-import { saveAs } from "file-saver";
 
 interface Props {
   values: valueProps[];
@@ -70,12 +70,8 @@ export const CreativeMaterialComponent = ({
 
   const handleDownload = async () => {
     const imageUrl = file ? file : "";
-    const response = await fetch(imageUrl);
-    const blob = await response.blob();
-    saveAs(
-      blob,
-      values[0]?.value ? values[0]?.value + ".jpg" : "creative_image.jpg"
-    );
+    const download = new JsFileDownloader({ url: imageUrl, autoStart: false });
+    await download.start();
   };
 
   return (
