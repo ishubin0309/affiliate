@@ -53,6 +53,8 @@ jobs:
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+            GCS_CONFIG_CLIENT_EMAIL=GCS_CONFIG_CLIENT_EMAIL:latest
+            GCS_CONFIG_PRIVATE_KEY=GCS_CONFIG_PRIVATE_KEY:latest
           env_vars: |
             LEGACY_PHP_URL=https://go.gamingaffiliates.co
             NEXTAUTH_URL=https://affiliate.gamingaffiliates.co
@@ -79,6 +81,8 @@ jobs:
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+            GCS_CONFIG_CLIENT_EMAIL=GCS_CONFIG_CLIENT_EMAIL:latest
+            GCS_CONFIG_PRIVATE_KEY=GCS_CONFIG_PRIVATE_KEY:latest
           env_vars: |
             LEGACY_PHP_URL=https://go.best-brokers-partners.com
             NEXTAUTH_URL=https://affiliate.best-brokers-partners.com
@@ -106,6 +110,8 @@ jobs:
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+            GCS_CONFIG_CLIENT_EMAIL=GCS_CONFIG_CLIENT_EMAIL:latest
+            GCS_CONFIG_PRIVATE_KEY=GCS_CONFIG_PRIVATE_KEY:latest
           env_vars: |
             LEGACY_PHP_URL=https://affiliate.freevpnplanet.com
             NEXTAUTH_URL=https://go.freevpnplanet.com
@@ -132,6 +138,8 @@ jobs:
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+            GCS_CONFIG_CLIENT_EMAIL=GCS_CONFIG_CLIENT_EMAIL:latest
+            GCS_CONFIG_PRIVATE_KEY=GCS_CONFIG_PRIVATE_KEY:latest
           env_vars: |
             NEXTAUTH_URL=https://partners.bi-winning.org
             NODE_ENV=production
@@ -157,6 +165,8 @@ jobs:
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+            GCS_CONFIG_CLIENT_EMAIL=GCS_CONFIG_CLIENT_EMAIL:latest
+            GCS_CONFIG_PRIVATE_KEY=GCS_CONFIG_PRIVATE_KEY:latest
           env_vars: |
             NEXTAUTH_URL=https://partners.fivestars-markets.com
             NODE_ENV=production
@@ -182,6 +192,8 @@ jobs:
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+            GCS_CONFIG_CLIENT_EMAIL=GCS_CONFIG_CLIENT_EMAIL:latest
+            GCS_CONFIG_PRIVATE_KEY=GCS_CONFIG_PRIVATE_KEY:latest
           env_vars: |
             NEXTAUTH_URL=https://partners.focusoption.com
             NODE_ENV=production
@@ -207,6 +219,8 @@ jobs:
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+            GCS_CONFIG_CLIENT_EMAIL=GCS_CONFIG_CLIENT_EMAIL:latest
+            GCS_CONFIG_PRIVATE_KEY=GCS_CONFIG_PRIVATE_KEY:latest
           env_vars: |
             LEGACY_PHP_URL=https://partners.fxoro.com
             NEXTAUTH_URL=https://go.fxoro.com

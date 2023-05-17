@@ -31,7 +31,9 @@ jobs:
           echo 'LEGACY_PHP_ACCESS_TOKEN="fake"' >> app/.env
           echo 'SENTRY_IGNORE_API_RESOLUTION_ERROR=1' >> app/.env
           echo 'NEXT_PUBLIC_FLAGS_ENV_KEY=flags' >> app/.env
-          echo 'SENDGRID_API_KEY=SENDGRID_API_KEY=key' >> app/.env
+          echo 'SENDGRID_API_KEY=key' >> app/.env
+          echo 'GCS_CONFIG_CLIENT_EMAIL=client_email' >> app/.env
+          echo 'GCS_CONFIG_PRIVATE_KEY=private_key' >> app/.env
         shell: bash
 
       - id: yarn_confirm
