@@ -10,6 +10,7 @@
 // ./deploy-process.mjs --step=secret
 // ./deploy-process.mjs --step=verify --prod
 // ./deploy-process.mjs --step=verify --prod --service=freevpnplanet
+// ./deploy-process.mjs --step=dns --service=freevpnplanet
 // ./deploy-process.mjs --step=create --prod --service=fxoro
 // ./deploy-process.mjs --step=secret --prod --service=fxoro
 // ./deploy-process.mjs --step=dns --prod --service=fxoro
@@ -112,7 +113,7 @@ for (const site of sites) {
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
           env_vars: |
-            LEGACY_PHP_URL=${LEGACY_PHP_URL}
+            LEGACY_PHP_URL=https://${LEGACY_PHP_URL}
             NEXTAUTH_URL=https://${prod.domain}
             NODE_ENV=production
           flags: |
@@ -141,7 +142,7 @@ for (const site of sites) {
             NEXTAUTH_SECRET=DEV_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
           env_vars: |
-            LEGACY_PHP_URL=${LEGACY_PHP_URL}
+            LEGACY_PHP_URL=https://${LEGACY_PHP_URL}
             NEXTAUTH_URL=https://${dev.domain}
             NODE_ENV=production
           flags: |
@@ -177,7 +178,7 @@ for (const site of sites) {
   if (step === "dns") {
     console.log(`DOMAIN: ${val.domain}
 TXT: ${val.TXT}
-CNAME: ghs.googlehosted.com
+CNAME: ghs.googlehosted.com (Make sure to DISABLE proxy)
 `);
   }
 
