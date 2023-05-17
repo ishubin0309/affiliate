@@ -18,7 +18,7 @@ import { formatISO } from "date-fns";
 import path from "path";
 import paginator from "prisma-paginate";
 import { z } from "zod";
-import { uploadFile } from "../config";
+// import { uploadFile } from "../config";
 
 const QuickReportSummaryResultSchema = z.object({
   data: z.array(QuickReportSummarySchema),
@@ -151,36 +151,38 @@ export const exportQuickSummaryReport = publicProcedure
       "Active Trader",
       "Commission",
     ];
-    const file_date = new Date().toISOString();
-    const generic_filename = `quick-summary${file_date}`;
+    // const file_date = new Date().toISOString();
+    // const generic_filename = `quick-summary${file_date}`;
+    //
+    // console.log("export type ---->", exportType);
+    // const quick_summary = "quick-summary";
+    //
+    // await exportReportLoop(
+    //   exportType || "csv",
+    //   columns,
+    //   generic_filename,
+    //   quick_summary,
+    //   async (pageNumber, pageSize) =>
+    //     quickReportSummary(ctx.prisma, {
+    //       ...params,
+    //       pageParams: { pageNumber, pageSize },
+    //     })
+    // );
+    //
+    // const bucketName = "reports-download-tmp";
+    // const serviceKey = path.join(
+    //   __dirname,
+    //   "../../../../../api-front-dashbord-a4ee8aec074c.json"
+    // );
+    //
+    // const public_url = uploadFile(
+    //   serviceKey,
+    //   "api-front-dashbord",
+    //   bucketName,
+    //   generic_filename,
+    //   exportType ? exportType : "json"
+    // );
+    // return public_url;
 
-    console.log("export type ---->", exportType);
-    const quick_summary = "quick-summary";
-
-    await exportReportLoop(
-      exportType || "csv",
-      columns,
-      generic_filename,
-      quick_summary,
-      async (pageNumber, pageSize) =>
-        quickReportSummary(ctx.prisma, {
-          ...params,
-          pageParams: { pageNumber, pageSize },
-        })
-    );
-
-    const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
-
-    const public_url = uploadFile(
-      serviceKey,
-      "api-front-dashbord",
-      bucketName,
-      generic_filename,
-      exportType ? exportType : "json"
-    );
-    return public_url;
+    return Promise.resolve("");
   });
