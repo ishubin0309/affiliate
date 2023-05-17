@@ -1,7 +1,7 @@
 import { Parser } from "json2csv";
 
 import type { Writable } from "stream";
-import { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export const generateCSVReport = (
   columns: ColumnsType[],

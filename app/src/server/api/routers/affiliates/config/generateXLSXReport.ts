@@ -1,7 +1,7 @@
 import path from "path";
 import type { Writable } from "stream";
 import XLSX from "xlsx";
-import { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export const generateXLSXReport = (
   columns: Array<ColumnsType>,
