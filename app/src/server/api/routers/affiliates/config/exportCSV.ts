@@ -1,13 +1,18 @@
 import fs from "fs";
 import { Parser } from "json2csv";
+import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export const generateCSVReport = (
-  header: Array<string>,
-  data: Array<number>,
+  columns: ColumnsType[],
+  data: any[],
   fileName: string
 ) => {
-  const opts = { header: true, excelString: true };
-  const parser = new Parser(opts);
+  const parser = new Parser({
+    fields: columns.map(({ header, accessorKey }) => ({
+      label: header,
+      value: accessorKey,
+    })),
+  });
   const csv = parser.parse(data);
 
   fs.writeFile(fileName, csv, function (err) {

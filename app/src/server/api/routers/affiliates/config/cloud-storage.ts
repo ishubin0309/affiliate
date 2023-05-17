@@ -38,3 +38,21 @@ export const uploadFile = async (
     console.log(`Error uploading the file:${error}`);
   }
 };
+
+export async function uploadCsvToGcs(
+  bucketName: string,
+  filePath: string,
+  csvData: any
+) {
+  const storage = new Storage();
+  const bucket = storage.bucket(bucketName);
+  const file = bucket.file(filePath);
+
+  await file.save(csvData, {
+    contentType: "text/csv",
+    resumable: false,
+    validation: "crc32c",
+  });
+
+  console.log(`File ${filePath} uploaded to ${bucketName}.`);
+}

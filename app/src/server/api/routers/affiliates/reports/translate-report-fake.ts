@@ -1,11 +1,12 @@
 import {
+  PageParamsSchema,
+  SortingParamSchema,
   exportReportLoop,
   exportType,
   getPageOffset,
   getSortingInfo,
   pageInfo,
-  PageParamsSchema,
-  SortingParamSchema,
+  reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { publicProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
@@ -79,26 +80,9 @@ export const getTranslateReportFake = publicProcedure
   .query(({ ctx, input }) => translateReportFake(ctx.prisma, input));
 
 export const exportTranslateReportFake = publicProcedure
-  .input(Input.extend({ exportType }))
-  .mutation(async ({ ctx, input }) => {
-    const { exportType, ...params } = input;
-
-    const columns = [
-      "id",
-      "rdate",
-      "source",
-      "langENG",
-      "langRUS",
-      "langGER",
-      "langFRA",
-      "langITA",
-      "langESP",
-      "langHEB",
-      "langARA",
-      "langCHI",
-      "langPOR",
-      "langJAP",
-    ];
+  .input(Input.extend({ exportType, reportColumns }))
+  .mutation(async function ({ ctx, input }) {
+    const { exportType, reportColumns, ...params } = input;
 
     const file_date = new Date().toISOString();
     const fake_report = "fake-translate-report";
@@ -107,9 +91,7 @@ export const exportTranslateReportFake = publicProcedure
     // console.log("export type ---->", exportType);
     const public_url: string | undefined = await exportReportLoop(
       exportType || "csv",
-      columns,
-      generic_filename,
-      fake_report,
+      reportColumns,
       async (pageNumber: number, pageSize: number) =>
         translateReportFake(ctx.prisma, {
           ...params,
