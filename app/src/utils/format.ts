@@ -1,5 +1,3 @@
-import type { ColumnSort } from "@tanstack/react-table";
-
 export const valueFormat = {
   CURRENCY: "currency",
   NUMBER: "number",

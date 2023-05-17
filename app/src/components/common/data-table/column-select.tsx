@@ -8,10 +8,14 @@ import { SaveIcon } from "lucide-react";
 import React, { useRef, useState } from "react";
 export type SelectedColumnList = Record<string, boolean>;
 
+type ExtendedColumnDef<T, U> = ColumnDef<T, U> & {
+  label?: string;
+};
+
 interface Props<Data extends object> {
   reportsColumns?: string[];
   reportName: string;
-  columns: ColumnDef<any, any>[];
+  columns: ExtendedColumnDef<any, any>[];
   selectColumnsMode: SelectedColumnList | null;
   setSelectColumnsMode: (selectedStatus: SelectedColumnList | null) => void;
   btnText?: string;
@@ -107,7 +111,7 @@ export const ColumnSelect = <Data extends object>({
                   htmlFor={name}
                   className="cursor-pointer whitespace-nowrap text-sm font-medium leading-none"
                 >
-                  {name}
+                  {item?.label ? item.label : name}
                 </label>
               </div>
             </div>
