@@ -1,168 +1,143 @@
 //
 
-import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import {
+  getNumberParam,
+  useSearchContext,
+} from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
+import { SearchSelect } from "@/components/common/search/search-select";
+import { SearchText } from "@/components/common/search/search-text";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import { QuerySelect } from "../../../components/common/QuerySelect";
-import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { CreativeReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { DateRangeSelect } from "../../common/DateRangeSelect";
-import { Loading } from "../../common/Loading";
-import { useDateRange } from "@/components/ui/date-range";
+import { ReportControl } from "./report-control";
 
 export const CreativeReport = () => {
   const router = useRouter();
-  const { merchant_id } = router.query;
-  const { from, to } = useDateRange();
-  const [traderID, setTraderID] = useState<string>("");
+  const {
+    values: { merchant_id, dates, trader_id, unique_id, type },
+  } = useSearchContext();
+  const pagination = usePagination();
   const { currentPage, itemsPerPage } = router.query;
+  const { name, ...dateRange } = getDateRange(dates);
 
-  // const { data, isLoading } = api.affiliates.getCreativeReport.useQuery({
-  //   from,
-  //   to,
-  //   pageParams: {
-  //     pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
-  //     pageNumber: currentPage ? Number(currentPage) : 1,
-  //   },
-  // });
-  // const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
-  // const columnHelper = createColumnHelper<CreativeReportType>();
-  //
-  // console.log("Install render", {
-  //   data,
-  //   merchants,
-  //   isLoading,
-  //   from,
-  //   to,
-  //   merchant_id,
-  // });
-  //
-  // if (isLoading) {
-  //   return <Loading />;
-  // }
-  //
-  // const divCol = (
-  //   val: number | null | undefined,
-  //   div: number | null | undefined
-  // ) => {
-  //   return val ? (
-  //     <span>{((val / (div || 1)) * 100).toFixed(2)}%</span>
-  //   ) : (
-  //     <span></span>
-  //   );
-  // };
-  //
-  // const columns = [
-  //   columnHelper.accessor("banner_id", {
-  //     cell: (info) => info.getValue() as number,
-  //     header: "Creative ID",
-  //   }),
-  //   columnHelper.accessor("title", {
-  //     cell: (info) => info.getValue() as string,
-  //     header: "Creative Name",
-  //   }),
-  //   columnHelper.accessor("name", {
-  //     cell: (info) => info.getValue() as string,
-  //     header: "Merchant",
-  //   }),
-  //   columnHelper.accessor("type", {
-  //     cell: (info) => info.getValue() as string,
-  //     header: "Type",
-  //   }),
-  //   columnHelper.accessor("totalViews", {
-  //     cell: (info) => info.getValue() as string,
-  //     header: "Impressions",
-  //   }),
-  //   columnHelper.accessor("totalClicks", {
-  //     cell: (info) => info.getValue() as string,
-  //     header: "Clicks",
-  //   }),
-  //   columnHelper.accessor("cpi_amount", {
-  //     cell: (info) => info.getValue() as number,
-  //     header: "Installation",
-  //   }),
-  //   columnHelper.accessor("ctr" as any, {
-  //     cell: ({ row }) =>
-  //       divCol(row?.original?.totalClicks, row.original.totalViews),
-  //     header: "Click Through Ratio (CTR)",
-  //   }),
-  //   columnHelper.accessor("click-to-account" as any, {
-  //     cell: ({ row }) =>
-  //       divCol(row?.original?.total_real, row.original.totalClicks),
-  //     header: "Click to Account",
-  //   }),
-  //   columnHelper.accessor("click-to-sale" as any, {
-  //     cell: ({ row }) => divCol(row?.original?.ftd, row.original.totalClicks),
-  //     header: "Click to Sale",
-  //   }),
-  //   columnHelper.accessor("leads", {
-  //     cell: (info) => info.getValue() as number,
-  //     header: "Leads",
-  //   }),
-  //   columnHelper.accessor("demo", {
-  //     cell: (info) => info.getValue() as string,
-  //     header: "Demo",
-  //   }),
-  //   columnHelper.accessor("accounts", {
-  //     cell: (info) => info.getValue() as string,
-  //     header: "Accounts",
-  //   }),
-  //   columnHelper.accessor("ftd", {
-  //     cell: (info) => info.getValue() as string,
-  //     header: "FTD",
-  //   }),
-  //   columnHelper.accessor("volume", {
-  //     cell: (info) => info.getValue() as string,
-  //     header: "Volume",
-  //   }),
-  //   columnHelper.accessor("withdrawal", {
-  //     cell: (info) => info.getValue() as string,
-  //     header: "Withdrawal Amount",
-  //   }),
-  //   columnHelper.accessor("chargeback", {
-  //     cell: (info) => info.getValue() as string,
-  //     header: "ChargeBack Amount",
-  //   }),
-  // ];
-  //
-  // return (
-  //   <>
-  //     <Grid
-  //       templateColumns="repeat(4, 1fr)"
-  //       gap={6}
-  //       alignContent={"center"}
-  //       width="90%"
-  //       alignItems={"center"}
-  //       alignSelf="center"
-  //     >
-  //       <GridItem>
-  //         <QuerySelect
-  //           label="Merchant"
-  //           choices={merchants}
-  //           varName="merchant_id"
-  //         />
-  //       </GridItem>
-  //       <GridItem>
-  //         <FormLabel>Trader ID</FormLabel>
-  //         <Input
-  //           value={traderID}
-  //           onChange={(event) => setTraderID(event.target.value)}
-  //         />
-  //       </GridItem>
-  //     </Grid>
-  //     <h2>Creative Report</h2>
-  //     <Grid
-  //       alignContent={"center"}
-  //       alignItems={"center"}
-  //       width="100%"
-  //       alignSelf="center"
-  //     >
-  //       <DataTable data={data} columns={columns} footerData={[]} />
-  //     </Grid>
-  //   </>
-  // );
+  const { data, isRefetching } = api.affiliates.getCreativeReport.useQuery({
+    ...dateRange,
+    type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
+    merchant_id: getNumberParam(merchant_id),
+    trader_id,
+    unique_id,
+    pageParams: pagination.pageParams,
+  });
+  const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
+  const columnHelper = createColumnHelper<CreativeReportType>();
 
-  return null;
+  console.log("Install render", {
+    data,
+    merchants,
+    merchant_id,
+  });
+
+  const divCol = (
+    val: number | null | undefined,
+    div: number | null | undefined
+  ) => {
+    return val ? (
+      <span>{((val / (div || 1)) * 100).toFixed(2)}%</span>
+    ) : (
+      <span></span>
+    );
+  };
+
+  const createColumn = (id: keyof CreativeReportType, header: string) =>
+    columnHelper.accessor(id, {
+      cell: (info) => info.getValue(),
+      header,
+    });
+
+  const columns = [
+    createColumn("banner_id", "Creative ID"),
+    createColumn("title", "Creative Name"),
+    createColumn("merchant_name", "Merchant"),
+    createColumn("type", "Type"),
+    createColumn("views", "Impressions"),
+    createColumn("clicks", "Clicks"),
+    createColumn("totalCPI", "Installation"),
+    columnHelper.accessor("ctr" as any, {
+      cell: ({ row }) => divCol(row?.original?.clicks, row.original.views),
+      header: "Click Through Ratio (CTR)",
+    }),
+    columnHelper.accessor("click-to-account" as any, {
+      cell: ({ row }) => divCol(row?.original?.real, row.original.clicks),
+      header: "Click to Account",
+    }),
+    columnHelper.accessor("click-to-sale" as any, {
+      cell: ({ row }) => divCol(row?.original?.ftd, row.original.clicks),
+      header: "Click to Sale",
+    }),
+    createColumn("leads", "Leads"),
+    createColumn("demo", "Demo"),
+    createColumn("accounts", "Accounts"),
+    createColumn("ftd", "FTD"),
+    createColumn("volume", "Volume"),
+    createColumn("withdrawal", "Withdrawal Amount"),
+    createColumn("chargeback", "ChargeBack Amount"),
+  ];
+
+  const typeOptions = [
+    {
+      id: "image",
+      title: "Image",
+    },
+    {
+      id: "mobileleader",
+      title: "Mobile Leader",
+    },
+    {
+      id: "mobilesplash",
+      title: "Mobile Splash",
+    },
+    {
+      id: "flash",
+      title: "Flash",
+    },
+    {
+      id: "widget",
+      title: "Widget",
+    },
+    {
+      id: "link",
+      title: "Text Link",
+    },
+    {
+      id: "mail",
+      title: "Email",
+    },
+    {
+      id: "coupon",
+      title: "Coupon",
+    },
+  ];
+
+  return (
+    <ReportControl
+      reportName="Creative Report"
+      report={data}
+      columns={columns}
+      pagination={pagination}
+      isRefetching={isRefetching}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
+    >
+      <SearchSelect
+        label="Merchant"
+        choices={merchants}
+        varName="merchant_id"
+      />
+      <SearchText varName="unique_id" label="Unique ID" />
+      <SearchText varName="trader_id" label="Trader ID" />
+      <SearchSelect varName="type" label={"Type"} choices={typeOptions} />
+    </ReportControl>
+  );
 };

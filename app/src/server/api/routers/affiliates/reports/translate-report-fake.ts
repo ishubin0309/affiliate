@@ -96,7 +96,7 @@ export const exportTranslateReportFake = publicProcedure
       __dirname,
       "../../../../../api-front-dashbord-a4ee8aec074c.json"
     );
-    const url = await exportReportLoop(
+    const url: string = await exportReportLoop(
       "api-front-dashbord",
       serviceKey,
       exportType || "csv",
@@ -109,6 +109,7 @@ export const exportTranslateReportFake = publicProcedure
         })
     );
 
+    console.log("checking timeout----");
     // console.log("url ------>", url);
     // const public_url = uploadFile(
     //   serviceKey,

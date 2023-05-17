@@ -1,7 +1,7 @@
 import { Parser } from "json2csv";
 
+import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import type { Writable } from "stream";
-import { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export const generateCSVReport = (
   columns: ColumnsType[],
@@ -17,5 +17,13 @@ export const generateCSVReport = (
   });
   const csv = parser.parse(data);
 
-  writeStream.write(csv);
+  writeStream.on("error", (err) => {
+    console.error(err);
+  });
+
+  writeStream.on("finish", () => {
+    console.log(`File  uploaded.`);
+  });
+
+  writeStream.end(csv);
 };

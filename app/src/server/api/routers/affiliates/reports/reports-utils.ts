@@ -97,7 +97,11 @@ export const exportReportLoop = async (
   const fileExtension = `.${exportType}`;
 
   const file = bucket.file(`${reportName}${fileExtension}`);
-  const writeStream = file.createWriteStream({ resumable: false });
+  const writeStream = file.createWriteStream({
+    metadata: {
+      contentType: "text/csv",
+    },
+  });
 
   let page = 1;
   const pageSize = 5000;
@@ -110,6 +114,7 @@ export const exportReportLoop = async (
       generateXLSXReport(columns, data, writeStream, "");
     } else if (exportType === "csv") {
       generateCSVReport(columns, data, writeStream, "");
+      await file.makePublic();
     } else {
       generateJSONReport(columns, data, writeStream, "");
     }

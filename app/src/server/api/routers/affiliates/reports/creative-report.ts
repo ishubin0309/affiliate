@@ -442,11 +442,23 @@ const creativeReport = async (
     // });
   }
 
-  const creativeArray = bannersww?.map((item) => {
+  const view_clicks = trafficRow.map((item) => {
+    return {
+      clicks: item?._sum.Clicks,
+      views: item?._sum.Impressions,
+      banner_id: item.BannerID,
+    };
+  });
+
+  // console.log("item ------>", view_clicks);
+
+  const creativeArray = bannersww?.map((item, i) => {
     const { merchant, language, ...resItem } = item;
+
     return {
       ...creativeItems,
       ...resItem,
+      ...view_clicks[i],
       merchant_name: merchant.name,
       language: language.title,
     };

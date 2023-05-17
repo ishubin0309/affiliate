@@ -83,7 +83,7 @@ export const ReportControl = <Data extends object>({
         btnText="Save"
       />
 
-      {report.pageInfo.totalItems > 0 ? (
+      {report?.pageInfo?.totalItems > 0 ? (
         <ReportDataTable
           report={report}
           columns={getColumnsBySetup(columns, reportsColumns)}
