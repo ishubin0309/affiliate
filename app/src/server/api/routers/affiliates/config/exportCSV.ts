@@ -1,21 +1,17 @@
+import fs from "fs";
 import { Parser } from "json2csv";
 
-import type { Writable } from "stream";
-import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
-
 export const generateCSVReport = (
-  columns: ColumnsType[],
-  data: any[],
-  writeStream: Writable,
-  localFileName: string
+  header: Array<string>,
+  data: Array<number>,
+  fileName: string
 ) => {
-  const parser = new Parser({
-    fields: columns.map(({ header, accessorKey }) => ({
-      label: header,
-      value: accessorKey,
-    })),
-  });
+  const opts = { header: true, excelString: true };
+  const parser = new Parser(opts);
   const csv = parser.parse(data);
 
-  writeStream.write(csv);
+  fs.writeFile(fileName, csv, function (err) {
+    if (err) throw err;
+    console.log("file saved");
+  });
 };

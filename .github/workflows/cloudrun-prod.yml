@@ -107,7 +107,7 @@ jobs:
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
           env_vars: |
-            LEGACY_PHP_URL=affiliate.freevpnplanet.com
+            LEGACY_PHP_URL=https://affiliate.freevpnplanet.com
             NEXTAUTH_URL=https://go.freevpnplanet.com
             NODE_ENV=production
           flags: |
@@ -208,7 +208,7 @@ jobs:
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
           env_vars: |
-            LEGACY_PHP_URL=partners.fxoro.com
+            LEGACY_PHP_URL=https://partners.fxoro.com
             NEXTAUTH_URL=https://go.fxoro.com
             NODE_ENV=production
           flags: |

@@ -15,7 +15,6 @@ import type { PrismaClient } from "@prisma/client";
 import path from "path";
 import { z } from "zod";
 import { trafficModel } from "../../../../../../prisma/zod";
-import { uploadFile } from "../config";
 import { affiliate_id, merchant_id } from "../const";
 
 const Input = z.object({
@@ -93,7 +92,7 @@ const clicksReport = async (
   if (type === "views") {
     type_filter = {
       views: {
-        gte: 0,
+        gt: 0,
       },
     };
   } else if (type === "clicks") {
@@ -141,7 +140,6 @@ const clicksReport = async (
 
   // DONE missing order by and limits
 
-  console.log("traffic data ----->", type_filter);
   const traficDataFull = await prisma.traffic.findMany({
     orderBy: orderBy,
     skip: offset,
@@ -326,37 +324,37 @@ export const exportClicksReport = publicProcedure
       "Active Traders",
     ];
 
-    const file_date = new Date().toISOString();
-    const generic_filename = `clicks-report${file_date}`;
-
-    console.log("export type ---->", exportType);
-    const clicks_report = "clicks-report";
-
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
-    await exportReportLoop(
-      "api-front-dashbord",
-      serviceKey,
-      exportType || "csv",
-      columns,
-      clicks_report,
-      async (pageNumber, pageSize) =>
-        clicksReport(ctx.prisma, {
-          ...params,
-          pageParams: { pageNumber, pageSize },
-        })
-    );
-
-    const bucketName = "reports-download-tmp";
-
-    const public_url = uploadFile(
-      serviceKey,
-      "api-front-dashbord",
-      bucketName,
-      generic_filename,
-      exportType ? exportType : "json"
-    );
-    return public_url;
+    // const file_date = new Date().toISOString();
+    // const generic_filename = `clicks-report${file_date}`;
+    //
+    // console.log("export type ---->", exportType);
+    // const clicks_report = "clicks-report";
+    //
+    // await exportReportLoop(
+    //   exportType || "csv",
+    //   columns,
+    //   generic_filename,
+    //   clicks_report,
+    //   async (pageNumber, pageSize) =>
+    //     clicksReport(ctx.prisma, {
+    //       ...params,
+    //       pageParams: { pageNumber, pageSize },
+    //     })
+    // );
+    //
+    // const bucketName = "reports-download-tmp";
+    // const serviceKey = path.join(
+    //   __dirname,
+    //   "../../../../../api-front-dashbord-a4ee8aec074c.json"
+    // );
+    //
+    // const public_url = uploadFile(
+    //   serviceKey,
+    //   "api-front-dashbord",
+    //   bucketName,
+    //   generic_filename,
+    //   exportType ? exportType : "json"
+    // );
+    // return public_url;
+    return Promise.resolve("");
   });

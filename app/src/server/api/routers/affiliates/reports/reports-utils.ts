@@ -1,8 +1,9 @@
 import { env } from "@/env.mjs";
-import { Storage } from "@google-cloud/storage";
-import { writeFileSync } from "fs";
-import json2csv from "json2csv";
+import fs, { writeFileSync } from "fs";
+import os from "os";
+import path from "path";
 import { z } from "zod";
+import { uploadFile } from "../config/cloud-storage";
 import { generateCSVReport } from "../config/exportCSV";
 import { generateJSONReport } from "../config/generateJSONReport";
 import { generateXLSXReport } from "../config/generateXLSXReport";
@@ -63,79 +64,80 @@ export const splitToPages = <Row>(data: Row[], pageParams: PageParam) => {
 // Common params for all reports export
 export const exportType = z.enum(["csv", "xlsx", "json"]);
 
-const ReportColumn = z.object({
-  header: z.string().optional(),
-  accessorKey: z.string(),
-});
-
-export const reportColumns = z.array(ReportColumn);
-
 export type ExportType = z.infer<typeof exportType>;
-
-export type ColumnsType = z.infer<typeof ReportColumn>;
 
 // Generic function to export data in csv, xlsx, json format
 // Can be used for all reports
-
 export const exportReportLoop = async (
-  GCP_PROJECT_ID: string,
-  GCP_KEY_FILE_PATH: string,
   exportType: ExportType,
-  columns: ColumnsType[],
-  reportName: string,
-  getPage: (page: number, pageSize: number) => Promise<PageResult>
-): Promise<string> => {
-  const storage = new Storage({
-    projectId: GCP_PROJECT_ID,
-    keyFilename: GCP_KEY_FILE_PATH,
-  });
-  console.log("GCP_PROJECT_ID", GCP_PROJECT_ID);
-  console.log("GCP_KEY_FILE_PATH", GCP_KEY_FILE_PATH);
-
-  const bucketName = "reports-download-tmp";
-  const bucket = storage.bucket(bucketName);
-  const fileExtension = `.${exportType}`;
-
-  const file = bucket.file(`${reportName}${fileExtension}`);
-  const writeStream = file.createWriteStream({ resumable: false });
-
+  columns: string[], // TODO: define better type, see what is needed for export
+  generic_filename: string,
+  report_type: string,
+  getPage: (page: number, items_per_page: number) => Promise<PageResult>
+) => {
   let page = 1;
-  const pageSize = 5000;
+  const items_per_page = 5000;
   let hasMoreData = true;
+  const tmpDir = os.tmpdir();
+  if (!fs.existsSync(tmpDir)) {
+    fs.mkdirSync(tmpDir);
+  }
+  const tmpFile = path.join(tmpDir, Date.now().toString());
 
   while (hasMoreData) {
-    const { data, pageInfo } = await getPage(page, pageSize);
+    // console.log("generic file name ------->", page, items_per_page);
+    const { data, pageInfo } = await getPage(page, items_per_page);
+    // TODO: write data to to csv, xlsx, json based on exportType
+
+    // console.log("data ----->", data);
+    // TODO: should not be needed
+    const data_rows = data; // filterData(data, report_type);
 
     if (exportType === "xlsx") {
-      generateXLSXReport(columns, data, writeStream, "");
+      generateXLSXReport(columns, data_rows, tmpFile);
     } else if (exportType === "csv") {
-      generateCSVReport(columns, data, writeStream, "");
+      generateCSVReport(columns, data_rows, tmpFile);
     } else {
-      generateJSONReport(columns, data, writeStream, "");
+      generateJSONReport(columns, data, tmpFile);
     }
 
-    hasMoreData = data.length >= pageSize;
+    hasMoreData = data.length >= items_per_page;
     page++;
   }
+  const bucketName = "reports-download-tmp";
+  const serviceKey = path.join(
+    __dirname,
+    "../../../../../api-front-dashbord-a4ee8aec074c.json"
+  );
 
-  return new Promise((resolve, reject) => {
-    writeStream.on("error", (err) => {
-      reject(err);
-    });
+  const public_url = await uploadFile(
+    serviceKey,
+    "api-front-dashbord",
+    bucketName,
+    tmpFile
+  );
 
-    writeStream.on("finish", () => {
-      const publicUrl = `https://storage.googleapis.com/${bucketName}/${reportName}${fileExtension}`;
-      resolve(publicUrl);
-    });
-  });
+  fs.unlinkSync(tmpFile);
+
+  return public_url;
 };
 
-export function generateCsv(jsonData: any) {
-  const parser = json2csv.parse;
-  const fields = Object.keys(jsonData[0]); // Get the field names from the first object in the array
-  const csvData = parser(jsonData, { fields }); // Convert the JSON data to CSV format
-  return csvData;
-}
+// export const convertArrayOfObjectsToCSV = (arr: object[]) => {
+//   const separator = ",";
+//   const keys = Object.keys(arr[0]);
+//   const csvHeader = keys.join(separator);
+//   const csvRows = arr.map((obj) => {
+//     return keys
+//       .map((key) => {
+//         return obj[key];
+//       })
+//       .join(separator);
+//   });
+//
+//   const filtered_data = [];
+//   filtered_data.push(csvRows.join("\n"));
+//   return filtered_data;
+// };
 
 // export const filterData = (data: any[], report_type: string) => {
 //   const data_rows = [] as number[];

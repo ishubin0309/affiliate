@@ -1,9 +1,10 @@
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import { publicProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
+import type { Simplify } from "@trpc/server";
 import path from "path";
+import paginator from "prisma-paginate";
 import { z } from "zod";
-import { uploadFile } from "../config";
 import {
   exportReportLoop,
   exportType,
@@ -111,36 +112,36 @@ export const exportCommissionReport = publicProcedure
       "Commission",
     ];
 
-    const file_date = new Date().toISOString();
-    const generic_filename = `commission-report${file_date}`;
-
-    console.log("export type ---->", exportType);
-    const commission_report = "commission-report";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
-    await exportReportLoop(
-      "api-front-dashbord",
-      serviceKey,
-      exportType || "csv",
-      columns,
-      commission_report,
-      async (pageNumber, pageSize) =>
-        commissionSummary(ctx.prisma, {
-          ...params,
-          pageParams: { pageNumber, pageSize },
-        })
-    );
-
-    const bucketName = "reports-download-tmp";
-
-    const public_url = uploadFile(
-      serviceKey,
-      "api-front-dashbord",
-      bucketName,
-      generic_filename,
-      exportType ? exportType : "json"
-    );
-    return public_url;
+    // const file_date = new Date().toISOString();
+    // const generic_filename = `commission-report${file_date}`;
+    //
+    // console.log("export type ---->", exportType);
+    // const commission_report = "commission-report";
+    // await exportReportLoop(
+    //   exportType || "csv",
+    //   columns,
+    //   generic_filename,
+    //   commission_report,
+    //   async (pageNumber, pageSize) =>
+    //     commissionSummary(ctx.prisma, {
+    //       ...params,
+    //       pageParams: { pageNumber, pageSize },
+    //     })
+    // );
+    //
+    // const bucketName = "reports-download-tmp";
+    // const serviceKey = path.join(
+    //   __dirname,
+    //   "../../../../../api-front-dashbord-a4ee8aec074c.json"
+    // );
+    //
+    // const public_url = uploadFile(
+    //   serviceKey,
+    //   "api-front-dashbord",
+    //   bucketName,
+    //   generic_filename,
+    //   exportType ? exportType : "json"
+    // );
+    // return public_url;
+    return Promise.resolve("");
   });
