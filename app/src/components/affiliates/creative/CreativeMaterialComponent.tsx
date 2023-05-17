@@ -3,6 +3,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Copy, Download, Image as ImageIcon } from "lucide-react";
 import React from "react";
 import { CreativeMaterialDialogComponent } from "./CreativeMaterialDialogComponent";
+import { saveAs } from "file-saver";
 
 interface Props {
   values: valueProps[];
@@ -67,6 +68,16 @@ export const CreativeMaterialComponent = ({
     });
   };
 
+  const handleDownload = async () => {
+    const imageUrl = file ? file : "";
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    saveAs(
+      blob,
+      values[0]?.value ? values[0]?.value + ".jpg" : "creative_image.jpg"
+    );
+  };
+
   return (
     <div className="mb-5 rounded-xl bg-white p-4 shadow">
       <div
@@ -81,7 +92,12 @@ export const CreativeMaterialComponent = ({
           <ImageWithFallback src={file} alt={alt} />
           {!imagePlaceHolder && file && (
             <div className="absolute right-0 top-0">
-              <Button variant="primary-outline" className="bg-white" size="rec">
+              <Button
+                variant="primary-outline"
+                className="bg-white"
+                size="rec"
+                onClick={handleDownload}
+              >
                 <Download className="w-4" />
               </Button>
             </div>
