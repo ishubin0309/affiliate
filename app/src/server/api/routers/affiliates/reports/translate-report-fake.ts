@@ -10,7 +10,6 @@ import {
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { publicProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
-import path from "path";
 import { z } from "zod";
 import { translateModel } from "../../../../../../prisma/zod";
 
@@ -89,19 +88,10 @@ export const exportTranslateReportFake = publicProcedure
     const fake_report = "fake-translate-report";
     const generic_filename = `${fake_report}${file_date}`;
 
-    console.log("exportType ---->", exportType);
-    console.log("export columns ---->", reportColumns);
-    const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
-    const url: string = await exportReportLoop(
-      "api-front-dashbord",
-      serviceKey,
+    // console.log("export type ---->", exportType);
+    const public_url: string | undefined = await exportReportLoop(
       exportType || "csv",
       reportColumns,
-      fake_report,
       async (pageNumber: number, pageSize: number) =>
         translateReportFake(ctx.prisma, {
           ...params,
@@ -109,14 +99,5 @@ export const exportTranslateReportFake = publicProcedure
         })
     );
 
-    console.log("checking timeout----");
-    // console.log("url ------>", url);
-    // const public_url = uploadFile(
-    //   serviceKey,
-    //   "api-front-dashbord",
-    //   bucketName,
-    //   generic_filename,
-    //   exportType ? exportType : "json"
-    // );
-    return url;
+    return public_url;
   });

@@ -4,39 +4,26 @@ import { env } from "../../../env.mjs";
 import { createTRPCContext } from "../../../server/api/trpc";
 import { appRouter } from "../../../server/api/root";
 import * as Sentry from "@sentry/nextjs";
-import cors from "cors";
-import { createRouter, expressWrapper } from "next-connect";
-import type { NextApiRequest, NextApiResponse } from "next";
-
-const router = createRouter<NextApiRequest, NextApiResponse>();
 
 // export API handler
-router
-  .use(
-    cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"] })
-  )
-  .all(
-    createNextApiHandler({
-      router: appRouter,
-      createContext: createTRPCContext,
-      onError:
-        env.NODE_ENV === "development"
-          ? ({ path, error }) => {
-              console.error(
-                `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
-                error
-              );
-            }
-          : ({ error, type, path, input, ctx, req }) => {
-              console.error(
-                `tRPC failed on ${path ?? "<no-path>"}: ${error.message}`
-              );
+export default createNextApiHandler({
+  router: appRouter,
+  createContext: createTRPCContext,
+  onError:
+    env.NODE_ENV === "development"
+      ? ({ path, error }) => {
+          console.error(
+            `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
+            error
+          );
+        }
+      : ({ error, type, path, input, ctx, req }) => {
+          console.error(
+            `tRPC failed on ${path ?? "<no-path>"}: ${error.message}`
+          );
 
-              const { prisma, ...clean_ctx } = ctx || {};
-              Sentry.setExtras({ path, type, input, clean_ctx });
-              Sentry.captureException(error);
-            },
-    })
-  );
-
-export default router.handler();
+          const { prisma, ...clean_ctx } = ctx || {};
+          Sentry.setExtras({ path, type, input, clean_ctx });
+          Sentry.captureException(error);
+        },
+});

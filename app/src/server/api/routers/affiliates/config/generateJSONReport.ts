@@ -1,23 +1,13 @@
 import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import fs from "fs";
-import path from "path";
-import type { Writable } from "stream";
 
 export const generateJSONReport = (
-  columns: Array<ColumnsType>,
-  rows: Array<number>,
-  writeStream: Writable,
+  columns: ColumnsType[],
+  data: any[],
   localFileName: string
 ) => {
-  const path_name = path.join(
-    __dirname,
-    "../../../../../src/server/api/routers/affiliates/config/generated/" +
-      localFileName
-  );
-  console.log("dir name ----->", __dirname);
-  console.log("path name ----->", path_name);
-  fs.writeFile(path_name, JSON.stringify(rows), function (err: unknown) {
-    if (err) throw err;
-    console.log("complete");
+  data.forEach((row) => {
+    fs.appendFileSync(localFileName, JSON.stringify(row));
+    fs.appendFileSync(localFileName, "\n");
   });
 };

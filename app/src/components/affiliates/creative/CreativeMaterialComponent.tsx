@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import JsFileDownloader from "js-file-downloader";
 import { Copy, Download, Image as ImageIcon } from "lucide-react";
 import React from "react";
 import { CreativeMaterialDialogComponent } from "./CreativeMaterialDialogComponent";
@@ -67,6 +68,12 @@ export const CreativeMaterialComponent = ({
     });
   };
 
+  const handleDownload = async () => {
+    const imageUrl = file ? file : "";
+    const download = new JsFileDownloader({ url: imageUrl, autoStart: false });
+    await download.start();
+  };
+
   return (
     <div className="mb-5 rounded-xl bg-white p-4 shadow">
       <div
@@ -81,7 +88,12 @@ export const CreativeMaterialComponent = ({
           <ImageWithFallback src={file} alt={alt} />
           {!imagePlaceHolder && file && (
             <div className="absolute right-0 top-0">
-              <Button variant="primary-outline" className="bg-white" size="rec">
+              <Button
+                variant="primary-outline"
+                className="bg-white"
+                size="rec"
+                onClick={handleDownload}
+              >
                 <Download className="w-4" />
               </Button>
             </div>

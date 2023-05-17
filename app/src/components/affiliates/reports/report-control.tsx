@@ -63,7 +63,7 @@ export const ReportControl = <Data extends object>({
         }
       >
         <div className="flex flex-row gap-2">
-          <ExportButton onExport={handleExport} />
+          <ExportButton onExport={handleExport} reportName={reportName} />
           <ColumnSelectButton
             columns={columns}
             reportName={reportName}

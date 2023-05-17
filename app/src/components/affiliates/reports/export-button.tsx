@@ -1,4 +1,3 @@
-import type { OnExport } from "@/components/affiliates/reports/utils";
 import { CSVIcon, ExcelIcon, JSONIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +17,8 @@ interface ExportOption {
 }
 
 interface Props {
-  onExport: OnExport;
+  onExport: (exportType: ExportType) => Promise<string | undefined>;
+  reportName: string;
 }
 
 const exportOptions: { id: ExportType; title: string; icon: any }[] = [
@@ -39,17 +39,24 @@ const exportOptions: { id: ExportType; title: string; icon: any }[] = [
   },
 ];
 
-export const ExportButton = ({ onExport }: Props) => {
+export const ExportButton = ({ onExport, reportName }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleExport = async (id: ExportType) => {
     setIsLoading(true);
     try {
       const link = await onExport(id); // selectedValue.id);
+      console.log(`muly:handleExport`, { id, reportName, link });
 
       if (link) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        const download = new JsFileDownloader({ url: link, autoStart: false });
+        const download = new JsFileDownloader({
+          url: link,
+          filename: `${reportName
+            .toLocaleLowerCase()
+            .replaceAll(" ", "-")}.${id}`,
+          autoStart: false,
+        });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         await download.start();
       }

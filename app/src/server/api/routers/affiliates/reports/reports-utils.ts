@@ -1,8 +1,9 @@
 import { env } from "@/env.mjs";
-import { Storage } from "@google-cloud/storage";
-import { writeFileSync } from "fs";
-import json2csv from "json2csv";
+import fs, { writeFileSync } from "fs";
+import os from "os";
+import path from "path";
 import { z } from "zod";
+import { uploadFile } from "../config/cloud-storage";
 import { generateCSVReport } from "../config/exportCSV";
 import { generateJSONReport } from "../config/generateJSONReport";
 import { generateXLSXReport } from "../config/generateXLSXReport";
@@ -76,130 +77,57 @@ export type ColumnsType = z.infer<typeof ReportColumn>;
 
 // Generic function to export data in csv, xlsx, json format
 // Can be used for all reports
-
 export const exportReportLoop = async (
-  GCP_PROJECT_ID: string,
-  GCP_KEY_FILE_PATH: string,
   exportType: ExportType,
   columns: ColumnsType[],
-  reportName: string,
-  getPage: (page: number, pageSize: number) => Promise<PageResult>
-): Promise<string> => {
-  const storage = new Storage({
-    projectId: GCP_PROJECT_ID,
-    keyFilename: GCP_KEY_FILE_PATH,
-  });
-  console.log("GCP_PROJECT_ID", GCP_PROJECT_ID);
-  console.log("GCP_KEY_FILE_PATH", GCP_KEY_FILE_PATH);
-
-  const bucketName = "reports-download-tmp";
-  const bucket = storage.bucket(bucketName);
-  const fileExtension = `.${exportType}`;
-
-  const file = bucket.file(`${reportName}${fileExtension}`);
-  const writeStream = file.createWriteStream({
-    metadata: {
-      contentType: "text/csv",
-    },
-  });
-
+  getPage: (page: number, items_per_page: number) => Promise<PageResult>
+) => {
   let page = 1;
-  const pageSize = 5000;
+  const items_per_page = 5000;
   let hasMoreData = true;
+  const tmpDir = os.tmpdir();
+  if (!fs.existsSync(tmpDir)) {
+    fs.mkdirSync(tmpDir);
+  }
+  const tmpFile = path.join(tmpDir, Date.now().toString());
 
   while (hasMoreData) {
-    const { data, pageInfo } = await getPage(page, pageSize);
+    // console.log("generic file name ------->", page, items_per_page);
+    const { data, pageInfo } = await getPage(page, items_per_page);
+    // TODO: write data to to csv, xlsx, json based on exportType
+
+    // console.log("data ----->", data);
+    // TODO: should not be needed
+    const data_rows = data;
 
     if (exportType === "xlsx") {
-      generateXLSXReport(columns, data, writeStream, "");
+      generateXLSXReport(columns, data_rows, tmpFile);
     } else if (exportType === "csv") {
-      generateCSVReport(columns, data, writeStream, "");
-      await file.makePublic();
+      generateCSVReport(columns, data_rows, tmpFile);
     } else {
-      generateJSONReport(columns, data, writeStream, "");
+      generateJSONReport(columns, data, tmpFile);
     }
 
-    hasMoreData = data.length >= pageSize;
+    hasMoreData = data.length >= items_per_page;
     page++;
   }
+  const bucketName = "reports-download-tmp";
+  const serviceKey = path.join(
+    __dirname,
+    "../../../../../api-front-dashbord-a4ee8aec074c.json"
+  );
 
-  return new Promise((resolve, reject) => {
-    writeStream.on("error", (err) => {
-      reject(err);
-    });
+  const public_url = await uploadFile(
+    serviceKey,
+    "api-front-dashbord",
+    bucketName,
+    tmpFile
+  );
 
-    writeStream.on("finish", () => {
-      const publicUrl = `https://storage.googleapis.com/${bucketName}/${reportName}${fileExtension}`;
-      resolve(publicUrl);
-    });
-  });
+  fs.unlinkSync(tmpFile);
+
+  return public_url;
 };
-
-export function generateCsv(jsonData: any) {
-  const parser = json2csv.parse;
-  const fields = Object.keys(jsonData[0]); // Get the field names from the first object in the array
-  const csvData = parser(jsonData, { fields }); // Convert the JSON data to CSV format
-  return csvData;
-}
-
-// export const filterData = (data: any[], report_type: string) => {
-//   const data_rows = [] as number[];
-//   switch (report_type) {
-//     case "quick-summary":
-//       data.map((item) => {
-//         data_rows.push(
-//           item.Impressions,
-//           item.Clicks,
-//           item.Install,
-//           item.Leads,
-//           item.Demo,
-//           item.RealAccount,
-//           item.FTD,
-//           item.Withdrawal,
-//           item.ChargeBack,
-//           item.ActiveTrader,
-//           item.Commission
-//         );
-//       });
-//       break;
-//     case "commission-report":
-//       data.map((item: CommissionReportType) => {
-//         data_rows.push(
-//           item?.merchant_id,
-//           Number(item?.traderID),
-//           Number(item?.transactionID),
-//           Number(item?.Type),
-//           item?.Amount,
-//           // item?.Country || "",
-//           item?.Commission
-//         );
-//       });
-//     case "install-report":
-//       data.map((item) => {
-//         data_rows.push(
-//           item?.type,
-//           item?.rdate,
-//           item?.trader_id,
-//           item?.trader_alias,
-//           item?.trader_status,
-//           item?.country,
-//           item?.affiliate_id,
-//           item?.username,
-//           item?.merchant_id,
-//           item?.name,
-//           item?.id,
-//           item?.title
-//         );
-//       });
-//     default:
-//       // console.log("data ------>", data?.data);
-//       data?.data?.map((item) => {
-//         data_rows.push(item);
-//       });
-//       break;
-//   }
-//   return data_rows;
-// };
 
 export const debugSaveData = (name: string, data: any) => {
   if (env.NODE_ENV !== "production") {
