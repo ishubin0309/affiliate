@@ -1,6 +1,9 @@
 import { env } from "@/env.mjs";
-import { writeFileSync } from "fs";
+import fs, { writeFileSync } from "fs";
+import os from "os";
+import path from "path";
 import { z } from "zod";
+import { uploadFile } from "../config";
 import { generateCSVReport } from "../config/exportCSV";
 import { generateJSONReport } from "../config/generateJSONReport";
 import { generateXLSXReport } from "../config/generateXLSXReport";
@@ -75,6 +78,16 @@ export const exportReportLoop = async (
   let page = 1;
   const items_per_page = 5000;
   let hasMoreData = true;
+  let tmpDir = os.tmpdir();
+  tmpDir = path.join(
+    __dirname,
+    "../../../../../src/server/api/routers/affiliates/config/" + tmpDir
+  );
+  if (!fs.existsSync(tmpDir)) {
+    fs.mkdirSync(tmpDir);
+  }
+  const tmpFile = path.join(tmpDir, Date.now().toString());
+
   while (hasMoreData) {
     // console.log("generic file name ------->", page, items_per_page);
     const { data, pageInfo } = await getPage(page, items_per_page);
@@ -84,9 +97,9 @@ export const exportReportLoop = async (
     // TODO: should not be needed
     const data_rows = data; // filterData(data, report_type);
 
-    const xlsx_filename = `${generic_filename}.${exportType}`;
-    const csv_filename = `${generic_filename}.${exportType}`;
-    const json_filename = `${generic_filename}.${exportType}`;
+    const xlsx_filename = `${tmpFile}${generic_filename}.${exportType}`;
+    const csv_filename = `${tmpFile}${generic_filename}.${exportType}`;
+    const json_filename = `${tmpFile}${generic_filename}.${exportType}`;
 
     if (exportType === "xlsx") {
       generateXLSXReport(columns, data_rows, xlsx_filename);
@@ -99,6 +112,25 @@ export const exportReportLoop = async (
     hasMoreData = data.length >= items_per_page;
     page++;
   }
+  const bucketName = "reports-download-tmp";
+  const serviceKey = path.join(
+    __dirname,
+    "../../../../../api-front-dashbord-a4ee8aec074c.json"
+  );
+
+  const public_url = await uploadFile(
+    serviceKey,
+    "api-front-dashbord",
+    bucketName,
+    generic_filename,
+    exportType ? exportType : "json",
+    0,
+    tmpFile
+  );
+
+  fs.unlinkSync(`${tmpFile}${generic_filename}.${exportType}`);
+
+  return public_url
 };
 
 // export const convertArrayOfObjectsToCSV = (arr: object[]) => {

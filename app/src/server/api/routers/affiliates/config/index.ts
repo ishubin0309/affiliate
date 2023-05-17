@@ -1,13 +1,12 @@
 import { Storage } from "@google-cloud/storage";
-import fs from "fs";
-import path from "path";
 export const uploadFile = async (
   keyFilename: string,
   projectId: string,
   bucketName: string,
   generic_filename: string,
   exportType: string,
-  generationMatchPrecondition = 0
+  generationMatchPrecondition = 0,
+  tmpFile: string
 ) => {
   try {
     const storage = new Storage({
@@ -26,18 +25,14 @@ export const uploadFile = async (
       preconditionOpts: { ifGenerationMatch: generationMatchPrecondition },
     };
 
-    const localFileName = path.join(
-      __dirname,
-      `../../../../../src/server/api/routers/affiliates/config/generated/${generic_filename}.${exportType}`
-    );
-
+    const localFileName = `${tmpFile}${generic_filename}.${exportType}`;
     const response = await storage.bucket(bucketName).upload(localFileName, {
       metadata: {
         cacheControl: "public, max-age=31536000",
       },
       destination: `/${generic_filename}.${exportType}`,
     });
-    fs.unlinkSync(localFileName);
+
     const public_url: string = response[0].metadata.mediaLink;
 
     return public_url;

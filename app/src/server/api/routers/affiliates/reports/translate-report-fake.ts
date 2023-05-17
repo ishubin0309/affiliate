@@ -9,10 +9,8 @@ import {
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { publicProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
-import path from "path";
 import { z } from "zod";
 import { translateModel } from "../../../../../../prisma/zod";
-import { uploadFile } from "../config";
 
 const Input = z.object({
   from: z.date(),
@@ -107,7 +105,7 @@ export const exportTranslateReportFake = publicProcedure
     const generic_filename = `${fake_report}${file_date}`;
 
     // console.log("export type ---->", exportType);
-    await exportReportLoop(
+    const public_url: string | undefined = await exportReportLoop(
       exportType || "csv",
       columns,
       generic_filename,
@@ -119,18 +117,5 @@ export const exportTranslateReportFake = publicProcedure
         })
     );
 
-    const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
-
-    const public_url = uploadFile(
-      serviceKey,
-      "api-front-dashbord",
-      bucketName,
-      generic_filename,
-      exportType ? exportType : "json"
-    );
     return public_url;
   });
