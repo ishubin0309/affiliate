@@ -1,6 +1,7 @@
 import { ReportControl } from "@/components/affiliates/reports/report-control";
 import { DateColumn } from "@/components/common/data-table/available-column";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 import { useSearchContext } from "@/components/common/search/search-context";
 import { getDateRange } from "@/components/common/search/search-date-range";
 import { SearchText } from "@/components/common/search/search-text";
@@ -10,7 +11,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
 import "react-datepicker/dist/react-datepicker.css";
 import type { TranslateReportFakeType } from "../../../server/db-types";
-import { deserializeSorting } from "@/components/common/data-table/sorting";
+import { getColumns } from "@/components/affiliates/reports/utils";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -38,10 +39,7 @@ const columns = [
   createColumn("langPOR", "Lang POR"),
   createColumn("langJAP", "Lang JAP"),
 ];
-// interface SortType {
-//   id: string;
-//   desc: boolean;
-// }
+
 export const FakeTranslationReport = () => {
   const { t } = useTranslation("affiliate");
   const {
@@ -70,8 +68,14 @@ export const FakeTranslationReport = () => {
       ...dateRange,
       search,
       exportType,
+      reportColumns: getColumns(columns),
     });
-  console.log(`muly:FakeTranslationReport`, { data, pagination, _sorting });
+  console.log(`muly:FakeTranslationReport`, {
+    data,
+    pagination,
+    _sorting,
+    columns,
+  });
 
   return (
     <ReportControl

@@ -64,15 +64,22 @@ export const splitToPages = <Row>(data: Row[], pageParams: PageParam) => {
 // Common params for all reports export
 export const exportType = z.enum(["csv", "xlsx", "json"]);
 
+const ReportColumn = z.object({
+  header: z.string().optional(),
+  accessorKey: z.string(),
+});
+
+export const reportColumns = z.array(ReportColumn);
+
 export type ExportType = z.infer<typeof exportType>;
+
+export type ColumnsType = z.infer<typeof ReportColumn>;
 
 // Generic function to export data in csv, xlsx, json format
 // Can be used for all reports
 export const exportReportLoop = async (
   exportType: ExportType,
-  columns: string[], // TODO: define better type, see what is needed for export
-  generic_filename: string,
-  report_type: string,
+  columns: ColumnsType[],
   getPage: (page: number, items_per_page: number) => Promise<PageResult>
 ) => {
   let page = 1;
@@ -91,7 +98,7 @@ export const exportReportLoop = async (
 
     // console.log("data ----->", data);
     // TODO: should not be needed
-    const data_rows = data; // filterData(data, report_type);
+    const data_rows = data;
 
     if (exportType === "xlsx") {
       generateXLSXReport(columns, data_rows, tmpFile);
@@ -121,82 +128,6 @@ export const exportReportLoop = async (
 
   return public_url;
 };
-
-// export const convertArrayOfObjectsToCSV = (arr: object[]) => {
-//   const separator = ",";
-//   const keys = Object.keys(arr[0]);
-//   const csvHeader = keys.join(separator);
-//   const csvRows = arr.map((obj) => {
-//     return keys
-//       .map((key) => {
-//         return obj[key];
-//       })
-//       .join(separator);
-//   });
-//
-//   const filtered_data = [];
-//   filtered_data.push(csvRows.join("\n"));
-//   return filtered_data;
-// };
-
-// export const filterData = (data: any[], report_type: string) => {
-//   const data_rows = [] as number[];
-//   switch (report_type) {
-//     case "quick-summary":
-//       data.map((item) => {
-//         data_rows.push(
-//           item.Impressions,
-//           item.Clicks,
-//           item.Install,
-//           item.Leads,
-//           item.Demo,
-//           item.RealAccount,
-//           item.FTD,
-//           item.Withdrawal,
-//           item.ChargeBack,
-//           item.ActiveTrader,
-//           item.Commission
-//         );
-//       });
-//       break;
-//     case "commission-report":
-//       data.map((item: CommissionReportType) => {
-//         data_rows.push(
-//           item?.merchant_id,
-//           Number(item?.traderID),
-//           Number(item?.transactionID),
-//           Number(item?.Type),
-//           item?.Amount,
-//           // item?.Country || "",
-//           item?.Commission
-//         );
-//       });
-//     case "install-report":
-//       data.map((item) => {
-//         data_rows.push(
-//           item?.type,
-//           item?.rdate,
-//           item?.trader_id,
-//           item?.trader_alias,
-//           item?.trader_status,
-//           item?.country,
-//           item?.affiliate_id,
-//           item?.username,
-//           item?.merchant_id,
-//           item?.name,
-//           item?.id,
-//           item?.title
-//         );
-//       });
-//     default:
-//       // console.log("data ------>", data?.data);
-//       data?.data?.map((item) => {
-//         data_rows.push(item);
-//       });
-//       break;
-//   }
-//   return data_rows;
-// };
 
 export const debugSaveData = (name: string, data: any) => {
   if (env.NODE_ENV !== "production") {

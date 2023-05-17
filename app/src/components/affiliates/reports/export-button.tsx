@@ -50,7 +50,13 @@ export const ExportButton = ({ onExport, reportName }: Props) => {
 
       if (link) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        const download = new JsFileDownloader({ url: link, filename: reportName.toLocaleLowerCase().replaceAll(" ", "-"), autoStart: false });
+        const download = new JsFileDownloader({
+          url: link,
+          filename: `${reportName
+            .toLocaleLowerCase()
+            .replaceAll(" ", "-")}.${id}`,
+          autoStart: false,
+        });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         await download.start();
       }
