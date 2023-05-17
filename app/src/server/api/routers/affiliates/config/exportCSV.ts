@@ -4,7 +4,7 @@ import { Parser } from "json2csv";
 export const generateCSVReport = (
   header: Array<string>,
   data: Array<number>,
-  fileName: string,
+  fileName: string
 ) => {
   const opts = { header: true, excelString: true };
   const parser = new Parser(opts);

@@ -1,11 +1,10 @@
 import { Storage } from "@google-cloud/storage";
+import path from "path";
+
 export const uploadFile = async (
   keyFilename: string,
   projectId: string,
   bucketName: string,
-  generic_filename: string,
-  exportType: string,
-  generationMatchPrecondition = 0,
   tmpFile: string
 ) => {
   try {
@@ -22,15 +21,14 @@ export const uploadFile = async (
       // object that does not yet exist, set the ifGenerationMatch precondition to 0
       // If the destination object already exists in your bucket, set instead a
       // generation-match precondition using its generation number.
-      preconditionOpts: { ifGenerationMatch: generationMatchPrecondition },
+      preconditionOpts: { ifGenerationMatch: 0 },
     };
 
-    const localFileName = `${tmpFile}${generic_filename}.${exportType}`;
-    const response = await storage.bucket(bucketName).upload(localFileName, {
+    const response = await storage.bucket(bucketName).upload(tmpFile, {
       metadata: {
         cacheControl: "public, max-age=31536000",
       },
-      destination: `/${generic_filename}.${exportType}`,
+      destination: path.basename(tmpFile),
     });
 
     const public_url: string = response[0].metadata.mediaLink;

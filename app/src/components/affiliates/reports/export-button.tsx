@@ -45,6 +45,7 @@ export const ExportButton = ({ onExport }: Props) => {
     setIsLoading(true);
     try {
       const link = await onExport(id); // selectedValue.id);
+      console.log(`muly:handleExport`, { link });
 
       if (link) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call

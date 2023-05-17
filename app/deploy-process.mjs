@@ -171,7 +171,7 @@ for (const site of sites) {
   }
 
   if (step === "dns") {
-// TXT: ${val.TXT}
+    // TXT: ${val.TXT}
     console.log(`DOMAIN: ${val.cr_domain}
 CNAME: ghs.googlehosted.com
 

@@ -3,7 +3,7 @@ import fs, { writeFileSync } from "fs";
 import os from "os";
 import path from "path";
 import { z } from "zod";
-import { uploadFile } from "../config";
+import { uploadFile } from "../config/cloud-storage";
 import { generateCSVReport } from "../config/exportCSV";
 import { generateJSONReport } from "../config/generateJSONReport";
 import { generateXLSXReport } from "../config/generateXLSXReport";
@@ -78,11 +78,7 @@ export const exportReportLoop = async (
   let page = 1;
   const items_per_page = 5000;
   let hasMoreData = true;
-  let tmpDir = os.tmpdir();
-  tmpDir = path.join(
-    __dirname,
-    "../../../../../src/server/api/routers/affiliates/config/" + tmpDir
-  );
+  const tmpDir = os.tmpdir();
   if (!fs.existsSync(tmpDir)) {
     fs.mkdirSync(tmpDir);
   }
@@ -97,16 +93,12 @@ export const exportReportLoop = async (
     // TODO: should not be needed
     const data_rows = data; // filterData(data, report_type);
 
-    const xlsx_filename = `${tmpFile}${generic_filename}.${exportType}`;
-    const csv_filename = `${tmpFile}${generic_filename}.${exportType}`;
-    const json_filename = `${tmpFile}${generic_filename}.${exportType}`;
-
     if (exportType === "xlsx") {
-      generateXLSXReport(columns, data_rows, xlsx_filename);
+      generateXLSXReport(columns, data_rows, tmpFile);
     } else if (exportType === "csv") {
-      generateCSVReport(columns, data_rows, csv_filename);
+      generateCSVReport(columns, data_rows, tmpFile);
     } else {
-      generateJSONReport(columns, data, json_filename);
+      generateJSONReport(columns, data, tmpFile);
     }
 
     hasMoreData = data.length >= items_per_page;
@@ -122,15 +114,12 @@ export const exportReportLoop = async (
     serviceKey,
     "api-front-dashbord",
     bucketName,
-    generic_filename,
-    exportType ? exportType : "json",
-    0,
     tmpFile
   );
 
-  fs.unlinkSync(`${tmpFile}${generic_filename}.${exportType}`);
+  fs.unlinkSync(tmpFile);
 
-  return public_url
+  return public_url;
 };
 
 // export const convertArrayOfObjectsToCSV = (arr: object[]) => {
