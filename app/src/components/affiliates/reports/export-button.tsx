@@ -18,6 +18,7 @@ interface ExportOption {
 
 interface Props {
   onExport: (exportType: ExportType) => Promise<string | undefined>;
+  reportName: string;
 }
 
 const exportOptions: { id: ExportType; title: string; icon: any }[] = [
@@ -38,14 +39,14 @@ const exportOptions: { id: ExportType; title: string; icon: any }[] = [
   },
 ];
 
-export const ExportButton = ({ onExport }: Props) => {
+export const ExportButton = ({ onExport, reportName }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleExport = async (id: ExportType) => {
     setIsLoading(true);
     try {
       const link = await onExport(id); // selectedValue.id);
-      console.log(`muly:handleExport`, { link });
+      console.log(`muly:handleExport`, { id, reportName, link });
 
       if (link) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
