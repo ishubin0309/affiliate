@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure } from "../../trpc";
+import { protectedProcedure } from "../../trpc";
 import { env } from "../../../../env.mjs";
 import { TRPCError } from "@trpc/server";
 import { callAsync } from "../../../../utils/call-async";
@@ -110,7 +110,7 @@ const updateMissing = () => {
   }, pairs);
 };
 
-export const missingLanguageTranslation = publicProcedure
+export const missingLanguageTranslation = protectedProcedure
   .input(translationSchema)
   .mutation(({ ctx, input }) => {
     if (env.NODE_ENV !== "development") {

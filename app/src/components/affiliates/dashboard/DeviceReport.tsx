@@ -30,13 +30,8 @@ const reportInfo = [
 ];
 
 const reportDropDown = [
+  { id: "Clicks", title: "Clicks" },
   { id: "SignUp", title: "SignUp" },
-  { id: "Acquisition", title: "Acquisition" },
-  { id: "Demo", title: "Demo" },
-  { id: "FTD", title: "FTD" },
-  { id: "Account", title: "Account" },
-  { id: "FTDAccount", title: "FTD Account" },
-  { id: "Withdrawal", title: "Withdrawal" },
 ];
 
 const DeviceReport = () => {

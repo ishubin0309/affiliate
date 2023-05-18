@@ -123,6 +123,8 @@ for (const site of sites) {
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
             NEXTAUTH_SECRET=PROD_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+            GCS_CONFIG_CLIENT_EMAIL=GCS_CONFIG_CLIENT_EMAIL:latest
+            GCS_CONFIG_PRIVATE_KEY=GCS_CONFIG_PRIVATE_KEY:latest
           env_vars: |
             LEGACY_PHP_URL=https://${LEGACY_PHP_URL}
             NEXTAUTH_URL=https://${prod.domain}
@@ -152,6 +154,8 @@ for (const site of sites) {
             LEGACY_PHP_ACCESS_TOKEN=DEV_LEGACY_PHP_ACCESS_TOKEN:latest
             NEXTAUTH_SECRET=DEV_NEXTAUTH_SECRET:latest
             SENDGRID_API_KEY=SENDGRID_API_KEY:latest
+            GCS_CONFIG_CLIENT_EMAIL=GCS_CONFIG_CLIENT_EMAIL:latest
+            GCS_CONFIG_PRIVATE_KEY=GCS_CONFIG_PRIVATE_KEY:latest
           env_vars: |
             LEGACY_PHP_URL=https://${LEGACY_PHP_URL}
             NEXTAUTH_URL=https://${dev.domain}

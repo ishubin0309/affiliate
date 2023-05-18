@@ -1,15 +1,17 @@
 import { sub } from "date-fns";
 import { z } from "zod";
-import { publicProcedure } from "../../trpc";
-import { affiliate_id, merchant_id } from "./const";
+import { protectedProcedure } from "../../trpc";
+import { merchant_id } from "./const";
+import { checkIsUser } from "@/server/api/utils";
 
-export const getDashboardDeviceReport = publicProcedure
+export const getDashboardDeviceReport = protectedProcedure
   .input(
     z.object({
       lastDays: z.number().int(),
     })
   )
   .query(async ({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
     const { lastDays } = input;
     const dateQuery = sub(new Date(), { days: lastDays ? lastDays : 0 });
     const data = await ctx.prisma.traffic.groupBy({

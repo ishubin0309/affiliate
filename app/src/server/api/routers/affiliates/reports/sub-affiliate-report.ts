@@ -1,5 +1,5 @@
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import type { PrismaClient, affiliates } from "@prisma/client";
 import { affiliatesModel } from "prisma/zod";
 import { z } from "zod";
@@ -356,7 +356,7 @@ export const subAffiliateReport = async (
   return arrRes;
 };
 
-export const getSubAffiliateReport = publicProcedure
+export const getSubAffiliateReport = protectedProcedure
   .input(InputWithPageInfo)
   .output(SubAffiliateReportSchema)
   .query(({ ctx, input }) => subAffiliateReport(ctx.prisma, input));

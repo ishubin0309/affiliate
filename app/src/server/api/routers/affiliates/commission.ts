@@ -1,9 +1,10 @@
 import { number, string, z } from "zod";
 
-import { publicProcedure } from "../../trpc";
-import { affiliate_id, merchant_id } from "./const";
+import { protectedProcedure } from "../../trpc";
+import { checkIsUser } from "@/server/api/utils";
 
-export const getCommissions = publicProcedure.query(async ({ ctx }) => {
+export const getCommissions = protectedProcedure.query(async ({ ctx }) => {
+  const affiliate_id = checkIsUser(ctx);
   const results = await ctx.prisma.merchants.findMany({
     where: {
       valid: 1,

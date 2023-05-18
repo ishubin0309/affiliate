@@ -8,7 +8,7 @@ import {
   pageInfo,
   reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import { translateModel } from "../../../../../../prisma/zod";
@@ -74,12 +74,12 @@ const translateReportFake = async (
   };
 };
 
-export const getTranslateReportFake = publicProcedure
+export const getTranslateReportFake = protectedProcedure
   .input(InputWithPageInfo)
   .output(TranslateReportFakeResultSchema)
   .query(({ ctx, input }) => translateReportFake(ctx.prisma, input));
 
-export const exportTranslateReportFake = publicProcedure
+export const exportTranslateReportFake = protectedProcedure
   .input(Input.extend({ exportType, reportColumns }))
   .mutation(async function ({ ctx, input }) {
     const { exportType, reportColumns, ...params } = input;

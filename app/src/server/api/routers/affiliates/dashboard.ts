@@ -1,10 +1,11 @@
 import { map } from "rambda";
 import { z } from "zod";
 import { serverStoragePath } from "../../../../components/utils";
-import { publicProcedure } from "../../trpc";
-import { affiliate_id, merchant_id } from "./const";
+import { protectedProcedure } from "../../trpc";
+import { merchant_id } from "./const";
+import { checkIsUser } from "@/server/api/utils";
 
-export const getDashboard = publicProcedure
+export const getDashboard = protectedProcedure
   .input(
     z.object({
       from: z.date(),
@@ -12,6 +13,7 @@ export const getDashboard = publicProcedure
     })
   )
   .query(async ({ ctx, input: { from, to } }) => {
+    const affiliate_id = checkIsUser(ctx);
     const data = await ctx.prisma.dashboard.groupBy({
       by: ["merchant_id"],
       where: {
@@ -50,39 +52,41 @@ export const getDashboard = publicProcedure
     return data;
   });
 
-export const getTopMerchantCreative = publicProcedure.query(async ({ ctx }) => {
-  const data = await ctx.prisma.merchants_creative.findMany({
-    where: {
-      merchant_id,
-      valid: 1,
-      affiliateReady: 1,
-      featured: 1,
-      NOT: {
-        file: {
-          contains: "%tmp%",
+export const getTopMerchantCreative = protectedProcedure.query(
+  async ({ ctx }) => {
+    const data = await ctx.prisma.merchants_creative.findMany({
+      where: {
+        merchant_id,
+        valid: 1,
+        affiliateReady: 1,
+        featured: 1,
+        NOT: {
+          file: {
+            contains: "%tmp%",
+          },
         },
       },
-    },
-    include: {
-      merchant: {
-        select: { name: true },
+      include: {
+        merchant: {
+          select: { name: true },
+        },
+        language: {
+          select: { title: true },
+        },
+        category: { select: { categoryname: true } },
       },
-      language: {
-        select: { title: true },
+      orderBy: {
+        id: "desc",
       },
-      category: { select: { categoryname: true } },
-    },
-    orderBy: {
-      id: "desc",
-    },
-    take: 5,
-  });
+      take: 5,
+    });
 
-  return map(
-    ({ file, ...data }) => ({ ...data, file: serverStoragePath(file) }),
-    data
-  );
-});
+    return map(
+      ({ file, ...data }) => ({ ...data, file: serverStoragePath(file) }),
+      data
+    );
+  }
+);
 
 const dateList = (
   from: Date,
@@ -121,7 +125,7 @@ const dateList = (
   return data;
 };
 
-export const getPerformanceChart = publicProcedure
+export const getPerformanceChart = protectedProcedure
   .input(
     z.object({
       from: z.date(),
@@ -129,6 +133,7 @@ export const getPerformanceChart = publicProcedure
     })
   )
   .query(async ({ ctx, input: { from, to } }) => {
+    const affiliate_id = checkIsUser(ctx);
     return await Promise.all(
       dateList(from, to).map(async (item) => {
         const from = new Date(item.year, item.month, 1);
@@ -159,7 +164,7 @@ export const getPerformanceChart = publicProcedure
     );
   });
 
-export const getAllPerformanceChart = publicProcedure
+export const getAllPerformanceChart = protectedProcedure
   .input(
     z.object({
       from: z.date(),
@@ -167,6 +172,7 @@ export const getAllPerformanceChart = publicProcedure
     })
   )
   .query(async ({ ctx, input: { from, to } }) => {
+    const affiliate_id = checkIsUser(ctx);
     return await Promise.all(
       dateList(from, to).map(async (item) => {
         const from = new Date(item.year, item.month, 1);
@@ -237,7 +243,7 @@ export const getAllPerformanceChart = publicProcedure
     );
   });
 
-export const getConversionChart = publicProcedure
+export const getConversionChart = protectedProcedure
   .input(
     z.object({
       from: z.date(),
@@ -245,6 +251,7 @@ export const getConversionChart = publicProcedure
     })
   )
   .query(async ({ ctx, input: { from, to } }) => {
+    const affiliate_id = checkIsUser(ctx);
     return await Promise.all(
       dateList(from, to).map(async (item) => {
         const from = new Date(item.year, item.month, 1);

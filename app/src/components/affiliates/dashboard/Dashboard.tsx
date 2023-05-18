@@ -94,6 +94,11 @@ export const Dashboard = () => {
     ) +
       1);
 
+  const sixMonth = {
+    from: startOfMonth(sub(today, { months: 6 })),
+    to: endOfMonth(sub(today, { months: 1 })),
+  };
+
   const { values: context } = useSearchContext();
 
   const [selectColumnsMode, setSelectColumnsMode] = useState<{
@@ -125,31 +130,24 @@ export const Dashboard = () => {
   );
 
   const { data: performanceChart, isRefetching: isRefetchingPerformanceChart } =
-    api.affiliates.getPerformanceChart.useQuery(
-      {
-        ...dateRange,
-      },
-      { keepPreviousData: true, refetchOnWindowFocus: false }
-    );
+    api.affiliates.getPerformanceChart.useQuery(sixMonth, {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    });
 
   const {
     data: allPerformanceChart,
     isRefetching: isRefetchingAllPerformanceChart,
-  } = api.affiliates.getAllPerformanceChart.useQuery(
-    {
-      from: startOfMonth(sub(today, { months: 6 })),
-      to: endOfMonth(sub(today, { months: 1 })),
-    },
-    { keepPreviousData: true, refetchOnWindowFocus: false }
-  );
+  } = api.affiliates.getAllPerformanceChart.useQuery(sixMonth, {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
 
   const { data: conversionChart, isRefetching: isRefetchingConversionChart } =
-    api.affiliates.getConversionChart.useQuery(
-      {
-        ...dateRange,
-      },
-      { keepPreviousData: true, refetchOnWindowFocus: false }
-    );
+    api.affiliates.getConversionChart.useQuery(sixMonth, {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    });
 
   // const { data: creative } = api.affiliates.getTopMerchantCreative.useQuery(
   //   undefined,

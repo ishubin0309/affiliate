@@ -1,9 +1,8 @@
-import { publicProcedure } from "../../trpc";
-import { affiliate_id } from "../affiliates/const";
+import { protectedProcedure } from "../../trpc";
 import { SelectSchema } from "../../../db-schema-utils";
 import { z } from "zod";
 
-export const getLanguages = publicProcedure
+export const getLanguages = protectedProcedure
   .output(SelectSchema(z.string().length(3)))
   .query(async ({ ctx }) => {
     const data = await ctx.prisma.languages.findMany({

@@ -1,6 +1,7 @@
 # How to run admin commands
 
 Open [trpc-playground](http://localhost:3001/api/trpc-playground)
+https://best-brokers-partners.staging.affiliatets.com/api/trpc-playground
 
 ![img.png](docs/img.png)
 

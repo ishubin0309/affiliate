@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure } from "../../trpc";
+import { protectedProcedure } from "../../trpc";
 
 export const QuickReportSummarySchema = z.object({
   Date: z.date().nullish(),
@@ -160,7 +160,7 @@ export const CreativeReportSchema = z.object({
 const dataInstallSchemaArray = z.array(dataInstallSchema);
 const CreativeReportSchemaArray = z.array(CreativeReportSchema);
 
-export const getDataInstall = publicProcedure.query(async ({ ctx }) => {
+export const getDataInstall = protectedProcedure.query(async ({ ctx }) => {
   const data = await ctx.prisma.data_install.findMany({
     select: {
       type: true,
@@ -176,7 +176,7 @@ export const getDataInstall = publicProcedure.query(async ({ ctx }) => {
   return data;
 });
 
-export const getAllMerchants = publicProcedure.query(async ({ ctx }) => {
+export const getAllMerchants = protectedProcedure.query(async ({ ctx }) => {
   const merchants = await ctx.prisma.merchants.findMany({
     where: {
       valid: 1,
@@ -190,7 +190,7 @@ export const getAllMerchants = publicProcedure.query(async ({ ctx }) => {
   return merchants.map(({ id, name }) => ({ id, title: name }));
 });
 
-export const getAffiliateProfile = publicProcedure.query(async ({ ctx }) => {
+export const getAffiliateProfile = protectedProcedure.query(async ({ ctx }) => {
   const affiliates = await ctx.prisma.affiliates_profiles.findMany({
     where: {
       valid: 1,
@@ -204,7 +204,7 @@ export const getAffiliateProfile = publicProcedure.query(async ({ ctx }) => {
   return affiliates;
 });
 
-export const getLongCountries = publicProcedure
+export const getLongCountries = protectedProcedure
   .input(
     z.object({
       table_type: z.string().optional(),

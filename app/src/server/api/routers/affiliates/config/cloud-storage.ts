@@ -1,16 +1,16 @@
 import { Storage } from "@google-cloud/storage";
 import path from "path";
+import { env } from "@/env.mjs";
 
-export const uploadFile = async (
-  keyFilename: string,
-  projectId: string,
-  bucketName: string,
-  tmpFile: string
-) => {
+export const uploadFile = async (bucketName: string, tmpFile: string) => {
   try {
+    const projectId = "api-front-dashbord";
     const storage = new Storage({
-      keyFilename: keyFilename,
-      projectId: projectId,
+      projectId,
+      credentials: {
+        client_email: env.GCS_CONFIG_CLIENT_EMAIL,
+        private_key: env.GCS_CONFIG_PRIVATE_KEY.replace(/\\n/g, "\n"),
+      },
     });
     const options = {
       destination: "",

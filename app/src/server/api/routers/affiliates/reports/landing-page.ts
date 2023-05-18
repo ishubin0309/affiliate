@@ -1,5 +1,5 @@
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import type { PrismaClient, data_sales_type } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
@@ -306,7 +306,7 @@ export const landingPageData = async (
   };
 };
 
-export const getLandingPageData = publicProcedure
+export const getLandingPageData = protectedProcedure
   .input(InputWithPageInfo)
   .output(LandingPageReportResultSchema)
   .query(({ ctx, input }) => landingPageData(ctx.prisma, input));

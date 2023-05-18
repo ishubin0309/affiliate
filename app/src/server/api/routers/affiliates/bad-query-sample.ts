@@ -1,11 +1,10 @@
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { sub } from "date-fns";
-import {
-  affiliate_id,
-  merchant_id,
-} from "@/server/api/routers/affiliates/const";
+import { merchant_id } from "@/server/api/routers/affiliates/const";
+import { checkIsUser } from "@/server/api/utils";
 
-export const badQuerySample = publicProcedure.query(async ({ ctx }) => {
+export const badQuerySample = protectedProcedure.query(async ({ ctx }) => {
+  const affiliate_id = checkIsUser(ctx);
   const from = sub(new Date(), { months: 6 });
   const to = new Date();
 

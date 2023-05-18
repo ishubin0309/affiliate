@@ -112,17 +112,7 @@ export const exportReportLoop = async (
     page++;
   }
   const bucketName = "reports-download-tmp";
-  const serviceKey = path.join(
-    __dirname,
-    "../../../../../api-front-dashbord-a4ee8aec074c.json"
-  );
-
-  const public_url = await uploadFile(
-    serviceKey,
-    "api-front-dashbord",
-    bucketName,
-    tmpFile
-  );
+  const public_url = await uploadFile(bucketName, tmpFile);
 
   fs.unlinkSync(tmpFile);
 

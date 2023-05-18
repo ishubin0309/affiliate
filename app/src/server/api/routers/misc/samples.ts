@@ -1,6 +1,6 @@
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 
-export const sampleQuery = publicProcedure.query(async () => {
+export const sampleQuery = protectedProcedure.query(async () => {
   return Promise.resolve({
     hello: "world",
   });
