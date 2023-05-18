@@ -146,6 +146,11 @@ export const LandingPageReportSchema = z.object({
   campaign_id: z.string().nullish(),
   dummySource: z.number().nullish(),
   volume: z.number().nullish(),
+  chargeback: z.number().nullish(),
+  accounts: z.number().nullish(),
+  lead: z.number().nullish(),
+  demo: z.number().nullish(),
+  ftd: z.number().nullish(),
   cpi: z.number().nullish(),
 });
 

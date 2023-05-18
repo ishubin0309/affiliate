@@ -42,26 +42,17 @@ export const landingPageData = async (
     sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
-  let totalLeads = 0;
-  let totalDemo = 0;
-  let totalReal = 0;
   let ftd = 0;
-  let cpi = 0;
-  let ftd_amount = 0;
-  let real_ftd = 0;
-  let real_ftd_amount = 0;
-  let netRevenue = 0;
-  let depositingAccounts = 0;
-  let sumDeposits = 0;
   let bonus = 0;
   let chargeback = 0;
-  let cpaAmount = 0;
   let withdrawal = 0;
   let volume = 0;
-  let lots = 0;
-  let totalPNL = 0;
-  let depositsAmount = 0;
-  let totalCom = 0;
+  let lead = 0;
+  let demo = 0;
+  let real = 0;
+  let depositingAccounts = 0;
+  let sumDeposits = 0;
+
   const offset = getPageOffset(pageParams);
 
   const orderBy = {};
@@ -131,6 +122,18 @@ export const landingPageData = async (
     take: pageParams.pageSize,
   });
 
+  for (const item of regww) {
+    if (item.type === "lead") {
+      lead += 1;
+    }
+    if (item.type === "demo") {
+      demo += 1;
+    }
+    if (item.type === "real") {
+      real += 1;
+    }
+  }
+
   //Qualified
 
   const group_id = null;
@@ -187,32 +190,38 @@ export const landingPageData = async (
 `;
 
   const SalesArray = [];
-  for (let i = 0; i < salesww.length; i++) {
-    if (salesww[i]?.type === "bonus") {
-      bonus = salesww[i]?.amount ?? 0;
+
+  for (const item of salesww) {
+    if (item.type === "bonus") {
+      bonus = item.amount ?? 0;
       SalesArray.push({
-        bonus: salesww[i]?.amount ?? 0,
+        bonus: item.amount ?? 0,
       });
     }
-    if (salesww[i]?.type === "withdrawal") {
-      withdrawal = salesww[i]?.amount ?? 0;
+    if (item.type === "withdrawal") {
+      withdrawal = item.amount ?? 0;
       SalesArray.push({
-        withdrawal: salesww[i]?.amount ?? 0,
+        withdrawal: item.amount ?? 0,
       });
     }
 
-    if (salesww[i]?.type === "chargeback") {
-      chargeback = salesww[i]?.amount ?? 0;
+    if (item.type === "chargeback") {
+      chargeback = item.amount ?? 0;
       SalesArray.push({
-        chargeback: salesww[i]?.amount ?? 0,
+        chargeback: item.amount ?? 0,
       });
     }
 
-    if (salesww[i]?.type === "volume") {
-      volume = salesww[i]?.amount ?? 0;
+    if (item.type === "volume") {
+      volume = item.amount ?? 0;
       SalesArray.push({
-        volume: salesww[i]?.amount ?? 0,
+        volume: item.amount ?? 0,
       });
+    }
+
+    if (item.type === "deposit") {
+      depositingAccounts += 1;
+      sumDeposits += item.amount;
     }
   }
 
@@ -279,29 +288,34 @@ export const landingPageData = async (
     traderStats = ts;
   }
 
-  const creativeArray = [];
   const traffic: any = Object.values(trafficRow);
-  for (let i = 0; i < bannersww.length; i++) {
-    creativeArray.push({
-      ...bannersww[i],
-      ...traffic[i]._sum,
-      ...regww[i],
-      ...revww[i],
-      ...SalesArray[i],
-      volume: traderStats[i]?._sum?.turnover ?? 0,
-      chargeback: chargeback,
-      cpi: 0,
-    });
-  }
 
-  console.log("creative array ---->", creativeArray);
+  const arrRes = bannersww.map((item, key) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return {
+      ...item,
+      ...traffic[key]._sum,
+      ...regww[key],
+      ...revww[key],
+      volume: traderStats[key]?._sum?.turnover ?? 0,
+      chargeback: chargeback,
+      demo: demo,
+      real: real,
+      lead: lead,
+      ftd: ftd,
+      accounts: depositingAccounts,
+      cpi: 0,
+    };
+  });
+
+  console.log("creative array ---->", arrRes);
 
   return {
-    data: creativeArray,
+    data: arrRes,
     totals: {},
     pageInfo: {
       ...pageParams,
-      totalItems: creativeArray.length,
+      totalItems: arrRes.length,
     },
   };
 };

@@ -286,5 +286,40 @@
   },
   "lang": {
     "label": "Language"
+  },
+  "landing_page_report": {
+    "url": "URL",
+    "merchant": "Merchant",
+    "impressions": "Impressions",
+    "clicks": "Clicks",
+    "installation": "Installation",
+    "click_through_ratio_(ctr)": "Click Through Ratio (CTR)",
+    "click_to_account": "Click to Account",
+    "click_to_sale": "Click to Sale",
+    "epc": "EPC",
+    "leads": "Leads",
+    "demo": "Demo",
+    "accounts": "Accounts",
+    "ftd": "FTD",
+    "volume": "Volume",
+    "chargeback_amount": "ChargeBack Amount",
+    "active_traders": "Active Traders"
+  },
+  "pixel_log_report": {
+    "pixel_fire_id": "Pixel Fire ID",
+    "date": "Date",
+    "type": "Type",
+    "method": "Method",
+    "fired_url": "Fired URL",
+    "response": "Response",
+    "all_time_fired": "All Time Fired",
+    "pixel_state": "Pixel State",
+    "affiliate_id": "Affiliate ID",
+    "affiliate_username": "Affiliate Username",
+    "merchant_id": "Merchant ID",
+    "merchant": "Merchant",
+    "product_id": "Product ID",
+    "banner_id": "Banner ID",
+    "group_id": "Group ID"
   }
 }

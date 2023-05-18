@@ -1,28 +1,31 @@
-import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import {
+  getNumberParam,
+  useSearchContext,
+} from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
+import { SearchSelect } from "@/components/common/search/search-select";
+import { SearchText } from "@/components/common/search/search-text";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import { QuerySelect } from "../../../components/common/QuerySelect";
-import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { PixelLogsReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { DateRangeSelect } from "../../common/DateRangeSelect";
-import { Loading } from "../../common/Loading";
-import { creativeType } from "@/components/affiliates/reports/TraderReports";
-import { useDateRange } from "@/components/ui/date-range";
+import { ReportControl } from "./report-control";
 
 export const PixelLogReports = () => {
   const router = useRouter();
-  const { merchant_id, country, groups } = router.query;
-  const { from, to } = useDateRange();
-  const [traderID, setTraderID] = useState<string>("");
+  const pagination = usePagination();
+  const {
+    values: { merchant_id, dates, group_id, country },
+  } = useSearchContext();
+  const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isLoading } = api.affiliates.getPixelLogReport.useQuery({
-    from,
-    to,
-    merchant_id: merchant_id ? Number(merchant_id) : undefined,
+  const { data, isRefetching } = api.affiliates.getPixelLogReport.useQuery({
+    ...dateRange,
+    merchant_id: getNumberParam(merchant_id),
     country: country ? String(country) : "",
-    group_id: groups ? String(groups) : "",
+    group_id: group_id ? String(group_id) : "",
+    pageParams: pagination.pageParams,
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const { data: countries } = api.affiliates.getLongCountries.useQuery({});
@@ -36,10 +39,6 @@ export const PixelLogReports = () => {
   // 	to,
   // 	merchant_id,
   // });
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   const divCol = (valid: number | null | undefined) => {
     return valid === 1 ? <span>Active</span> : <span>Blocked</span>;
@@ -115,56 +114,31 @@ export const PixelLogReports = () => {
     };
   });
 
-  return (
-    <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        width="90%"
-        alignItems={"center"}
-        alignSelf="center"
-      >
-        <GridItem></GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Merchant"
-            choices={merchants}
-            varName="merchant_id"
-          />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Country"
-            choices={country_options}
-            varName="country"
-          />
-        </GridItem>
-        <GridItem>
-          <FormLabel>Banner ID</FormLabel>
-          <Input
-            value={traderID}
-            onChange={(event) => setTraderID(event.target.value)}
-          />
-        </GridItem>
+  const handleExport = async (exportType: ExportType) => {
+    return null;
+  };
 
-        <GridItem>
-          <QuerySelect
-            label="All Groups"
-            choices={creativeType}
-            varName="groups"
-          />
-        </GridItem>
-      </Grid>
-      <h2>Pixel Logs Report</h2>
-      <Grid
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-        alignSelf="center"
-      >
-        <DataTable data={data ? data : []} columns={columns} footerData={[]} />
-      </Grid>
-    </>
+  return (
+    <ReportControl
+      reportName="Pixel Log Report"
+      report={data}
+      columns={columns}
+      pagination={pagination}
+      isRefetching={isRefetching}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
+    >
+      <SearchSelect
+        label="Merchant"
+        choices={merchants}
+        varName="merchant_id"
+      />
+      <SearchSelect
+        label="Country"
+        choices={country_options}
+        varName="country"
+      />
+      <SearchText varName="unique_id" label="Unique ID" />
+      <SearchText varName="trader_id" label="Trader ID" />
+    </ReportControl>
   );
 };
