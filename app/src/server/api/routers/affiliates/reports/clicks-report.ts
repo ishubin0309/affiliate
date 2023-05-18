@@ -10,12 +10,13 @@ import {
   pageInfo,
   splitToPages,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
 import path from "path";
 import { z } from "zod";
 import { trafficModel } from "../../../../../../prisma/zod";
-import { affiliate_id, merchant_id } from "../const";
+import { merchant_id } from "../const";
+import { checkIsUser } from "@/server/api/utils";
 
 const Input = z.object({
   from: z.date(),
@@ -73,6 +74,7 @@ const clickReportResultSchema = z.object({
 
 const clicksReport = async (
   prisma: PrismaClient,
+  affiliate_id: number,
   {
     from,
     to,
@@ -156,7 +158,7 @@ const clicksReport = async (
     orderBy,
     where: {
       ...type_filter,
-      affiliate_id: affiliate_id,
+      affiliate_id,
       merchant_id: merchant_id,
       uid: unique_id,
       rdate: {
@@ -319,14 +321,18 @@ const clicksReport = async (
   return splitToPages(clickArray, pageParams);
 };
 
-export const getClicksReport = publicProcedure
+export const getClicksReport = protectedProcedure
   .input(InputWithPageInfo)
   .output(clickReportResultSchema)
-  .query(({ ctx, input }) => clicksReport(ctx.prisma, input));
+  .query(({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
+    return clicksReport(ctx.prisma, affiliate_id, input);
+  });
 
-export const exportClicksReport = publicProcedure
+export const exportClicksReport = protectedProcedure
   .input(Input.extend({ exportType }))
   .mutation(async function ({ ctx, input }) {
+    const affiliate_id = checkIsUser(ctx);
     const { exportType, ...params } = input;
 
     const columns = [

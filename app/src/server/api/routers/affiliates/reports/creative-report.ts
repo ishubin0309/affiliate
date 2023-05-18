@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import {
-  affiliate_id,
-  merchant_id,
-} from "@/server/api/routers/affiliates/const";
+import { merchant_id } from "@/server/api/routers/affiliates/const";
 import type { CreativeReportSchema } from "@/server/api/routers/affiliates/reports";
 import {
   PageParamsSchema,
@@ -11,12 +8,13 @@ import {
   getPageOffset,
   pageInfo,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import path from "path";
 import { data_statsModel } from "prisma/zod";
 import { z } from "zod";
+import { checkIsUser } from "@/server/api/utils";
 // import { uploadFile } from "../config";
 
 type RegType = {
@@ -73,6 +71,7 @@ const creativeReportResultSchema = z.object({
 
 const creativeReport = async (
   prisma: PrismaClient,
+  affiliate_id: number,
   {
     from,
     to,
@@ -464,11 +463,14 @@ const creativeReport = async (
   return arrRes;
 };
 
-export const getCreativeReport = publicProcedure
+export const getCreativeReport = protectedProcedure
   .input(InputWithPageInfo)
-  .query(({ ctx, input }) => creativeReport(ctx.prisma, input));
+  .query(({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
+    return creativeReport(ctx.prisma, affiliate_id, input);
+  });
 
-export const exportTraderReport = publicProcedure
+export const exportTraderReport = protectedProcedure
   .input(Input.extend({ exportType }))
   .mutation(async function ({ ctx, input }) {
     const { exportType, ...params } = input;

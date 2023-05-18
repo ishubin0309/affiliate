@@ -1,7 +1,7 @@
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 
-export const getPixelLogReport = publicProcedure
+export const getPixelLogReport = protectedProcedure
   .input(
     z.object({
       from: z.date().optional(),

@@ -1,7 +1,4 @@
-import {
-  affiliate_id,
-  merchant_id,
-} from "@/server/api/routers/affiliates/const";
+import { merchant_id } from "@/server/api/routers/affiliates/const";
 import { QuickReportSummarySchema } from "@/server/api/routers/affiliates/reports";
 import {
   exportReportLoop,
@@ -10,7 +7,7 @@ import {
   pageInfo,
   PageParamsSchema,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
 import { Prisma, PrismaClient } from "@prisma/client";
 import type { Simplify } from "@trpc/server";
@@ -18,6 +15,7 @@ import { formatISO } from "date-fns";
 import path from "path";
 import paginator from "prisma-paginate";
 import { z } from "zod";
+import { checkIsUser } from "@/server/api/utils";
 // import { uploadFile } from "../config";
 
 const QuickReportSummaryResultSchema = z.object({
@@ -37,6 +35,7 @@ const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
 const quickReportSummary = async (
   prisma: PrismaClient,
+  affiliate_id: number,
   { from, to, display = "", pageParams }: z.infer<typeof InputWithPageInfo>
 ) => {
   console.log(from, to);
@@ -127,12 +126,15 @@ const quickReportSummary = async (
   };
 };
 
-export const getQuickReportSummary = publicProcedure
+export const getQuickReportSummary = protectedProcedure
   .input(InputWithPageInfo)
   .output(QuickReportSummaryResultSchema)
-  .query(({ ctx, input }) => quickReportSummary(ctx.prisma, input));
+  .query(({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
+    return quickReportSummary(ctx.prisma, affiliate_id, input);
+  });
 
-export const exportQuickSummaryReport = publicProcedure
+export const exportQuickSummaryReport = protectedProcedure
   .input(Input.extend({ exportType }))
   .mutation(async function ({ ctx, input }) {
     const items_per_page = 5000;

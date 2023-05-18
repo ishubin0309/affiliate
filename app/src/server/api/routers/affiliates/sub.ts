@@ -3,9 +3,9 @@ import { z } from "zod";
 import type { Prisma, PrismaClient, sub_banners_type } from "@prisma/client";
 import { indexBy, map, uniq } from "rambda";
 import { SelectSchema } from "../../../db-schema-utils";
-import { publicProcedure } from "../../trpc";
-import { affiliate_id } from "./const";
+import { protectedProcedure } from "../../trpc";
 import { PageParamsSchema, pageInfo } from "./reports/reports-utils";
+import { checkIsUser } from "@/server/api/utils";
 
 const Input = z.object({
   type: z.string().optional(), //merchants_creativeModel.shape.type.nullish(),
@@ -38,7 +38,7 @@ const MerchantSubCreativeResultSchema = z.object({
   totals: z.any(),
 });
 
-export const getMerchantSubCreativeMeta = publicProcedure
+export const getMerchantSubCreativeMeta = protectedProcedure
   .output(
     z.object({
       type: SelectSchema(z.string()),
@@ -68,6 +68,7 @@ export const getMerchantSubCreativeMeta = publicProcedure
 
 const merchantSubCreativeQuery = async (
   prisma: PrismaClient,
+  affiliate_id: number,
   { type, search, pageParams }: z.infer<typeof InputWithPageInfo>
 ) => {
   const where: Prisma.sub_bannersWhereInput = {
@@ -116,8 +117,12 @@ const merchantSubCreativeQuery = async (
   };
 };
 
-export const getMerchantSubCreative = publicProcedure
+export const getMerchantSubCreative = protectedProcedure
   .input(InputWithPageInfo)
   .output(MerchantSubCreativeResultSchema)
-  .query(({ ctx, input }) => merchantSubCreativeQuery(ctx.prisma, input));
+  .query(({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
+
+    return merchantSubCreativeQuery(ctx.prisma, affiliate_id, input);
+  });
 //

@@ -7,8 +7,8 @@ import type {
 } from "@prisma/client";
 import { countBy, map, sortBy, uniq, uniqBy } from "rambda";
 import { SelectSchema } from "../../../db-schema-utils";
-import { publicProcedure } from "../../trpc";
-import { affiliate_id, merchant_id } from "./const";
+import { protectedProcedure } from "../../trpc";
+import { merchant_id } from "./const";
 import { serverStoragePath } from "../../../../components/utils";
 import {
   getPageOffset,
@@ -16,6 +16,7 @@ import {
   PageParamsSchema,
 } from "./reports/reports-utils";
 import { getConfig } from "@/server/config";
+import { checkIsUser } from "@/server/api/utils";
 const Input = z.object({
   category: z.number().optional(),
   promotion: z.number().optional(),
@@ -68,7 +69,7 @@ const MerchantCreativeResultSchema = z.object({
   totals: z.any(),
 });
 
-export const getMerchantCreativeMeta = publicProcedure
+export const getMerchantCreativeMeta = protectedProcedure
   .output(
     z.object({
       merchants_creative_categories: SelectSchema(z.number()),
@@ -81,6 +82,7 @@ export const getMerchantCreativeMeta = publicProcedure
   .query(async ({ ctx }) => {
     // SELECT * FROM affiliates WHERE id='500' AND valid='1'
 
+    const affiliate_id = checkIsUser(ctx);
     const data = await ctx.prisma.merchants.findUnique({
       where: { id: merchant_id },
       select: {
@@ -165,6 +167,7 @@ export const getMerchantCreativeMeta = publicProcedure
 
 const merchantCreativeQuery = async (
   prisma: PrismaClient,
+  affiliate_id: number,
   {
     category,
     promotion,
@@ -233,7 +236,10 @@ const merchantCreativeQuery = async (
   };
 };
 
-export const getMerchantCreative = publicProcedure
+export const getMerchantCreative = protectedProcedure
   .input(InputWithPageInfo)
   .output(MerchantCreativeResultSchema)
-  .query(({ ctx, input }) => merchantCreativeQuery(ctx.prisma, input));
+  .query(({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
+    return merchantCreativeQuery(ctx.prisma, affiliate_id, input);
+  });

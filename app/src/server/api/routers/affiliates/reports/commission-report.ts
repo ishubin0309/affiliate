@@ -1,5 +1,4 @@
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
 import type { Simplify } from "@trpc/server";
 import path from "path";
@@ -11,6 +10,7 @@ import {
   getPageOffset,
   PageParamsSchema,
 } from "./reports-utils";
+import { checkIsUser } from "@/server/api/utils";
 
 const Input = z.object({
   from: z.date().optional(),
@@ -23,6 +23,7 @@ const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
 const commissionSummary = async (
   prisma: PrismaClient,
+  affiliate_id: number,
   {
     from,
     to,
@@ -61,7 +62,7 @@ const commissionSummary = async (
         gte: from,
         lt: to,
       },
-      affiliate_id: affiliate_id,
+      affiliate_id,
       traderID: trader_id ? trader_id : "",
     },
     include: {
@@ -92,11 +93,14 @@ const commissionSummary = async (
   };
 };
 
-export const getCommissionReport = publicProcedure
+export const getCommissionReport = protectedProcedure
   .input(InputWithPageInfo)
-  .query(({ ctx, input }) => commissionSummary(ctx.prisma, input));
+  .query(({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
+    return commissionSummary(ctx.prisma, affiliate_id, input);
+  });
 
-export const exportCommissionReport = publicProcedure
+export const exportCommissionReport = protectedProcedure
   .input(Input.extend({ exportType }))
   .mutation(async function ({ ctx, input }) {
     const { exportType, ...params } = input;

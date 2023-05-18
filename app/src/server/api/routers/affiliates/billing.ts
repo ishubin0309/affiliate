@@ -1,18 +1,18 @@
 import { TRPCError } from "@trpc/server";
 import { indexBy, map } from "rambda";
 import { z } from "zod";
-import { publicProcedure } from "../../trpc";
-import { affiliate_id } from "./const";
+import { protectedProcedure } from "../../trpc";
 import { getConfig } from "@/server/config";
-import { serverStoragePath } from "@/components/utils";
+import { checkIsUser } from "@/server/api/utils";
 
-export const getPaymentsPaid = publicProcedure
+export const getPaymentsPaid = protectedProcedure
   .input(
     z.object({
       search: z.string().optional(),
     })
   )
   .query(async ({ ctx, input: { search } }) => {
+    const affiliate_id = checkIsUser(ctx);
     const where = {
       affiliate_id,
       // valid: 1,
@@ -48,7 +48,7 @@ export const getPaymentsPaid = publicProcedure
     );
   });
 
-export const getPaymentDetails = publicProcedure
+export const getPaymentDetails = protectedProcedure
   .input(z.object({ paymentId: z.string() }))
   .query(async ({ ctx, input: { paymentId } }) => {
     if (!paymentId) {

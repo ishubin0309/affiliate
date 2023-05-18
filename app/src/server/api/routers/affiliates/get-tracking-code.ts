@@ -6,10 +6,10 @@ import type { PrismaClient } from "@prisma/client";
 // import { env } from "@/env.mjs";
 import { pause } from "@/utils/pause";
 import { getConfig } from "@/server/config";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import QRCode from "qrcode";
+import { checkIsUser } from "@/server/api/utils";
 
 const Input = z.object({
   creative_id: z.number(),
@@ -259,10 +259,11 @@ const _generateBannerCode = async (
   };
 };
 
-export const generateBannerCode = publicProcedure
+export const generateBannerCode = protectedProcedure
   .input(Input)
   .output(BannerCode)
   .query(async ({ ctx, input: { profile_id, params, creative_id } }) => {
+    const affiliate_id = checkIsUser(ctx);
     return _generateBannerCode(
       affiliate_id,
       "creative",
