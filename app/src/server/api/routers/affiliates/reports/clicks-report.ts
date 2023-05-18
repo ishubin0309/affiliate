@@ -4,7 +4,6 @@ import {
 } from "@/server/api/routers/affiliates/reports/get-trader-data";
 import {
   PageParamsSchema,
-  exportReportLoop,
   exportType,
   getPageOffset,
   pageInfo,
@@ -12,7 +11,6 @@ import {
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { publicProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
-import path from "path";
 import { z } from "zod";
 import { trafficModel } from "../../../../../../prisma/zod";
 import { affiliate_id, merchant_id } from "../const";
@@ -92,13 +90,13 @@ const clicksReport = async (
   if (type === "views") {
     type_filter = {
       views: {
-        gt: 0,
+        gte: 0,
       },
     };
   } else if (type === "clicks") {
     type_filter = {
       clicks: {
-        gt: 0,
+        gte: 0,
       },
     };
   }
