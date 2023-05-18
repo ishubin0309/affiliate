@@ -23,3 +23,5 @@ export const getColumns = (columns: any[]) =>
     header: String(header),
     accessorKey,
   }));
+
+export const toKey = (key: string) => key.toLowerCase().split(" ").join("_");

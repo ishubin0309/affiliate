@@ -14,7 +14,9 @@ import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { SearchDateRange } from "@/components/common/search/search-date-range";
 import { Pagination } from "@/components/ui/pagination";
 import { api } from "@/utils/api";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import { useTranslation } from "next-i18next";
+import { toKey } from "@/components/affiliates/reports/utils";
 
 interface Props<Data extends object> extends ReportDataTableProps<Data> {
   reportName: string;
@@ -34,6 +36,20 @@ export const ReportControl = <Data extends object>({
   footerData,
   handleExport,
 }: Props<Data>) => {
+  const { t } = useTranslation("affiliate");
+  const allColumns = useMemo(
+    () =>
+      columns.map(({ header, ...rest }) => {
+        const id = toKey(String(header));
+        return {
+          title: t(`${toKey(reportName)}.${id}`, String(header)),
+          id,
+          ...rest,
+        };
+      }),
+    [t, reportName, columns]
+  );
+
   const [selectColumnsMode, setSelectColumnsMode] = useState<{
     [name: string]: boolean;
   } | null>(null);
@@ -65,7 +81,7 @@ export const ReportControl = <Data extends object>({
         <div className="flex flex-row gap-2">
           <ExportButton onExport={handleExport} reportName={reportName} />
           <ColumnSelectButton
-            columns={columns}
+            columns={allColumns}
             reportName={reportName}
             reportsColumns={reportsColumns}
             selectColumnsMode={selectColumnsMode}
@@ -75,7 +91,7 @@ export const ReportControl = <Data extends object>({
       </PageHeader>
 
       <ColumnSelect
-        columns={columns}
+        columns={allColumns}
         reportName={reportName}
         reportsColumns={reportsColumns}
         selectColumnsMode={selectColumnsMode}
@@ -86,7 +102,7 @@ export const ReportControl = <Data extends object>({
       {report?.pageInfo?.totalItems > 0 ? (
         <ReportDataTable
           report={report}
-          columns={getColumnsBySetup(columns, reportsColumns)}
+          columns={getColumnsBySetup(allColumns, reportsColumns)}
           footerData={footerData}
           pagination={pagination}
         />

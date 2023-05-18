@@ -185,5 +185,106 @@
   },
   "documentFile": {
     "label": "Document File"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "marketing_tools": {
+      "name": "Marketing Tools",
+      "items": {
+        "creative_materials": "Creative Materials",
+        "sub_affiliates_creatives": "Sub Affiliates Creatives"
+      }
+    },
+    "reports": {
+      "name": "Reports",
+      "items": {
+        "quick_summary_report": "Quick Summary Report",
+        "commission_report": "Commission Report",
+        "clicks_report": "Clicks Report",
+        "creative_report": "Creative Report",
+        "country_report": "Country Report",
+        "landing_page_report": "Landing Page Report",
+        "users_report": "Users Report",
+        "pixels_logs_report": "Pixels Logs Report",
+        "install_report": "Install Report",
+        "profile_report": "Profile Report",
+        "sub_affiliates_report": "Sub Affiliates Report",
+        "fake_report_server_(debug)": "Fake Report Server (Debug)"
+      }
+    },
+    "profiles": "Profiles",
+    "my_account": {
+      "name": "My Account",
+      "items": {
+        "account_details": "Account Details",
+        "payment_method_details": "Payment Method Details",
+        "commission_structure": "Commission Structure",
+        "documents": "Documents"
+      }
+    },
+    "billings": "Billings",
+    "pixel_monitor": "Pixel Monitor",
+    "support": "Support",
+    "announcements": "Announcements",
+    "privacy_policy": "Privacy policy",
+    "terms_&_conditions": "Terms & Conditions"
+  },
+  "country_report": {
+    "country": "Country",
+    "views": "Views",
+    "clicks": "Clicks",
+    "cpi": "CPI",
+    "merchant": "Merchant",
+    "volume": "Volume",
+    "withdrawal": "Withdrawal",
+    "leads": "Leads",
+    "demo": "Demo",
+    "account": "Account",
+    "depositing_accounts": "Depositing Accounts",
+    "real_ftd": "Real FTD",
+    "ftd": "FTD",
+    "ftd_amount": "FTD Amount",
+    "sum_deposits": "Sum Deposits",
+    "bonus": "Bonus",
+    "chargeback": "Chargeback",
+    "net_revenue": "Net Revenue",
+    "pnl": "PnL",
+    "total_commission": "Total Commission",
+    "qftd": "QFTD"
+  },
+  "fake_translation_report": {
+    "id": "ID",
+    "date": "Date",
+    "source": "Source",
+    "lang_eng": "Lang ENG",
+    "lang_rus": "Lang RUS",
+    "lang_ger": "Lang GER",
+    "lang_fra": "Lang FRA",
+    "lang_ita": "Lang ITA",
+    "lang_esp": "Lang ESP",
+    "lang_heb": "Lang HEB",
+    "lang_ara": "Lang ARA",
+    "lang_chi": "Lang CHI",
+    "lang_por": "Lang POR",
+    "lang_jap": "Lang JAP"
+  },
+  "dashboard": {
+    "cards": {
+      "impressions": "Impressions",
+      "clicks": "Clicks",
+      "install": "Install",
+      "leads": "Leads",
+      "demo": "Demo",
+      "realaccount": "Real Account",
+      "ftd": "FTD",
+      "withdrawal": "Withdrawal",
+      "chargeback": "Chargeback",
+      "activetrader": "Active Trader",
+      "commission": "Commission",
+      "netdeposit": "Deposit"
+    }
+  },
+  "lang": {
+    "label": "Language"
   }
 }

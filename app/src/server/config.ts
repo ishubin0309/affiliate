@@ -2,8 +2,9 @@ import * as z from "zod";
 import type { PrismaClient } from "@prisma/client";
 import { settingsModel } from "../../prisma/zod";
 import { env } from "@/env.mjs";
-import { serverStoragePath } from "@/components/utils";
 import { isDev } from "@/utils/nextjs-utils";
+import { serverStoragePath } from "@/server/utils";
+import { imageProxy } from "@/components/utils";
 
 export const settingFullModel = settingsModel.extend({
   dashboard_host: z.string(),
@@ -28,7 +29,9 @@ export const getConfig = async (prisma: PrismaClient): Promise<Settings> => {
       dashboard_host,
       legacy_host,
 
-      logoPath: dev ? "/img/logo.png" : serverStoragePath(logoPath) || "",
+      logoPath: dev
+        ? "/img/logo.png"
+        : imageProxy(serverStoragePath(logoPath) || ""),
       faviconPath: dev ? "/favicon.ico" : serverStoragePath(faviconPath) || "",
       billingLogoPath: dev
         ? "/img/logo.png"

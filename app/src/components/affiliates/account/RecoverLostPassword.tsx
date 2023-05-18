@@ -2,7 +2,7 @@ import { Form } from "@/components/common/forms/Form";
 import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
 import { useTranslation } from "next-i18next";
 import type { z } from "zod";
-import { schema } from "../../../shared-types/forms/lost-password";
+import { lostPasswordSchema } from "../../../shared-types/forms/lost-password";
 import { api } from "../../../utils/api";
 
 interface IProps {
@@ -10,10 +10,10 @@ interface IProps {
 }
 export const RecoverLostPassword = ({ setIsSent }: IProps) => {
   const { t } = useTranslation("affiliate");
-  const formContext = usePrepareSchema(t, schema);
+  const formContext = usePrepareSchema(t, lostPasswordSchema);
   const mutation = api.affiliates.recoverPassword.useMutation();
 
-  const handleSubmit = async (values: z.infer<typeof schema>) => {
+  const handleSubmit = async (values: z.infer<typeof lostPasswordSchema>) => {
     await mutation.mutateAsync(values);
     setIsSent(true);
   };
@@ -22,7 +22,7 @@ export const RecoverLostPassword = ({ setIsSent }: IProps) => {
     <div>
       <Form
         formContext={formContext}
-        schema={schema}
+        schema={lostPasswordSchema}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit}
         formProps={{

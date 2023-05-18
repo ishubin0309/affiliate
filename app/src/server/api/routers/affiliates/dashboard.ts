@@ -1,9 +1,10 @@
 import { map } from "rambda";
 import { z } from "zod";
-import { serverStoragePath } from "../../../../components/utils";
 import { protectedProcedure } from "../../trpc";
 import { merchant_id } from "./const";
 import { checkIsUser } from "@/server/api/utils";
+import { serverStoragePath } from "@/server/utils";
+import { imageProxy } from "@/components/utils";
 
 export const getDashboard = protectedProcedure
   .input(
@@ -82,7 +83,10 @@ export const getTopMerchantCreative = protectedProcedure.query(
     });
 
     return map(
-      ({ file, ...data }) => ({ ...data, file: serverStoragePath(file) }),
+      ({ file, ...data }) => ({
+        ...data,
+        file: imageProxy(serverStoragePath(file) || ""),
+      }),
       data
     );
   }

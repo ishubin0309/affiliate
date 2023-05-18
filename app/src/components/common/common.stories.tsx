@@ -8,7 +8,7 @@ import { Dialog } from "@/components/common/dialog";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DialogForm as DialogFormComponent } from "@/components/common/forms/dialog-form";
-import { schema } from "@/components/affiliates/profiles/Profiles";
+import { profileSchema } from "@/components/affiliates/profiles/Profiles";
 import { usePrepareSchema } from "@/components/common/forms/usePrepareSchema";
 import { EditIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useTranslation } from "next-i18next";
@@ -59,11 +59,11 @@ export const Test4 = {
 export const DialogForm = () => {
   const { t } = useTranslation("affiliate");
 
-  const formContext = usePrepareSchema(t, schema);
+  const formContext = usePrepareSchema(t, profileSchema);
   return (
     <DialogFormComponent
       formContext={formContext}
-      schema={schema}
+      schema={profileSchema}
       onSubmit={(newRec) => {
         console.log(`muly:Submit`, { newRec });
       }}

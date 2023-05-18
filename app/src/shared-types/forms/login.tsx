@@ -2,7 +2,7 @@ import { z } from "zod";
 import Link from "next/link";
 import React from "react";
 
-export const schema = z.object({
+export const loginSchema = z.object({
   username: z.string().describe("Username"),
   password: z
     .string()

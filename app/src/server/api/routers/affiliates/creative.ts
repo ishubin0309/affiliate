@@ -9,7 +9,6 @@ import { countBy, map, sortBy, uniq, uniqBy } from "rambda";
 import { SelectSchema } from "../../../db-schema-utils";
 import { protectedProcedure } from "../../trpc";
 import { merchant_id } from "./const";
-import { serverStoragePath } from "../../../../components/utils";
 import {
   getPageOffset,
   pageInfo,
@@ -17,6 +16,8 @@ import {
 } from "./reports/reports-utils";
 import { getConfig } from "@/server/config";
 import { checkIsUser } from "@/server/api/utils";
+import { serverStoragePath } from "@/server/utils";
+import { imageProxy } from "@/components/utils";
 const Input = z.object({
   category: z.number().optional(),
   promotion: z.number().optional(),
@@ -200,7 +201,10 @@ const merchantCreativeQuery = async (
 
   const [data, totals, config] = await Promise.all([
     map(
-      ({ file, ...data }) => ({ ...data, file: serverStoragePath(file) }),
+      ({ file, ...data }) => ({
+        ...data,
+        file: imageProxy(serverStoragePath(file) || ""),
+      }),
       await prisma.merchants_creative.findMany({
         take: pageParams.pageSize,
         skip: offset,
