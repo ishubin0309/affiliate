@@ -3,7 +3,7 @@ import {
   type NavigationLinkData,
 } from "@/components/affiliates/layout/navigation-data";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Menu,
   menuClasses,
@@ -12,6 +12,8 @@ import {
 } from "react-pro-sidebar";
 import DropdownLink from "./DropdownLink";
 import SingleLink from "./SingleLink";
+import { useTranslation } from "next-i18next";
+import { toKey } from "@/components/affiliates/reports/utils";
 
 interface Props {
   isDesktop: boolean;
@@ -72,6 +74,32 @@ const Sidebar: React.FC<Props> = ({
   tempCollapseShow,
   setTempCollapseShow,
 }) => {
+  const { t } = useTranslation("affiliate");
+  const navigation = useMemo(
+    () =>
+      navigationData.map((item) => {
+        if (item.type === "dropdown") {
+          return {
+            ...item,
+            linkName: t(`menu.${toKey(item.linkName)}.name`, item.linkName),
+            links: item.links.map(({ link, name }) => ({
+              link,
+              name: t(
+                `menu.${toKey(item.linkName)}.items.${toKey(name)}`,
+                name
+              ),
+            })),
+          };
+        } else {
+          return {
+            ...item,
+            linkName: t(`menu.${toKey(item.linkName)}`, item.linkName),
+          };
+        }
+      }),
+    [t]
+  );
+
   const [activeName, setActiveName] = React.useState("dashboard");
   const [dropdown, setDropdown] = React.useState("");
 
@@ -98,7 +126,7 @@ const Sidebar: React.FC<Props> = ({
             width="280px"
           >
             <Menu closeOnClick={true}>
-              {navigationData.map((item, index) =>
+              {navigation.map((item, index) =>
                 renderLink(
                   item,
                   index,

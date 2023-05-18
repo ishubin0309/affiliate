@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import AccountManager from "./AccountManager";
 import { DashboardCountryReport } from "./DashboradCountryReport";
 import DeviceReport from "./DeviceReport";
@@ -28,6 +28,8 @@ import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
 import { valueFormat } from "@/utils/format";
 import { Loading } from "@/components/common/Loading";
+import { useTranslation } from "next-i18next";
+import { toKey } from "@/components/affiliates/reports/utils";
 
 interface CardInfo {
   id: string;
@@ -36,7 +38,7 @@ interface CardInfo {
   value_format?: string;
 }
 
-const allColumns: CardInfo[] = [
+const _allColumns: CardInfo[] = [
   { id: "Impressions", title: "Impressions", link: "reports/creative-report" },
   { id: "Clicks", title: "Clicks", link: "reports/clicks-report" },
   { id: "Install", title: "Install", link: "reports/install-reports" },
@@ -79,6 +81,16 @@ export interface ItemType {
   isChecked: boolean;
 }
 export const Dashboard = () => {
+  const { t } = useTranslation("affiliate");
+  const allColumns = useMemo(
+    () =>
+      _allColumns.map(({ title, id, ...rest }) => ({
+        title: t(`dashboard.cards.${toKey(id)}`, title),
+        id,
+        ...rest,
+      })),
+    [t]
+  );
   const today = endOfToday();
   const {
     values: { dates },

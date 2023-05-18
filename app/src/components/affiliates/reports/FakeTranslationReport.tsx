@@ -70,6 +70,7 @@ export const FakeTranslationReport = () => {
       exportType,
       reportColumns: getColumns(columns),
     });
+
   console.log(`muly:FakeTranslationReport`, {
     data,
     pagination,
