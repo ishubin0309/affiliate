@@ -264,7 +264,7 @@ export const Dashboard = () => {
           reportsColumns={reportsColumns}
           selectColumnsMode={selectColumnsMode}
           setSelectColumnsMode={setSelectColumnsMode}
-          btnText="Apply"
+          btnText="Save"
         />
         <div className="mt-4 grid gap-5 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
           {!!reportsColumns &&
