@@ -47,7 +47,7 @@ export const ReportControl = <Data extends object>({
           ...rest,
         };
       }),
-    [t]
+    [t, reportName, columns]
   );
 
   const [selectColumnsMode, setSelectColumnsMode] = useState<{

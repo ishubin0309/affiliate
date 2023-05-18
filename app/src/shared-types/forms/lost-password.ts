@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { schema as accountSchema } from "./account";
+import { accountSchema as accountSchema } from "./account";
 import { numericCheckbox } from "./common";
 
-export const schema = z
+export const lostPasswordSchema = z
   .object({
     username: z.string().optional().describe("Username"),
     mail: z.string().email().optional().describe("email"),

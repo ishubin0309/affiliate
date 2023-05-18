@@ -20,7 +20,7 @@ const createColumn = (id: keyof AffiliateProfileType, header: string) =>
     header,
   });
 
-export const schema = z.object({
+export const profileSchema = z.object({
   name: z.string().describe("Profile Name"),
   url: z.string().url().describe("URL"),
   description: z.string().optional().describe("Description"),
@@ -35,7 +35,7 @@ type RecType = affiliates_profilesModelType;
 
 export const Profiles = () => {
   const { t } = useTranslation("affiliate");
-  const formContext = usePrepareSchema(t, schema);
+  const formContext = usePrepareSchema(t, profileSchema);
 
   const { data, refetch } = api.affiliates.getProfiles.useQuery(undefined, {
     keepPreviousData: true,
@@ -46,7 +46,7 @@ export const Profiles = () => {
 
   const { editDialog, createDialog } = useCRUD<RecType>({
     formContext,
-    schema,
+    schema: profileSchema,
     refetch: async () => {
       await refetch();
     },
