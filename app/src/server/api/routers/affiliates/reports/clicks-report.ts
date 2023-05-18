@@ -89,16 +89,16 @@ const clicksReport = async (
   const offset = getPageOffset(pageParams);
   const uid: string[] = [];
 
-  console.log("clicksReport: Input Parameters", {
-    from,
-    to,
-    unique_id,
-    trader_id,
-    type,
-    pageParams,
-    sortBy,
-    sortOrder,
-  });
+  // console.log("clicksReport: Input Parameters", {
+  //   from,
+  //   to,
+  //   unique_id,
+  //   trader_id,
+  //   type,
+  //   pageParams,
+  //   sortBy,
+  //   sortOrder,
+  // });
 
   let type_filter = {};
 
@@ -153,20 +153,20 @@ const clicksReport = async (
 
   // DONE missing order by and limits
 
-  console.log("clicksReport: Filter and Order Parameters", {
-    type_filter,
-    orderBy,
-    where: {
-      ...type_filter,
-      affiliate_id,
-      merchant_id: merchant_id,
-      uid: unique_id,
-      rdate: {
-        gte: from,
-        lte: to,
-      },
-    },
-  });
+  // console.log("clicksReport: Filter and Order Parameters", {
+  //   type_filter,
+  //   orderBy,
+  //   where: {
+  //     ...type_filter,
+  //     affiliate_id,
+  //     merchant_id: merchant_id,
+  //     uid: unique_id,
+  //     rdate: {
+  //       gte: from,
+  //       lte: to,
+  //     },
+  //   },
+  // });
 
   const traficDataFull = await prisma.traffic.findMany({
     orderBy: orderBy,
@@ -244,10 +244,10 @@ const clicksReport = async (
     uid.push(item.uid);
   }
 
-  console.log("clicksReport: Traffic Data", {
-    len: traficDataFull.length,
-    traficDataFull: traficDataFull.slice(0, 10),
-  });
+  // console.log("clicksReport: Traffic Data", {
+  //   len: traficDataFull.length,
+  //   traficDataFull: traficDataFull.slice(0, 10),
+  // });
 
   const totalRecords = await prisma.traffic.aggregate({
     _count: {
@@ -265,31 +265,31 @@ const clicksReport = async (
     },
   });
 
-  console.log(`clicksReport:findMany`, {
-    totalRecords,
-    traficDataFull: traficDataFull.length,
-    orderBy: orderBy,
-    skip: offset,
-    take: pageParams.pageSize,
-    where: {
-      ...type_filter,
-      affiliate_id: affiliate_id,
-      merchant_id: merchant_id,
-      uid: unique_id,
-      rdate: {
-        gte: from,
-        lte: to,
-      },
-    },
-  });
+  // console.log(`clicksReport:findMany`, {
+  //   totalRecords,
+  //   traficDataFull: traficDataFull.length,
+  //   orderBy: orderBy,
+  //   skip: offset,
+  //   take: pageParams.pageSize,
+  //   where: {
+  //     ...type_filter,
+  //     affiliate_id: affiliate_id,
+  //     merchant_id: merchant_id,
+  //     uid: unique_id,
+  //     rdate: {
+  //       gte: from,
+  //       lte: to,
+  //     },
+  //   },
+  // });
 
   const ReportTradersDataItems = await getReportTraderData(prisma, from, uid);
 
-  console.log("clicksReport:Report Trader Data (first 10 items)", {
-    ReportTradersDataItems: Object.fromEntries(
-      Object.entries(ReportTradersDataItems).slice(0, 10)
-    ),
-  });
+  // console.log("clicksReport:Report Trader Data (first 10 items)", {
+  //   ReportTradersDataItems: Object.fromEntries(
+  //     Object.entries(ReportTradersDataItems).slice(0, 10)
+  //   ),
+  // });
 
   const clickArray = traficDataFull.map((item) => {
     const {
