@@ -15,6 +15,7 @@ import {
   pageInfo,
   PageParamsSchema,
 } from "./reports/reports-utils";
+import { getConfig } from "@/server/config";
 const Input = z.object({
   category: z.number().optional(),
   promotion: z.number().optional(),
@@ -40,6 +41,7 @@ const MerchantCreativeModel = z.object({
   width: z.number().optional(),
   height: z.number().optional(),
   url: z.string(),
+  directLink: z.string(),
   iframe_url: z.string().optional(),
   alt: z.string(),
   scriptCode: z.string().optional(),
@@ -193,7 +195,7 @@ const merchantCreativeQuery = async (
     },
   };
 
-  const [data, totals] = await Promise.all([
+  const [data, totals, config] = await Promise.all([
     map(
       ({ file, ...data }) => ({ ...data, file: serverStoragePath(file) }),
       await prisma.merchants_creative.findMany({
@@ -215,10 +217,17 @@ const merchantCreativeQuery = async (
       },
       where,
     }),
+
+    getConfig(prisma),
   ]);
 
+  const { legacy_host } = config;
+
   return {
-    data: data,
+    data: data.map((item) => ({
+      directLink: `${legacy_host}/click.php?ctag=a${affiliate_id}-b${item.id}-p`,
+      ...item,
+    })),
     pageInfo: { ...pageParams, totalItems: totals._count.id },
     totals: undefined,
   };

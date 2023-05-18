@@ -173,11 +173,12 @@ const _generateBannerCode = async (
   // const freeParam = fParam ? `&p1=${fParam}` : "";
   // const subidParam = subid ? `&p2=${subid}` : "";
   const freeParam = params
+    .filter((p: string) => !!p)
     .map((p: string, index) => `&p${index + 1}=${p}`)
     .join("");
 
-  const tag = `a${affiliate_id}-b${ww["id"]}${productTagPart}-${
-    profile_id ? `p${profile_id}` : ""
+  const tag = `a${affiliate_id}-b${ww["id"]}${productTagPart}-p${
+    profile_id ? profile_id : ""
   }${freeParam}`; // Creat CTag
   // const webAddress = typeURL === 2 ? webAddressHttps : webAddress;
 
