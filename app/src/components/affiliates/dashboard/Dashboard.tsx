@@ -52,7 +52,7 @@ const allColumns: CardInfo[] = [
   },
   {
     id: "ChargeBack",
-    title: "ChargeBack",
+    title: "Chargeback",
     link: "reports/clicks-report",
     value_format: valueFormat.CURRENCY,
   },
