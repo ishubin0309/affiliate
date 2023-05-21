@@ -1,25 +1,28 @@
-import { Grid, GridItem } from "@chakra-ui/react";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import {
+  getNumberParam,
+  useSearchContext,
+} from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
+import { SearchSelect } from "@/components/common/search/search-select";
+import { SearchText } from "@/components/common/search/search-text";
 import { createColumnHelper } from "@tanstack/react-table";
-import { useRouter } from "next/router";
-import { QuerySelect } from "../../../components/common/QuerySelect";
-import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { ProfileReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { DateRangeSelect } from "../../common/DateRangeSelect";
-import { Loading } from "../../common/Loading";
-import { useDateRange } from "@/components/ui/date-range";
-import { SearchDateRange } from "@/components/common/search/search-date-range";
+import { ReportControl } from "./report-control";
 
 export const ProfileReport = () => {
-  const router = useRouter();
-  const { merchant_id, search_type } = router.query;
-  const { from, to } = useDateRange();
+  const {
+    values: { dates, merchant_id, trader_id, banner_id, search_type },
+  } = useSearchContext();
+  const pagination = usePagination();
+  const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isLoading } = api.affiliates.getProfileReportData.useQuery({
-    from,
-    to,
-    merchant_id: merchant_id ? Number(merchant_id) : undefined,
-    search_type: search_type ? String(search_type) : undefined,
+  const { data, isRefetching } = api.affiliates.getProfileReportData.useQuery({
+    ...dateRange,
+    merchant_id: getNumberParam(merchant_id),
+    search_type: search_type,
+    pageParams: pagination.pageParams,
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<ProfileReportType>();
@@ -32,10 +35,6 @@ export const ProfileReport = () => {
   // 	to,
   // 	merchant_id,
   // });
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   const divCol = (
     val: number | null | undefined,
@@ -141,106 +140,88 @@ export const ProfileReport = () => {
     },
   ];
 
-  let totalImpressions = 0;
-  let totalClicks = 0;
-  let totalCPIM = 0;
-  let totalLeadsAccounts = 0;
-  let totalDemoAccounts = 0;
-  let totalRealAccounts = 0;
-  let totalFTD = 0;
-  let totalVolume = 0;
-  const totalBonus = 0;
-  let totalWithdrawal = 0;
-  let totalChargeback = 0;
-  const totalNetRevenue = 0;
-  const totalFooterPNL = 0;
-  const totalActiveTraders = 0;
-  let totalComs = 0;
-  let group = 0;
+  // let totalImpressions = 0;
+  // let totalClicks = 0;
+  // let totalCPIM = 0;
+  // let totalLeadsAccounts = 0;
+  // let totalDemoAccounts = 0;
+  // let totalRealAccounts = 0;
+  // let totalFTD = 0;
+  // let totalVolume = 0;
+  // const totalBonus = 0;
+  // let totalWithdrawal = 0;
+  // let totalChargeback = 0;
+  // const totalNetRevenue = 0;
+  // const totalFooterPNL = 0;
+  // const totalActiveTraders = 0;
+  // let totalComs = 0;
+  // let group = 0;
 
-  data?.forEach((row: any) => {
-    totalImpressions += row?.views ? Number(row?.views) : 0;
-    totalClicks += row?.views ? Number(row?.clicks) : 0;
-    totalCPIM += row?.views ? Number(row?.totalCPI) : 0;
-    totalLeadsAccounts += Number(row?.totalLeads);
-    totalDemoAccounts += Number(row?.totalDemo);
-    totalRealAccounts += Number(row?.totalReal);
-    totalFTD += Number(row?.ftd);
-    totalVolume += Number(row?.volume);
-    totalWithdrawal += Number(row?.withdrawal);
-    totalChargeback += Number(row?.chargeback);
-    totalComs += row?.totalCom;
-    group += row.totalPNL;
-  });
+  // data?.forEach((row: any) => {
+  //   totalImpressions += row?.views ? Number(row?.views) : 0;
+  //   totalClicks += row?.views ? Number(row?.clicks) : 0;
+  //   totalCPIM += row?.views ? Number(row?.totalCPI) : 0;
+  //   totalLeadsAccounts += Number(row?.totalLeads);
+  //   totalDemoAccounts += Number(row?.totalDemo);
+  //   totalRealAccounts += Number(row?.totalReal);
+  //   totalFTD += Number(row?.ftd);
+  //   totalVolume += Number(row?.volume);
+  //   totalWithdrawal += Number(row?.withdrawal);
+  //   totalChargeback += Number(row?.chargeback);
+  //   totalComs += row?.totalCom;
+  //   group += row.totalPNL;
+  // });
 
-  const totalObj = [];
-  totalObj.push({
-    id: "",
-    name: "",
-    totalImpressions,
-    totalClicks,
-    totalCPIM,
-    totalCTR:
-      totalImpressions > 0
-        ? `${((totalClicks / totalImpressions) * 100).toFixed(2)}%`
-        : "0%",
-    totalCTA: totalClicks
-      ? `${((totalRealAccounts / totalClicks) * 100).toFixed(2)}%`
-      : "0%",
-    totalCTS: totalClicks
-      ? `${((totalFTD / totalClicks) * 100).toFixed(2)}%`
-      : "0%",
-    totalComission: totalClicks
-      ? `${((totalComs / totalClicks) * 100).toFixed(2)}%`
-      : "0%",
-    totalLeadsAccounts,
-    totalDemoAccounts,
-    totalRealAccounts,
-    totalFTD,
-    totalWithdrawal,
-    totalChargeback,
-    totalVolume,
-    group,
-  });
+  // const totalObj = [];
+  // totalObj.push({
+  //   id: "",
+  //   name: "",
+  //   totalImpressions,
+  //   totalClicks,
+  //   totalCPIM,
+  //   totalCTR:
+  //     totalImpressions > 0
+  //       ? `${((totalClicks / totalImpressions) * 100).toFixed(2)}%`
+  //       : "0%",
+  //   totalCTA: totalClicks
+  //     ? `${((totalRealAccounts / totalClicks) * 100).toFixed(2)}%`
+  //     : "0%",
+  //   totalCTS: totalClicks
+  //     ? `${((totalFTD / totalClicks) * 100).toFixed(2)}%`
+  //     : "0%",
+  //   totalComission: totalClicks
+  //     ? `${((totalComs / totalClicks) * 100).toFixed(2)}%`
+  //     : "0%",
+  //   totalLeadsAccounts,
+  //   totalDemoAccounts,
+  //   totalRealAccounts,
+  //   totalFTD,
+  //   totalWithdrawal,
+  //   totalChargeback,
+  //   totalVolume,
+  //   group,
+  // });
+
+  const handleExport = async (exportType: ExportType) => {
+    return null;
+  };
 
   return (
-    <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        width="90%"
-        alignItems={"center"}
-        alignSelf="center"
-      >
-        <GridItem>
-          <SearchDateRange />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Merchant"
-            choices={merchants}
-            varName="merchant_id"
-          />
-        </GridItem>
+    <ReportControl
+      reportName="Profile Report"
+      report={data}
+      columns={columns}
+      pagination={pagination}
+      isRefetching={isRefetching}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
+    >
+      <SearchSelect
+        label="Merchant"
+        choices={merchants}
+        varName="merchant_id"
+      />
 
-        <GridItem>
-          <QuerySelect
-            label="Search Type"
-            choices={searchType}
-            varName="search_type"
-          />
-        </GridItem>
-      </Grid>
-      <h2>Profile Report</h2>
-      <Grid
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-        alignSelf="center"
-      >
-        <DataTable data={data} columns={columns} footerData={totalObj} />
-      </Grid>
-    </>
+      <SearchText varName="trader_id" label="Trader ID" />
+    </ReportControl>
   );
 };

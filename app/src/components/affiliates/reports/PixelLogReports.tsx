@@ -30,6 +30,11 @@ export const PixelLogReports = () => {
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const { data: countries } = api.affiliates.getLongCountries.useQuery({});
   const columnHelper = createColumnHelper<PixelLogsReportType>();
+  const createColumn = (id: keyof LandingPageReportType, header: string) =>
+    columnHelper.accessor(id, {
+      cell: (info) => info.getValue(),
+      header,
+    });
 
   // console.log("Clicks render", {
   // 	data,
@@ -45,66 +50,24 @@ export const PixelLogReports = () => {
   };
 
   const columns = [
-    columnHelper.accessor("plid" as any, {
-      cell: (info) => info.getValue() as number,
-      header: "Pixel Fire ID",
-    }),
-    columnHelper.accessor("dateTime", {
-      cell: (info) => info.getValue(),
-      header: "Date",
-    }),
-    columnHelper.accessor("type" as any, {
-      cell: (info) => info.getValue() as string,
-      header: "Type",
-    }),
-    columnHelper.accessor("method" as any, {
-      cell: (info) => info.getValue() as string,
-      header: "Method",
-    }),
-    columnHelper.accessor("firedUrl", {
-      cell: (info) => info.getValue(),
-      header: "Fired URL",
-    }),
-    columnHelper.accessor("pixelResponse", {
-      cell: (info) => info.getValue(),
-      header: "Response",
-    }),
-    columnHelper.accessor("totalFired" as any, {
-      cell: (info) => info.getValue() as number,
-      header: "All Time Fired",
-    }),
+    createColumn("id", "Pixel Fire ID"),
+    createColumn("dateTime", "Date"),
+    createColumn("pixel_monitor.type", "Type"),
+    createColumn("pixel_monitor.method", "Method"),
+    createColumn("firedUrl", "Fired URL"),
+    createColumn("pixelResponse", "Response"),
+    createColumn("totalFired", "All Time Fired"),
     columnHelper.accessor("pixel-state" as any, {
       cell: ({ row }) => divCol(row?.original?.pixel_monitor?.affiliate?.valid),
       header: "Pixel State",
     }),
-    columnHelper.accessor("pixel_monitor.affiliate.id", {
-      cell: (info) => info.getValue(),
-      header: "Affiliate ID",
-    }),
-    columnHelper.accessor("pixel_monitor.affiliate.username", {
-      cell: (info) => info.getValue(),
-      header: "Affiliate Username",
-    }),
-    columnHelper.accessor("pixel_monitor.merchant.id", {
-      cell: (info) => info.getValue(),
-      header: "Merchant ID",
-    }),
-    columnHelper.accessor("pixel_monitor.merchant", {
-      cell: (info) => info.getValue(),
-      header: "Merchant",
-    }),
-    columnHelper.accessor("product_id", {
-      cell: (info) => info.getValue(),
-      header: "Product ID",
-    }),
-    columnHelper.accessor("banner_id" as any, {
-      cell: (info) => info.getValue() as number,
-      header: "Banner ID",
-    }),
-    columnHelper.accessor("group_id" as any, {
-      cell: (info) => info.getValue() as number,
-      header: "Group ID",
-    }),
+    createColumn("pixel_monitor.affiliate.id", "Affiliate ID"),
+    createColumn("pixel_monitor.affiliate.username", "Affiliate Username"),
+    createColumn("pixel_monitor.merchant.id", "Merchant ID"),
+    createColumn("pixel_monitor.merchant", "Merchant"),
+    createColumn("product_id", "Product ID"),
+    createColumn("banner_id", "Banner ID"),
+    createColumn("group_id", "Group ID"),
   ];
 
   const country_options = countries?.map((country: any) => {

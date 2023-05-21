@@ -1,7 +1,23 @@
-import * as z from "zod"
-import * as imports from "../zod-add-schema"
-import { traffic_bannerType, traffic_type, traffic_platform } from "@prisma/client"
-import { Completemerchants, RelatedmerchantsModel, Completeaffiliates, RelatedaffiliatesModel, Completemerchants_creative, Relatedmerchants_creativeModel, Completeaffiliates_profiles, Relatedaffiliates_profilesModel, Completelanguages, RelatedlanguagesModel, Completecountries, RelatedcountriesModel } from "./index"
+import {
+  traffic_bannerType,
+  traffic_platform,
+  traffic_type,
+} from "@prisma/client";
+import * as z from "zod";
+import {
+  Completeaffiliates,
+  Completeaffiliates_profiles,
+  Completecountries,
+  Completelanguages,
+  Completemerchants,
+  Completemerchants_creative,
+  RelatedaffiliatesModel,
+  Relatedaffiliates_profilesModel,
+  RelatedcountriesModel,
+  RelatedlanguagesModel,
+  RelatedmerchantsModel,
+  Relatedmerchants_creativeModel,
+} from "./index";
 
 export const trafficModel = z.object({
   id: z.number().int(),
@@ -43,15 +59,15 @@ export const trafficModel = z.object({
   views: z.number().int(),
   clicks: z.number().int(),
   product_id: z.number().int(),
-})
+});
 
 export interface Completetraffic extends z.infer<typeof trafficModel> {
-  merchant?: Completemerchants | null
-  affiliate?: Completeaffiliates | null
-  merchant_creative?: Completemerchants_creative | null
-  affiliates_profiles?: Completeaffiliates_profiles | null
-  language?: Completelanguages | null
-  country?: Completecountries | null
+  merchant?: Completemerchants | null;
+  affiliate?: Completeaffiliates | null;
+  merchant_creative?: Completemerchants_creative | null;
+  affiliates_profiles?: Completeaffiliates_profiles | null;
+  language?: Completelanguages | null;
+  country?: Completecountries | null;
 }
 
 /**
@@ -59,11 +75,13 @@ export interface Completetraffic extends z.infer<typeof trafficModel> {
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const RelatedtrafficModel: z.ZodSchema<Completetraffic> = z.lazy(() => trafficModel.extend({
-  merchant: RelatedmerchantsModel.nullish(),
-  affiliate: RelatedaffiliatesModel.nullish(),
-  merchant_creative: Relatedmerchants_creativeModel.nullish(),
-  affiliates_profiles: Relatedaffiliates_profilesModel.nullish(),
-  language: RelatedlanguagesModel.nullish(),
-  country: RelatedcountriesModel.nullish(),
-}))
+export const RelatedtrafficModel: z.ZodSchema<Completetraffic> = z.lazy(() =>
+  trafficModel.extend({
+    merchant: RelatedmerchantsModel.nullish(),
+    affiliate: RelatedaffiliatesModel.nullish(),
+    merchant_creative: Relatedmerchants_creativeModel.nullish(),
+    affiliates_profiles: Relatedaffiliates_profilesModel.nullish(),
+    language: RelatedlanguagesModel.nullish(),
+    country: RelatedcountriesModel.nullish(),
+  })
+);

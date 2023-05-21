@@ -1,3 +1,4 @@
+import { affiliatesModel } from "prisma/zod";
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";
 
@@ -152,6 +153,30 @@ export const LandingPageReportSchema = z.object({
   demo: z.number().nullish(),
   ftd: z.number().nullish(),
   cpi: z.number().nullish(),
+});
+
+export const profileReportSchema = z.object({
+  id: z.number().nullish(),
+  rdate: z.date().nullish(),
+  valid: z.number().nullish(),
+  affiliate_id: z.number().nullish(),
+  name: z.string().nullish(),
+  url: z.string().nullish(),
+  description: z.string().nullish(),
+  source_traffic: z.string().nullish(),
+  affiliate: affiliatesModel,
+  totalCPI: z.number().nullish(),
+  totalReal: z.number().nullish(),
+  ftd: z.number().nullish(),
+  totalCom: z.number().nullish(),
+  totalLeads: z.number().nullish(),
+  totalDemo: z.number().nullish(),
+  withdrawal: z.number().nullish(),
+  chargeback: z.number().nullish(),
+  volume: z.number().nullish(),
+  totalPNL: z.number().nullish(),
+  clicks: z.number().nullish(),
+  views: z.number().nullish(),
 });
 
 export const CreativeReportSchema = z.object({

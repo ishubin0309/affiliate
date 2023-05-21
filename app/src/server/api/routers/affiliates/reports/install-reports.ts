@@ -1,14 +1,14 @@
 import { merchant_id } from "@/server/api/routers/affiliates/const";
-import { protectedProcedure } from "@/server/api/trpc";
-import type { data_install_type } from "@prisma/client";
-import type { PrismaClient } from "@prisma/client";
-import type { Simplify } from "@trpc/server";
-import { z } from "zod";
 import {
-  getPageOffset,
   PageParamsSchema,
+  getPageOffset,
+  pageInfo,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { protectedProcedure } from "@/server/api/trpc";
 import { checkIsUser } from "@/server/api/utils";
+import type { PrismaClient, data_install_type } from "@prisma/client";
+import { z } from "zod";
+import { dataInstallSchema } from "../reports";
 
 const Input = z.object({
   from: z.date().optional(),
@@ -23,7 +23,12 @@ const Input = z.object({
 
 const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
-export const installReport = async (
+const installReportSchema = z.object({
+  data: z.array(dataInstallSchema),
+  pageInfo,
+  totals: z.any(),
+});
+const installReport = async (
   prisma: PrismaClient,
   affiliate_id: number,
   {
@@ -117,11 +122,21 @@ export const installReport = async (
     },
   });
 
-  return data as Array<Record<string, any>>;
+  const arrRes = {
+    data: data,
+    totals: {},
+    pageInfo: {
+      ...pageParams,
+      totalItems: data.length,
+    },
+  };
+
+  return arrRes;
 };
 
 export const getInstallReport = protectedProcedure
   .input(InputWithPageInfo)
+  .output(installReportSchema)
   .query(({ ctx, input }) => {
     const affiliate_id = checkIsUser(ctx);
     return installReport(ctx.prisma, affiliate_id, input);
