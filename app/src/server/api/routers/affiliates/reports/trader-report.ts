@@ -2,18 +2,16 @@
 import { merchant_id } from "@/server/api/routers/affiliates/const";
 import {
   PageParamsSchema,
-  exportReportLoop,
   exportType,
   getPageOffset,
   pageInfo,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { protectedProcedure } from "@/server/api/trpc";
+import { checkIsUser } from "@/server/api/utils";
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { formatISO } from "date-fns";
-import path from "path";
 import { z } from "zod";
 import { reporttradersModel } from "../../../../../../prisma/zod";
-import { checkIsUser } from "@/server/api/utils";
 // import { uploadFile } from "../config";
 
 const traderReportSchema = reporttradersModel.extend({
@@ -164,7 +162,10 @@ const traderReport = async (
         Trades: true,
         Commission: true,
       },
-      where,
+      where: {
+        ...type_filter,
+      },
+      // where,
     }),
   ]);
 

@@ -58,14 +58,14 @@ export const SubAffiliateReport = () => {
     createColumn("id", "Affiliate ID"),
     createColumn("mail", "Affiliate Username"),
     createColumn("merchant_name", "Tier Level"),
-    createColumn("clicks", "Clicks"),
-    createColumn("totalCPI", "Installation"),
-    createColumn("totalLeads", "Leads"),
-    createColumn("demo", "Demo"),
-    createColumn("real", "Accounts"),
-    createColumn("volume", "Volume"),
-    createColumn("withdrawal", "Withdrawal Amount"),
-    createColumn("chargeback", "ChargeBack Amount"),
+    createColumn("Clicks", "Clicks"),
+    createColumn("Install", "Installation"),
+    createColumn("Leads", "Leads"),
+    createColumn("Demo", "Demo"),
+    createColumn("RealAccount", "Accounts"),
+    createColumn("Volume", "Volume"),
+    createColumn("Withdrawal", "Withdrawal Amount"),
+    createColumn("ChargeBack", "ChargeBack Amount"),
   ];
   const handleExport = async (exportType: ExportType) => {
     return null;

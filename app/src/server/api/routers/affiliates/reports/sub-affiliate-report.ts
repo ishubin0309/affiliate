@@ -324,7 +324,7 @@ export const subAffiliateReport = async (
   const subAffiliateArray = affiliates?.map((item: affiliates) => {
     return {
       ...item,
-      ...Data,
+      ...Data._sum,
     };
   });
 
@@ -358,5 +358,5 @@ export const subAffiliateReport = async (
 
 export const getSubAffiliateReport = protectedProcedure
   .input(InputWithPageInfo)
-  .output(SubAffiliateReportSchema)
+  // .output(SubAffiliateReportSchema)
   .query(({ ctx, input }) => subAffiliateReport(ctx.prisma, input));

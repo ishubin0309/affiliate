@@ -7,14 +7,13 @@ import {
   exportType,
   getPageOffset,
   pageInfo,
-  splitToPages,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { protectedProcedure } from "@/server/api/trpc";
+import { checkIsUser } from "@/server/api/utils";
 import type { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import { trafficModel } from "../../../../../../prisma/zod";
 import { merchant_id } from "../const";
-import { checkIsUser } from "@/server/api/utils";
 
 const Input = z.object({
   from: z.date(),
@@ -166,77 +165,94 @@ const clicksReport = async (
   //   },
   // });
 
-  const traficDataFull = await prisma.traffic.findMany({
-    orderBy: orderBy,
-    skip: offset,
-    take: pageParams.pageSize,
-    where: {
-      ...type_filter,
-      affiliate_id: affiliate_id,
-      merchant_id: merchant_id,
-      uid: unique_id,
-      rdate: {
-        gte: from,
-        lte: to,
-      },
-    },
-    select: {
-      id: true,
-      uid: true,
-      clicks: true,
-      views: true,
-      rdate: true,
-      profile_id: true,
-      type: true,
-      banner_id: true,
-      param: true,
-      param2: true,
-      param3: true,
-      param4: true,
-      param5: true,
-      refer_url: true,
-      ip: true,
-      affiliate_id: true,
-      platform: true,
-      os: true,
-      osVersion: true,
-      browser: true,
-      broswerVersion: true,
-      merchant_id: true,
-      country: {
-        select: {
-          title: true,
-          code: true,
-          id: true,
+  const [traficDataFull, totals] = await Promise.all([
+    prisma.traffic.findMany({
+      orderBy: orderBy,
+      skip: offset,
+      take: pageParams.pageSize,
+      where: {
+        ...type_filter,
+        affiliate_id: affiliate_id,
+        merchant_id: merchant_id,
+        uid: unique_id,
+        rdate: {
+          gte: from,
+          lte: to,
         },
       },
-      merchant: {
-        select: {
-          id: true,
-          name: true,
+      select: {
+        id: true,
+        uid: true,
+        clicks: true,
+        views: true,
+        rdate: true,
+        profile_id: true,
+        type: true,
+        banner_id: true,
+        param: true,
+        param2: true,
+        param3: true,
+        param4: true,
+        param5: true,
+        refer_url: true,
+        ip: true,
+        affiliate_id: true,
+        platform: true,
+        os: true,
+        osVersion: true,
+        browser: true,
+        broswerVersion: true,
+        merchant_id: true,
+        country: {
+          select: {
+            title: true,
+            code: true,
+            id: true,
+          },
+        },
+        merchant: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        affiliate: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        merchant_creative: {
+          select: {
+            id: true,
+            title: true,
+            url: true,
+          },
+        },
+        affiliates_profiles: {
+          select: {
+            id: true,
+            name: true,
+          },
         },
       },
-      affiliate: {
-        select: {
-          id: true,
-          username: true,
+    }),
+    prisma.traffic.aggregate({
+      _count: {
+        id: true,
+      },
+      where: {
+        ...type_filter,
+        affiliate_id: affiliate_id,
+        merchant_id: merchant_id,
+        uid: unique_id,
+        rdate: {
+          gte: from,
+          lte: to,
         },
       },
-      merchant_creative: {
-        select: {
-          id: true,
-          title: true,
-          url: true,
-        },
-      },
-      affiliates_profiles: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-    },
-  });
+    }),
+  ]);
 
   for (const item of traficDataFull) {
     uid.push(item.uid);
@@ -315,8 +331,13 @@ const clicksReport = async (
       ...traderData,
     };
   });
+
+  return {
+    data: clickArray,
+    pageInfo: { ...pageParams, totalItems: totals._count.id },
+    totals: undefined,
+  };
   // DONE, this is not efficient for this report, need to use db side pagination
-  return splitToPages(clickArray, pageParams);
 };
 
 export const getClicksReport = protectedProcedure

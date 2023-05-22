@@ -103,6 +103,7 @@ export const ClicksReport = () => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
+  console.log("data ---->", data);
   return (
     <ReportControl
       reportName="Clicks Report"

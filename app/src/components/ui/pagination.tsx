@@ -1,12 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { cva } from "class-variance-authority";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
-import * as React from "react";
 import ReactPaginate from "react-paginate";
 
-import { queryTypes, useQueryState } from "next-usequerystate";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 import {
   Select,
   SelectContent,
@@ -14,9 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./select";
-import { useSearchContext } from "@/components/common/search/search-context";
-import { usePaginationContext } from "@/components/common/data-table/paginagion-context";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
 
 export interface Props {
   pagination: ReturnType<typeof usePagination>;

@@ -27,6 +27,11 @@ export const ProfileReport = () => {
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<ProfileReportType>();
 
+  const createColumn = (id: keyof ProfileReportType, header: string) =>
+    columnHelper.accessor(id, {
+      cell: (info) => info.getValue(),
+      header,
+    });
   // console.log("Clicks render", {
   // 	data,
   // 	merchants,
@@ -48,30 +53,12 @@ export const ProfileReport = () => {
   };
 
   const columns = [
-    columnHelper.accessor("id", {
-      cell: (info) => info.getValue(),
-      header: "Profile ID",
-    }),
-    columnHelper.accessor("name", {
-      cell: (info) => info.getValue(),
-      header: "Profile Name",
-    }),
-    columnHelper.accessor("url", {
-      cell: (info) => info.getValue(),
-      header: "Profile URL",
-    }),
-    columnHelper.accessor("views", {
-      cell: (info) => info.getValue(),
-      header: "Impressions",
-    }),
-    columnHelper.accessor("clicks", {
-      cell: (info) => info.getValue(),
-      header: "Clicks",
-    }),
-    columnHelper.accessor("totalCPI", {
-      cell: (info) => info.getValue(),
-      header: "Installation",
-    }),
+    createColumn("id", "Profile ID"),
+    createColumn("name", "Profile Name"),
+    createColumn("url", "Profile URL"),
+    createColumn("views", "Impressions"),
+    createColumn("clicks", "Clicks"),
+    createColumn("totalCPI", "Installations"),
     columnHelper.accessor("CTR" as any, {
       cell: ({ row }) => {
         return divCol(row?.original?.clicks, row?.original?.views);
@@ -91,38 +78,14 @@ export const ProfileReport = () => {
       cell: ({ row }) => divCol(row?.original?.totalCom, row?.original?.clicks),
       header: "EPC",
     }),
-    columnHelper.accessor("totalLeads", {
-      cell: (info) => info.getValue(),
-      header: "Lead",
-    }),
-    columnHelper.accessor("totalDemo", {
-      cell: (info) => info.getValue(),
-      header: "Demo",
-    }),
-    columnHelper.accessor("totalReal", {
-      cell: (info) => info.getValue(),
-      header: "Accounts",
-    }),
-    columnHelper.accessor("ftd", {
-      cell: (info) => info.getValue(),
-      header: "FTD",
-    }),
-    columnHelper.accessor("withdrawal", {
-      cell: (info) => info.getValue(),
-      header: "Withdrawal Amount",
-    }),
-    columnHelper.accessor("chargeback", {
-      cell: (info) => info.getValue(),
-      header: "ChargeBack Amount",
-    }),
-    columnHelper.accessor("volume", {
-      cell: (info) => info.getValue(),
-      header: "Volume",
-    }),
-    columnHelper.accessor("totalPNL", {
-      cell: (info) => info.getValue(),
-      header: "Group",
-    }),
+    createColumn("totalLeads", "Lead"),
+    createColumn("totalDemo", "Demo"),
+    createColumn("totalReal", "Accounts"),
+    createColumn("ftd", "FTD"),
+    createColumn("withdrawal", "Withdrawal Amount"),
+    createColumn("chargeback", "ChargeBack Amount"),
+    createColumn("volume", "Volume"),
+    createColumn("totalPNL", "Group"),
   ];
 
   const searchType = [
