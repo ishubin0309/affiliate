@@ -1,16 +1,8 @@
 import { protectedProcedure } from "@/server/api/trpc";
-import type { PrismaClient } from "@prisma/client";
-import type { Simplify } from "@trpc/server";
-import path from "path";
-import paginator from "prisma-paginate";
-import { z } from "zod";
-import {
-  exportReportLoop,
-  exportType,
-  getPageOffset,
-  PageParamsSchema,
-} from "./reports-utils";
 import { checkIsUser } from "@/server/api/utils";
+import type { PrismaClient } from "@prisma/client";
+import { z } from "zod";
+import { exportType, getPageOffset, PageParamsSchema } from "./reports-utils";
 
 const Input = z.object({
   from: z.date().optional(),
@@ -88,7 +80,7 @@ const commissionSummary = async (
     pageInfo: {
       ...pageParams,
       // TODO
-      totalItems: 0,
+      totalItems: 1,
     },
   };
 };

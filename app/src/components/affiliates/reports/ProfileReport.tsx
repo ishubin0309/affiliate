@@ -103,68 +103,6 @@ export const ProfileReport = () => {
     },
   ];
 
-  // let totalImpressions = 0;
-  // let totalClicks = 0;
-  // let totalCPIM = 0;
-  // let totalLeadsAccounts = 0;
-  // let totalDemoAccounts = 0;
-  // let totalRealAccounts = 0;
-  // let totalFTD = 0;
-  // let totalVolume = 0;
-  // const totalBonus = 0;
-  // let totalWithdrawal = 0;
-  // let totalChargeback = 0;
-  // const totalNetRevenue = 0;
-  // const totalFooterPNL = 0;
-  // const totalActiveTraders = 0;
-  // let totalComs = 0;
-  // let group = 0;
-
-  // data?.forEach((row: any) => {
-  //   totalImpressions += row?.views ? Number(row?.views) : 0;
-  //   totalClicks += row?.views ? Number(row?.clicks) : 0;
-  //   totalCPIM += row?.views ? Number(row?.totalCPI) : 0;
-  //   totalLeadsAccounts += Number(row?.totalLeads);
-  //   totalDemoAccounts += Number(row?.totalDemo);
-  //   totalRealAccounts += Number(row?.totalReal);
-  //   totalFTD += Number(row?.ftd);
-  //   totalVolume += Number(row?.volume);
-  //   totalWithdrawal += Number(row?.withdrawal);
-  //   totalChargeback += Number(row?.chargeback);
-  //   totalComs += row?.totalCom;
-  //   group += row.totalPNL;
-  // });
-
-  // const totalObj = [];
-  // totalObj.push({
-  //   id: "",
-  //   name: "",
-  //   totalImpressions,
-  //   totalClicks,
-  //   totalCPIM,
-  //   totalCTR:
-  //     totalImpressions > 0
-  //       ? `${((totalClicks / totalImpressions) * 100).toFixed(2)}%`
-  //       : "0%",
-  //   totalCTA: totalClicks
-  //     ? `${((totalRealAccounts / totalClicks) * 100).toFixed(2)}%`
-  //     : "0%",
-  //   totalCTS: totalClicks
-  //     ? `${((totalFTD / totalClicks) * 100).toFixed(2)}%`
-  //     : "0%",
-  //   totalComission: totalClicks
-  //     ? `${((totalComs / totalClicks) * 100).toFixed(2)}%`
-  //     : "0%",
-  //   totalLeadsAccounts,
-  //   totalDemoAccounts,
-  //   totalRealAccounts,
-  //   totalFTD,
-  //   totalWithdrawal,
-  //   totalChargeback,
-  //   totalVolume,
-  //   group,
-  // });
-
   const handleExport = async (exportType: ExportType) => {
     return null;
   };

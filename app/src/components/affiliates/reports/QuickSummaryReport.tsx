@@ -39,19 +39,13 @@ export const QuickSummaryReport = () => {
   const [reportFields, setReportFields] = useState<
     { id: number; title: string; value: string; isChecked: boolean }[]
   >([]);
-  const [selectedValue, setSelectedItem] = useState<ItemProps>({});
   const { name, ...dateRange } = getDateRange(dates);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
   const { currentPage, itemsPerPage } = router.query;
 
   const { data, isRefetching } = api.affiliates.getQuickReportSummary.useQuery({
     ...dateRange,
     display: display ? String(display) : undefined,
-    pageParams: {
-      pageNumber: currentPage ? Number(currentPage) : 1,
-      pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
-    },
+    pageParams: pagination.pageParams,
   });
 
   const { mutateAsync: reportExport } =
@@ -60,54 +54,25 @@ export const QuickSummaryReport = () => {
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<QuickReportSummary>();
 
+  const createColumn = (id: keyof SubAffiliateReportType, header: string) =>
+    columnHelper.accessor(id, {
+      cell: (info) => info.getValue(),
+      header,
+    });
+
   const columns = [
-    columnHelper.accessor("merchant_id", {
-      cell: (info) => info.getValue(),
-      header: "Merchant",
-    }),
-    columnHelper.accessor("Impressions", {
-      cell: (info) => info.getValue(),
-      header: "Impressions",
-    }),
-    columnHelper.accessor("Clicks", {
-      cell: (info) => info.getValue(),
-      header: "Clicks",
-    }),
-    columnHelper.accessor("Install", {
-      cell: (info) => info.getValue(),
-      header: "Installation",
-      // meta: {
-      //   isNumeric: true,
-      // },
-    }),
-    columnHelper.accessor("Leads", {
-      cell: (info) => info.getValue(),
-      header: "Leads",
-    }),
-    columnHelper.accessor("Demo", {
-      cell: (info) => info.getValue(),
-      header: "Demo",
-    }),
-    columnHelper.accessor("RealAccount", {
-      cell: (info) => info.getValue(),
-      header: "Accounts",
-    }),
-    columnHelper.accessor("FTD", {
-      cell: (info) => info.getValue(),
-      header: "FTD",
-    }),
-    columnHelper.accessor("Withdrawal", {
-      cell: (info) => info.getValue(),
-      header: "Withdrawal Amount",
-    }),
-    columnHelper.accessor("ChargeBack", {
-      cell: (info) => info.getValue(),
-      header: "ChargeBack Amount",
-    }),
-    columnHelper.accessor("ActiveTrader", {
-      cell: (info) => info.getValue(),
-      header: "Active Traders",
-    }),
+    createColumn("merchant_id", "Merchant"),
+    createColumn("Impressions", "Impressions"),
+    createColumn("Clicks", "Clicks"),
+    createColumn("Clicks", "Clicks"),
+    createColumn("Install", "Installation"),
+    createColumn("Leads", "Leads"),
+    createColumn("Demo", "Demo"),
+    createColumn("RealAccount", "Accounts"),
+    createColumn("FTD", "FTD"),
+    createColumn("Withdrawal", "Withdrawal Amount"),
+    createColumn("ChargeBack", "ChargeBack Amount"),
+    createColumn("ActiveTrader", "Active Traders"),
     columnHelper.accessor("Commission", {
       cell: ({ row }) => {
         // console.log("row ---->", row);
@@ -129,11 +94,7 @@ export const QuickSummaryReport = () => {
       cell: ({ row }) => divCol(row?.original?.FTD, row.original.Clicks),
       header: "Click to Sale",
     }),
-
-    columnHelper.accessor("Volume", {
-      cell: (info) => info.getValue(),
-      header: "Volume",
-    }),
+    createColumn("Volume", "Volume"),
   ];
 
   const handleExport = async (exportType: ExportType) =>

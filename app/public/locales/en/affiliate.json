@@ -457,6 +457,23 @@
     "click_through_ratio(ctr)": "Click Through Ratio(CTR)",
     "click_to_account": "Click to Account",
     "click_to_sale": "Click to Sale",
-    "volume": "Volume"
+    "volume": "Volume",
+    "merchant_name": "Merchant Name",
+    "merchant_id": "Merchant ID",
+    "trader_id": "Trader ID",
+    "transaction_id": "Transaction ID",
+    "type": "Type",
+    "amount": "Amount",
+    "location": "Location"
+  },
+  "commission_report": {
+    "merchant_name": "Merchant Name",
+    "merchant_id": "Merchant ID",
+    "trader_id": "Trader ID",
+    "transaction_id": "Transaction ID",
+    "type": "Type",
+    "amount": "Amount",
+    "location": "Location",
+    "commission": "Commission"
   }
 }
