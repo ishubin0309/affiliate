@@ -440,5 +440,23 @@
     "volume": "Volume",
     "withdrawal_amount": "Withdrawal Amount",
     "chargeback_amount": "ChargeBack Amount"
+  },
+  "quick_summary_report": {
+    "merchant": "Merchant",
+    "impressions": "Impressions",
+    "clicks": "Clicks",
+    "installation": "Installation",
+    "leads": "Leads",
+    "demo": "Demo",
+    "accounts": "Accounts",
+    "ftd": "FTD",
+    "withdrawal_amount": "Withdrawal Amount",
+    "chargeback_amount": "ChargeBack Amount",
+    "active_traders": "Active Traders",
+    "commission": "Commission",
+    "click_through_ratio(ctr)": "Click Through Ratio(CTR)",
+    "click_to_account": "Click to Account",
+    "click_to_sale": "Click to Sale",
+    "volume": "Volume"
   }
 }
