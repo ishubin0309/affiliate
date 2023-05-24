@@ -41,7 +41,7 @@ const DeviceReport = () => {
   return (
     <div className="rounded-2xl bg-white px-2 py-5 shadow-sm md:px-5">
       <div className="mb-3 text-xl font-bold text-primary">Device Report</div>
-      <div className="mb-5 flex justify-between">
+      <div className="mb-5 flex justify-between items-center">
         <div className="text-base font-light">Session by device</div>
         <div className="flex items-center justify-center text-xs font-light">
           <SelectInput
@@ -55,7 +55,7 @@ const DeviceReport = () => {
       <div className="align-center mb-5">
         <DeviceReportChart />
       </div>
-      <div className="mb-3 flex justify-between">
+      <div className="mb-3 flex justify-between items-center">
         <div className="text-base font-medium text-[#2262C6]">Report</div>
         <div className="flex w-48 items-center justify-center text-xs">
           <SelectInput
