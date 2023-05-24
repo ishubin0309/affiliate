@@ -3,10 +3,13 @@
  * @param userInfo - An object containing user information such as level and group ID.
  * @returns An object containing country data and report filename.
  */
-import type { PageParam } from "@/server/api/routers/affiliates/reports/reports-utils";
 import {
-  pageInfo,
+  PageParam,
   PageParamsSchema,
+  exportReportLoop,
+  exportType,
+  pageInfo,
+  reportColumns,
   splitToPages,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { protectedProcedure } from "@/server/api/trpc";
@@ -287,7 +290,8 @@ export const countryReport = async (
         SUM(CASE ReportTraders.FirstDeposit WHEN ReportTraders.FirstDeposit > '0000-00-00 00:00:00' THEN 1 ELSE 0 END) as FirstDeposit
         FROM ReportTraders
         WHERE ReportTraders.RegistrationDate >= ${from} AND
-        ReportTraders.RegistrationDate <= ${to} 
+        ReportTraders.RegistrationDate <= ${to} AND
+        ${traders_main}
         GROUP BY Country`;
 
   console.log(`muly:countryReport before merge`, {
@@ -327,7 +331,6 @@ export const countryReport = async (
     }
   });
 
-  console.log("country array ----->", countryArray);
   return splitToPages(
     countryArray.map(convertPrismaResultsToNumbers),
     pageParams
@@ -366,4 +369,23 @@ export const getCountryReport = protectedProcedure
 
     // debugSaveData("countryData", { countryData });
     return countryData;
+  });
+
+export const exportCountryReport = protectedProcedure
+  .input(Input.extend({ exportType, reportColumns }))
+  .mutation(async function ({ ctx, input }) {
+    const { exportType, reportColumns, ...params } = input;
+    const affiliate_id = checkIsUser(ctx);
+
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        countryReport(ctx.prisma, affiliate_id, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
+
+    return public_url;
   });

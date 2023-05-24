@@ -40,7 +40,10 @@ import {
   exportCommissionReport,
   getCommissionReport,
 } from "@/server/api/routers/affiliates/reports/commission-report";
-import { getCountryReport } from "@/server/api/routers/affiliates/reports/country-report";
+import {
+  exportCountryReport,
+  getCountryReport,
+} from "@/server/api/routers/affiliates/reports/country-report";
 import { getCountryReportDashboard } from "@/server/api/routers/affiliates/reports/country-report-dashboard";
 import {
   exportCreativeReport,
@@ -116,11 +119,15 @@ export const affiliatesRouter = createTRPCRouter({
 
   getCommissionReport,
   exportCommissionReport,
+
   getClicksReport,
   getTranslateReportFake,
   exportTranslateReportFake,
   exportClicksReport,
+
   getCountryReport,
+  exportCountryReport,
+
   getDocuments,
 
   getCommissions,
