@@ -7,6 +7,7 @@ export const commissionsModel = z.object({
   affiliate_id: z.number().int(),
   traderID: z.string(),
   transactionID: z.string(),
+  Date: z.date(),
   Type: z.string(),
   Amount: z.number(),
   DealType: z.string(),

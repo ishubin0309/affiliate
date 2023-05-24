@@ -4,9 +4,11 @@ import {
 } from "@/server/api/routers/affiliates/reports/get-trader-data";
 import {
   PageParamsSchema,
+  exportReportLoop,
   exportType,
   getPageOffset,
   pageInfo,
+  reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { protectedProcedure } from "@/server/api/trpc";
 import { checkIsUser } from "@/server/api/utils";
@@ -349,75 +351,20 @@ export const getClicksReport = protectedProcedure
   });
 
 export const exportClicksReport = protectedProcedure
-  .input(Input.extend({ exportType }))
+  .input(Input.extend({ exportType, reportColumns }))
   .mutation(async function ({ ctx, input }) {
     const affiliate_id = checkIsUser(ctx);
-    const { exportType, ...params } = input;
+    const { exportType, reportColumns, ...params } = input;
 
-    const columns = [
-      "ID",
-      "UID",
-      "Impression",
-      "Click",
-      "Date",
-      "Type",
-      "Merchant",
-      "Banner ID",
-      "Profile ID",
-      "Param",
-      "Param 2",
-      "Refer URL",
-      "Country",
-      "IP",
-      "Platform",
-      "Operating System",
-      "OS Version",
-      "Browser",
-      "Browser Version",
-      "Trader ID",
-      "Trader Alias",
-      "Lead",
-      "Demo",
-      "Sales Status",
-      "Accounts",
-      "FTD",
-      "Volume",
-      "Withdrawal Amount",
-      "ChargeBack Amount",
-      "Active Traders",
-    ];
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        clicksReport(ctx.prisma, affiliate_id, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
 
-    // const file_date = new Date().toISOString();
-    // const generic_filename = `clicks-report${file_date}`;
-    //
-    // console.log("export type ---->", exportType);
-    // const clicks_report = "clicks-report";
-    //
-    // await exportReportLoop(
-    //   exportType || "csv",
-    //   columns,
-    //   generic_filename,
-    //   clicks_report,
-    //   async (pageNumber, pageSize) =>
-    //     clicksReport(ctx.prisma, {
-    //       ...params,
-    //       pageParams: { pageNumber, pageSize },
-    //     })
-    // );
-    //
-    // const bucketName = "reports-download-tmp";
-    // const serviceKey = path.join(
-    //   __dirname,
-    //   "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    // );
-    //
-    // const public_url = uploadFile(
-    //   serviceKey,
-    //   "api-front-dashbord",
-    //   bucketName,
-    //   generic_filename,
-    //   exportType ? exportType : "json"
-    // );
-    // return public_url;
-    return Promise.resolve("");
+    return public_url;
   });

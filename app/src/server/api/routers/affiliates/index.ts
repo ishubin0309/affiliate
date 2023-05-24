@@ -42,7 +42,10 @@ import {
 } from "@/server/api/routers/affiliates/reports/commission-report";
 import { getCountryReport } from "@/server/api/routers/affiliates/reports/country-report";
 import { getCountryReportDashboard } from "@/server/api/routers/affiliates/reports/country-report-dashboard";
-import { getCreativeReport } from "@/server/api/routers/affiliates/reports/creative-report";
+import {
+  exportCreativeReport,
+  getCreativeReport,
+} from "@/server/api/routers/affiliates/reports/creative-report";
 import {
   // exportInstallReport,
   getInstallReport,
@@ -55,7 +58,10 @@ import {
   getQuickReportSummary,
 } from "@/server/api/routers/affiliates/reports/quick-summary";
 import { getSubAffiliateReport } from "@/server/api/routers/affiliates/reports/sub-affiliate-report";
-import { getTraderReport } from "@/server/api/routers/affiliates/reports/trader-report";
+import {
+  exportTraderReport,
+  getTraderReport,
+} from "@/server/api/routers/affiliates/reports/trader-report";
 import {
   exportTranslateReportFake,
   getTranslateReportFake,
@@ -118,10 +124,14 @@ export const affiliatesRouter = createTRPCRouter({
   getDocuments,
 
   getCommissions,
+
   getCreativeReport,
+  exportCreativeReport,
+
   getLandingPageData,
 
   getTraderReport,
+  exportTraderReport,
   getLongCountries,
   getPixelLogReport,
 

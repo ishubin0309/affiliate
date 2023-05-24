@@ -12,6 +12,7 @@ import type { ExportType } from "@/server/api/routers/affiliates/reports/reports
 import { createColumnHelper } from "@tanstack/react-table";
 import type { ClicksReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
+import { getColumns } from "./utils";
 
 const columnHelper = createColumnHelper<ClicksReportType>();
 const createColumn = (id: keyof ClicksReportType, header: string) =>
@@ -87,9 +88,19 @@ export const ClicksReport = () => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
-  const handleExport = async (exportType: ExportType) => {
-    return Promise.resolve("ok");
-  };
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportClicksReport.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
+      merchant_id: getNumberParam(merchant_id),
+      trader_id,
+      unique_id,
+      exportType,
+      reportColumns: getColumns(columns),
+    });
   // reportExport({
   //   type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
   //   merchant_id: getNumberParam(merchant_id),

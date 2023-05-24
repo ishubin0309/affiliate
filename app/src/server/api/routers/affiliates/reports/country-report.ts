@@ -3,21 +3,19 @@
  * @param userInfo - An object containing user information such as level and group ID.
  * @returns An object containing country data and report filename.
  */
-import type { PrismaClient } from "@prisma/client";
-import { Prisma } from "@prisma/client";
-import { protectedProcedure } from "@/server/api/trpc";
-import { z } from "zod";
-import type { Sql } from "@prisma/client/runtime";
 import type { PageParam } from "@/server/api/routers/affiliates/reports/reports-utils";
 import {
-  debugSaveData,
-  getPageOffset,
   pageInfo,
   PageParamsSchema,
   splitToPages,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
+import { protectedProcedure } from "@/server/api/trpc";
 import { checkIsUser } from "@/server/api/utils";
+import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
+import type { PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import type { Sql } from "@prisma/client/runtime";
+import { z } from "zod";
 
 const Input = z.object({
   from: z.date(),
@@ -289,8 +287,7 @@ export const countryReport = async (
         SUM(CASE ReportTraders.FirstDeposit WHEN ReportTraders.FirstDeposit > '0000-00-00 00:00:00' THEN 1 ELSE 0 END) as FirstDeposit
         FROM ReportTraders
         WHERE ReportTraders.RegistrationDate >= ${from} AND
-        ReportTraders.RegistrationDate <= ${to} AND
-        ${traders_main}
+        ReportTraders.RegistrationDate <= ${to} 
         GROUP BY Country`;
 
   console.log(`muly:countryReport before merge`, {
@@ -330,6 +327,7 @@ export const countryReport = async (
     }
   });
 
+  console.log("country array ----->", countryArray);
   return splitToPages(
     countryArray.map(convertPrismaResultsToNumbers),
     pageParams

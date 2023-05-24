@@ -12,6 +12,7 @@ import { useState } from "react";
 import type { TraderReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
 
 export const creativeType = [
   {
@@ -71,6 +72,21 @@ export const TraderReports = () => {
     banner_id: banner_id,
     pageParams: pagination.pageParams,
   });
+
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportTraderReport.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      merchant_id: getNumberParam(merchant_id),
+      trader_id: trader_id,
+      country: country,
+      banner_id: banner_id,
+      exportType,
+      pageParams: pagination.pageParams,
+      reportColumns: getColumns(columns),
+    });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const { data: countries } = api.affiliates.getLongCountries.useQuery({});
   const columnHelper = createColumnHelper<TraderReportType>();
@@ -124,65 +140,6 @@ export const TraderReports = () => {
     createColumn("SaleStatus", "Sale Status"),
   ];
 
-  let totalVolume = 0;
-  let totalLots = 0;
-  let totalWithdrawal = 0;
-  let totalChargeback = 0;
-
-  data?.data?.forEach((row: any) => {
-    totalVolume += Number(row?.Volume);
-    totalLots += Number(row?.totalLots);
-    totalWithdrawal += Number(row?.WithdrawalAmount);
-    totalChargeback += Number(row?.ChargeBackAmount);
-  });
-
-  const totalObj = [];
-  totalObj.push({
-    TraderID: "",
-    sub_trader_count: "",
-    RegistrationDate: "",
-    TraderStatus: "",
-    Country: "",
-    affiliate_id: "",
-    AffiliateUsername: "",
-    merchant_id: "",
-    MerchantName: "",
-    CreativeID: "",
-    CreativeName: "",
-    Type: "",
-    CreativeLanguage: "",
-    ProfileID: "",
-    ProfileName: "",
-    Param: "",
-    Param2: "",
-    Param3: "",
-    Param4: "",
-    Param5: "",
-    totalVolume,
-    totalWithdrawal,
-    totalChargeback,
-    totalLots,
-    SaleStatus: "",
-  });
-  const displayOptions = [
-    {
-      id: "monthly",
-      title: "monthly",
-    },
-    {
-      id: "weekly",
-      title: "weekly",
-    },
-    {
-      id: "daily",
-      title: "daily",
-    },
-  ];
-
-  const handleExport = async (exportType: ExportType) => {
-    return null;
-  };
-
   return (
     <ReportControl
       reportName="Users Report"
@@ -207,7 +164,7 @@ export const TraderReports = () => {
       <SearchText varName="trader_id" label="Trader ID" />
       <SearchText varName="banner_id" label="Banner ID" />
 
-      <SearchSelect label="Filter" choices={displayOptions} varName="filter" />
+      <SearchSelect label="Filter" choices={creativeType} varName="filter" />
     </ReportControl>
   );
 };

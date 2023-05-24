@@ -13,6 +13,55 @@ import { useRouter } from "next/router";
 import type { CreativeReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
+
+const columnHelper = createColumnHelper<CreativeReportType>();
+
+const createColumn = (id: keyof CreativeReportType, header: string) =>
+  columnHelper.accessor(id, {
+    cell: (info) => info.getValue(),
+    header,
+  });
+
+const divCol = (
+  val: number | null | undefined,
+  div: number | null | undefined
+) => {
+  return val ? (
+    <span>{((val / (div || 1)) * 100).toFixed(2)}%</span>
+  ) : (
+    <span></span>
+  );
+};
+
+const columns = [
+  createColumn("banner_id", "Creative ID"),
+  createColumn("title", "Creative Name"),
+  createColumn("merchant_name", "Merchant"),
+  createColumn("type", "Type"),
+  createColumn("views", "Impressions"),
+  createColumn("clicks", "Clicks"),
+  createColumn("totalCPI", "Installation"),
+  columnHelper.accessor("ctr" as any, {
+    cell: ({ row }) => divCol(row?.original?.clicks, row.original.views),
+    header: "Click Through Ratio (CTR)",
+  }),
+  columnHelper.accessor("click-to-account" as any, {
+    cell: ({ row }) => divCol(row?.original?.real, row.original.clicks),
+    header: "Click to Account",
+  }),
+  columnHelper.accessor("click-to-sale" as any, {
+    cell: ({ row }) => divCol(row?.original?.ftd, row.original.clicks),
+    header: "Click to Sale",
+  }),
+  createColumn("leads", "Leads"),
+  createColumn("demo", "Demo"),
+  createColumn("accounts", "Accounts"),
+  createColumn("ftd", "FTD"),
+  createColumn("volume", "Volume"),
+  createColumn("withdrawal", "Withdrawal Amount"),
+  createColumn("chargeback", "ChargeBack Amount"),
+];
 
 export const CreativeReport = () => {
   const router = useRouter();
@@ -31,60 +80,28 @@ export const CreativeReport = () => {
     unique_id,
     pageParams: pagination.pageParams,
   });
+
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportCreativeReport.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
+      merchant_id: getNumberParam(merchant_id),
+      trader_id,
+      unique_id,
+      exportType,
+      reportColumns: getColumns(columns),
+    });
+
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
-  const columnHelper = createColumnHelper<CreativeReportType>();
 
   console.log("Install render", {
     data,
     merchants,
     merchant_id,
   });
-
-  const divCol = (
-    val: number | null | undefined,
-    div: number | null | undefined
-  ) => {
-    return val ? (
-      <span>{((val / (div || 1)) * 100).toFixed(2)}%</span>
-    ) : (
-      <span></span>
-    );
-  };
-
-  const createColumn = (id: keyof CreativeReportType, header: string) =>
-    columnHelper.accessor(id, {
-      cell: (info) => info.getValue(),
-      header,
-    });
-
-  const columns = [
-    createColumn("banner_id", "Creative ID"),
-    createColumn("title", "Creative Name"),
-    createColumn("merchant_name", "Merchant"),
-    createColumn("type", "Type"),
-    createColumn("views", "Impressions"),
-    createColumn("clicks", "Clicks"),
-    createColumn("totalCPI", "Installation"),
-    columnHelper.accessor("ctr" as any, {
-      cell: ({ row }) => divCol(row?.original?.clicks, row.original.views),
-      header: "Click Through Ratio (CTR)",
-    }),
-    columnHelper.accessor("click-to-account" as any, {
-      cell: ({ row }) => divCol(row?.original?.real, row.original.clicks),
-      header: "Click to Account",
-    }),
-    columnHelper.accessor("click-to-sale" as any, {
-      cell: ({ row }) => divCol(row?.original?.ftd, row.original.clicks),
-      header: "Click to Sale",
-    }),
-    createColumn("leads", "Leads"),
-    createColumn("demo", "Demo"),
-    createColumn("accounts", "Accounts"),
-    createColumn("ftd", "FTD"),
-    createColumn("volume", "Volume"),
-    createColumn("withdrawal", "Withdrawal Amount"),
-    createColumn("chargeback", "ChargeBack Amount"),
-  ];
 
   const typeOptions = [
     {

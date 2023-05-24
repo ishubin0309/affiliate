@@ -2,7 +2,13 @@ import { protectedProcedure } from "@/server/api/trpc";
 import { checkIsUser } from "@/server/api/utils";
 import type { PrismaClient } from "@prisma/client";
 import { z } from "zod";
-import { exportType, getPageOffset, PageParamsSchema } from "./reports-utils";
+import {
+  exportReportLoop,
+  exportType,
+  getPageOffset,
+  PageParamsSchema,
+  reportColumns,
+} from "./reports-utils";
 
 const Input = z.object({
   from: z.date().optional(),
@@ -74,13 +80,13 @@ const commissionSummary = async (
   console.log("commission report ----->", data);
 
   return {
-    data,
+    data: data,
     // TODO
     totals: {},
     pageInfo: {
       ...pageParams,
       // TODO
-      totalItems: 1,
+      totalItems: data.length,
     },
   };
 };
@@ -93,51 +99,21 @@ export const getCommissionReport = protectedProcedure
   });
 
 export const exportCommissionReport = protectedProcedure
-  .input(Input.extend({ exportType }))
+  .input(Input.extend({ exportType, reportColumns }))
   .mutation(async function ({ ctx, input }) {
-    const { exportType, ...params } = input;
+    const { exportType, reportColumns, ...params } = input;
 
-    const columns = [
-      "Merchant Name",
-      "Merchant ID",
-      "Trader ID",
-      "Transaction ID",
-      "Type",
-      "Amount",
-      "Location",
-      "Commission",
-    ];
+    const affiliate_id = checkIsUser(ctx);
 
-    // const file_date = new Date().toISOString();
-    // const generic_filename = `commission-report${file_date}`;
-    //
-    // console.log("export type ---->", exportType);
-    // const commission_report = "commission-report";
-    // await exportReportLoop(
-    //   exportType || "csv",
-    //   columns,
-    //   generic_filename,
-    //   commission_report,
-    //   async (pageNumber, pageSize) =>
-    //     commissionSummary(ctx.prisma, {
-    //       ...params,
-    //       pageParams: { pageNumber, pageSize },
-    //     })
-    // );
-    //
-    // const bucketName = "reports-download-tmp";
-    // const serviceKey = path.join(
-    //   __dirname,
-    //   "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    // );
-    //
-    // const public_url = uploadFile(
-    //   serviceKey,
-    //   "api-front-dashbord",
-    //   bucketName,
-    //   generic_filename,
-    //   exportType ? exportType : "json"
-    // );
-    // return public_url;
-    return Promise.resolve("");
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        commissionSummary(ctx.prisma, affiliate_id, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
+
+    return public_url;
   });
