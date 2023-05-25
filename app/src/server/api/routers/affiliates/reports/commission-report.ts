@@ -81,11 +81,9 @@ const commissionSummary = async (
 
   return {
     data: data,
-    // TODO
     totals: {},
     pageInfo: {
       ...pageParams,
-      // TODO
       totalItems: data.length,
     },
   };

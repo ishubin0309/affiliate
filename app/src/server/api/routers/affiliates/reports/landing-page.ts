@@ -1,5 +1,5 @@
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import { protectedProcedure } from "@/server/api/trpc";
+import { checkIsUser } from "@/server/api/utils";
 import type { PrismaClient, data_sales_type } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
@@ -7,8 +7,11 @@ import { LandingPageReportSchema } from "../reports";
 import {
   PageParamsSchema,
   SortingParamSchema,
+  exportReportLoop,
+  exportType,
   getPageOffset,
   pageInfo,
+  reportColumns,
 } from "./reports-utils";
 
 const LandingPageReportResultSchema = z.object({
@@ -32,6 +35,7 @@ const InputWithPageInfo = Input.extend({
 
 export const landingPageData = async (
   prisma: PrismaClient,
+  affiliate_id: number,
   {
     from,
     to,
@@ -57,27 +61,38 @@ export const landingPageData = async (
 
   const orderBy = {};
 
-  const bannersww = await prisma.merchants_creative.findMany({
-    where: {
-      merchant_id: merchant_id,
-      valid: 1,
-    },
-    include: {
-      language: {
-        select: {
-          title: true,
+  const [bannersww, totals] = await Promise.all([
+    prisma.merchants_creative.findMany({
+      where: {
+        merchant_id: merchant_id,
+        valid: 1,
+      },
+      include: {
+        language: {
+          select: {
+            title: true,
+          },
+        },
+        merchant: {
+          select: {
+            name: true,
+          },
         },
       },
-      merchant: {
-        select: {
-          name: true,
-        },
+      orderBy: orderBy,
+      skip: offset,
+      take: pageParams.pageSize,
+    }),
+    prisma.merchants_creative.aggregate({
+      _count: {
+        merchant_id: true,
       },
-    },
-    orderBy: orderBy,
-    skip: offset,
-    take: pageParams.pageSize,
-  });
+      where: {
+        merchant_id: merchant_id,
+        valid: 1,
+      },
+    }),
+  ]);
 
   //clicks and impressions
   const trafficRow = await prisma.traffic.groupBy({
@@ -308,14 +323,14 @@ export const landingPageData = async (
     };
   });
 
-  console.log("creative array ---->", arrRes);
+  // console.log("creative array ---->", arrRes);
 
   return {
     data: arrRes,
     totals: {},
     pageInfo: {
       ...pageParams,
-      totalItems: arrRes.length,
+      totalItems: totals._count.merchant_id,
     },
   };
 };
@@ -323,4 +338,25 @@ export const landingPageData = async (
 export const getLandingPageData = protectedProcedure
   .input(InputWithPageInfo)
   .output(LandingPageReportResultSchema)
-  .query(({ ctx, input }) => landingPageData(ctx.prisma, input));
+  .query(({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
+    return landingPageData(ctx.prisma, affiliate_id, input);
+  });
+export const exportLandingPageData = protectedProcedure
+  .input(Input.extend({ exportType, reportColumns }))
+  .mutation(async function ({ ctx, input }) {
+    const { exportType, reportColumns, ...params } = input;
+    const affiliate_id = checkIsUser(ctx);
+
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        landingPageData(ctx.prisma, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
+
+    return public_url;
+  });

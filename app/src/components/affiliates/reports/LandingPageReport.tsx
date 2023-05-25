@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import type { LandingPageReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
 
 export const LandingPageReport = () => {
   const router = useRouter();
@@ -91,70 +92,19 @@ export const LandingPageReport = () => {
     };
   });
 
-  // let totalImpressions = 0;
-  // let totalClicks = 0;
-  // let totalCPIM = 0;
-  // let totalLeadsAccounts = 0;
-  // let totalDemoAccounts = 0;
-  // let totalRealAccounts = 0;
-  // let totalFTD = 0;
-  // const totalFTDAmount = 0;
-  // const totalRealFtd = 0;
-  // const totalRealFtdAmount = 0;
-  // let totalDeposits = 0;
-  // let totalDepositAmount = 0;
-  // let totalVolume = 0;
-  // let totalBonus = 0;
-  // let totalWithdrawal = 0;
-  // let totalChargeback = 0;
-  // let totalNetRevenue = 0;
-  // let totalFooterPNL = 0;
-  // let totalActiveTraders = 0;
-  // let totalComs = 0;
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportLandingPageData.useMutation();
 
-  // const Data = data as LandingPageReportType[];
-  // Data?.forEach((row: LandingPageReportType) => {
-  //   totalImpressions += row?._sum?.views;
-  //   totalClicks += Number(row?._sum?.clicks);
-  //   totalCPIM += Number(row?.cpi);
-  //   totalLeadsAccounts += Number(row?.lead ?? 0);
-  //   totalDemoAccounts += Number(row?.demo ?? 0);
-  //   totalRealAccounts += Number(row?.real ?? 0);
-  //   totalFTD += Number(row?.ftd ?? 0);
-  //   totalDeposits += Number(row?.deposit ?? 0);
-  //   totalDepositAmount += Number(row?.depositsAmount ?? 0);
-  //   totalVolume += Number(row?.volume ?? 0);
-  //   totalBonus += Number(row?.bonus ?? 0);
-  //   totalWithdrawal += Number(row?.withdrawal ?? 0);
-  //   totalChargeback += Number(row?.chargeBack ?? 0);
-  //   totalNetRevenue += Number(row?.netDeposit ?? 0);
-  //   totalFooterPNL += Number(row?.pnl ?? 0);
-  //   totalActiveTraders += Number(row?.activeTrader ?? 0);
-  //   totalComs += row?.Commission ?? 0;
-  // });
-
-  // const totalObj = [];
-  // totalObj.push({
-  //   URL: "",
-  //   totalImpressions,
-  //   totalClicks,
-  //   totalCPIM,
-  //   totalCTR: `${((totalClicks / totalImpressions) * 100).toFixed(2)}%`,
-  //   totalCTA: `${((totalRealAccounts / totalClicks) * 100).toFixed(2)}%`,
-  //   totalCTS: `${((totalFTD / totalClicks) * 100).toFixed(2)}%`,
-  //   totalLeadsAccounts,
-  //   totalDemoAccounts,
-  //   totalFTD,
-  //   totalVolume,
-  //   totalWithdrawal,
-  //   totalChargeback,
-  //   totalActiveTraders,
-  //   totalComs,
-  // });
-
-  const handleExport = async (exportType: ExportType) => {
-    return null;
-  };
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      merchant_id: getNumberParam(merchant_id),
+      url: url,
+      creative_type: creative_type,
+      pageParams: pagination.pageParams,
+      exportType,
+      reportColumns: getColumns(columns),
+    });
 
   return (
     <ReportControl

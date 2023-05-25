@@ -2,7 +2,13 @@ import { protectedProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
 import { pixel_logsModel } from "prisma/zod";
 import { z } from "zod";
-import { PageParamsSchema, pageInfo } from "./reports-utils";
+import {
+  PageParamsSchema,
+  exportReportLoop,
+  exportType,
+  pageInfo,
+  reportColumns,
+} from "./reports-utils";
 
 const Input = z.object({
   from: z.date().optional(),
@@ -93,7 +99,7 @@ const pixelLogReportData = async (
       dateTime: "asc",
     },
     where: {
-      ...type_filter,
+      // ...type_filter,
       dateTime: {
         gte: from,
         lt: to,
@@ -135,3 +141,21 @@ export const getPixelLogReport = protectedProcedure
   .input(InputWithPageInfo)
   .output(pixelLogReportSchema)
   .query(({ ctx, input }) => pixelLogReportData(ctx.prisma, input));
+
+export const exportPixelLogReportData = protectedProcedure
+  .input(Input.extend({ exportType, reportColumns }))
+  .mutation(async function ({ ctx, input }) {
+    const { exportType, reportColumns, ...params } = input;
+
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        pixelLogReportData(ctx.prisma, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
+
+    return public_url;
+  });

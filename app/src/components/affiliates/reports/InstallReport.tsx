@@ -11,6 +11,30 @@ import { useRouter } from "next/router";
 import type { InstallReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
+
+const columnHelper = createColumnHelper<ProfileReportType>();
+
+const createColumn = (id: keyof ProfileReportType, header: string) =>
+  columnHelper.accessor(id, {
+    cell: (info) => info.getValue(),
+    header,
+  });
+
+const columns = [
+  createColumn("type", "Event Type"),
+  createColumn("rdate", "Event Date"),
+  createColumn("trader_id", "Trader ID"),
+  createColumn("trader_alias", "Trader Alias"),
+  createColumn("type", "Trader Status"),
+  createColumn("country", "Country"),
+  createColumn("affiliate_id", "Affiliate ID"),
+  createColumn("username", "Affiliate Username"),
+  createColumn("merchant_id", "Merchant ID"),
+  createColumn("name", "Merchant Name"),
+  createColumn("id", "Creative ID"),
+  createColumn("title", "Creative Name"),
+];
 
 export const InstallReport = () => {
   const router = useRouter();
@@ -59,69 +83,25 @@ export const InstallReport = () => {
     );
   };
 
-  console.log("countries ----->", countries);
-
-  const columns = [
-    columnHelper.accessor("type", {
-      cell: (info) => info.getValue() as string,
-      header: "Event Type",
-    }),
-    columnHelper.accessor("rdate", {
-      cell: (info) => info.getValue() as Date,
-      header: "Event Date",
-    }),
-    columnHelper.accessor("trader_id", {
-      cell: (info) => info.getValue() as number,
-      header: "Trader ID",
-    }),
-    columnHelper.accessor("trader_alias", {
-      cell: (info) => info.getValue() as string,
-      header: "Trader Alias",
-    }),
-    columnHelper.accessor("type", {
-      cell: (info) => info.getValue() as string,
-      header: "Trader Status",
-    }),
-    columnHelper.accessor("country", {
-      cell: (info) => info.getValue() as string,
-      header: "Country",
-    }),
-    columnHelper.accessor("affiliate_id", {
-      cell: (info) => info.getValue() as number,
-      header: "Affiliate ID",
-    }),
-    columnHelper.accessor("username", {
-      cell: (info) => info.getValue() as string,
-      header: "Affiliate Username",
-    }),
-    columnHelper.accessor("merchant_id", {
-      cell: (info) => info.getValue() as number,
-      header: "Merchant ID",
-    }),
-    columnHelper.accessor("name", {
-      cell: (info) => info.getValue() as string,
-      header: "Merchant Name",
-    }),
-    columnHelper.accessor("id", {
-      cell: (info) => info.getValue() as number,
-      header: "Creative ID",
-    }),
-    columnHelper.accessor("title", {
-      cell: (info) => info.getValue() as string,
-      header: "Creative Name",
-    }),
-  ];
-
   const country_options = countries?.map((country: any) => {
     return {
       id: country.id,
       title: country.title,
     };
   });
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportInstallReport.useMutation();
 
-  const handleExport = async (exportType: ExportType) => {
-    return null;
-  };
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      country: country,
+      trader_id: getNumberParam(trader_id),
+      banner_id: banner_id,
+      pageParams: pagination.pageParams,
+      exportType,
+      reportColumns: getColumns(columns),
+    });
 
   return (
     <ReportControl

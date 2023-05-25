@@ -1,8 +1,11 @@
 import { merchant_id } from "@/server/api/routers/affiliates/const";
 import {
   PageParamsSchema,
+  exportReportLoop,
+  exportType,
   getPageOffset,
   pageInfo,
+  reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { protectedProcedure } from "@/server/api/trpc";
 import { checkIsUser } from "@/server/api/utils";
@@ -142,56 +145,22 @@ export const getInstallReport = protectedProcedure
     return installReport(ctx.prisma, affiliate_id, input);
   });
 
-// export const exportInstallReport = publicProcedure
-//   .input(paramsWithReport)
-//   .mutation(async function ({ ctx, input }) {
-//     const items_per_page = 5000;
-//     const { exportType, ...params } = input;
+export const exportInstallReport = protectedProcedure
+  .input(Input.extend({ exportType, reportColumns }))
+  .mutation(async function ({ ctx, input }) {
+    const { exportType, reportColumns, ...params } = input;
 
-//     const columns = [
-//       "Event Type",
-//       "Event Date",
-//       "Trader ID",
-//       "Trader Alias",
-//       "Trader Status",
-//       "Country",
-//       "Affiliate ID",
-//       "Affiliate Username",
-//       "Merchant ID",
-//       "Merchant Name",
-//       "Creative ID",
-//       "Creative Name",
-//     ];
-//     const file_date = new Date().toISOString();
-//     const generic_filename = `install-report${file_date}`;
+    const affiliate_id = checkIsUser(ctx);
 
-//     console.log("export type ---->", exportType);
-//     const install_report = "install-report";
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        installReport(ctx.prisma, affiliate_id, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
 
-//     await exportReportLoop(
-//       exportType || "csv",
-//       columns,
-//       generic_filename,
-//       install_report,
-//       async (page, items_per_page) =>
-//         installReport({
-//           ctx,
-//           input: { ...params, page, items_per_page },
-//         })
-//     );
-
-//     const bucketName = "reports-download-tmp";
-//     const serviceKey = path.join(
-//       __dirname,
-//       "../../../../../api-front-dashbord-a4ee8aec074c.json"
-//     );
-
-//     const public_url = uploadFile(
-//       serviceKey,
-//       "api-front-dashbord",
-//       bucketName,
-//       generic_filename,
-//       exportType ? exportType : "json"
-//     );
-//     return public_url;
-//   });
+    return public_url;
+  });

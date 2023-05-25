@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import type { PixelLogsReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
 
 export const PixelLogReports = () => {
   const router = useRouter();
@@ -77,9 +78,19 @@ export const PixelLogReports = () => {
     };
   });
 
-  const handleExport = async (exportType: ExportType) => {
-    return null;
-  };
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportPixelLogReportData.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      merchant_id: getNumberParam(merchant_id),
+      country: country ? String(country) : "",
+      group_id: group_id ? String(group_id) : "",
+      pageParams: pagination.pageParams,
+      exportType,
+      reportColumns: getColumns(columns),
+    });
 
   return (
     <ReportControl

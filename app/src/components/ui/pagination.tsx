@@ -46,6 +46,8 @@ export const Pagination = ({
     });
   };
 
+  console.log("total items ------>", totalItems);
+
   if (totalItems > pageSize) {
     return (
       <nav className="paginate-container flex items-center justify-start space-x-0">

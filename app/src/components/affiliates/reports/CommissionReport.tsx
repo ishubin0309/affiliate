@@ -11,6 +11,7 @@ import { useState } from "react";
 import type { CommissionReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
 
 export const CommissionReport = () => {
   const router = useRouter();
@@ -185,6 +186,10 @@ export const CommissionReport = () => {
   const handleExport = async (exportType: ExportType) =>
     reportExport({
       ...dateRange,
+      commission: commission ? String(commission) : "",
+      trader_id: traderID,
+      pageParams: pagination.pageParams,
+      reportColumns: getColumns(columns),
       exportType,
     });
 

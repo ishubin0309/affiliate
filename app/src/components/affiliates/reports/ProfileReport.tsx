@@ -10,6 +10,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import type { ProfileReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
 
 export const ProfileReport = () => {
   const {
@@ -103,9 +104,17 @@ export const ProfileReport = () => {
     },
   ];
 
-  const handleExport = async (exportType: ExportType) => {
-    return null;
-  };
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportProfileReportData.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      merchant_id: getNumberParam(merchant_id),
+      pageParams: pagination.pageParams,
+      exportType,
+      reportColumns: getColumns(columns),
+    });
 
   return (
     <ReportControl

@@ -3,7 +3,14 @@ import { protectedProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
 import { getUnixTime } from "date-fns";
 import { z } from "zod";
-import { PageParamsSchema, getPageOffset, pageInfo } from "./reports-utils";
+import {
+  PageParamsSchema,
+  exportReportLoop,
+  exportType,
+  getPageOffset,
+  pageInfo,
+  reportColumns,
+} from "./reports-utils";
 
 type TraderStats = {
   _sum?: {
@@ -153,19 +160,29 @@ const profileReportData = async (
   // }
 
   // console.log("date ranges ----->", dateRanges);
-  const ww = await prisma.affiliates_profiles.findMany({
-    orderBy: {
-      id: "desc",
-    },
-    where: {
-      valid: 1,
-    },
-    include: {
-      affiliate: true,
-    },
-    skip: offset,
-    take: pageParams.pageSize,
-  });
+  const [ww, totals] = await Promise.all([
+    prisma.affiliates_profiles.findMany({
+      orderBy: {
+        id: "desc",
+      },
+      where: {
+        valid: 1,
+      },
+      include: {
+        affiliate: true,
+      },
+      skip: offset,
+      take: pageParams.pageSize,
+    }),
+    prisma.affiliates_profiles.aggregate({
+      _count: {
+        id: true,
+      },
+      where: {
+        valid: 1,
+      },
+    }),
+  ]);
 
   const brandsRow = await prisma.merchants.findMany({
     select: {
@@ -182,7 +199,7 @@ const profileReportData = async (
     },
   });
 
-  console.log("brands row ----->", brandsRow);
+  // console.log("brands row ----->", brandsRow);
 
   const merchant_count = await prisma.merchants.aggregate({
     _sum: {
@@ -500,25 +517,6 @@ const profileReportData = async (
   totalPNL += pnl;
   // });
 
-  // return {
-  //   totalImpressionsM,
-  //   totalClicksM,
-  //   totalLeadsAccountsM,
-  //   totalDemoAccountsM,
-  //   totalRealAccountsM,
-  //   totalFTDM,
-  //   totalDepositsM,
-  //   totalDepositAmountM,
-  //   totalFTDAmountM,
-  //   totalVolumeM,
-  //   totalBonusM,
-  //   totalWithdrawalM,
-  //   totalChargeBackM,
-  //   totalComsM,
-  //   totalRealFtdAmountM,
-  //   totalRealFtdM,
-  //   totalPNL,
-  // };
   const merged = [];
 
   for (let i = 0; i < ww.length; i++) {
@@ -561,11 +559,11 @@ const profileReportData = async (
     },
     pageInfo: {
       ...pageParams,
-      totalItems: merged.length,
+      totalItems: totals._count.id,
     },
   };
 
-  console.log("arr res ------>", arrRes);
+  // console.log("arr res ------>", arrRes);
   return arrRes;
 };
 
@@ -574,4 +572,22 @@ export const getProfileReportData = protectedProcedure
   .output(profileReportDataSchema)
   .query(({ ctx, input }) => {
     return profileReportData(ctx.prisma, input);
+  });
+
+export const exportProfileReportData = protectedProcedure
+  .input(Input.extend({ exportType, reportColumns }))
+  .mutation(async function ({ ctx, input }) {
+    const { exportType, reportColumns, ...params } = input;
+
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        profileReportData(ctx.prisma, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
+
+    return public_url;
   });
