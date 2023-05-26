@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import type { SubAffiliateReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
 
 export const SubAffiliateReport = () => {
   const router = useRouter();
@@ -67,13 +68,23 @@ export const SubAffiliateReport = () => {
     createColumn("Withdrawal", "Withdrawal Amount"),
     createColumn("ChargeBack", "ChargeBack Amount"),
   ];
-  const handleExport = async (exportType: ExportType) => {
-    return null;
-  };
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportSubAffiliateReport.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      merchant_id: getNumberParam(merchant_id),
+      user_level: "admin",
+      trader_id,
+      unique_id,
+      exportType,
+      reportColumns: getColumns(columns),
+    });
 
   return (
     <ReportControl
-      reportName="Clicks Report"
+      reportName="Sub Affiliate Report"
       report={data}
       columns={columns}
       pagination={pagination}

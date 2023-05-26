@@ -475,5 +475,18 @@
     "amount": "Amount",
     "location": "Location",
     "commission": "Commission"
+  },
+  "sub_affiliate_report": {
+    "affiliate_id": "Affiliate ID",
+    "affiliate_username": "Affiliate Username",
+    "tier_level": "Tier Level",
+    "clicks": "Clicks",
+    "installation": "Installation",
+    "leads": "Leads",
+    "demo": "Demo",
+    "accounts": "Accounts",
+    "volume": "Volume",
+    "withdrawal_amount": "Withdrawal Amount",
+    "chargeback_amount": "ChargeBack Amount"
   }
 }

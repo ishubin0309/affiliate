@@ -69,7 +69,10 @@ import {
   exportQuickSummaryReport,
   getQuickReportSummary,
 } from "@/server/api/routers/affiliates/reports/quick-summary";
-import { getSubAffiliateReport } from "@/server/api/routers/affiliates/reports/sub-affiliate-report";
+import {
+  exportSubAffiliateReport,
+  getSubAffiliateReport,
+} from "@/server/api/routers/affiliates/reports/sub-affiliate-report";
 import {
   exportTraderReport,
   getTraderReport,
@@ -160,6 +163,7 @@ export const affiliatesRouter = createTRPCRouter({
   exportProfileReportData,
 
   getSubAffiliateReport,
+  exportSubAffiliateReport,
 
   getPixelMonitorMeta,
   getPixelMonitor,

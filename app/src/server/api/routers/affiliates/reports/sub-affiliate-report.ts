@@ -1,12 +1,16 @@
 import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import { protectedProcedure } from "@/server/api/trpc";
-import type { PrismaClient, affiliates } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 import { affiliatesModel } from "prisma/zod";
 import { z } from "zod";
 import {
   PageParamsSchema,
   SortingParamSchema,
+  exportReportLoop,
+  exportType,
+  getPageOffset,
   pageInfo,
+  reportColumns,
 } from "./reports-utils";
 
 type DashboardType = {
@@ -77,6 +81,7 @@ export const subAffiliateReport = async (
   let totalLots = 0;
   let totalVolume = 0;
   const merchantArray: Record<string, object> = {};
+  const offset = getPageOffset(pageParams);
 
   const mer_rsc = await prisma.merchants.findMany({
     where: {
@@ -91,7 +96,6 @@ export const subAffiliateReport = async (
     }
   }
 
-  let allAffiliates;
   let affiliateData;
 
   const id = await prisma.affiliates.findMany({
@@ -106,84 +110,92 @@ export const subAffiliateReport = async (
     },
   });
 
-  console.log("user level 1111 3333----->", id);
+  const totals = await prisma.affiliates.aggregate({
+    _count: {
+      id: true,
+    },
+  });
 
   if (user_level === "admin") {
-    allAffiliates = await prisma.affiliates.findMany({
+    affiliateData = await prisma.affiliates.findMany({
       where: {
         valid: 1,
       },
+      skip: offset,
+      take: pageParams.pageSize,
     });
   } else if (user_level === "manager") {
-    allAffiliates = await prisma.affiliates.findMany({
+    affiliateData = await prisma.affiliates.findMany({
       where: {
         valid: 1,
         group_id: user_level === "manager" ? group_id : 0,
       },
+      skip: offset,
+      take: pageParams.pageSize,
     });
   } else {
-    allAffiliates = [];
+    affiliateData = [];
   }
 
   // affiliate data
 
-  if (user_level === "admin") {
-    if (!affiliate_id) {
-      affiliateData = await prisma.affiliates.findMany({
-        where: {
-          id: id[0]?.refer_id,
-          valid: 1,
-        },
-      });
-    } else {
-      affiliateData = await prisma.affiliates.findMany({
-        where: {
-          id: id[0]?.refer_id,
-          valid: 1,
-          // OR: {
-          //   id: Number(affiliate_id),
-          //   refer_id: Number(affiliate_id),
-          // },
-        },
-      });
-    }
-  } else if (user_level === "manager") {
-    if (!affiliate_id) {
-      affiliateData = await prisma.affiliates.findMany({
-        where: {
-          id: id[0]?.refer_id,
-          valid: 1,
-          group_id: user_level === "manager" ? group_id : 0,
-        },
-      });
-    } else {
-      affiliateData = await prisma.affiliates.findMany({
-        where: {
-          id: id[0]?.refer_id,
-          valid: 1,
-          group_id: user_level === "manager" ? group_id : 0,
-          OR: {
-            id: Number(affiliate_id),
-            refer_id: Number(affiliate_id),
-          },
-        },
-      });
-    }
-  } else {
-    affiliateData = await prisma.affiliates.findMany({
-      select: {
-        username: true,
-        id: true,
-      },
-      where: {
-        valid: 1,
-      },
-    });
-  }
+  // if (user_level === "admin") {
+  //   if (!affiliate_id) {
+  //     affiliateData = await prisma.affiliates.findMany({
+  //       where: {
+  //         id: id[0]?.refer_id,
+  //         valid: 1,
+  //       },
+  //     });
+  //   } else {
+  //     affiliateData = await prisma.affiliates.findMany({
+  //       where: {
+  //         id: id[0]?.refer_id,
+  //         valid: 1,
+  //         // OR: {
+  //         //   id: Number(affiliate_id),
+  //         //   refer_id: Number(affiliate_id),
+  //         // },
+  //       },
+  //     });
+  //   }
+  // } else if (user_level === "manager") {
+  //   if (!affiliate_id) {
+  //     affiliateData = await prisma.affiliates.findMany({
+  //       where: {
+  //         id: id[0]?.refer_id,
+  //         valid: 1,
+  //         group_id: user_level === "manager" ? group_id : 0,
+  //       },
+  //     });
+  //   } else {
+  //     affiliateData = await prisma.affiliates.findMany({
+  //       where: {
+  //         id: id[0]?.refer_id,
+  //         valid: 1,
+  //         group_id: user_level === "manager" ? group_id : 0,
+  //         OR: {
+  //           id: Number(affiliate_id),
+  //           refer_id: Number(affiliate_id),
+  //         },
+  //       },
+  //     });
+  //   }
+  // } else {
+  //   affiliateData = await prisma.affiliates.findMany({
+  //     select: {
+  //       username: true,
+  //       id: true,
+  //     },
+  //     where: {
+  //       valid: 1,
+  //     },
+  //   });
+  // }
+
+  let Commission;
 
   let data;
-  let Commission;
-  const affiliates = affiliateData as any;
   const IDs = await prisma.affiliates.findMany({
     select: {
       id: true,
@@ -235,7 +247,7 @@ export const subAffiliateReport = async (
         },
       });
     }
-    for (let j = 0; j < affiliates?.length; j++) {
+    for (let j = 0; j < affiliateData?.length; j++) {
       data = prisma.dashboard.aggregate({
         _sum: {
           Clicks: true,
@@ -256,7 +268,7 @@ export const subAffiliateReport = async (
           Volume: true,
         },
         where: {
-          affiliate_id: affiliates[j]?.id,
+          affiliate_id: affiliateData[j]?.id,
           Date: {
             gt: from,
             lt: to,
@@ -269,7 +281,7 @@ export const subAffiliateReport = async (
           Commission: true,
         },
         where: {
-          affiliate_id: affiliates[j]?.id,
+          affiliate_id: affiliateData[j]?.id,
           Date: {
             gt: from,
             lt: to,
@@ -321,7 +333,7 @@ export const subAffiliateReport = async (
     totalVolume += Data?._sum?.Volume || 0;
   }
 
-  const subAffiliateArray = affiliates?.map((item: affiliates) => {
+  const subAffiliateArray = affiliateData?.map((item: any) => {
     return {
       ...item,
       ...Data._sum,
@@ -349,7 +361,7 @@ export const subAffiliateReport = async (
     },
     pageInfo: {
       ...pageParams,
-      totalItems: subAffiliateArray.length,
+      totalItems: totals._count.id,
     },
   };
 
@@ -360,3 +372,21 @@ export const getSubAffiliateReport = protectedProcedure
   .input(InputWithPageInfo)
   // .output(SubAffiliateReportSchema)
   .query(({ ctx, input }) => subAffiliateReport(ctx.prisma, input));
+
+export const exportSubAffiliateReport = protectedProcedure
+  .input(Input.extend({ exportType, reportColumns }))
+  .mutation(async function ({ ctx, input }) {
+    const { exportType, reportColumns, ...params } = input;
+
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        subAffiliateReport(ctx.prisma, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
+
+    return public_url;
+  });
