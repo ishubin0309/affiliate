@@ -59,7 +59,7 @@ export type PixelMonitorUpsertType =
 
 export type pixel_monitorModelType = z.infer<typeof pixel_monitorModel>;
 
-export type QuickReportSummary =
+export type QuickReportSummaryType =
   RouterOutput["affiliates"]["getQuickReportSummary"]["data"][0];
 
 export type CommissionReportType =

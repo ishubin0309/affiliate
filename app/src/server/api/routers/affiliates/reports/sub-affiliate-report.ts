@@ -96,7 +96,7 @@ export const subAffiliateReport = async (
     }
   }
 
-  let affiliateData;
+  let affiliateData: any[] = [];
 
   const id = await prisma.affiliates.findMany({
     distinct: ["refer_id"],
@@ -333,12 +333,14 @@ export const subAffiliateReport = async (
     totalVolume += Data?._sum?.Volume || 0;
   }
 
-  const subAffiliateArray = affiliateData?.map((item: any) => {
-    return {
-      ...item,
-      ...Data._sum,
-    };
-  });
+  const subAffiliateArray = (affiliateData ?? []).map(
+    (item: Record<string, unknown>) => {
+      return {
+        ...item,
+        ...Data._sum,
+      };
+    }
+  ) as Record<string, unknown>[];
 
   const arrRes = {
     data: subAffiliateArray,

@@ -6,6 +6,7 @@ import {
 import { getDateRange } from "@/components/common/search/search-date-range";
 import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
+import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 import type { PixelLogsReportType } from "../../../server/db-types";
@@ -31,9 +32,9 @@ export const PixelLogReports = () => {
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const { data: countries } = api.affiliates.getLongCountries.useQuery({});
   const columnHelper = createColumnHelper<PixelLogsReportType>();
-  const createColumn = (id: keyof LandingPageReportType, header: string) =>
+  const createColumn = (id: keyof PixelLogsReportType, header: string) =>
     columnHelper.accessor(id, {
-      cell: (info) => info.getValue(),
+      cell: (info: { getValue: () => string }) => info.getValue(),
       header,
     });
 

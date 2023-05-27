@@ -1,7 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import type { QuickReportSummary } from "../../../server/db-types";
+import { type QuickReportSummaryType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 
 import { usePagination } from "@/components/common/data-table/pagination-hook";
@@ -52,9 +52,9 @@ export const QuickSummaryReport = () => {
     api.affiliates.exportQuickSummaryReport.useMutation();
 
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
-  const columnHelper = createColumnHelper<QuickReportSummary>();
+  const columnHelper = createColumnHelper<QuickReportSummaryType>();
 
-  const createColumn = (id: keyof SubAffiliateReportType, header: string) =>
+  const createColumn = (id: keyof QuickReportSummaryType, header: string) =>
     columnHelper.accessor(id, {
       cell: (info) => info.getValue(),
       header,

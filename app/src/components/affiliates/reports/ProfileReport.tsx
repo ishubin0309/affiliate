@@ -6,6 +6,7 @@ import {
 import { getDateRange } from "@/components/common/search/search-date-range";
 import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
+import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import type { ProfileReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
@@ -30,7 +31,7 @@ export const ProfileReport = () => {
 
   const createColumn = (id: keyof ProfileReportType, header: string) =>
     columnHelper.accessor(id, {
-      cell: (info) => info.getValue(),
+      cell: (info: { getValue: () => string }) => info.getValue(),
       header,
     });
   // console.log("Clicks render", {
