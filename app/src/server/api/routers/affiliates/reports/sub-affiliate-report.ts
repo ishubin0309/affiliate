@@ -97,6 +97,7 @@ export const subAffiliateReport = async (
   }
 
   let affiliateData: any[] = [];
+  let allAffiliates: any[] = [];
 
   const id = await prisma.affiliates.findMany({
     distinct: ["refer_id"],
@@ -117,7 +118,7 @@ export const subAffiliateReport = async (
   });
 
   if (user_level === "admin") {
-    affiliateData = await prisma.affiliates.findMany({
+    allAffiliates = await prisma.affiliates.findMany({
       where: {
         valid: 1,
       },
@@ -125,7 +126,7 @@ export const subAffiliateReport = async (
       take: pageParams.pageSize,
     });
   } else if (user_level === "manager") {
-    affiliateData = await prisma.affiliates.findMany({
+    allAffiliates = await prisma.affiliates.findMany({
       where: {
         valid: 1,
         group_id: user_level === "manager" ? group_id : 0,
@@ -134,64 +135,64 @@ export const subAffiliateReport = async (
       take: pageParams.pageSize,
     });
   } else {
-    affiliateData = [];
+    allAffiliates = [];
   }
 
   // affiliate data
 
-  // if (user_level === "admin") {
-  //   if (!affiliate_id) {
-  //     affiliateData = await prisma.affiliates.findMany({
-  //       where: {
-  //         id: id[0]?.refer_id,
-  //         valid: 1,
-  //       },
-  //     });
-  //   } else {
-  //     affiliateData = await prisma.affiliates.findMany({
-  //       where: {
-  //         id: id[0]?.refer_id,
-  //         valid: 1,
-  //         // OR: {
-  //         //   id: Number(affiliate_id),
-  //         //   refer_id: Number(affiliate_id),
-  //         // },
-  //       },
-  //     });
-  //   }
-  // } else if (user_level === "manager") {
-  //   if (!affiliate_id) {
-  //     affiliateData = await prisma.affiliates.findMany({
-  //       where: {
-  //         id: id[0]?.refer_id,
-  //         valid: 1,
-  //         group_id: user_level === "manager" ? group_id : 0,
-  //       },
-  //     });
-  //   } else {
-  //     affiliateData = await prisma.affiliates.findMany({
-  //       where: {
-  //         id: id[0]?.refer_id,
-  //         valid: 1,
-  //         group_id: user_level === "manager" ? group_id : 0,
-  //         OR: {
-  //           id: Number(affiliate_id),
-  //           refer_id: Number(affiliate_id),
-  //         },
-  //       },
-  //     });
-  //   }
-  // } else {
-  //   affiliateData = await prisma.affiliates.findMany({
-  //     select: {
-  //       username: true,
-  //       id: true,
-  //     },
-  //     where: {
-  //       valid: 1,
-  //     },
-  //   });
-  // }
+  if (user_level === "admin") {
+    if (!affiliate_id) {
+      affiliateData = await prisma.affiliates.findMany({
+        where: {
+          id: id[0]?.refer_id,
+          valid: 1,
+        },
+      });
+    } else {
+      affiliateData = await prisma.affiliates.findMany({
+        where: {
+          id: id[0]?.refer_id,
+          valid: 1,
+          // OR: {
+          //   id: Number(affiliate_id),
+          //   refer_id: Number(affiliate_id),
+          // },
+        },
+      });
+    }
+  } else if (user_level === "manager") {
+    if (!affiliate_id) {
+      affiliateData = await prisma.affiliates.findMany({
+        where: {
+          id: id[0]?.refer_id,
+          valid: 1,
+          group_id: user_level === "manager" ? group_id : 0,
+        },
+      });
+    } else {
+      affiliateData = await prisma.affiliates.findMany({
+        where: {
+          id: id[0]?.refer_id,
+          valid: 1,
+          group_id: user_level === "manager" ? group_id : 0,
+          OR: {
+            id: Number(affiliate_id),
+            refer_id: Number(affiliate_id),
+          },
+        },
+      });
+    }
+  } else {
+    affiliateData = await prisma.affiliates.findMany({
+      select: {
+        username: true,
+        id: true,
+      },
+      where: {
+        valid: 1,
+      },
+    });
+  }
 
   let Commission;
 
@@ -202,8 +203,9 @@ export const subAffiliateReport = async (
     },
     take: 10,
   });
+
   if (user_level === "admin" || user_level === "manager") {
-    for (let j = 0; j < IDs?.length; j++) {
+    for (const item of IDs) {
       data = await prisma.dashboard.aggregate({
         _sum: {
           Clicks: true,
@@ -224,7 +226,7 @@ export const subAffiliateReport = async (
           Volume: true,
         },
         where: {
-          affiliate_id: IDs[j]?.id,
+          affiliate_id: item?.id,
           Date: {
             gt: from,
             lt: to,
@@ -233,13 +235,13 @@ export const subAffiliateReport = async (
       });
     }
   } else {
-    for (let i = 0; i < IDs?.length; i++) {
+    for (const item of IDs) {
       Commission = await prisma.commissions.aggregate({
         _sum: {
           Commission: true,
         },
         where: {
-          affiliate_id: IDs[i]?.id,
+          affiliate_id: item.id,
           Date: {
             gt: from,
             lt: to,
@@ -247,7 +249,7 @@ export const subAffiliateReport = async (
         },
       });
     }
-    for (let j = 0; j < affiliateData?.length; j++) {
+    for (const item of affiliateData) {
       data = prisma.dashboard.aggregate({
         _sum: {
           Clicks: true,
@@ -268,7 +270,7 @@ export const subAffiliateReport = async (
           Volume: true,
         },
         where: {
-          affiliate_id: affiliateData[j]?.id,
+          affiliate_id: item?.id,
           Date: {
             gt: from,
             lt: to,
@@ -309,8 +311,8 @@ export const subAffiliateReport = async (
     },
   });
 
-  for (let i = 0; i < lots.length; i++) {
-    totalLots += lots[i]?.turnover || 0;
+  for (const item of lots) {
+    totalLots += item?.turnover ?? 0;
   }
 
   const Data = data as DashboardType;
@@ -333,7 +335,7 @@ export const subAffiliateReport = async (
     totalVolume += Data?._sum?.Volume || 0;
   }
 
-  const subAffiliateArray = (affiliateData ?? []).map(
+  const subAffiliateArray = (allAffiliates ?? []).map(
     (item: Record<string, unknown>) => {
       return {
         ...item,
