@@ -68,26 +68,26 @@ export type CommissionReportType =
 export type ClicksReportType =
   RouterOutput["affiliates"]["getClicksReport"]["data"][0];
 
-export type InstallReportType =
-  RouterOutput["affiliates"]["getInstallReport"][0];
-
 export type CreativeReportType =
   RouterOutput["affiliates"]["getCreativeReport"]["data"][0];
 
 export type LandingPageReportType =
-  RouterOutput["affiliates"]["getLandingPageData"][0];
+  RouterOutput["affiliates"]["getLandingPageData"]["data"][0];
 
 export type TraderReportType =
   RouterOutput["affiliates"]["getTraderReport"]["data"][0];
 
 export type PixelLogsReportType =
-  RouterOutput["affiliates"]["getPixelLogReport"][0];
+  RouterOutput["affiliates"]["getPixelLogReport"]["data"][0];
 
 export type ProfileReportType =
-  RouterOutput["affiliates"]["getProfileReportData"][0];
+  RouterOutput["affiliates"]["getProfileReportData"]["data"][0];
+
+export type InstallReportType =
+  RouterOutput["affiliates"]["getInstallReport"]["data"][0];
 
 export type SubAffiliateReportType =
-  RouterOutput["affiliates"]["getSubAffiliateReport"][0];
+  RouterOutput["affiliates"]["getSubAffiliateReport"]["data"][0];
 
 export type AffiliateCommissionType =
   RouterOutput["affiliates"]["getCommissions"][0];

@@ -13,9 +13,9 @@ import { api } from "../../../utils/api";
 import { ReportControl } from "./report-control";
 import { getColumns } from "./utils";
 
-const columnHelper = createColumnHelper<ProfileReportType>();
+const columnHelper = createColumnHelper<InstallReportType>();
 
-const createColumn = (id: keyof ProfileReportType, header: string) =>
+const createColumn = (id: keyof InstallReportType, header: string) =>
   columnHelper.accessor(id, {
     cell: (info) => info.getValue(),
     header,

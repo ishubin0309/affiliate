@@ -79,7 +79,7 @@ const profileReportData = async (
     };
   }
 
-  let orderBy = {};
+  const orderBy = {};
   // Initialize total counters per affiliate.
   let totalImpressionsM = 0;
   let totalClicksM = 0;

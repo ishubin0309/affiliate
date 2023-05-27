@@ -3,8 +3,9 @@
  * @param userInfo - An object containing user information such as level and group ID.
  * @returns An object containing country data and report filename.
  */
+import type {
+  PageParam} from "@/server/api/routers/affiliates/reports/reports-utils";
 import {
-  PageParam,
   PageParamsSchema,
   exportReportLoop,
   exportType,

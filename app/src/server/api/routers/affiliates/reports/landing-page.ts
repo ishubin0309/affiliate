@@ -46,7 +46,7 @@ export const landingPageData = async (
     sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
-  let ftd = 0;
+  const ftd = 0;
   let bonus = 0;
   let chargeback = 0;
   let withdrawal = 0;
