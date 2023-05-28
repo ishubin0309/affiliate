@@ -60,7 +60,10 @@ export const LandingPageReport = () => {
 
   const columns = [
     createColumn("url", "URL"),
-    createColumn("merchant.name", "Merchant"),
+    columnHelper.accessor("merchant.name", {
+      cell: (info) => info.getValue(),
+      header: "Merchant",
+    }),
     createColumn("views", "Impressions"),
     createColumn("clicks", "Clicks"),
     createColumn("cpi", "Installation"),

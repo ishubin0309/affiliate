@@ -30,11 +30,20 @@ const columns = [
   createColumn("type", "Trader Status"),
   createColumn("country", "Country"),
   createColumn("affiliate_id", "Affiliate ID"),
-  createColumn("affiliate.username", "Affiliate Username"),
+  columnHelper.accessor("affiliate.username", {
+    cell: (info) => info.getValue(),
+    header: "Affiliate Username",
+  }),
   createColumn("merchant_id", "Merchant ID"),
-  createColumn("merchant.name", "Merchant Name"),
+  columnHelper.accessor("merchant.name", {
+    cell: (info) => info.getValue(),
+    header: "Merchant Name",
+  }),
   createColumn("id", "Creative ID"),
-  createColumn("merchant_creative.title", "Creative Name"),
+  columnHelper.accessor("merchant_creative.title", {
+    cell: (info) => info.getValue(),
+    header: "Creative Name",
+  }),
 ];
 
 export const InstallReport = () => {
