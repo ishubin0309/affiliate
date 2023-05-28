@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { api } from "@/utils/api";
 import ImageWithFallback from "@/components/common/image-fallback";
+import { useConfigContext } from "@/components/common/config/config-context";
 
 interface Props {
   isDesktop: boolean;
@@ -30,10 +31,8 @@ const AffiliatesNavbar = ({
   const router = useRouter();
   const { t, i18n } = useTranslation("affiliate");
   const language = router.locale || "en";
-  const { data: config } = api.misc.getConfig.useQuery(undefined, {
-    keepPreviousData: true,
-    refetchOnWindowFocus: false,
-  });
+
+  const { config } = useConfigContext();
   const logoPath = config?.logoPath;
 
   // const [selectLanguageItem, setSelectLanguageItem] =
