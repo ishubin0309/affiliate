@@ -62,17 +62,17 @@ const config = {
       {
         protocol: "https",
         hostname: "go.*",
-        pathname: '/files/**',
+        pathname: "/files/**",
       },
       {
         protocol: "https",
         hostname: "partners.*",
-        pathname: '/files/**',
+        pathname: "/files/**",
       },
       {
         protocol: "https",
         hostname: "affiliate.*",
-        pathname: '/files/**',
+        pathname: "/files/**",
       },
     ],
   },

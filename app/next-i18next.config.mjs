@@ -8,7 +8,7 @@ export const i18nConfig = {
     locales: ["en", "ru", "nl", "es", "fr", "it", "ar", "zh", "pt", "he", "ja"],
     defaultLocale: "en",
   },
-  ns: ['affiliate'],
+  ns: ["affiliate"],
   localePath: path.resolve("./public/locales"),
   saveMissing: true,
   saveMissingTo: "all",
