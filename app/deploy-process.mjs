@@ -5,7 +5,6 @@
 // export service=freevpnplanet
 // export service=fxoro
 
-
 // ./deploy-process.mjs --step=create --prod
 // ./deploy-process.mjs --step=dns --prod
 // ./deploy-process.mjs --step=secret --prod

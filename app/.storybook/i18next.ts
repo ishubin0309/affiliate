@@ -4,8 +4,21 @@ import Backend from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
 // import { missingKeyHandler } from "@/utils/i18n-utils";
 
-const ns = ["common", "affiliate"];
-const supportedLngs = ["en", "he", "zz"];
+const ns = ["affiliate"];
+const supportedLngs = [
+  "en",
+  "ru",
+  "nl",
+  "es",
+  "fr",
+  "it",
+  "ar",
+  "zh",
+  "pt",
+  "he",
+  "ja",
+  "zz",
+];
 const resources = ns.reduce((acc, n) => {
   supportedLngs.forEach((lng) => {
     if (!acc[lng]) acc[lng] = {};
@@ -36,7 +49,7 @@ i18n
     // debug: true,
     lng: "en",
     fallbackLng: "en",
-    defaultNS: "common",
+    defaultNS: "affiliate",
     ns,
     interpolation: { escapeValue: false },
     react: { useSuspense: false },

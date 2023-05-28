@@ -10,7 +10,7 @@ const ImageWithFallback = (props: ImageWithFallbackProps) => {
   const { src, fallbackSrc, ...rest } = props;
   const [imgSrc, setImgSrc] = useState(src);
   useEffect(() => {
-    console.log(`muly:ImageWithFallback:useEffect`, { props, imgSrc });
+    console.log(`muly:ImageWithFallback:useEffect`, { src });
     setImgSrc(src);
   }, [src]);
 

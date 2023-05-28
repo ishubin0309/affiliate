@@ -11,7 +11,7 @@ export default {
   verbose: true,
 
   defaultValue: "*TRANSLATE*",
-  defaultNamespace: "common",
+  defaultNamespace: "affiliate",
 
   lexers: {
     ts: [
