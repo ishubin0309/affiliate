@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { ImageProps } from "next/image";
 import Image from "next/image";
 
@@ -9,6 +9,10 @@ interface ImageWithFallbackProps extends ImageProps {
 const ImageWithFallback = (props: ImageWithFallbackProps) => {
   const { src, fallbackSrc, ...rest } = props;
   const [imgSrc, setImgSrc] = useState(src);
+  useEffect(() => {
+    console.log(`muly:ImageWithFallback:useEffect`, { props, imgSrc });
+    setImgSrc(src);
+  }, [src]);
 
   console.log(`muly:ImageWithFallback:render`, { props, imgSrc });
   return (
