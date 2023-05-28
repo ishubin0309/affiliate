@@ -6,14 +6,14 @@ import type {
 import { z } from "zod";
 import { pixel_monitorModel } from "../../../../../prisma/zod";
 import { upsertSchema } from "../../../../../prisma/zod-add-schema";
-import { publicProcedure } from "../../trpc";
-import { affiliate_id, merchant_id } from "./const";
+import { protectedProcedure } from "../../trpc";
+import { checkIsUser } from "@/server/api/utils";
 
 const ChoicesSchema = z.array(
   z.object({ id: z.number().or(z.string()), title: z.string() })
 );
 
-export const getPixelMonitorMeta = publicProcedure
+export const getPixelMonitorMeta = protectedProcedure
   .output(
     z.object({
       // pixel_type: ChoicesSchema,
@@ -73,7 +73,7 @@ export const getPixelMonitorMeta = publicProcedure
     };
   });
 
-export const getPixelMonitor = publicProcedure
+export const getPixelMonitor = protectedProcedure
   .output(
     z.array(
       pixel_monitorModel.extend({
@@ -87,6 +87,7 @@ export const getPixelMonitor = publicProcedure
   )
   .query(async ({ ctx }) => {
     // console.log(`muly:query`, {});
+    const affiliate_id = checkIsUser(ctx);
     const where: Prisma.pixel_monitorWhereInput = {
       affiliate_id,
       // merchant_id: merchant,
@@ -129,7 +130,7 @@ export const getPixelMonitor = publicProcedure
 //   return data;
 // });
 
-export const upsertPixelMonitor = publicProcedure
+export const upsertPixelMonitor = protectedProcedure
   .input(
     upsertSchema(
       pixel_monitorModel
@@ -149,6 +150,7 @@ export const upsertPixelMonitor = publicProcedure
   )
   .mutation(
     async ({ ctx, input: { id, valid, banner_id, all_creative, ...data } }) => {
+      const affiliate_id = checkIsUser(ctx);
       if (all_creative) {
         banner_id = 0;
       }
@@ -168,7 +170,7 @@ export const upsertPixelMonitor = publicProcedure
             data: {
               id,
               banner_id: banner_id ?? 0,
-              affiliate_id: affiliate_id,
+              affiliate_id,
               valid: valid ?? 1,
               ...data,
               rdate: new Date(),
@@ -179,7 +181,7 @@ export const upsertPixelMonitor = publicProcedure
     }
   );
 
-export const deletePixelMonitor = publicProcedure
+export const deletePixelMonitor = protectedProcedure
   .input(
     pixel_monitorModel.pick({
       id: true,

@@ -1,6 +1,6 @@
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
+import { checkIsUser } from "@/server/api/utils";
 
 type DashboardType = {
   _sum?: {
@@ -23,7 +23,7 @@ type DashboardType = {
   };
 };
 
-export const getSubAffiliateReport = publicProcedure
+export const getSubAffiliateReport = protectedProcedure
   .input(
     z.object({
       from: z.date().optional(),
@@ -32,6 +32,7 @@ export const getSubAffiliateReport = publicProcedure
     })
   )
   .query(async ({ ctx, input: { from, to, user_level } }) => {
+    const affiliate_id = checkIsUser(ctx);
     let viewsSum = 0;
     let clicksSum = 0;
     let totalLeads = 0;

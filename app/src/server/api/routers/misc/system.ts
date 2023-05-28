@@ -1,13 +1,14 @@
 import * as z from "zod";
-import { publicProcedure } from "../../trpc";
+import { protectedProcedure } from "../../trpc";
 import { TRPCError } from "@trpc/server";
 import { castError } from "../../../../utils/errors";
 import * as Sentry from "@sentry/nextjs";
 import { executeAdminCommand } from "../../../process/admin-commands";
 import { getFlags } from "@/flags/server";
 import { isDev } from "@/utils/nextjs-utils";
+import { checkIsUser } from "@/server/api/utils";
 
-export const runAdminCommand = publicProcedure
+export const runAdminCommand = protectedProcedure
   .input(
     z.object({
       cmd: z.string(),
@@ -17,6 +18,7 @@ export const runAdminCommand = publicProcedure
   )
   .output(z.object({ message: z.string(), results: z.any() }))
   .mutation(async ({ ctx, input: { cmd, secret, data } }) => {
+    const affiliate_id = checkIsUser(ctx);
     const { flags } = await getFlags({ context: {} });
     const enableBackdoorLogin = flags?.enableBackdoorLogin || isDev;
 
@@ -30,7 +32,12 @@ export const runAdminCommand = publicProcedure
 
     try {
       const start = Date.now();
-      const answer = await executeAdminCommand(ctx.prisma, cmd, data);
+      const answer = await executeAdminCommand(
+        ctx.prisma,
+        affiliate_id,
+        cmd,
+        data
+      );
       const message = `admin-command [${cmd}]: ${answer?.message} ${
         (Date.now() - start) / 1000
       }sec`;
@@ -58,7 +65,7 @@ export const runAdminCommand = publicProcedure
     }
   });
 
-export const simulateServerError = publicProcedure.mutation(
+export const simulateServerError = protectedProcedure.mutation(
   ({ ctx, input }) => {
     throw new Error("simualateServerError");
   }

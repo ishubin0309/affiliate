@@ -16,7 +16,7 @@ import { DataTable } from "../../common/data-table/DataTable";
 
 const columnHelper = createColumnHelper<AffiliateDocumentType>();
 
-export const schema = z.object({
+export const schemaDocument = z.object({
   documentType: z
     .string()
     .describe("Document Type // Select a Document Type")
@@ -37,12 +37,12 @@ export const schema = z.object({
     .meta({ control: "File" }),
 });
 
-type NewRecType = z.infer<typeof schema>;
+type NewRecType = z.infer<typeof schemaDocument>;
 
 export const Documents = () => {
   const { t } = useTranslation("affiliate");
   const { data, refetch } = api.affiliates.getDocuments.useQuery();
-  const formContext = usePrepareSchema(t, schema);
+  const formContext = usePrepareSchema(t, schemaDocument);
   const { toast } = useToast();
 
   const handleUpload = async (values: NewRecType) => {
@@ -78,7 +78,7 @@ export const Documents = () => {
 
   const { createDialog } = useCRUD<NewRecType>({
     formContext,
-    schema,
+    schema: schemaDocument,
     refetch: async () => {
       await refetch();
     },

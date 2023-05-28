@@ -1,4 +1,4 @@
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { getUnixTime } from "date-fns";
 
@@ -15,7 +15,7 @@ type TotalFraud = {
   };
 };
 
-export const getProfileReportData = publicProcedure
+export const getProfileReportData = protectedProcedure
   .input(
     z.object({
       from: z.date(),

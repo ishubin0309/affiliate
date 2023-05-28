@@ -144,7 +144,7 @@ export const getColumnsBySetup = <Data,>(
   if (!columns || !columns.length || !columns[0]) return [];
 
   const filteredColumns = columns.filter(
-    (item: any) => !reportsColumns?.includes(String(item.header))
+    ({ id }) => !reportsColumns?.includes(String(id || ""))
   );
 
   return filteredColumns.length ? filteredColumns : [columns[0]];

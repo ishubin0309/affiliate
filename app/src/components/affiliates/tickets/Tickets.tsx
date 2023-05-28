@@ -21,7 +21,7 @@ const createColumn = (id: keyof AffiliateTicketType, header: string) =>
     header,
   });
 
-export const schema = z.object({
+export const ticketSchema = z.object({
   subject: z.string().describe("Ticket Subject"),
   reply_email: z.string().email().describe("Your Email"),
   text: z.string().describe("Ticket Content").meta({ control: "Textarea" }),
@@ -31,7 +31,7 @@ type RecType = affiliates_ticketsModelType;
 
 export const Tickets = () => {
   const { t } = useTranslation("affiliate");
-  const formContext = usePrepareSchema(t, schema);
+  const formContext = usePrepareSchema(t, ticketSchema);
 
   const { data, refetch } = api.affiliates.getTickets.useQuery();
   const upsertTicket = api.affiliates.upsertTicket.useMutation();
@@ -39,7 +39,7 @@ export const Tickets = () => {
 
   const { editDialog, createDialog } = useCRUD<RecType>({
     formContext,
-    schema,
+    schema: ticketSchema,
     refetch: async () => {
       await refetch();
     },

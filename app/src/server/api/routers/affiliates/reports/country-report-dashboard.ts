@@ -1,12 +1,12 @@
 import type { PrismaClient } from "@prisma/client";
 import { Prisma } from "@prisma/client";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import type { Sql } from "@prisma/client/runtime";
 import { endOfDay, startOfDay, sub } from "date-fns";
 import { debugSaveData } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
+import { checkIsUser } from "@/server/api/utils";
 
 const Input = z.object({
   lastDays: z.number().int(),
@@ -75,10 +75,11 @@ export const countryReport = async ({
   }
 };
 
-export const getCountryReportDashboard = publicProcedure
+export const getCountryReportDashboard = protectedProcedure
   .input(Input)
   .output(z.array(CountryData))
   .query(async ({ ctx, input: { lastDays, value } }) => {
+    const affiliate_id = checkIsUser(ctx);
     const { prisma } = ctx;
 
     const to = endOfDay(new Date());

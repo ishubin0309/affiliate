@@ -1,10 +1,10 @@
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import type { data_sales_type } from "@prisma/client";
 import { Prisma } from "@prisma/client";
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
+import { checkIsUser } from "@/server/api/utils";
 
-export const getLandingPageData = publicProcedure
+export const getLandingPageData = protectedProcedure
   .input(
     z.object({
       from: z.date().optional(),
@@ -16,6 +16,7 @@ export const getLandingPageData = publicProcedure
   )
   .query(
     async ({ ctx, input: { from, to, merchant_id, url, creative_type } }) => {
+      const affiliate_id = checkIsUser(ctx);
       const bannersww = await ctx.prisma.merchants_creative.findMany({
         where: {
           merchant_id: merchant_id,
@@ -120,9 +121,9 @@ export const getLandingPageData = publicProcedure
         : Prisma.empty;
 
       const salesww = await ctx.prisma.$queryRaw<SalesWWType[]>`select * from (
-			SELECT data_reg.merchant_id,data_reg.affiliate_id,data_reg.initialftddate,tb1.rdate,tb1.tranz_id,data_reg.banner_id,data_reg.trader_id,data_reg.group_id,data_reg.profile_id,tb1.amount, tb1.type AS data_sales_type  ,data_reg.country as country FROM data_sales as tb1 
-					  INNER JOIN merchants_creative mc on mc.id= tb1.banner_id 
-					 INNER JOIN data_reg AS data_reg ON tb1.merchant_id = data_reg.merchant_id AND tb1.trader_id = data_reg.trader_id AND data_reg.type <> 'demo'  
+			SELECT data_reg.merchant_id,data_reg.affiliate_id,data_reg.initialftddate,tb1.rdate,tb1.tranz_id,data_reg.banner_id,data_reg.trader_id,data_reg.group_id,data_reg.profile_id,tb1.amount, tb1.type AS data_sales_type  ,data_reg.country as country FROM data_sales as tb1
+					  INNER JOIN merchants_creative mc on mc.id= tb1.banner_id
+					 INNER JOIN data_reg AS data_reg ON tb1.merchant_id = data_reg.merchant_id AND tb1.trader_id = data_reg.trader_id AND data_reg.type <> 'demo'
 					 WHERE tb1.merchant_id> 0 and mc.valid=1 and tb1.rdate BETWEEN ${from} AND ${to}
 					 ${cond_banner_id} ${cond_group_id} ${cond_affiliate_id}
 					  ) a group by merchant_id , tranz_id , data_sales_type

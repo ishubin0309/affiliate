@@ -36,7 +36,7 @@ export const DashboardCountryReport = () => {
       <div className="mb-3 text-xl font-bold text-[#2262C6]">
         Country Report
       </div>
-      <div className="mb-7 flex justify-between">
+      <div className="mb-7 flex justify-between items-center">
         <div className="text-base font-light">Session by country</div>
         <div className="flex items-center justify-center text-xs font-light">
           <SelectInput
@@ -51,7 +51,7 @@ export const DashboardCountryReport = () => {
         <img width="243" src="/img/worldMap.png" alt="worldmap" />
       </div>
 
-      <div className="mb-3 flex justify-between">
+      <div className="mb-3 flex justify-between items-center">
         <div className="text-base font-medium text-[#2262C6]">Report</div>
         <div className="flex w-48 items-center justify-center text-xs">
           <SelectInput

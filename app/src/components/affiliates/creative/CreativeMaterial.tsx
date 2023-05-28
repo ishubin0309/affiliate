@@ -35,7 +35,7 @@ const renderRow = (item: MerchantCreativeType, gridView: boolean) => {
       values={values}
       file={item.file || undefined}
       alt={item.alt}
-      url={item.url}
+      url={item.directLink}
       creative_id={item.id}
       gridView={gridView}
     />

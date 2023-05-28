@@ -1,6 +1,6 @@
 import { Form } from "../../common/forms/Form";
 import type { z } from "zod";
-import { schema } from "../../../shared-types/forms/login";
+import { loginSchema } from "../../../shared-types/forms/login";
 import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
 import NextLink from "next/link";
@@ -14,11 +14,11 @@ import Link from "next/link";
 
 export const FormSignin = () => {
   const { t } = useTranslation("affiliate");
-  const formContext = usePrepareSchema(t, schema);
+  const formContext = usePrepareSchema(t, loginSchema);
   const [loginError, setLoginError] = useState<string | null>(null);
   const { data: session } = useSession();
 
-  const handleSubmit = async (values: z.infer<typeof schema>) => {
+  const handleSubmit = async (values: z.infer<typeof loginSchema>) => {
     const callbackUrl = "/";
     setLoginError(null);
 
@@ -43,7 +43,7 @@ export const FormSignin = () => {
     <>
       <Form
         formContext={formContext}
-        schema={schema}
+        schema={loginSchema}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit}
         formProps={{

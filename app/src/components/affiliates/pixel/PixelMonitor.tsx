@@ -29,7 +29,7 @@ const createColumn = (
     meta: { isNumeric },
   });
 
-const schema = z.object({
+export const schemaPixelMonitor = z.object({
   merchant_id: z.coerce.number().describe("Select Merchants"),
   type: z.enum(["lead", "account", "sale", "qftd"]).describe("Type"),
   all_creative: z
@@ -104,7 +104,7 @@ const PixelMonitor = () => {
     }
   );
 
-  const formContext = usePrepareSchema(t, schema, {
+  const formContext = usePrepareSchema(t, schemaPixelMonitor, {
     pixelMonitorFormMeta: meta,
   });
 
@@ -233,7 +233,7 @@ const PixelMonitor = () => {
 
   const { editDialog, createDialog } = useCRUD<RecType>({
     formContext,
-    schema,
+    schema: schemaPixelMonitor,
     refetch: async () => {
       await refetch();
     },

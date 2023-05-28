@@ -70,7 +70,10 @@ export const CreativeMaterialComponent = ({
 
   const handleDownload = async () => {
     const imageUrl = file ? file : "";
-    const download = new JsFileDownloader({ url: imageUrl, autoStart: false });
+    const download = new JsFileDownloader({
+      url: imageUrl,
+      autoStart: false,
+    });
     await download.start();
   };
 

@@ -17,4 +17,4 @@ console.log(prCreateOutput.stdout);
 const prNumber = prCreateOutput.stdout.match(/\/pull\/(\d+)/)[1];
 
 // Step 3: Merge the PR
-await $`gh pr merge ${prNumber} --repo ${repo} --merge --delete-branch`;
+await $`gh pr merge ${prNumber} --repo ${repo} --merge`;

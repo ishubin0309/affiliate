@@ -5,11 +5,9 @@
  */
 import type { PrismaClient } from "@prisma/client";
 import { Prisma } from "@prisma/client";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import type { Sql } from "@prisma/client/runtime";
-import { sub } from "date-fns";
 import type { PageParam } from "@/server/api/routers/affiliates/reports/reports-utils";
 import {
   debugSaveData,
@@ -19,6 +17,7 @@ import {
   splitToPages,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
+import { checkIsUser } from "@/server/api/utils";
 
 const Input = z.object({
   from: z.date(),
@@ -337,10 +336,11 @@ export const countryReport = async (
   );
 };
 
-export const getCountryReport = publicProcedure
+export const getCountryReport = protectedProcedure
   .input(InputWithPageInfo)
   .output(countryReportResultSchema)
   .query(async ({ ctx, input: { from, to, merchant_id, pageParams } }) => {
+    const affiliate_id = checkIsUser(ctx);
     const { prisma } = ctx;
 
     const userInfo = { level: "all" };

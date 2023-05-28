@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { imUserTypes } from "@/shared-types/forms/common";
 
-export const schema = z.object({
+export const contactSchema = z.object({
   company: z.string().optional().describe("Company Name"),
   gender: z
     .enum(["EMPTY_ENUM_VALUE", "male", "female"])

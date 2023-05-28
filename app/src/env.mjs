@@ -27,6 +27,8 @@ const server = z.object({
   LEGACY_PHP_ACCESS_TOKEN: z.string(),
 
   SENDGRID_API_KEY: z.string(),
+  GCS_CONFIG_CLIENT_EMAIL: z.string(),
+  GCS_CONFIG_PRIVATE_KEY: z.string(),
 });
 
 /**
@@ -60,6 +62,9 @@ const processEnv = {
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
+
+  GCS_CONFIG_CLIENT_EMAIL: process.env.GCS_CONFIG_CLIENT_EMAIL,
+  GCS_CONFIG_PRIVATE_KEY: process.env.GCS_CONFIG_PRIVATE_KEY,
 };
 
 // Don't touch the part below

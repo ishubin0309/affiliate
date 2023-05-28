@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import AccountManager from "./AccountManager";
 import { DashboardCountryReport } from "./DashboradCountryReport";
 import DeviceReport from "./DeviceReport";
@@ -28,6 +28,8 @@ import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
 import { valueFormat } from "@/utils/format";
 import { Loading } from "@/components/common/Loading";
+import { useTranslation } from "next-i18next";
+import { toKey } from "@/components/affiliates/reports/utils";
 
 interface CardInfo {
   id: string;
@@ -36,7 +38,7 @@ interface CardInfo {
   value_format?: string;
 }
 
-const allColumns: CardInfo[] = [
+const _allColumns: CardInfo[] = [
   { id: "Impressions", title: "Impressions", link: "reports/creative-report" },
   { id: "Clicks", title: "Clicks", link: "reports/clicks-report" },
   { id: "Install", title: "Install", link: "reports/install-reports" },
@@ -52,7 +54,7 @@ const allColumns: CardInfo[] = [
   },
   {
     id: "ChargeBack",
-    title: "ChargeBack",
+    title: "Chargeback",
     link: "reports/clicks-report",
     value_format: valueFormat.CURRENCY,
   },
@@ -79,6 +81,16 @@ export interface ItemType {
   isChecked: boolean;
 }
 export const Dashboard = () => {
+  const { t } = useTranslation("affiliate");
+  const allColumns = useMemo(
+    () =>
+      _allColumns.map(({ title, id, ...rest }) => ({
+        title: t(`dashboard.cards.${toKey(id)}`, title),
+        id,
+        ...rest,
+      })),
+    [t]
+  );
   const today = endOfToday();
   const {
     values: { dates },
@@ -93,6 +105,11 @@ export const Dashboard = () => {
       startOfMonth(sub(today, { months: 6 }))
     ) +
       1);
+
+  const sixMonth = {
+    from: startOfMonth(sub(today, { months: 6 })),
+    to: endOfMonth(sub(today, { months: 1 })),
+  };
 
   const { values: context } = useSearchContext();
 
@@ -125,31 +142,24 @@ export const Dashboard = () => {
   );
 
   const { data: performanceChart, isRefetching: isRefetchingPerformanceChart } =
-    api.affiliates.getPerformanceChart.useQuery(
-      {
-        ...dateRange,
-      },
-      { keepPreviousData: true, refetchOnWindowFocus: false }
-    );
+    api.affiliates.getPerformanceChart.useQuery(sixMonth, {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    });
 
   const {
     data: allPerformanceChart,
     isRefetching: isRefetchingAllPerformanceChart,
-  } = api.affiliates.getAllPerformanceChart.useQuery(
-    {
-      from: startOfMonth(sub(today, { months: 6 })),
-      to: endOfMonth(sub(today, { months: 1 })),
-    },
-    { keepPreviousData: true, refetchOnWindowFocus: false }
-  );
+  } = api.affiliates.getAllPerformanceChart.useQuery(sixMonth, {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
 
   const { data: conversionChart, isRefetching: isRefetchingConversionChart } =
-    api.affiliates.getConversionChart.useQuery(
-      {
-        ...dateRange,
-      },
-      { keepPreviousData: true, refetchOnWindowFocus: false }
-    );
+    api.affiliates.getConversionChart.useQuery(sixMonth, {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    });
 
   // const { data: creative } = api.affiliates.getTopMerchantCreative.useQuery(
   //   undefined,
@@ -266,7 +276,7 @@ export const Dashboard = () => {
           reportsColumns={reportsColumns}
           selectColumnsMode={selectColumnsMode}
           setSelectColumnsMode={setSelectColumnsMode}
-          btnText="Apply"
+          btnText="Save"
         />
         <div className="mt-4 grid gap-5 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
           {!!reportsColumns &&

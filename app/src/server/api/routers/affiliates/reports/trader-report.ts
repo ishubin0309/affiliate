@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import {
-  affiliate_id,
-  merchant_id,
-} from "@/server/api/routers/affiliates/const";
+import { merchant_id } from "@/server/api/routers/affiliates/const";
 import {
   PageParamsSchema,
   exportReportLoop,
@@ -10,12 +7,13 @@ import {
   getPageOffset,
   pageInfo,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { formatISO } from "date-fns";
 import path from "path";
 import { z } from "zod";
 import { reporttradersModel } from "../../../../../../prisma/zod";
+import { checkIsUser } from "@/server/api/utils";
 // import { uploadFile } from "../config";
 
 const traderReportSchema = reporttradersModel.extend({
@@ -63,6 +61,7 @@ const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
 const traderReport = async (
   prisma: PrismaClient,
+  affiliate_id: number,
   {
     from,
     to,
@@ -219,12 +218,15 @@ const traderReport = async (
   return arrRes;
 };
 
-export const getTraderReport = publicProcedure
+export const getTraderReport = protectedProcedure
   .input(InputWithPageInfo)
   .output(traderReportResultSchema)
-  .query(({ ctx, input }) => traderReport(ctx.prisma, input));
+  .query(({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
+    return traderReport(ctx.prisma, affiliate_id, input);
+  });
 
-export const exportTraderReport = publicProcedure
+export const exportTraderReport = protectedProcedure
   .input(Input.extend({ exportType }))
   .mutation(async function ({ ctx, input }) {
     const { exportType, ...params } = input;
