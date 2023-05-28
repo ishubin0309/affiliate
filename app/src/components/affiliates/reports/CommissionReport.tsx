@@ -188,7 +188,6 @@ export const CommissionReport = () => {
       ...dateRange,
       commission: commission ? String(commission) : "",
       trader_id: traderID,
-      pageParams: pagination.pageParams,
       reportColumns: getColumns(columns),
       exportType,
     });

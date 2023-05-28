@@ -1,8 +1,5 @@
 import { usePagination } from "@/components/common/data-table/pagination-hook";
-import {
-  getNumberParam,
-  useSearchContext,
-} from "@/components/common/search/search-context";
+import { useSearchContext } from "@/components/common/search/search-context";
 import { getDateRange } from "@/components/common/search/search-date-range";
 import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
@@ -25,10 +22,7 @@ export const SubAffiliateReport = () => {
 
   const { data, isRefetching } = api.affiliates.getSubAffiliateReport.useQuery({
     ...dateRange,
-    merchant_id: getNumberParam(merchant_id),
     user_level: "admin",
-    trader_id,
-    unique_id,
     pageParams: pagination.pageParams,
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
@@ -52,7 +46,7 @@ export const SubAffiliateReport = () => {
   };
   const createColumn = (id: keyof SubAffiliateReportType, header: string) =>
     columnHelper.accessor(id, {
-      cell: (info: { getValue: () => string }) => info.getValue(),
+      cell: (info) => info.getValue(),
       header,
     });
 
@@ -75,10 +69,7 @@ export const SubAffiliateReport = () => {
   const handleExport = async (exportType: ExportType) =>
     reportExport({
       ...dateRange,
-      merchant_id: getNumberParam(merchant_id),
       user_level: "admin",
-      trader_id,
-      unique_id,
       exportType,
       reportColumns: getColumns(columns),
     });

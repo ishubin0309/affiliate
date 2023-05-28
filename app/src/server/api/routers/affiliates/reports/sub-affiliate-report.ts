@@ -283,7 +283,7 @@ export const subAffiliateReport = async (
           Commission: true,
         },
         where: {
-          affiliate_id: affiliateData[j]?.id,
+          affiliate_id: item?.id,
           Date: {
             gt: from,
             lt: to,

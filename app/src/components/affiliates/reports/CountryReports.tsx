@@ -71,7 +71,6 @@ export const CountryReports = () => {
     reportExport({
       ...dateRange,
       merchant_id: getNumberParam(merchant_id),
-      pageParams: pagination.pageParams,
       exportType,
       reportColumns: getColumns(columns),
     });

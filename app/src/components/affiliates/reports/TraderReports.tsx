@@ -70,7 +70,7 @@ export const TraderReports = () => {
     merchant_id: getNumberParam(merchant_id),
     trader_id: trader_id,
     country: country,
-    banner_id: banner_id,
+    banner_id: getNumberParam(banner_id),
     pageParams: pagination.pageParams,
   });
 
@@ -83,9 +83,8 @@ export const TraderReports = () => {
       merchant_id: getNumberParam(merchant_id),
       trader_id: trader_id,
       country: country,
-      banner_id: banner_id,
+      banner_id: getNumberParam(banner_id),
       exportType,
-      pageParams: pagination.pageParams,
       reportColumns: getColumns(columns),
     });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();

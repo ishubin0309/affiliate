@@ -1,6 +1,6 @@
 import { protectedProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
-import { pixel_logsModel } from "prisma/zod";
+import { Relatedpixel_logsModel } from "prisma/zod";
 import { z } from "zod";
 import {
   PageParamsSchema,
@@ -24,7 +24,7 @@ const Input = z.object({
 const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
 const pixelLogReportSchema = z.object({
-  data: z.array(pixel_logsModel),
+  data: z.array(Relatedpixel_logsModel),
   pageInfo,
   totals: z.any(),
 });

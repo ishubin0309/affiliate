@@ -34,7 +34,7 @@ export const PixelLogReports = () => {
   const columnHelper = createColumnHelper<PixelLogsReportType>();
   const createColumn = (id: keyof PixelLogsReportType, header: string) =>
     columnHelper.accessor(id, {
-      cell: (info: { getValue: () => string }) => info.getValue(),
+      cell: (info) => info.getValue(),
       header,
     });
 
@@ -58,7 +58,7 @@ export const PixelLogReports = () => {
     createColumn("pixel_monitor.method", "Method"),
     createColumn("firedUrl", "Fired URL"),
     createColumn("pixelResponse", "Response"),
-    createColumn("totalFired", "All Time Fired"),
+    createColumn("pixel_monitor.totalFired", "All Time Fired"),
     columnHelper.accessor("pixel-state" as any, {
       cell: ({ row }) => divCol(row?.original?.pixel_monitor?.affiliate?.valid),
       header: "Pixel State",
@@ -68,8 +68,8 @@ export const PixelLogReports = () => {
     createColumn("pixel_monitor.merchant.id", "Merchant ID"),
     createColumn("pixel_monitor.merchant", "Merchant"),
     createColumn("product_id", "Product ID"),
-    createColumn("banner_id", "Banner ID"),
-    createColumn("group_id", "Group ID"),
+    createColumn("pixel_monitor.banner_id", "Banner ID"),
+    createColumn("pixel_monitor.group_id", "Group ID"),
   ];
 
   const country_options = countries?.map((country: any) => {
@@ -88,7 +88,6 @@ export const PixelLogReports = () => {
       merchant_id: getNumberParam(merchant_id),
       country: country ? String(country) : "",
       group_id: group_id ? String(group_id) : "",
-      pageParams: pagination.pageParams,
       exportType,
       reportColumns: getColumns(columns),
     });

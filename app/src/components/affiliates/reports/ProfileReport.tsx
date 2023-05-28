@@ -31,7 +31,7 @@ export const ProfileReport = () => {
 
   const createColumn = (id: keyof ProfileReportType, header: string) =>
     columnHelper.accessor(id, {
-      cell: (info: { getValue: () => string }) => info.getValue(),
+      cell: (info) => info.getValue(),
       header,
     });
   // console.log("Clicks render", {
@@ -112,7 +112,6 @@ export const ProfileReport = () => {
     reportExport({
       ...dateRange,
       merchant_id: getNumberParam(merchant_id),
-      pageParams: pagination.pageParams,
       exportType,
       reportColumns: getColumns(columns),
     });

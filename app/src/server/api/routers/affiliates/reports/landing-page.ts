@@ -320,6 +320,7 @@ export const landingPageData = async (
       ftd: ftd,
       accounts: depositingAccounts,
       cpi: 0,
+      Qftd: 0,
     };
   });
 
@@ -352,7 +353,7 @@ export const exportLandingPageData = protectedProcedure
       exportType || "csv",
       reportColumns,
       async (pageNumber: number, pageSize: number) =>
-        landingPageData(ctx.prisma, {
+        landingPageData(ctx.prisma, affiliate_id, {
           ...params,
           pageParams: { pageNumber, pageSize },
         })

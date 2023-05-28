@@ -60,6 +60,22 @@ export const dataInstallSchema = z.object({
   couponName: z.string().nullish(),
   campaign_id: z.number().nullish(),
   currentDate: z.date().nullish(),
+  merchant_creative: z.object({
+    id: z.number().nullish(),
+    title: z.string().nullish(),
+    url: z.string().nullish(),
+    language: z.object({
+      title: z.string().nullish(),
+    }),
+  }),
+  merchant: z.object({
+    id: z.number().nullish(),
+    name: z.string().nullish(),
+  }),
+  affiliate: z.object({
+    id: z.number().nullish(),
+    username: z.string().nullish(),
+  }),
 });
 
 export const CommissionReportSchema = z.object({
@@ -153,6 +169,7 @@ export const LandingPageReportSchema = z.object({
   demo: z.number().nullish(),
   ftd: z.number().nullish(),
   cpi: z.number().nullish(),
+  real: z.number().nullish(),
 });
 
 export const profileReportSchema = z.object({

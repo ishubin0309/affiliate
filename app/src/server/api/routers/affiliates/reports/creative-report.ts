@@ -33,7 +33,10 @@ type MerchantIds = {
 const Input = z.object({
   from: z.date().optional(),
   to: z.date().optional(),
+  merchant_id: z.number().optional(),
   banner_id: z.number().optional(),
+  trader_id: z.number().optional(),
+  unique_id: z.number().optional(),
   type: z.string().optional(),
   group_id: z.number().optional(),
 });

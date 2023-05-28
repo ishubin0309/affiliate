@@ -57,7 +57,7 @@ const columns = [
   }),
   createColumn("leads", "Leads"),
   createColumn("demo", "Demo"),
-  createColumn("accounts", "Accounts"),
+  createColumn("real_ftd", "Accounts"),
   createColumn("ftd", "FTD"),
   createColumn("volume", "Volume"),
   createColumn("withdrawal", "Withdrawal Amount"),
@@ -67,7 +67,15 @@ const columns = [
 export const CreativeReport = () => {
   const router = useRouter();
   const {
-    values: { merchant_id, dates, trader_id, unique_id, type },
+    values: {
+      merchant_id,
+      dates,
+      banner_id,
+      trader_id,
+      unique_id,
+      group_id,
+      type,
+    },
   } = useSearchContext();
   const pagination = usePagination();
   const { currentPage, itemsPerPage } = router.query;
@@ -75,10 +83,12 @@ export const CreativeReport = () => {
 
   const { data, isRefetching } = api.affiliates.getCreativeReport.useQuery({
     ...dateRange,
-    type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
     merchant_id: getNumberParam(merchant_id),
-    trader_id,
-    unique_id,
+    trader_id: getNumberParam(trader_id),
+    banner_id: getNumberParam(banner_id),
+    unique_id: getNumberParam(unique_id),
+    type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
+    group_id: getNumberParam(group_id),
     pageParams: pagination.pageParams,
   });
 
@@ -88,10 +98,11 @@ export const CreativeReport = () => {
   const handleExport = async (exportType: ExportType) =>
     reportExport({
       ...dateRange,
-      type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
       merchant_id: getNumberParam(merchant_id),
-      trader_id,
-      unique_id,
+      trader_id: getNumberParam(trader_id),
+      unique_id: getNumberParam(unique_id),
+      type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
+      group_id: getNumberParam(group_id),
       exportType,
       reportColumns: getColumns(columns),
     });
@@ -154,6 +165,7 @@ export const CreativeReport = () => {
         varName="merchant_id"
       />
       <SearchText varName="unique_id" label="Unique ID" />
+      <SearchText varName="banner_id" label="Banner ID" />
       <SearchText varName="trader_id" label="Trader ID" />
       <SearchSelect varName="type" label={"Type"} choices={typeOptions} />
     </ReportControl>

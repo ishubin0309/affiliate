@@ -54,7 +54,7 @@ export const LandingPageReport = () => {
 
   const createColumn = (id: keyof LandingPageReportType, header: string) =>
     columnHelper.accessor(id, {
-      cell: (info: { getValue: () => string }) => info.getValue(),
+      cell: (info) => info.getValue(),
       header,
     });
 
@@ -83,7 +83,7 @@ export const LandingPageReport = () => {
     createColumn("ftd", "FTD"),
     createColumn("volume", "Volume"),
     createColumn("chargeback", "ChargeBack Amount"),
-    createColumn("traders", "Active Traders"),
+    createColumn("traderValue", "Active Traders"),
   ];
 
   const country_options = countries?.map((country: any) => {
@@ -102,7 +102,6 @@ export const LandingPageReport = () => {
       merchant_id: getNumberParam(merchant_id),
       url: url,
       creative_type: creative_type,
-      pageParams: pagination.pageParams,
       exportType,
       reportColumns: getColumns(columns),
     });

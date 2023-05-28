@@ -6,6 +6,7 @@ import {
 import { getDateRange } from "@/components/common/search/search-date-range";
 import { SearchSelect } from "@/components/common/search/search-select";
 import { SearchText } from "@/components/common/search/search-text";
+import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 import type { InstallReportType } from "../../../server/db-types";
@@ -17,7 +18,7 @@ const columnHelper = createColumnHelper<InstallReportType>();
 
 const createColumn = (id: keyof InstallReportType, header: string) =>
   columnHelper.accessor(id, {
-    cell: (info: { getValue: () => string }) => info.getValue(),
+    cell: (info) => info.getValue(),
     header,
   });
 
@@ -29,11 +30,11 @@ const columns = [
   createColumn("type", "Trader Status"),
   createColumn("country", "Country"),
   createColumn("affiliate_id", "Affiliate ID"),
-  createColumn("username", "Affiliate Username"),
+  createColumn("affiliate.username", "Affiliate Username"),
   createColumn("merchant_id", "Merchant ID"),
-  createColumn("name", "Merchant Name"),
+  createColumn("merchant.name", "Merchant Name"),
   createColumn("id", "Creative ID"),
-  createColumn("title", "Creative Name"),
+  createColumn("merchant_creative.title", "Creative Name"),
 ];
 
 export const InstallReport = () => {
@@ -54,7 +55,6 @@ export const InstallReport = () => {
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const { data: countries } = api.affiliates.getLongCountries.useQuery({});
-  const columnHelper = createColumnHelper<InstallReportType>();
 
   console.log("Install render", {
     data,
@@ -98,7 +98,6 @@ export const InstallReport = () => {
       country: country,
       trader_id: getNumberParam(trader_id),
       banner_id: banner_id,
-      pageParams: pagination.pageParams,
       exportType,
       reportColumns: getColumns(columns),
     });

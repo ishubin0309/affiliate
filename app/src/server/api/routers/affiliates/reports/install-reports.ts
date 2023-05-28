@@ -107,6 +107,13 @@ const installReport = async (
           name: true,
         },
       },
+
+      affiliate: {
+        select: {
+          id: true,
+          username: true,
+        },
+      },
     },
     where: {
       rdate: {
@@ -123,6 +130,8 @@ const installReport = async (
           ? ("" as data_install_type)
           : (filter as data_install_type),
     },
+    take: pageParams.pageSize,
+    skip: offset,
   });
 
   const arrRes = {
