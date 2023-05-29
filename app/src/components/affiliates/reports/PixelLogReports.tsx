@@ -93,7 +93,7 @@ export const PixelLogReports = () => {
       cell: (info) => info.getValue(),
       header: "Banner ID",
     }),
-    columnHelper.accessor("pixel_monitor.group_id", {
+    columnHelper.accessor("pixel_monitor.affiliate.group_id", {
       cell: (info) => info.getValue(),
       header: "Group ID",
     }),

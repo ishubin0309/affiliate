@@ -1,4 +1,5 @@
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 import { useSearchContext } from "@/components/common/search/search-context";
 import { getDateRange } from "@/components/common/search/search-date-range";
 import { SearchSelect } from "@/components/common/search/search-select";
@@ -25,6 +26,7 @@ export const CommissionReport = () => {
   const [reportFields, setReportFields] = useState<
     { id: number; title: string; value: string; isChecked: boolean }[]
   >([]);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
   const { currentPage, itemsPerPage } = router.query;
 
@@ -33,6 +35,7 @@ export const CommissionReport = () => {
     commission: commission ? String(commission) : "",
     trader_id: traderID,
     pageParams: pagination.pageParams,
+    sortingParam: _sorting,
   });
   const { mutateAsync: reportExport } =
     api.affiliates.exportCommissionReport.useMutation();

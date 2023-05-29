@@ -1,6 +1,7 @@
 import { ReportControl } from "@/components/affiliates/reports/report-control";
 import { DateColumn } from "@/components/common/data-table/available-column";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 import {
   getNumberParam,
   useSearchContext,
@@ -75,7 +76,9 @@ export const ClicksReport = () => {
   } = useSearchContext();
   const pagination = usePagination();
   const { name, ...dateRange } = getDateRange(dates);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
+  console.log("sorting ---------->", _sorting);
   const { data, isRefetching } = api.affiliates.getClicksReport.useQuery(
     {
       ...dateRange,
@@ -84,6 +87,7 @@ export const ClicksReport = () => {
       trader_id,
       unique_id,
       pageParams: pagination.pageParams,
+      sortingParam: _sorting,
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );

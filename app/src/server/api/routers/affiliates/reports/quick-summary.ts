@@ -4,9 +4,11 @@ import {
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   pageInfo,
   PageParamsSchema,
   reportColumns,
+  SortingParamSchema,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { protectedProcedure } from "@/server/api/trpc";
 import { checkIsUser } from "@/server/api/utils";
@@ -30,12 +32,21 @@ const Input = z.object({
   merchant_id: z.number().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const quickReportSummary = async (
   prisma: PrismaClient,
   affiliate_id: number,
-  { from, to, display = "", pageParams }: z.infer<typeof InputWithPageInfo>
+  {
+    from,
+    to,
+    display = "",
+    pageParams,
+    sortingParam,
+  }: z.infer<typeof InputWithPageInfo>
 ) => {
   console.log("from", from, "to", to);
 
@@ -43,6 +54,8 @@ const quickReportSummary = async (
   console.log("display type", display, merchant_id);
 
   const offset = getPageOffset(pageParams);
+  const orderBy = getSortingInfo(sortingParam);
+
   let dasboardSQLperiod = Prisma.sql`GROUP BY d.MerchantId ORDER BY d.MerchantId ASC`;
   let dasboardSQLwhere = Prisma.empty;
 

@@ -6,8 +6,10 @@ import {
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   PageParamsSchema,
   reportColumns,
+  SortingParamSchema,
 } from "./reports-utils";
 
 const Input = z.object({
@@ -17,7 +19,10 @@ const Input = z.object({
   trader_id: z.string().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const commissionSummary = async (
   prisma: PrismaClient,
@@ -28,9 +33,11 @@ const commissionSummary = async (
     trader_id,
     commission,
     pageParams,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   const offset = getPageOffset(pageParams);
+  const orderBy = getSortingInfo(sortingParam);
 
   let deal_filter = {};
   switch (commission) {
@@ -51,9 +58,7 @@ const commissionSummary = async (
   const data = await prisma.commissions.findMany({
     take: pageParams.pageSize,
     skip: offset,
-    orderBy: {
-      Date: "asc",
-    },
+    orderBy,
     where: {
       ...deal_filter,
       Date: {

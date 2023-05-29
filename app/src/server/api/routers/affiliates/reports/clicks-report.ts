@@ -4,9 +4,11 @@ import {
 } from "@/server/api/routers/affiliates/reports/get-trader-data";
 import {
   PageParamsSchema,
+  SortingParamSchema,
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   pageInfo,
   reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
@@ -24,11 +26,12 @@ const Input = z.object({
   unique_id: z.string().optional(),
   trader_id: z.string().optional(),
   type: z.enum(["clicks", "views"]).optional(),
-  sortBy: z.string().optional(),
-  sortOrder: z.string().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const ClickReportItem = trafficModel
   .pick({
@@ -81,11 +84,17 @@ const clicksReport = async (
     trader_id,
     type,
     pageParams,
-    sortBy,
-    sortOrder,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   const offset = getPageOffset(pageParams);
+  const sorting_info = getSortingInfo(sortingParam);
+
+  const sortBy = sorting_info ? Object.keys(sorting_info[0] ?? "")[0] : "";
+  console.log("sorted by  ------>", sortBy);
+  const sortOrder = sorting_info ? Object.values(sorting_info[0] ?? "")[0] : "";
+  console.log("sorted order  ------>", sortOrder);
+
   const uid: string[] = [];
 
   // console.log("clicksReport: Input Parameters", {
