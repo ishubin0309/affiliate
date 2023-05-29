@@ -54,22 +54,49 @@ export const PixelLogReports = () => {
   const columns = [
     createColumn("id", "Pixel Fire ID"),
     createColumn("dateTime", "Date"),
-    createColumn("pixel_monitor.type", "Type"),
-    createColumn("pixel_monitor.method", "Method"),
+    columnHelper.accessor("pixel_monitor.type", {
+      cell: (info) => info.getValue(),
+      header: "Type",
+    }),
+    columnHelper.accessor("pixel_monitor.method", {
+      cell: (info) => info.getValue(),
+      header: "Method",
+    }),
     createColumn("firedUrl", "Fired URL"),
     createColumn("pixelResponse", "Response"),
-    createColumn("pixel_monitor.totalFired", "All Time Fired"),
+    columnHelper.accessor("pixel_monitor.totalFired", {
+      cell: (info) => info.getValue(),
+      header: "All Time Fired",
+    }),
     columnHelper.accessor("pixel-state" as any, {
       cell: ({ row }) => divCol(row?.original?.pixel_monitor?.affiliate?.valid),
       header: "Pixel State",
     }),
-    createColumn("pixel_monitor.affiliate.id", "Affiliate ID"),
-    createColumn("pixel_monitor.affiliate.username", "Affiliate Username"),
-    createColumn("pixel_monitor.merchant.id", "Merchant ID"),
-    createColumn("pixel_monitor.merchant", "Merchant"),
+    columnHelper.accessor("pixel_monitor.affiliate.id", {
+      cell: (info) => info.getValue(),
+      header: "Affiliate ID",
+    }),
+    columnHelper.accessor("pixel_monitor.affiliate.username", {
+      cell: (info) => info.getValue(),
+      header: "Affiliate Username",
+    }),
+    columnHelper.accessor("pixel_monitor.merchant.id", {
+      cell: (info) => info.getValue(),
+      header: "Merchant ID",
+    }),
+    columnHelper.accessor("pixel_monitor.merchant", {
+      cell: (info) => info.getValue(),
+      header: "Merchant",
+    }),
     createColumn("product_id", "Product ID"),
-    createColumn("pixel_monitor.banner_id", "Banner ID"),
-    createColumn("pixel_monitor.group_id", "Group ID"),
+    columnHelper.accessor("pixel_monitor.banner_id", {
+      cell: (info) => info.getValue(),
+      header: "Banner ID",
+    }),
+    columnHelper.accessor("pixel_monitor.group_id", {
+      cell: (info) => info.getValue(),
+      header: "Group ID",
+    }),
   ];
 
   const country_options = countries?.map((country: any) => {
