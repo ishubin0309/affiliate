@@ -9,10 +9,12 @@ interface ImageWithFallbackProps extends ImageProps {
 const ImageWithFallback = (props: ImageWithFallbackProps) => {
   const { src, fallbackSrc, ...rest } = props;
   const [imgSrc, setImgSrc] = useState(src);
-  useEffect(() => {
-    console.log(`muly:ImageWithFallback:useEffect`, { src });
-    setImgSrc(src);
-  }, [src]);
+
+  // we don't need this if we sure we pass correct src on 1st call
+  // useEffect(() => {
+  //   console.log(`muly:ImageWithFallback:useEffect`, { src });
+  //   setImgSrc(src);
+  // }, [src]);
 
   console.log(`muly:ImageWithFallback:render`, { props, imgSrc });
   return (
