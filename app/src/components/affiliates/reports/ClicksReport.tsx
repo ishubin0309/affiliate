@@ -1,6 +1,7 @@
 import { ReportControl } from "@/components/affiliates/reports/report-control";
 import { DateColumn } from "@/components/common/data-table/available-column";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 import {
   getNumberParam,
   useSearchContext,
@@ -12,6 +13,7 @@ import type { ExportType } from "@/server/api/routers/affiliates/reports/reports
 import { createColumnHelper } from "@tanstack/react-table";
 import type { ClicksReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
+import { getColumns } from "./utils";
 
 const columnHelper = createColumnHelper<ClicksReportType>();
 const createColumn = (id: keyof ClicksReportType, header: string) =>
@@ -74,7 +76,9 @@ export const ClicksReport = () => {
   } = useSearchContext();
   const pagination = usePagination();
   const { name, ...dateRange } = getDateRange(dates);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
+  console.log("sorting ---------->", _sorting);
   const { data, isRefetching } = api.affiliates.getClicksReport.useQuery(
     {
       ...dateRange,
@@ -83,13 +87,24 @@ export const ClicksReport = () => {
       trader_id,
       unique_id,
       pageParams: pagination.pageParams,
+      sortingParam: _sorting,
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
-  const handleExport = async (exportType: ExportType) => {
-    return Promise.resolve("ok");
-  };
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportClicksReport.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
+      merchant_id: getNumberParam(merchant_id),
+      trader_id,
+      unique_id,
+      exportType,
+      reportColumns: getColumns(columns),
+    });
   // reportExport({
   //   type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
   //   merchant_id: getNumberParam(merchant_id),
@@ -103,6 +118,7 @@ export const ClicksReport = () => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
+  console.log("data ---->", data);
   return (
     <ReportControl
       reportName="Clicks Report"

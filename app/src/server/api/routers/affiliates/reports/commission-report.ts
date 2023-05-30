@@ -1,16 +1,16 @@
 import { protectedProcedure } from "@/server/api/trpc";
+import { checkIsUser } from "@/server/api/utils";
 import type { PrismaClient } from "@prisma/client";
-import type { Simplify } from "@trpc/server";
-import path from "path";
-import paginator from "prisma-paginate";
 import { z } from "zod";
 import {
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   PageParamsSchema,
+  reportColumns,
+  SortingParamSchema,
 } from "./reports-utils";
-import { checkIsUser } from "@/server/api/utils";
 
 const Input = z.object({
   from: z.date().optional(),
@@ -19,7 +19,10 @@ const Input = z.object({
   trader_id: z.string().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const commissionSummary = async (
   prisma: PrismaClient,
@@ -30,9 +33,11 @@ const commissionSummary = async (
     trader_id,
     commission,
     pageParams,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   const offset = getPageOffset(pageParams);
+  const orderBy = getSortingInfo(sortingParam);
 
   let deal_filter = {};
   switch (commission) {
@@ -53,9 +58,7 @@ const commissionSummary = async (
   const data = await prisma.commissions.findMany({
     take: pageParams.pageSize,
     skip: offset,
-    orderBy: {
-      Date: "asc",
-    },
+    orderBy,
     where: {
       ...deal_filter,
       Date: {
@@ -82,13 +85,11 @@ const commissionSummary = async (
   console.log("commission report ----->", data);
 
   return {
-    data,
-    // TODO
+    data: data,
     totals: {},
     pageInfo: {
       ...pageParams,
-      // TODO
-      totalItems: 0,
+      totalItems: data.length,
     },
   };
 };
@@ -101,51 +102,21 @@ export const getCommissionReport = protectedProcedure
   });
 
 export const exportCommissionReport = protectedProcedure
-  .input(Input.extend({ exportType }))
+  .input(Input.extend({ exportType, reportColumns }))
   .mutation(async function ({ ctx, input }) {
-    const { exportType, ...params } = input;
+    const { exportType, reportColumns, ...params } = input;
 
-    const columns = [
-      "Merchant Name",
-      "Merchant ID",
-      "Trader ID",
-      "Transaction ID",
-      "Type",
-      "Amount",
-      "Location",
-      "Commission",
-    ];
+    const affiliate_id = checkIsUser(ctx);
 
-    // const file_date = new Date().toISOString();
-    // const generic_filename = `commission-report${file_date}`;
-    //
-    // console.log("export type ---->", exportType);
-    // const commission_report = "commission-report";
-    // await exportReportLoop(
-    //   exportType || "csv",
-    //   columns,
-    //   generic_filename,
-    //   commission_report,
-    //   async (pageNumber, pageSize) =>
-    //     commissionSummary(ctx.prisma, {
-    //       ...params,
-    //       pageParams: { pageNumber, pageSize },
-    //     })
-    // );
-    //
-    // const bucketName = "reports-download-tmp";
-    // const serviceKey = path.join(
-    //   __dirname,
-    //   "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    // );
-    //
-    // const public_url = uploadFile(
-    //   serviceKey,
-    //   "api-front-dashbord",
-    //   bucketName,
-    //   generic_filename,
-    //   exportType ? exportType : "json"
-    // );
-    // return public_url;
-    return Promise.resolve("");
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        commissionSummary(ctx.prisma, affiliate_id, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
+
+    return public_url;
   });

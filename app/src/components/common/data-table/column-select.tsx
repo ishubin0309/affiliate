@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { api } from "@/utils/api";
 import type { ColumnDef } from "@tanstack/react-table";
 import { SaveIcon } from "lucide-react";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 export type SelectedColumnList = Record<string, boolean>;
 
 type ExtendedColumnDef<T, U> = ColumnDef<T, U> & {

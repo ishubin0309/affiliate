@@ -1,24 +1,21 @@
+import {
+  deserializeSorting,
+  serializeSorting,
+} from "@/components/common/data-table/sorting";
 import { cn } from "@/lib/utils";
 import type { PageInfo } from "@/server/api/routers/affiliates/reports/reports-utils";
 import type {
   ColumnDef,
   ColumnSort,
   SortingState,
-  Updater,
 } from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import * as React from "react";
 import type { usePagination } from "./pagination-hook";
-import {
-  deserializeSorting,
-  serializeSorting,
-} from "@/components/common/data-table/sorting";
 
 export type ReportDataTableProps<Data extends object> = {
   report:

@@ -6,14 +6,14 @@ import {
   exportType,
   getPageOffset,
   pageInfo,
+  reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { protectedProcedure } from "@/server/api/trpc";
+import { checkIsUser } from "@/server/api/utils";
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { formatISO } from "date-fns";
-import path from "path";
 import { z } from "zod";
 import { reporttradersModel } from "../../../../../../prisma/zod";
-import { checkIsUser } from "@/server/api/utils";
 // import { uploadFile } from "../config";
 
 const traderReportSchema = reporttradersModel.extend({
@@ -164,7 +164,10 @@ const traderReport = async (
         Trades: true,
         Commission: true,
       },
-      where,
+      where: {
+        ...type_filter,
+      },
+      // where,
     }),
   ]);
 
@@ -227,51 +230,20 @@ export const getTraderReport = protectedProcedure
   });
 
 export const exportTraderReport = protectedProcedure
-  .input(Input.extend({ exportType }))
+  .input(Input.extend({ exportType, reportColumns }))
   .mutation(async function ({ ctx, input }) {
-    const { exportType, ...params } = input;
+    const affiliate_id = checkIsUser(ctx);
+    const { exportType, reportColumns, ...params } = input;
 
-    const columns = [
-      "Merchant Name",
-      "Merchant ID",
-      "Trader ID",
-      "Transaction ID",
-      "Type",
-      "Amount",
-      "Location",
-      "Commission",
-    ];
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        traderReport(ctx.prisma, affiliate_id, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
 
-    // const file_date = new Date().toISOString();
-    // const generic_filename = `trader-report${file_date}`;
-    //
-    // // console.log("export type ---->", exportType);
-    // const trader_report = "trader-report";
-    // await exportReportLoop(
-    //   exportType || "csv",
-    //   columns,
-    //   generic_filename,
-    //   trader_report,
-    //   async (pageNumber, pageSize) =>
-    //     traderReport(ctx.prisma, {
-    //       ...params,
-    //       pageParams: { pageNumber, pageSize },
-    //     })
-    // );
-    //
-    // const bucketName = "reports-download-tmp";
-    // const serviceKey = path.join(
-    //   __dirname,
-    //   "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    // );
-    //
-    // const public_url = uploadFile(
-    //   serviceKey,
-    //   "api-front-dashbord",
-    //   bucketName,
-    //   generic_filename,
-    //   exportType ? exportType : "json"
-    // );
-    // return public_url;
-    return Promise.resolve("");
+    return public_url;
   });

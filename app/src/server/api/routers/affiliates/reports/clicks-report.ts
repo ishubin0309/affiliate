@@ -4,19 +4,20 @@ import {
 } from "@/server/api/routers/affiliates/reports/get-trader-data";
 import {
   PageParamsSchema,
+  SortingParamSchema,
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   pageInfo,
-  splitToPages,
+  reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { protectedProcedure } from "@/server/api/trpc";
+import { checkIsUser } from "@/server/api/utils";
 import type { PrismaClient } from "@prisma/client";
-import path from "path";
 import { z } from "zod";
 import { trafficModel } from "../../../../../../prisma/zod";
 import { merchant_id } from "../const";
-import { checkIsUser } from "@/server/api/utils";
 
 const Input = z.object({
   from: z.date(),
@@ -25,11 +26,12 @@ const Input = z.object({
   unique_id: z.string().optional(),
   trader_id: z.string().optional(),
   type: z.enum(["clicks", "views"]).optional(),
-  sortBy: z.string().optional(),
-  sortOrder: z.string().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const ClickReportItem = trafficModel
   .pick({
@@ -82,11 +84,17 @@ const clicksReport = async (
     trader_id,
     type,
     pageParams,
-    sortBy,
-    sortOrder,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   const offset = getPageOffset(pageParams);
+  const sorting_info = getSortingInfo(sortingParam);
+
+  const sortBy = sorting_info ? Object.keys(sorting_info[0] ?? "")[0] : "";
+  console.log("sorted by  ------>", sortBy);
+  const sortOrder = sorting_info ? Object.values(sorting_info[0] ?? "")[0] : "";
+  console.log("sorted order  ------>", sortOrder);
+
   const uid: string[] = [];
 
   // console.log("clicksReport: Input Parameters", {
@@ -105,13 +113,13 @@ const clicksReport = async (
   if (type === "views") {
     type_filter = {
       views: {
-        gt: 0,
+        gte: 0,
       },
     };
   } else if (type === "clicks") {
     type_filter = {
       clicks: {
-        gt: 0,
+        gte: 0,
       },
     };
   }
@@ -168,77 +176,94 @@ const clicksReport = async (
   //   },
   // });
 
-  const traficDataFull = await prisma.traffic.findMany({
-    orderBy: orderBy,
-    skip: offset,
-    take: pageParams.pageSize,
-    where: {
-      ...type_filter,
-      affiliate_id: affiliate_id,
-      merchant_id: merchant_id,
-      uid: unique_id,
-      rdate: {
-        gte: from,
-        lte: to,
-      },
-    },
-    select: {
-      id: true,
-      uid: true,
-      clicks: true,
-      views: true,
-      rdate: true,
-      profile_id: true,
-      type: true,
-      banner_id: true,
-      param: true,
-      param2: true,
-      param3: true,
-      param4: true,
-      param5: true,
-      refer_url: true,
-      ip: true,
-      affiliate_id: true,
-      platform: true,
-      os: true,
-      osVersion: true,
-      browser: true,
-      broswerVersion: true,
-      merchant_id: true,
-      country: {
-        select: {
-          title: true,
-          code: true,
-          id: true,
+  const [traficDataFull, totals] = await Promise.all([
+    prisma.traffic.findMany({
+      orderBy: orderBy,
+      skip: offset,
+      take: pageParams.pageSize,
+      where: {
+        ...type_filter,
+        affiliate_id: affiliate_id,
+        merchant_id: merchant_id,
+        uid: unique_id,
+        rdate: {
+          gte: from,
+          lte: to,
         },
       },
-      merchant: {
-        select: {
-          id: true,
-          name: true,
+      select: {
+        id: true,
+        uid: true,
+        clicks: true,
+        views: true,
+        rdate: true,
+        profile_id: true,
+        type: true,
+        banner_id: true,
+        param: true,
+        param2: true,
+        param3: true,
+        param4: true,
+        param5: true,
+        refer_url: true,
+        ip: true,
+        affiliate_id: true,
+        platform: true,
+        os: true,
+        osVersion: true,
+        browser: true,
+        broswerVersion: true,
+        merchant_id: true,
+        country: {
+          select: {
+            title: true,
+            code: true,
+            id: true,
+          },
+        },
+        merchant: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        affiliate: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        merchant_creative: {
+          select: {
+            id: true,
+            title: true,
+            url: true,
+          },
+        },
+        affiliates_profiles: {
+          select: {
+            id: true,
+            name: true,
+          },
         },
       },
-      affiliate: {
-        select: {
-          id: true,
-          username: true,
+    }),
+    prisma.traffic.aggregate({
+      _count: {
+        id: true,
+      },
+      where: {
+        ...type_filter,
+        affiliate_id: affiliate_id,
+        merchant_id: merchant_id,
+        uid: unique_id,
+        rdate: {
+          gte: from,
+          lte: to,
         },
       },
-      merchant_creative: {
-        select: {
-          id: true,
-          title: true,
-          url: true,
-        },
-      },
-      affiliates_profiles: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-    },
-  });
+    }),
+  ]);
 
   for (const item of traficDataFull) {
     uid.push(item.uid);
@@ -317,8 +342,13 @@ const clicksReport = async (
       ...traderData,
     };
   });
+
+  return {
+    data: clickArray,
+    pageInfo: { ...pageParams, totalItems: totals._count.id },
+    totals: undefined,
+  };
   // DONE, this is not efficient for this report, need to use db side pagination
-  return splitToPages(clickArray, pageParams);
 };
 
 export const getClicksReport = protectedProcedure
@@ -330,75 +360,20 @@ export const getClicksReport = protectedProcedure
   });
 
 export const exportClicksReport = protectedProcedure
-  .input(Input.extend({ exportType }))
+  .input(Input.extend({ exportType, reportColumns }))
   .mutation(async function ({ ctx, input }) {
     const affiliate_id = checkIsUser(ctx);
-    const { exportType, ...params } = input;
+    const { exportType, reportColumns, ...params } = input;
 
-    const columns = [
-      "ID",
-      "UID",
-      "Impression",
-      "Click",
-      "Date",
-      "Type",
-      "Merchant",
-      "Banner ID",
-      "Profile ID",
-      "Param",
-      "Param 2",
-      "Refer URL",
-      "Country",
-      "IP",
-      "Platform",
-      "Operating System",
-      "OS Version",
-      "Browser",
-      "Browser Version",
-      "Trader ID",
-      "Trader Alias",
-      "Lead",
-      "Demo",
-      "Sales Status",
-      "Accounts",
-      "FTD",
-      "Volume",
-      "Withdrawal Amount",
-      "ChargeBack Amount",
-      "Active Traders",
-    ];
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        clicksReport(ctx.prisma, affiliate_id, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
 
-    // const file_date = new Date().toISOString();
-    // const generic_filename = `clicks-report${file_date}`;
-    //
-    // console.log("export type ---->", exportType);
-    // const clicks_report = "clicks-report";
-    //
-    // await exportReportLoop(
-    //   exportType || "csv",
-    //   columns,
-    //   generic_filename,
-    //   clicks_report,
-    //   async (pageNumber, pageSize) =>
-    //     clicksReport(ctx.prisma, {
-    //       ...params,
-    //       pageParams: { pageNumber, pageSize },
-    //     })
-    // );
-    //
-    // const bucketName = "reports-download-tmp";
-    // const serviceKey = path.join(
-    //   __dirname,
-    //   "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    // );
-    //
-    // const public_url = uploadFile(
-    //   serviceKey,
-    //   "api-front-dashbord",
-    //   bucketName,
-    //   generic_filename,
-    //   exportType ? exportType : "json"
-    // );
-    // return public_url;
-    return Promise.resolve("");
+    return public_url;
   });

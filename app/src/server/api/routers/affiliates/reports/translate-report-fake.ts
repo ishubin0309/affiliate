@@ -84,10 +84,6 @@ export const exportTranslateReportFake = protectedProcedure
   .mutation(async function ({ ctx, input }) {
     const { exportType, reportColumns, ...params } = input;
 
-    const file_date = new Date().toISOString();
-    const fake_report = "fake-translate-report";
-    const generic_filename = `${fake_report}${file_date}`;
-
     // console.log("export type ---->", exportType);
     const public_url: string | undefined = await exportReportLoop(
       exportType || "csv",

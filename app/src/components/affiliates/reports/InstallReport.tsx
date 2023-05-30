@@ -1,47 +1,86 @@
-import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import {
+  getNumberParam,
+  useSearchContext,
+} from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
+import { SearchSelect } from "@/components/common/search/search-select";
+import { SearchText } from "@/components/common/search/search-text";
+import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import { QuerySelect } from "../../../components/common/QuerySelect";
-import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { InstallReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { DateRangeSelect } from "../../common/DateRangeSelect";
-import { Loading } from "../../common/Loading";
-import { useDateRange } from "@/components/ui/date-range";
+import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
+
+const columnHelper = createColumnHelper<InstallReportType>();
+
+const createColumn = (id: keyof InstallReportType, header: string) =>
+  columnHelper.accessor(id, {
+    cell: (info) => info.getValue(),
+    header,
+  });
+
+const columns = [
+  createColumn("type", "Event Type"),
+  createColumn("rdate", "Event Date"),
+  createColumn("trader_id", "Trader ID"),
+  createColumn("trader_alias", "Trader Alias"),
+  createColumn("type", "Trader Status"),
+  createColumn("country", "Country"),
+  createColumn("affiliate_id", "Affiliate ID"),
+  columnHelper.accessor("affiliate.username", {
+    cell: (info) => info.getValue(),
+    header: "Affiliate Username",
+  }),
+  createColumn("merchant_id", "Merchant ID"),
+  columnHelper.accessor("merchant.name", {
+    cell: (info) => info.getValue(),
+    header: "Merchant Name",
+  }),
+  createColumn("id", "Creative ID"),
+  columnHelper.accessor("merchant_creative.title", {
+    cell: (info) => info.getValue(),
+    header: "Creative Name",
+  }),
+];
 
 export const InstallReport = () => {
   const router = useRouter();
-  const { merchant_id, country } = router.query;
-  const { from, to } = useDateRange();
-  const [traderID, setTraderID] = useState<string>("");
+  const {
+    values: { dates, country, trader_id, banner_id },
+  } = useSearchContext();
+  const pagination = usePagination();
+  const { currentPage, itemsPerPage } = router.query;
+  const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isLoading } = api.affiliates.getInstallReport.useQuery({
-    from,
-    to,
-    country: country ? String(country) : undefined,
-    trader_id: traderID ? Number(traderID) : undefined,
-
-    // TODO
-    pageParams: { pageSize: 10, pageNumber: 1 },
+  const { data, isRefetching } = api.affiliates.getInstallReport.useQuery({
+    ...dateRange,
+    country: country,
+    trader_id: getNumberParam(trader_id),
+    banner_id: banner_id,
+    pageParams: pagination.pageParams,
   });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const { data: countries } = api.affiliates.getLongCountries.useQuery({});
-  const columnHelper = createColumnHelper<InstallReportType>();
 
   console.log("Install render", {
     data,
     merchants,
-    isLoading,
-    from,
-    to,
-    merchant_id,
+    isRefetching,
   });
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
+  const type_options = [
+    {
+      id: "install",
+      title: "Install",
+    },
+    {
+      id: "uninstall",
+      title: "Uninstall",
+    },
+  ];
   const divCol = (
     val: number | null | undefined,
     div: number | null | undefined
@@ -53,112 +92,49 @@ export const InstallReport = () => {
     );
   };
 
-  console.log("countries ----->", countries);
-
-  const columns = [
-    columnHelper.accessor("type", {
-      cell: (info) => info.getValue() as string,
-      header: "Event Type",
-    }),
-    columnHelper.accessor("rdate", {
-      cell: (info) => info.getValue() as Date,
-      header: "Event Date",
-    }),
-    columnHelper.accessor("trader_id", {
-      cell: (info) => info.getValue() as number,
-      header: "Trader ID",
-    }),
-    columnHelper.accessor("trader_alias", {
-      cell: (info) => info.getValue() as string,
-      header: "Trader Alias",
-    }),
-    columnHelper.accessor("type", {
-      cell: (info) => info.getValue() as string,
-      header: "Trader Status",
-    }),
-    columnHelper.accessor("country", {
-      cell: (info) => info.getValue() as string,
-      header: "Country",
-    }),
-    columnHelper.accessor("affiliate_id", {
-      cell: (info) => info.getValue() as number,
-      header: "Affiliate ID",
-    }),
-    columnHelper.accessor("username", {
-      cell: (info) => info.getValue() as string,
-      header: "Affiliate Username",
-    }),
-    columnHelper.accessor("merchant_id", {
-      cell: (info) => info.getValue() as number,
-      header: "Merchant ID",
-    }),
-    columnHelper.accessor("name", {
-      cell: (info) => info.getValue() as string,
-      header: "Merchant Name",
-    }),
-    columnHelper.accessor("id", {
-      cell: (info) => info.getValue() as number,
-      header: "Creative ID",
-    }),
-    columnHelper.accessor("title", {
-      cell: (info) => info.getValue() as string,
-      header: "Creative Name",
-    }),
-  ];
-
   const country_options = countries?.map((country: any) => {
     return {
       id: country.id,
       title: country.title,
     };
   });
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportInstallReport.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      country: country,
+      trader_id: getNumberParam(trader_id),
+      banner_id: banner_id,
+      exportType,
+      reportColumns: getColumns(columns),
+    });
 
   return (
-    <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        width="90%"
-        alignItems={"center"}
-        alignSelf="center"
-      >
-        <GridItem></GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Merchant"
-            choices={merchants}
-            varName="merchant_id"
-          />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Country"
-            choices={country_options}
-            varName="country"
-          />
-        </GridItem>
-        <GridItem>
-          <FormLabel>Trader ID</FormLabel>
-          <Input
-            value={traderID}
-            onChange={(event) => setTraderID(event.target.value)}
-          />
-        </GridItem>
-      </Grid>
-      <h2>Install Report</h2>
-      <Grid
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-        alignSelf="center"
-      >
-        <DataTable
-          data={Object.values(data || {})}
-          columns={columns}
-          footerData={[]}
-        />
-      </Grid>
-    </>
+    <ReportControl
+      reportName="Install Report"
+      report={data}
+      columns={columns}
+      pagination={pagination}
+      isRefetching={isRefetching}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
+    >
+      <SearchSelect
+        label="Merchant"
+        choices={merchants}
+        varName="merchant_id"
+      />
+      <SearchSelect
+        label="Country"
+        choices={country_options}
+        varName="country"
+      />
+      <SearchText varName="trader_id" label="Trader ID" />
+      <SearchText varName="banner_id" label="Banner ID" />
+      <SearchText varName="parameter" label="Parameter" />
+      <SearchText varName="parameter2" label="Parameter 2" />
+      <SearchSelect label="Type" choices={type_options} varName="type" />
+    </ReportControl>
   );
 };
