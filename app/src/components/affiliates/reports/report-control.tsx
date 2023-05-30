@@ -1,5 +1,6 @@
 import { ExportButton } from "@/components/affiliates/reports/export-button";
 import type { OnExport } from "@/components/affiliates/reports/utils";
+import { toKey } from "@/components/affiliates/reports/utils";
 import { Loading } from "@/components/common/Loading";
 import type { ReportDataTableProps } from "@/components/common/data-table/ReportDataTable";
 import { ReportDataTable } from "@/components/common/data-table/ReportDataTable";
@@ -14,9 +15,8 @@ import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { SearchDateRange } from "@/components/common/search/search-date-range";
 import { Pagination } from "@/components/ui/pagination";
 import { api } from "@/utils/api";
-import React, { useMemo, useState } from "react";
 import { useTranslation } from "next-i18next";
-import { toKey } from "@/components/affiliates/reports/utils";
+import React, { useMemo, useState } from "react";
 
 interface Props<Data extends object> extends ReportDataTableProps<Data> {
   reportName: string;
@@ -99,7 +99,7 @@ export const ReportControl = <Data extends object>({
         btnText="Save"
       />
 
-      {report.pageInfo.totalItems > 0 ? (
+      {report?.pageInfo?.totalItems > 0 ? (
         <ReportDataTable
           report={report}
           columns={getColumnsBySetup(allColumns, reportsColumns)}

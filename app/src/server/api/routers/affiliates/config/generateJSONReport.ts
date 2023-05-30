@@ -1,5 +1,5 @@
-import fs from "fs";
 import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import fs from "fs";
 
 export const generateJSONReport = (
   columns: ColumnsType[],

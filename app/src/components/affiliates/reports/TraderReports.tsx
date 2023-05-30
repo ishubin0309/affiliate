@@ -1,14 +1,19 @@
-import { useDateRange } from "@/components/ui/date-range";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import {
+  getNumberParam,
+  useSearchContext,
+} from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
+import { SearchSelect } from "@/components/common/search/search-select";
+import { SearchText } from "@/components/common/search/search-text";
+import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
-import { Calendar } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
 import type { TraderReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { Loading } from "../../common/Loading";
-import { Button } from "../../ui/button";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
 
 export const creativeType = [
   {
@@ -51,41 +56,53 @@ export const creativeType = [
 
 export const TraderReports = () => {
   const router = useRouter();
-  const { merchant_id } = router.query;
+  const {
+    values: { merchant_id, dates, trader_id, banner_id, country },
+  } = useSearchContext();
   const pagination = usePagination();
-  const { from, to } = useDateRange();
-  const [traderID, setTraderID] = useState<string>("");
+  const { name, ...dateRange } = getDateRange(dates);
   const [reportFields, setReportFields] = useState<
     { id: number; title: string; value: string; isChecked: boolean }[]
   >([]);
-  const { currentPage, itemsPerPage } = router.query;
 
-  const { data, isLoading } = api.affiliates.getTraderReport.useQuery({
-    from,
-    to,
-    merchant_id: merchant_id ? Number(merchant_id) : undefined,
-    trader_id: traderID,
-    pageParams: {
-      // TODO
-      pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
-      pageNumber: currentPage ? Number(currentPage) : 1,
-    },
+  const { data, isRefetching } = api.affiliates.getTraderReport.useQuery({
+    ...dateRange,
+    merchant_id: getNumberParam(merchant_id),
+    trader_id: trader_id,
+    country: country,
+    banner_id: getNumberParam(banner_id),
+    pageParams: pagination.pageParams,
   });
+
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportTraderReport.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      merchant_id: getNumberParam(merchant_id),
+      trader_id: trader_id,
+      country: country,
+      banner_id: getNumberParam(banner_id),
+      exportType,
+      reportColumns: getColumns(columns),
+    });
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
+  const { data: countries } = api.affiliates.getLongCountries.useQuery({});
   const columnHelper = createColumnHelper<TraderReportType>();
+  const country_options = countries?.map((country: any) => {
+    return {
+      id: country.id,
+      title: country.title,
+    };
+  });
 
   console.log("trader render", {
     data,
     merchants,
-    isLoading,
-    from,
-    to,
+    isRefetching,
     merchant_id,
   });
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   const createColumn = (id: keyof TraderReportType, header: string) =>
     columnHelper.accessor(id, {
@@ -123,86 +140,31 @@ export const TraderReports = () => {
     createColumn("SaleStatus", "Sale Status"),
   ];
 
-  let totalVolume = 0;
-  let totalLots = 0;
-  let totalWithdrawal = 0;
-  let totalChargeback = 0;
-
-  data?.data?.forEach((row: any) => {
-    totalVolume += Number(row?.Volume);
-    totalLots += Number(row?.totalLots);
-    totalWithdrawal += Number(row?.WithdrawalAmount);
-    totalChargeback += Number(row?.ChargeBackAmount);
-  });
-
-  const totalObj = [];
-  totalObj.push({
-    TraderID: "",
-    sub_trader_count: "",
-    RegistrationDate: "",
-    TraderStatus: "",
-    Country: "",
-    affiliate_id: "",
-    AffiliateUsername: "",
-    merchant_id: "",
-    MerchantName: "",
-    CreativeID: "",
-    CreativeName: "",
-    Type: "",
-    CreativeLanguage: "",
-    ProfileID: "",
-    ProfileName: "",
-    Param: "",
-    Param2: "",
-    Param3: "",
-    Param4: "",
-    Param5: "",
-    totalVolume,
-    totalWithdrawal,
-    totalChargeback,
-    totalLots,
-    SaleStatus: "",
-  });
-  const displayOptions = [
-    {
-      id: "monthly",
-      title: "monthly",
-    },
-    {
-      id: "weekly",
-      title: "weekly",
-    },
-    {
-      id: "daily",
-      title: "daily",
-    },
-  ];
-
   return (
-    <>
-      <div className="w-full pt-3.5">
-        <div className="block text-base font-medium md:justify-between lg:flex">
-          <div className="mb-2.5 flex items-center justify-between md:mb-5 lg:mb-5 ">
-            <div>
-              <span className="text-[#2262C6]">Affliate Program</span>
-              &nbsp;/&nbsp;Quick Summary Report
-            </div>
-            <Button className="lg:hidden">
-              <Calendar className="h-6 w-6" />
-            </Button>
-          </div>
-        </div>
+    <ReportControl
+      reportName="Users Report"
+      report={data}
+      columns={columns}
+      pagination={pagination}
+      isRefetching={isRefetching}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
+    >
+      <SearchSelect
+        label="Merchant"
+        choices={merchants}
+        varName="merchant_id"
+      />
+      <SearchSelect
+        label="Country"
+        choices={country_options}
+        varName="country"
+      />
 
-        <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
-          {/* @ts-ignore */}
-          <ReportDataTable
-            report={data}
-            columns={columns}
-            pagination={pagination}
-            // reportFields={reportFields}
-          />
-        </div>
-      </div>
-    </>
+      <SearchText varName="unique_id" label="Unique ID" />
+      <SearchText varName="trader_id" label="Trader ID" />
+      <SearchText varName="banner_id" label="Banner ID" />
+
+      <SearchSelect label="Filter" choices={creativeType} varName="filter" />
+    </ReportControl>
   );
 };

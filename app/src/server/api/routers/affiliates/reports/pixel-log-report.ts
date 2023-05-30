@@ -1,48 +1,96 @@
 import { protectedProcedure } from "@/server/api/trpc";
+import type { PrismaClient } from "@prisma/client";
+import {
+  affiliatesModel,
+  merchantsModel,
+  pixel_logsModel,
+  pixel_monitorModel,
+  RelatedaffiliatesModel,
+  RelatedmerchantsModel,
+  Relatedpixel_logsModel,
+  Relatedpixel_monitorModel,
+} from "prisma/zod";
 import { z } from "zod";
+import {
+  PageParamsSchema,
+  exportReportLoop,
+  exportType,
+  pageInfo,
+  reportColumns,
+} from "./reports-utils";
 
-export const getPixelLogReport = protectedProcedure
-  .input(
-    z.object({
-      from: z.date().optional(),
-      to: z.date().optional(),
-      merchant_id: z.number().optional(),
-      country: z.string().optional(),
-      banner_id: z.string().optional(),
-      group_id: z.string().optional(),
+const Input = z.object({
+  from: z.date().optional(),
+  to: z.date().optional(),
+  merchant_id: z.number().optional(),
+  country: z.string().optional(),
+  banner_id: z.string().optional(),
+  group_id: z.string().optional(),
+  sortBy: z.string().optional(),
+  sortOrder: z.string().optional(),
+});
+
+const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+
+const pixelLogReportSchema = z.object({
+  data: z.array(
+    pixel_logsModel.extend({
+      pixel_monitor: pixel_monitorModel.partial().extend({
+        merchant: merchantsModel.pick({ id: true }),
+        affiliate: affiliatesModel.pick({
+          username: true,
+          group_id: true,
+          id: true,
+          valid: true,
+        }),
+      }),
     })
-  )
-  .query(
-    async ({
-      ctx,
-      input: { from, to, merchant_id, country, banner_id, group_id },
-    }) => {
-      let type_filter = {};
-      if (banner_id) {
-        type_filter = {
-          banner_id: banner_id,
-        };
-      }
+  ),
+  pageInfo,
+  totals: z.any(),
+});
 
-      if (group_id) {
-        type_filter = {
-          group_id: group_id,
-        };
-      }
+const pixelLogReportData = async (
+  prisma: PrismaClient,
+  {
+    from,
+    to,
+    merchant_id,
+    country,
+    banner_id,
+    group_id,
+    sortBy,
+    sortOrder,
+    pageParams,
+  }: z.infer<typeof InputWithPageInfo>
+) => {
+  console.log("from ----->", from, " to ------->", to, merchant_id);
+  let type_filter = {};
+  if (banner_id) {
+    type_filter = {
+      banner_id: banner_id,
+    };
+  }
 
-      if (country) {
-        type_filter = {
-          country: country,
-        };
-      }
+  if (group_id) {
+    type_filter = {
+      group_id: group_id,
+    };
+  }
 
-      if (merchant_id) {
-        type_filter = {
-          merchant_id: merchant_id,
-        };
-      }
+  if (country) {
+    type_filter = {
+      country: country,
+    };
+  }
 
-      /*
+  if (merchant_id) {
+    type_filter = {
+      merchant_id: merchant_id,
+    };
+  }
+
+  /*
               SELECT pl.id as plid,
                 pm.* ,
                 pl.*,
@@ -66,38 +114,70 @@ export const getPixelLogReport = protectedProcedure
 
                 //}
              */
-      const pixelReport = await ctx.prisma.pixel_logs.findMany({
-        orderBy: {
-          dateTime: "asc",
-        },
-        where: {
-          ...type_filter,
-          dateTime: {
-            gte: from,
-            lt: to,
-          },
-        },
-        include: {
-          pixel_monitor: {
+  console.log("type filter", type_filter);
+  const pixelReport = await prisma.pixel_logs.findMany({
+    orderBy: {
+      dateTime: "asc",
+    },
+    where: {
+      // ...type_filter,
+      dateTime: {
+        gte: from,
+        lt: to,
+      },
+    },
+    include: {
+      pixel_monitor: {
+        select: {
+          affiliate: {
             select: {
-              affiliate: {
-                select: {
-                  username: true,
-                  group_id: true,
-                  id: true,
-                  valid: true,
-                },
-              },
-              merchant: {
-                select: {
-                  id: true,
-                },
-              },
+              username: true,
+              group_id: true,
+              id: true,
+              valid: true,
+            },
+          },
+          merchant: {
+            select: {
+              id: true,
             },
           },
         },
-      });
+      },
+    },
+  });
 
-      return pixelReport;
-    }
-  );
+  const arrRes = {
+    data: pixelReport,
+    totals: 0,
+    pageInfo: {
+      ...pageParams,
+      totalItems: pixelReport.length,
+    },
+  };
+
+  return arrRes;
+};
+
+export const getPixelLogReport = protectedProcedure
+  .input(InputWithPageInfo)
+  .output(pixelLogReportSchema)
+  .query(({ ctx, input }) => pixelLogReportData(ctx.prisma, input));
+
+export const exportPixelLogReportData = protectedProcedure
+  .input(Input.extend({ exportType, reportColumns }))
+  .mutation(async function ({ ctx, input }) {
+    const { exportType, reportColumns, ...params } = input;
+
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        pixelLogReportData(ctx.prisma, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
+
+    return public_url;
+  });

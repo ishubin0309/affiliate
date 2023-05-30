@@ -1,5 +1,5 @@
-import XLSX from "xlsx";
 import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import XLSX from "xlsx";
 
 export const generateXLSXReport = (
   columns: ColumnsType[],

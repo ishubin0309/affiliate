@@ -1,6 +1,6 @@
+import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import fs from "fs";
 import { Parser } from "json2csv";
-import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 
 export const generateCSVReport = (
   columns: ColumnsType[],

@@ -7,14 +7,14 @@ import {
   exportType,
   getPageOffset,
   pageInfo,
+  reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { protectedProcedure } from "@/server/api/trpc";
+import { checkIsUser } from "@/server/api/utils";
 import type { PrismaClient } from "@prisma/client";
 import { Prisma } from "@prisma/client";
-import path from "path";
 import { data_statsModel } from "prisma/zod";
 import { z } from "zod";
-import { checkIsUser } from "@/server/api/utils";
 // import { uploadFile } from "../config";
 
 type RegType = {
@@ -33,7 +33,10 @@ type MerchantIds = {
 const Input = z.object({
   from: z.date().optional(),
   to: z.date().optional(),
+  merchant_id: z.number().optional(),
   banner_id: z.number().optional(),
+  trader_id: z.number().optional(),
+  unique_id: z.number().optional(),
   type: z.string().optional(),
   group_id: z.number().optional(),
 });
@@ -441,11 +444,23 @@ const creativeReport = async (
     // });
   }
 
-  const creativeArray = bannersww?.map((item) => {
+  const view_clicks = trafficRow.map((item) => {
+    return {
+      clicks: item?._sum.Clicks,
+      views: item?._sum.Impressions,
+      banner_id: item.BannerID,
+    };
+  });
+
+  // console.log("item ------>", view_clicks);
+
+  const creativeArray = bannersww?.map((item, i) => {
     const { merchant, language, ...resItem } = item;
+
     return {
       ...creativeItems,
       ...resItem,
+      ...view_clicks[i],
       merchant_name: merchant.name,
       language: language.title,
     };
@@ -470,61 +485,21 @@ export const getCreativeReport = protectedProcedure
     return creativeReport(ctx.prisma, affiliate_id, input);
   });
 
-export const exportTraderReport = protectedProcedure
-  .input(Input.extend({ exportType }))
+export const exportCreativeReport = protectedProcedure
+  .input(Input.extend({ exportType, reportColumns }))
   .mutation(async function ({ ctx, input }) {
-    const { exportType, ...params } = input;
+    const affiliate_id = checkIsUser(ctx);
+    const { exportType, reportColumns, ...params } = input;
 
-    const columns = [
-      "Creative ID",
-      "Creative Name",
-      "Merchant",
-      "Type",
-      "Impressions",
-      "Clicks",
-      "Installation",
-      "Click Through Ratio(CTR)",
-      "Click To Account",
-      "Click To Sale",
-      "Leads",
-      "Demo",
-      "Accounts",
-      "FTD",
-      "Volume",
-      "Withdrawal Amount",
-      "ChargeBack Amount",
-    ];
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        creativeReport(ctx.prisma, affiliate_id, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
 
-    // const file_date = new Date().toISOString();
-    // const creative_report = "creative-report";
-    // const generic_filename = `${creative_report}${file_date}`;
-    //
-    // // console.log("export type ---->", exportType);
-    // await exportReportLoop(
-    //   exportType || "csv",
-    //   columns,
-    //   generic_filename,
-    //   creative_report,
-    //   async (pageNumber, pageSize) =>
-    //     creativeReport(ctx.prisma, {
-    //       ...params,
-    //       pageParams: { pageNumber, pageSize },
-    //     })
-    // );
-    //
-    // const bucketName = "reports-download-tmp";
-    // const serviceKey = path.join(
-    //   __dirname,
-    //   "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    // );
-    //
-    // const public_url = uploadFile(
-    //   serviceKey,
-    //   "api-front-dashbord",
-    //   bucketName,
-    //   generic_filename,
-    //   exportType ? exportType : "json"
-    // );
-    // return public_url;
-    return Promise.resolve("");
+    return public_url;
   });

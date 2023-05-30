@@ -3,26 +3,30 @@
  * @param userInfo - An object containing user information such as level and group ID.
  * @returns An object containing country data and report filename.
  */
-import type { PrismaClient } from "@prisma/client";
-import { Prisma } from "@prisma/client";
-import { protectedProcedure } from "@/server/api/trpc";
-import { z } from "zod";
-import type { Sql } from "@prisma/client/runtime";
-import type { PageParam } from "@/server/api/routers/affiliates/reports/reports-utils";
 import {
-  debugSaveData,
-  getPageOffset,
-  pageInfo,
   PageParamsSchema,
+  exportReportLoop,
+  exportType,
+  pageInfo,
+  reportColumns,
   splitToPages,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
+import { protectedProcedure } from "@/server/api/trpc";
 import { checkIsUser } from "@/server/api/utils";
+import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
+import type { PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import type { Sql } from "@prisma/client/runtime";
+import { z } from "zod";
 
 const Input = z.object({
   from: z.date(),
   to: z.date(),
   merchant_id: z.number().optional(),
+  affiliate_id: z.number().optional(),
+  country_id: z.string().optional(),
+  level: z.string().optional(),
+  group_id: z.string().optional(),
 });
 
 const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
@@ -78,19 +82,18 @@ const countryReportResultSchema = z.object({
 
 export const countryReport = async (
   prisma: PrismaClient,
-  pageParams: PageParam,
   {
-    userInfo,
+    level,
+    group_id,
     merchant_id,
     affiliate_id,
     country_id,
     from,
     to,
-  }: CountryReportParams
+    pageParams,
+  }: z.infer<typeof InputWithPageInfo>
 ) => {
-  const userLevel: string = userInfo.level;
-  const group_id = userLevel === "manager" ? userInfo.group_id : null;
-
+  const userLevel = level;
   const where = Prisma.sql`1 = 1`; // Set a default where condition to retrieve all data
   let whereDashboard = Prisma.sql`1 = 1`; // Set a default where condition for dashboard data
   let install_main = Prisma.sql`1 = 1`;
@@ -339,33 +342,66 @@ export const countryReport = async (
 export const getCountryReport = protectedProcedure
   .input(InputWithPageInfo)
   .output(countryReportResultSchema)
-  .query(async ({ ctx, input: { from, to, merchant_id, pageParams } }) => {
-    const affiliate_id = checkIsUser(ctx);
-    const { prisma } = ctx;
+  .query(
+    async ({
+      ctx,
+      input: {
+        from,
+        to,
+        merchant_id,
+        group_id = "manager",
+        country_id,
+        level,
+        pageParams,
+      },
+    }) => {
+      const affiliate_id = checkIsUser(ctx);
+      const { prisma } = ctx;
 
-    const userInfo = { level: "all" };
+      const userInfo = { level: "all" };
 
-    console.log(`muly:call countryReport`, {
-      from,
-      to,
-      userInfo,
-      affiliate_id,
-      merchant_id,
-    });
+      console.log(`muly:call countryReport`, {
+        from,
+        to,
+        userInfo,
+        affiliate_id,
+        merchant_id,
+      });
 
-    const countryData = await countryReport(prisma, pageParams, {
-      from,
-      to,
-      userInfo,
-      affiliate_id,
-      merchant_id,
-    });
+      const countryData = await countryReport(prisma, {
+        from,
+        to,
+        merchant_id,
+        group_id,
+        country_id,
+        level,
+        affiliate_id,
+        pageParams,
+      });
 
-    console.log(`muly:call countryReport after`, {
-      countryData: countryData.data.length,
-      pageInfo: countryData.pageInfo,
-    });
+      console.log(`muly:call countryReport after`, {
+        countryData: countryData.data.length,
+        pageInfo: countryData.pageInfo,
+      });
 
-    // debugSaveData("countryData", { countryData });
-    return countryData;
+      // debugSaveData("countryData", { countryData });
+      return countryData;
+    }
+  );
+
+export const exportCountryReport = protectedProcedure
+  .input(Input.extend({ exportType, reportColumns }))
+  .mutation(async function ({ ctx, input }) {
+    const { exportType, reportColumns, ...params } = input;
+    const public_url: string | undefined = await exportReportLoop(
+      exportType || "csv",
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        countryReport(ctx.prisma, {
+          ...params,
+          pageParams: { pageNumber, pageSize },
+        })
+    );
+
+    return public_url;
   });
