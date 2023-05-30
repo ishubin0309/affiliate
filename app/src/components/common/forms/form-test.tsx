@@ -3,7 +3,7 @@ import { Form } from "@/components/common/forms/Form";
 import { useTranslation } from "next-i18next";
 
 export const FormTestComponent = (args: any) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("affiliate");
   const formContext = usePrepareSchema(t, args.schema);
 
   const onSubmit = (values: any) => {

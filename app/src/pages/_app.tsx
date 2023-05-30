@@ -23,6 +23,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ProSidebarProvider } from "react-pro-sidebar";
 import "../styles/globals.css";
 import Head from "next/head";
+import { Loading } from "@/components/common/Loading";
 // import { Inter as FontSans } from "next/font/google";
 //
 // const fontSans = FontSans({
@@ -49,6 +50,11 @@ const MyApp = ({
     refetchOnWindowFocus: false,
   });
   const faviconPath = config?.faviconPath;
+
+  if (!config) {
+    return <Loading />;
+  }
+
   return (
     <>
       <Head>
@@ -62,7 +68,7 @@ const MyApp = ({
       <ProSidebarProvider>
         <FlagBagProvider value={flagBag}>
           <SessionProvider session={session}>
-            <ConfigProvider>
+            <ConfigProvider config={config}>
               <Layout>
                 <Component {...pageProps} />
                 <Toaster />
