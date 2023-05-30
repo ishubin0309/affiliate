@@ -107,7 +107,6 @@ const installReport = async (
           name: true,
         },
       },
-
       affiliate: {
         select: {
           id: true,

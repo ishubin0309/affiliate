@@ -3,9 +3,11 @@ import { merchant_id } from "@/server/api/routers/affiliates/const";
 import type { CreativeReportSchema } from "@/server/api/routers/affiliates/reports";
 import {
   PageParamsSchema,
+  SortingParamSchema,
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   pageInfo,
   reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
@@ -65,7 +67,10 @@ const creativeReportTotalsSchema = z.object({
   totalTotalCom: z.number(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 const creativeReportResultSchema = z.object({
   data: z.array(traderReportSchema),
   pageInfo,
@@ -82,10 +87,13 @@ const creativeReport = async (
     type,
     group_id,
     pageParams,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   console.log("pageParams", pageParams);
   const offset = getPageOffset(pageParams);
+  const orderBy = getSortingInfo(sortingParam);
+  console.log("order by ------>", orderBy);
 
   let creatives_stats_where = Prisma.empty;
   const country = "";
@@ -133,32 +141,39 @@ const creativeReport = async (
     real_ftd_amount: 0,
     real: 0,
   };
-  const bannersww = await prisma.merchants_creative.findMany({
-    take: pageParams.pageSize,
-    skip: offset,
-    select: {
-      id: true,
-      title: true,
-      merchant_id: true,
-      type: true,
-      width: true,
-      height: true,
-      merchant: {
-        select: {
-          name: true,
+  const [bannersww, totals] = await Promise.all([
+    prisma.merchants_creative.findMany({
+      take: pageParams.pageSize,
+      skip: offset,
+      select: {
+        id: true,
+        title: true,
+        merchant_id: true,
+        type: true,
+        width: true,
+        height: true,
+        merchant: {
+          select: {
+            name: true,
+          },
+        },
+        language: {
+          select: {
+            title: true,
+          },
         },
       },
-      language: {
-        select: {
-          title: true,
-        },
+      where: {
+        merchant_id: merchant_id,
+        valid: 1,
       },
-    },
-    where: {
-      merchant_id: merchant_id,
-      valid: 1,
-    },
-  });
+    }),
+    prisma.merchants_creative.aggregate({
+      _count: {
+        merchant_id: true,
+      },
+    }),
+  ]);
 
   // console.log("banners ww -------->", bannersww);
 
@@ -195,10 +210,10 @@ const creativeReport = async (
     },
     where: {
       ...where_main,
-      Date: {
-        gt: from,
-        lt: to,
-      },
+      // Date: {
+      //   gt: from,
+      //   lt: to,
+      // },
     },
   });
 
@@ -250,7 +265,7 @@ const creativeReport = async (
   });
 
   const arrRow = await prisma.data_sales.findMany({
-    take: 10,
+    take: pageParams.pageSize,
     select: {
       product_id: true,
       banner_id: true,
@@ -452,8 +467,6 @@ const creativeReport = async (
     };
   });
 
-  // console.log("item ------>", view_clicks);
-
   const creativeArray = bannersww?.map((item, i) => {
     const { merchant, language, ...resItem } = item;
 
@@ -471,7 +484,7 @@ const creativeReport = async (
     totals: creativeItems,
     pageInfo: {
       ...pageParams,
-      totalItems: creativeArray.length,
+      totalItems: totals._count.merchant_id,
     },
   };
 

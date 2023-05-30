@@ -569,7 +569,7 @@ const profileReportData = async (
 
 export const getProfileReportData = protectedProcedure
   .input(InputWithPageInfo)
-  .output(profileReportDataSchema)
+  // .output(profileReportDataSchema)
   .query(({ ctx, input }) => {
     return profileReportData(ctx.prisma, input);
   });

@@ -1,6 +1,7 @@
 //
 
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 import {
   getNumberParam,
   useSearchContext,
@@ -80,6 +81,7 @@ export const CreativeReport = () => {
   const pagination = usePagination();
   const { currentPage, itemsPerPage } = router.query;
   const { name, ...dateRange } = getDateRange(dates);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
   const { data, isRefetching } = api.affiliates.getCreativeReport.useQuery({
     ...dateRange,
@@ -90,6 +92,7 @@ export const CreativeReport = () => {
     type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
     group_id: getNumberParam(group_id),
     pageParams: pagination.pageParams,
+    sortingParam: _sorting,
   });
 
   const { mutateAsync: reportExport } =

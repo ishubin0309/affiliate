@@ -99,7 +99,7 @@ const pixelLogReportData = async (
       dateTime: "asc",
     },
     where: {
-      // ...type_filter,
+      ...type_filter,
       dateTime: {
         gte: from,
         lt: to,
@@ -108,6 +108,17 @@ const pixelLogReportData = async (
     include: {
       pixel_monitor: {
         select: {
+          affiliate_id: true,
+          banner_id: true,
+          method: true,
+          totalFired: true,
+          type: true,
+          id: true,
+          merchant_id: true,
+          pixelCode: true,
+          product_id: true,
+          rdate: true,
+          valid: true,
           affiliate: {
             select: {
               username: true,
@@ -121,6 +132,11 @@ const pixelLogReportData = async (
               id: true,
             },
           },
+          pixel_logs: {
+            select: {
+              id: true,
+            },
+          },
         },
       },
     },
@@ -128,7 +144,7 @@ const pixelLogReportData = async (
 
   const arrRes = {
     data: pixelReport,
-    totals: 0,
+    totals: {},
     pageInfo: {
       ...pageParams,
       totalItems: pixelReport.length,
@@ -139,7 +155,7 @@ const pixelLogReportData = async (
 };
 export const getPixelLogReport = protectedProcedure
   .input(InputWithPageInfo)
-  .output(pixelLogReportSchema)
+  // .output(pixelLogReportSchema)
   .query(({ ctx, input }) => pixelLogReportData(ctx.prisma, input));
 
 export const exportPixelLogReportData = protectedProcedure
