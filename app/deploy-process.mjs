@@ -1,5 +1,6 @@
 #!/usr/bin/env zx
 
+// export service=gamingaffiliates
 // export service=best-brokers-partners
 // export service=freevpnplanet
 // export service=fxoro

@@ -1,4 +1,4 @@
-import { affiliatesModel } from "prisma/zod";
+import { affiliatesModel, data_installModel } from "prisma/zod";
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";
 
@@ -32,34 +32,7 @@ export const QuickReportSummarySchema = z.object({
   PendingDepositsAmount: z.number().nullish(),
 });
 
-export const dataInstallSchema = z.object({
-  id: z.number().nullish(),
-  rdate: z.date().nullish(),
-  ctag: z.string().nullish(),
-  affiliate_id: z.number().nullish(),
-  group_id: z.number().nullish(),
-  banner_id: z.number().nullish(),
-  profile_id: z.number().nullish(),
-  product_id: z.number().nullish(),
-  country: z.string().nullish(),
-  trader_id: z.string().nullish(),
-  phone: z.string().nullish(),
-  trader_alias: z.string().nullish(),
-  type: z.string().nullish(),
-  freeParam: z.string().nullish(),
-  freeParam2: z.string().nullish(),
-  freeParam3: z.string().nullish(),
-  freeParam4: z.string().nullish(),
-  freeParam5: z.string().nullish(),
-  merchant_id: z.number().nullish(),
-  status: z.string().nullish(),
-  lastUpdate: z.date().nullish(),
-  platform: z.string().nullish(),
-  uid: z.string().nullish(),
-  email: z.string().nullish(),
-  couponName: z.string().nullish(),
-  campaign_id: z.string().nullish(),
-  currentDate: z.date().nullish(),
+export const dataInstallSchema = data_installModel.partial().extend({
   merchant_creative: z.object({
     id: z.number().nullish(),
     title: z.string().nullish(),
@@ -181,7 +154,7 @@ export const profileReportSchema = z.object({
   url: z.string().nullish(),
   description: z.string().nullish(),
   source_traffic: z.string().nullish(),
-  affiliate: affiliatesModel,
+  affiliate: affiliatesModel.nullish(),
   totalCPI: z.number().nullish(),
   totalReal: z.number().nullish(),
   ftd: z.number().nullish(),

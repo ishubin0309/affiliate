@@ -1,6 +1,15 @@
 import { protectedProcedure } from "@/server/api/trpc";
 import type { PrismaClient } from "@prisma/client";
-import { Relatedpixel_logsModel } from "prisma/zod";
+import {
+  affiliatesModel,
+  merchantsModel,
+  pixel_logsModel,
+  pixel_monitorModel,
+  RelatedaffiliatesModel,
+  RelatedmerchantsModel,
+  Relatedpixel_logsModel,
+  Relatedpixel_monitorModel,
+} from "prisma/zod";
 import { z } from "zod";
 import {
   PageParamsSchema,
@@ -24,7 +33,19 @@ const Input = z.object({
 const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
 const pixelLogReportSchema = z.object({
-  data: z.array(Relatedpixel_logsModel),
+  data: z.array(
+    pixel_logsModel.extend({
+      pixel_monitor: pixel_monitorModel.partial().extend({
+        merchant: merchantsModel.pick({ id: true }),
+        affiliate: affiliatesModel.pick({
+          username: true,
+          group_id: true,
+          id: true,
+          valid: true,
+        }),
+      }),
+    })
+  ),
   pageInfo,
   totals: z.any(),
 });
@@ -153,6 +174,7 @@ const pixelLogReportData = async (
 
   return arrRes;
 };
+
 export const getPixelLogReport = protectedProcedure
   .input(InputWithPageInfo)
   // .output(pixelLogReportSchema)

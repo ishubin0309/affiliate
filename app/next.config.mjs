@@ -58,7 +58,23 @@ const config = {
   },
 
   images: {
-    domains: ["go.best-brokers-partners.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "go.*",
+        pathname: "/files/**",
+      },
+      {
+        protocol: "https",
+        hostname: "partners.*",
+        pathname: "/files/**",
+      },
+      {
+        protocol: "https",
+        hostname: "affiliate.*",
+        pathname: "/files/**",
+      },
+    ],
   },
 };
 

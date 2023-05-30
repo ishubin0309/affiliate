@@ -1,7 +1,9 @@
+
 # Admin Commands
 
 https://affiliate.best-brokers-partners.com/api/trpc-playground
 https://best-brokers-partners.staging.affiliatets.com/api/trpc-playground
+https://go.freevpnplanet.com/api/trpc-playground
 
 ![img.png](img.png)
 
