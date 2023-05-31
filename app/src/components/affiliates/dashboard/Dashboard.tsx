@@ -259,7 +259,7 @@ export const Dashboard = () => {
         <SearchDateRange />
         <SearchApply isLoading={isRefetching} />
         <ColumnSelectButton
-          columns={allColumns.map((item) => ({ header: item.id }))}
+          columns={allColumns}
           reportName={"dashStatCols"}
           reportsColumns={reportsColumns}
           selectColumnsMode={selectColumnsMode}
@@ -268,10 +268,7 @@ export const Dashboard = () => {
       </PageHeader>
       <div>
         <ColumnSelect
-          columns={allColumns.map((item) => ({
-            header: item.id,
-            label: item.title,
-          }))}
+          columns={allColumns}
           reportName={"dashStatCols"}
           reportsColumns={reportsColumns}
           selectColumnsMode={selectColumnsMode}

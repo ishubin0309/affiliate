@@ -23,9 +23,11 @@ export const ColumnSelectButton = ({
       /// reverse logic
       const selected: SelectedColumnList = {};
       columns.forEach((item) => {
-        const name = String(item.header);
-        const exclude = reportsColumns?.includes(name);
-        selected[name] = !exclude;
+        const name = item.id;
+        if (name) {
+          const exclude = reportsColumns?.includes(name);
+          selected[name] = !exclude;
+        }
       });
       setSelectColumnsMode(selected);
     } else {

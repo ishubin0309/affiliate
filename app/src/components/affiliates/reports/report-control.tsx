@@ -62,7 +62,7 @@ export const ReportControl = <Data extends object>({
     }
   );
 
-  console.log(`muly:ReportControl`, { reportsColumns });
+  // console.log(`muly:ReportControl`, { reportsColumns });
 
   return report ? (
     <div className="flex w-full flex-col gap-2">

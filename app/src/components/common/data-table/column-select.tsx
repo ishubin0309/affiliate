@@ -9,7 +9,7 @@ import { useRef, useState } from "react";
 export type SelectedColumnList = Record<string, boolean>;
 
 type ExtendedColumnDef<T, U> = ColumnDef<T, U> & {
-  label?: string;
+  title?: string;
 };
 
 interface Props<Data extends object> {
@@ -29,6 +29,15 @@ export const ColumnSelect = <Data extends object>({
   selectColumnsMode,
   btnText,
 }: Props<Data>) => {
+  // console.log(`muly:ColumnSelect`, {
+  //   reportsColumns,
+  //   columns,
+  //   setSelectColumnsMode,
+  //   reportName,
+  //   selectColumnsMode,
+  //   btnText,
+  // });
+
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
@@ -42,7 +51,7 @@ export const ColumnSelect = <Data extends object>({
       /// reverse logic
       const selected: SelectedColumnList = {};
       columns.forEach((item) => {
-        const name = String(item.header);
+        const name = String(item.id);
         const exclude = reportsColumns?.includes(name);
         selected[name] = !exclude;
       });
@@ -78,10 +87,20 @@ export const ColumnSelect = <Data extends object>({
   };
 
   const handleColumnChange = (fieldName: string, checked: boolean) => {
+    console.log(`muly:handleColumnChange , ${fieldName}`, {});
     if (selectColumnsMode) {
-      setSelectColumnsMode({ ...selectColumnsMode, [fieldName]: checked });
+      setSelectColumnsMode({
+        ...(selectColumnsMode ?? {}),
+        [fieldName]: checked,
+      });
     }
   };
+
+  console.log(`muly:ColumnSelect`, {
+    selectColumnsMode,
+    reportsColumns,
+    columns,
+  });
 
   return (
     <div
@@ -94,7 +113,7 @@ export const ColumnSelect = <Data extends object>({
     >
       <div className="grid auto-cols-min grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {columns.map((item) => {
-          const name = String(item.header);
+          const name = String(item.id);
           return (
             <div key={name}>
               <div className="flex items-center space-x-2">
@@ -111,7 +130,7 @@ export const ColumnSelect = <Data extends object>({
                   htmlFor={name}
                   className="cursor-pointer whitespace-nowrap text-sm font-medium leading-none"
                 >
-                  {item?.label ? item.label : name}
+                  {item?.title ? item.title : name}
                 </label>
               </div>
             </div>
