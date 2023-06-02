@@ -38,7 +38,7 @@ export const SearchSelect = ({
 
   const placeholder = label;
 
-  console.log(`muly:SearchSelect`, { placeholder, label });
+  // console.log(`muly:SearchSelect`, { placeholder, label });
 
   return (
     <div className="w-full min-w-fit md:w-40">

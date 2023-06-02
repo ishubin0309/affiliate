@@ -26,23 +26,23 @@ const traderReportSchema = reporttradersModel.extend({
   affiliate: z.object({ group_id: z.number().optional() }).optional(),
 });
 
-const traderReportTotalsSchema = z.object({
-  totalFTD: z.number(),
-  totalTotalDeposit: z.number(),
-  totalDepositAmount: z.number(),
-  totalVolumeAmount: z.number(),
-  totalBonusAmount: z.number(),
-  totalWithdrawalAmount: z.number(),
-  totalChargeBackAmount: z.number(),
-  totalNetRevenue: z.number(),
-  totalTrades: z.number(),
-  totalTotalCom: z.number(),
-});
+// const traderReportTotalsSchema = z.object({
+//   totalFTD: z.number(),
+//   totalTotalDeposit: z.number(),
+//   totalDepositAmount: z.number(),
+//   totalVolumeAmount: z.number(),
+//   totalBonusAmount: z.number(),
+//   totalWithdrawalAmount: z.number(),
+//   totalChargeBackAmount: z.number(),
+//   totalNetRevenue: z.number(),
+//   totalTrades: z.number(),
+//   totalTotalCom: z.number(),
+// });
 
 const traderReportResultSchema = z.object({
   data: z.array(traderReportSchema),
   pageInfo,
-  totals: traderReportTotalsSchema,
+  totals: z.undefined(),
 });
 
 const Input = z.object({
@@ -149,73 +149,81 @@ const traderReport = async (
       },
     }),
 
+    prisma.reporttraders.aggregate({
+      _count: {
+        affiliate_id: true,
+      },
+      where,
+    }),
+
     // notice separate query with no pagination
     // usually better to use prisma.aggregate but in this case cannot as fields are string
-    prisma.reporttraders.findMany({
-      select: {
-        FTDAmount: true,
-        NetDeposit: true,
-        TotalDeposits: true,
-        DepositAmount: true,
-        Volume: true,
-        BonusAmount: true,
-        WithdrawalAmount: true,
-        ChargeBackAmount: true,
-        Trades: true,
-        Commission: true,
-      },
-      where: {
-        ...type_filter,
-      },
-      // where,
-    }),
+    // prisma.reporttraders.findMany({
+    //   select: {
+    //     FTDAmount: true,
+    //     NetDeposit: true,
+    //     TotalDeposits: true,
+    //     DepositAmount: true,
+    //     Volume: true,
+    //     BonusAmount: true,
+    //     WithdrawalAmount: true,
+    //     ChargeBackAmount: true,
+    //     Trades: true,
+    //     Commission: true,
+    //   },
+    //   where: {
+    //     ...type_filter,
+    //   },
+    //   // where,
+    // }),
   ]);
 
-  let totalFTD = 0;
-  let totalTotalDeposit = 0;
-  let totalDepositAmount = 0;
-  let totalVolumeAmount = 0;
-  let totalBonusAmount = 0;
-  let totalWithdrawalAmount = 0;
-  let totalChargeBackAmount = 0;
-  let totalNetRevenue = 0;
-  let totalTrades = 0;
-  let totalTotalCom = 0;
-
-  for (const item of trader_report_totals) {
-    totalFTD += Number(item.FTDAmount);
-    totalNetRevenue += Number(item.NetDeposit);
-    totalTotalDeposit += Number(item.TotalDeposits);
-    totalDepositAmount += Number(item.DepositAmount);
-    totalVolumeAmount += Number(item.Volume);
-    totalBonusAmount += Number(item.BonusAmount);
-    totalWithdrawalAmount += Number(item.WithdrawalAmount);
-    totalChargeBackAmount += Number(item.ChargeBackAmount);
-    totalTrades += Number(item.Trades);
-    totalTotalCom += Number(item.Commission);
-  }
-
-  const totals = {
-    totalFTD,
-    totalTotalDeposit,
-    totalDepositAmount,
-    totalVolumeAmount,
-    totalBonusAmount,
-    totalWithdrawalAmount,
-    totalChargeBackAmount,
-    totalNetRevenue,
-    totalTrades,
-    totalTotalCom,
-  };
-
-  const totalItems = trader_report_totals.length;
+  // let totalFTD = 0;
+  // let totalTotalDeposit = 0;
+  // let totalDepositAmount = 0;
+  // let totalVolumeAmount = 0;
+  // let totalBonusAmount = 0;
+  // let totalWithdrawalAmount = 0;
+  // let totalChargeBackAmount = 0;
+  // let totalNetRevenue = 0;
+  // let totalTrades = 0;
+  // let totalTotalCom = 0;
+  //
+  // for (const item of trader_report_totals) {
+  //   totalFTD += Number(item.FTDAmount);
+  //   totalNetRevenue += Number(item.NetDeposit);
+  //   totalTotalDeposit += Number(item.TotalDeposits);
+  //   totalDepositAmount += Number(item.DepositAmount);
+  //   totalVolumeAmount += Number(item.Volume);
+  //   totalBonusAmount += Number(item.BonusAmount);
+  //   totalWithdrawalAmount += Number(item.WithdrawalAmount);
+  //   totalChargeBackAmount += Number(item.ChargeBackAmount);
+  //   totalTrades += Number(item.Trades);
+  //   totalTotalCom += Number(item.Commission);
+  // }
+  //
+  // const totals = {
+  //   totalFTD,
+  //   totalTotalDeposit,
+  //   totalDepositAmount,
+  //   totalVolumeAmount,
+  //   totalBonusAmount,
+  //   totalWithdrawalAmount,
+  //   totalChargeBackAmount,
+  //   totalNetRevenue,
+  //   totalTrades,
+  //   totalTotalCom,
+  // };
+  //
+  // const totalItems = trader_report_totals.length;
 
   const arrRes = {
     data: trader_report_resource,
-    totals,
+    totals: undefined,
     pageInfo: {
       ...pageParams,
-      totalItems,
+      // totalItems,
+      totalItems: trader_report_totals._count.affiliate_id,
     },
   };
   return arrRes;
