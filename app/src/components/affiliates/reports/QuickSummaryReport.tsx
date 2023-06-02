@@ -13,26 +13,26 @@ import { type ExportType } from "@/server/api/routers/affiliates/reports/reports
 import { ReportControl } from "./report-control";
 import { getColumns } from "./utils";
 
-const fields = [
-  "Impressions",
-  "Clicks",
-  "Install",
-  "Leads",
-  "Demo",
-  "Real Account",
-  "FTD",
-  "Withdrawal",
-  "ChargeBack",
-  "Active Trader",
-  "Commission",
-];
+// const fields = [
+//   "Impressions",
+//   "Clicks",
+//   "Install",
+//   "Leads",
+//   "Demo",
+//   "Real Account",
+//   "FTD",
+//   "Withdrawal",
+//   "ChargeBack",
+//   "Active Trader",
+//   "Commission",
+// ];
+
 export interface ItemProps {
   id?: ExportType;
   title?: string;
 }
 
 export const QuickSummaryReport = () => {
-  const router = useRouter();
   const pagination = usePagination();
   const {
     values: { display, dates },
@@ -69,7 +69,6 @@ export const QuickSummaryReport = () => {
   const columns = [
     createColumn("merchant_id", "Merchant"),
     createColumn("Impressions", "Impressions"),
-    createColumn("Clicks", "Clicks"),
     createColumn("Clicks", "Clicks"),
     createColumn("Install", "Installation"),
     createColumn("Leads", "Leads"),
