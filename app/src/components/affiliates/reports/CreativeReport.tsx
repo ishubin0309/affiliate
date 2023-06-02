@@ -37,23 +37,26 @@ const divCol = (
 };
 
 const columns = [
-  createColumn("banner_id", "Creative ID"),
+  createColumn("BannerID", "Creative ID"),
   createColumn("title", "Creative Name"),
-  createColumn("merchant_name", "Merchant"),
+  columnHelper.accessor("merchant.name", {
+    cell: (info) => info.getValue() as string,
+    header: "Merchant",
+  }),
   createColumn("type", "Type"),
-  createColumn("views", "Impressions"),
-  createColumn("clicks", "Clicks"),
+  createColumn("Impressions", "Impressions"),
+  createColumn("Clicks", "Clicks"),
   createColumn("totalCPI", "Installation"),
   columnHelper.accessor("ctr" as any, {
-    cell: ({ row }) => divCol(row?.original?.clicks, row.original.views),
+    cell: ({ row }) => divCol(row?.original?.Clicks, row.original.Impressions),
     header: "Click Through Ratio (CTR)",
   }),
   columnHelper.accessor("click-to-account" as any, {
-    cell: ({ row }) => divCol(row?.original?.real, row.original.clicks),
+    cell: ({ row }) => divCol(row?.original?.real, row.original.Clicks),
     header: "Click to Account",
   }),
   columnHelper.accessor("click-to-sale" as any, {
-    cell: ({ row }) => divCol(row?.original?.ftd, row.original.clicks),
+    cell: ({ row }) => divCol(row?.original?.ftd, row.original.Clicks),
     header: "Click to Sale",
   }),
   createColumn("leads", "Leads"),
@@ -117,6 +120,8 @@ export const CreativeReport = () => {
     merchants,
     merchant_id,
   });
+
+  console.log("sorting info ----->", _sorting);
 
   const typeOptions = [
     {

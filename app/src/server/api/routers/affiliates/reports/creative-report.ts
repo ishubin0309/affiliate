@@ -92,8 +92,38 @@ const creativeReport = async (
 ) => {
   console.log("pageParams", pageParams);
   const offset = getPageOffset(pageParams);
-  const orderBy = getSortingInfo(sortingParam);
-  console.log("order by ------>", orderBy);
+  const sorting_info = getSortingInfo(sortingParam);
+
+  const sortBy = sorting_info ? Object.keys(sorting_info[0] ?? "")[0] : "";
+  console.log("sorted by  ------>", sortBy);
+  const sortOrder = sorting_info ? Object.values(sorting_info[0] ?? "")[0] : "";
+  console.log("sorted order  ------>", sortOrder);
+
+  let sortBy_new = {};
+  let orderBy = {};
+  if (sortBy && sortBy !== "") {
+    if (sortBy == "affiliate_username") {
+      sortBy_new = "af.username";
+    } else if (sortBy == "merchant_name") {
+      sortBy_new = "m.name";
+    } else if (sortBy == "trader_id" || sortBy == "trader_alias") {
+      sortBy_new = "";
+    } else {
+      (sortBy_new = ""), sortBy;
+    }
+
+    if (sortOrder && sortOrder != "") {
+      if (sortBy_new !== "") {
+        orderBy = { sortBy_new: sortOrder };
+      }
+    } else {
+      if (sortBy_new !== "") orderBy = { sortBy_new: "asc" };
+    }
+  } else {
+    sortBy_new = {
+      id: "desc",
+    };
+  }
 
   let creatives_stats_where = Prisma.empty;
   const country = "";
@@ -461,9 +491,9 @@ const creativeReport = async (
 
   const view_clicks = trafficRow.map((item) => {
     return {
-      clicks: item?._sum.Clicks,
-      views: item?._sum.Impressions,
-      banner_id: item.BannerID,
+      Clicks: item?._sum.Clicks,
+      Impressions: item?._sum.Impressions,
+      BannerID: item.BannerID,
     };
   });
 
@@ -474,8 +504,8 @@ const creativeReport = async (
       ...creativeItems,
       ...resItem,
       ...view_clicks[i],
-      merchant_name: merchant.name,
-      language: language.title,
+      merchant,
+      language,
     };
   });
 

@@ -37,7 +37,6 @@ export function ReportDataTable<Data extends object>({
   },
 }: ReportDataTableProps<Data>) {
   const contextSorting = deserializeSorting(sortInfo);
-
   const onSortingChange = (sort_id: string) => {
     // console.log(`muly:onSortingChange cur_sorting`, { sort_id });
     let existing_sorting = [...contextSorting];
@@ -89,7 +88,6 @@ export function ReportDataTable<Data extends object>({
     // manualPagination: true,
     // initialState: { pagination: { pageSize: 50, pageIndex: 0 } },
   });
-
   const headers = [];
   return (
     <div className="scrollbar-thin relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -117,12 +115,14 @@ export function ReportDataTable<Data extends object>({
                   <th
                     key={header.id}
                     // onClick={header.column.getToggleSortingHandler()}
-                    onClick={() => onSortingChange(header.column.id)}
+                    onClick={() =>
+                      onSortingChange(header.column.columnDef.accessorKey)
+                    }
                     className="border"
                   >
                     <div className="text=[#323232] flex p-2 text-sm">
                       {flexRender(
-                        header.column.columnDef.header,
+                        header.column.columnDef?.title,
                         header.getContext()
                       )}
 
