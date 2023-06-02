@@ -46,7 +46,7 @@ export const Pagination = ({
     });
   };
 
-  console.log("total items ------>", totalItems);
+  // console.log("total items ------>", totalItems);
 
   if (totalItems > pageSize) {
     return (

@@ -23,13 +23,17 @@ export const LandingPageReport = () => {
   const { currentPage, itemsPerPage } = router.query;
   const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isRefetching } = api.affiliates.getLandingPageData.useQuery({
-    ...dateRange,
-    merchant_id: getNumberParam(merchant_id),
-    url: url,
-    creative_type: creative_type,
-    pageParams: pagination.pageParams,
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getLandingPageData.useQuery(
+      {
+        ...dateRange,
+        merchant_id: getNumberParam(merchant_id),
+        url: url,
+        creative_type: creative_type,
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const { data: countries } = api.affiliates.getLongCountries.useQuery({});
   const columnHelper = createColumnHelper<LandingPageReportType>();
@@ -113,6 +117,7 @@ export const LandingPageReport = () => {
     <ReportControl
       reportName="Landing Page Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

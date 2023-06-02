@@ -10,6 +10,7 @@ export const i18nConfig = {
   },
   ns: ["affiliate"],
   localePath: path.resolve("./public/locales"),
+  updateMissing: true,
   saveMissing: true,
   saveMissingTo: "all",
   // missingKeyHandler: (lngs, ns, key, fallbackValue, updateMissing, options) => {

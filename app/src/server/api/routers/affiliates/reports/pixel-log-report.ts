@@ -17,6 +17,7 @@ import {
   exportType,
   pageInfo,
   reportColumns,
+  flattenObject,
 } from "./reports-utils";
 
 const Input = z.object({
@@ -32,20 +33,26 @@ const Input = z.object({
 
 const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
+const dataItemSchema = pixel_logsModel
+  .extend({
+    pixel_monitor_type: pixel_monitorModel.shape.type,
+    pixel_monitor_method: pixel_monitorModel.shape.method,
+    pixel_monitor_totalFired: pixel_monitorModel.shape.totalFired,
+
+    pixel_monitor_affiliate_valid: affiliatesModel.shape.valid,
+    pixel_monitor_affiliate_id: affiliatesModel.shape.id,
+    pixel_monitor_affiliate_username: affiliatesModel.shape.username,
+    pixel_monitor_affiliate_group_id: affiliatesModel.shape.group_id,
+
+    pixel_monitor_merchant_id: merchantsModel.shape.id,
+    // pixel_monitor_banner_id: merchantsModel.shape.banner_id,
+  })
+  .partial();
+
+type DataItem = z.infer<typeof dataItemSchema>;
+
 const pixelLogReportSchema = z.object({
-  data: z.array(
-    pixel_logsModel.extend({
-      pixel_monitor: pixel_monitorModel.partial().extend({
-        merchant: merchantsModel.pick({ id: true }),
-        affiliate: affiliatesModel.pick({
-          username: true,
-          group_id: true,
-          id: true,
-          valid: true,
-        }),
-      }),
-    })
-  ),
+  data: z.array(dataItemSchema),
   pageInfo,
   totals: z.any(),
 });
@@ -147,8 +154,11 @@ const pixelLogReportData = async (
     },
   });
 
+  // TODO https://github.com/TanStack/table/issues/4499
+  // Table not handle correctly deep nested object with missing values
+  // maybe we should flatten the object?!
   const arrRes = {
-    data: pixelReport,
+    data: pixelReport.map((item) => flattenObject(item)) as DataItem[],
     totals: 0,
     pageInfo: {
       ...pageParams,
@@ -181,3 +191,17 @@ export const exportPixelLogReportData = protectedProcedure
 
     return public_url;
   });
+
+/*
+.map(({ pixel_monitor, ...rest }) => ({
+      pixel_monitor: pixel_monitor ?? {
+        type: "lead" as const,
+        method: "get" as const,
+        banner_id: 0,
+        totalFired: 0,
+        merchant: { id: 0 },
+        affiliate: { id: 0, valid: 0, group_id: 0, username: "" },
+      },
+      ...rest,
+    }))
+ */

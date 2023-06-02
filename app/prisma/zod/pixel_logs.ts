@@ -1,5 +1,6 @@
-import * as z from "zod";
-import { Completepixel_monitor, Relatedpixel_monitorModel } from "./index";
+import * as z from "zod"
+import * as imports from "../zod-add-schema"
+import { Completepixel_monitor, Relatedpixel_monitorModel } from "./index"
 
 export const pixel_logsModel = z.object({
   id: z.number().int(),
@@ -8,21 +9,10 @@ export const pixel_logsModel = z.object({
   pixelCode: z.number().int(),
   pixelResponse: z.string(),
   product_id: z.number().int(),
-  // pixel_monitor: z.object({
-  //   affiliate: z.object({
-  //     username: z.string().nullish(),
-  //     group_id: z.number().nullish(),
-  //     id: z.number().nullish(),
-  //     valid: z.number().nullish(),
-  //   }),
-  //   merchant: z.object({
-  //     id: z.string().nullish(),
-  //   }),
-  // }),
-});
+})
 
 export interface Completepixel_logs extends z.infer<typeof pixel_logsModel> {
-  pixel_monitor: Completepixel_monitor;
+  pixel_monitor?: Completepixel_monitor | null
 }
 
 /**
@@ -30,9 +20,6 @@ export interface Completepixel_logs extends z.infer<typeof pixel_logsModel> {
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const Relatedpixel_logsModel: z.ZodSchema<Completepixel_logs> = z.lazy(
-  () =>
-    pixel_logsModel.extend({
-      pixel_monitor: Relatedpixel_monitorModel,
-    })
-);
+export const Relatedpixel_logsModel: z.ZodSchema<Completepixel_logs> = z.lazy(() => pixel_logsModel.extend({
+  pixel_monitor: Relatedpixel_monitorModel.nullish(),
+}))

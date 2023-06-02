@@ -50,15 +50,16 @@ export const FakeTranslationReport = () => {
   console.log("*************************PAGE INFO: ", pagination.pageParams);
   const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
-  const { data, isRefetching } = api.affiliates.getTranslateReportFake.useQuery(
-    {
-      ...dateRange,
-      search,
-      pageParams: pagination.pageParams,
-      sortingParam: _sorting,
-    },
-    { keepPreviousData: true, refetchOnWindowFocus: false }
-  );
+  const { data, isRefetching, error } =
+    api.affiliates.getTranslateReportFake.useQuery(
+      {
+        ...dateRange,
+        search,
+        pageParams: pagination.pageParams,
+        sortingParam: _sorting,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
 
   const { mutateAsync: reportExport } =
     api.affiliates.exportTranslateReportFake.useMutation();
@@ -83,6 +84,7 @@ export const FakeTranslationReport = () => {
       reportName="Fake Translation Report"
       // totalItems={data.length || 0}
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

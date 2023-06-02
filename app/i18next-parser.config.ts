@@ -9,6 +9,7 @@ export default {
   locales: ["en"],
   sort: true,
   verbose: true,
+  keepRemoved: true,
 
   defaultValue: "*TRANSLATE*",
   defaultNamespace: "affiliate",

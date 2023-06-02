@@ -55,14 +55,15 @@ export const CountryReports = () => {
     undefined,
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
-  const { data, isRefetching } = api.affiliates.getCountryReport.useQuery(
-    {
-      ...dateRange,
-      merchant_id: getNumberParam(merchant_id),
-      pageParams: pagination.pageParams,
-    },
-    { keepPreviousData: true, refetchOnWindowFocus: false }
-  );
+  const { data, isRefetching, error } =
+    api.affiliates.getCountryReport.useQuery(
+      {
+        ...dateRange,
+        merchant_id: getNumberParam(merchant_id),
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
 
   const { mutateAsync: reportExport } =
     api.affiliates.exportClicksReport.useMutation();
@@ -75,12 +76,13 @@ export const CountryReports = () => {
       reportColumns: getColumns(columns),
     });
 
-  console.log(`muly:CountryReports:render`, { data });
+  console.log(`muly:CountryReports:render`, { data, error });
 
   return (
     <ReportControl
       reportName="Country Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}
