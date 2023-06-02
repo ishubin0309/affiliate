@@ -1221,7 +1221,7 @@ model pixel_logs {
   pixelResponse String   @default("") @db.VarChar(150)
   product_id    Int
 
-  pixel_monitor pixel_monitor @relation(fields: [pixelCode], references: [id])
+  pixel_monitor pixel_monitor? @relation(fields: [pixelCode], references: [id])
 }
 
 model pixel_monitor {

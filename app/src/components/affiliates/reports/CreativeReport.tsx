@@ -81,16 +81,21 @@ export const CreativeReport = () => {
   const { currentPage, itemsPerPage } = router.query;
   const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isRefetching } = api.affiliates.getCreativeReport.useQuery({
-    ...dateRange,
-    merchant_id: getNumberParam(merchant_id),
-    trader_id: getNumberParam(trader_id),
-    banner_id: getNumberParam(banner_id),
-    unique_id: getNumberParam(unique_id),
-    type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
-    group_id: getNumberParam(group_id),
-    pageParams: pagination.pageParams,
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getCreativeReport.useQuery(
+      {
+        ...dateRange,
+        merchant_id: getNumberParam(merchant_id),
+        trader_id: getNumberParam(trader_id),
+        banner_id: getNumberParam(banner_id),
+        unique_id: getNumberParam(unique_id),
+        type:
+          type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
+        group_id: getNumberParam(group_id),
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
 
   const { mutateAsync: reportExport } =
     api.affiliates.exportCreativeReport.useMutation();
@@ -154,6 +159,7 @@ export const CreativeReport = () => {
     <ReportControl
       reportName="Creative Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

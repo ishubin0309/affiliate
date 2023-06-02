@@ -30,13 +30,17 @@ export const CommissionReport = () => {
 
   const { currentPage, itemsPerPage } = router.query;
 
-  const { data, isRefetching } = api.affiliates.getCommissionReport.useQuery({
-    ...dateRange,
-    commission: commission ? String(commission) : "",
-    trader_id: traderID,
-    pageParams: pagination.pageParams,
-    sortingParam: _sorting,
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getCommissionReport.useQuery(
+      {
+        ...dateRange,
+        commission: commission ? String(commission) : "",
+        trader_id: traderID,
+        pageParams: pagination.pageParams,
+        sortingParam: _sorting,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
   const { mutateAsync: reportExport } =
     api.affiliates.exportCommissionReport.useMutation();
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
@@ -199,6 +203,7 @@ export const CommissionReport = () => {
     <ReportControl
       reportName="Commission Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

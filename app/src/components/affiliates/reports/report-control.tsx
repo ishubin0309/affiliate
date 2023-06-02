@@ -19,6 +19,7 @@ import { useTranslation } from "next-i18next";
 import React, { useMemo, useState } from "react";
 
 interface Props<Data extends object> extends ReportDataTableProps<Data> {
+  error: any;
   reportName: string;
   isRefetching: boolean;
   children: React.ReactNode;
@@ -31,6 +32,7 @@ export const ReportControl = <Data extends object>({
   reportName,
   isRefetching,
   report,
+  error,
   columns,
   pagination,
   footerData,
@@ -63,6 +65,17 @@ export const ReportControl = <Data extends object>({
   );
 
   // console.log(`muly:ReportControl`, { reportsColumns });
+  if (error) {
+    console.log(`Error:ReportControl`, { error });
+    return (
+      <div className="max-w-full text-red-500">
+        <pre>{error.data.code}</pre>
+        <pre>{error.data.path}</pre>
+        <pre>{error.message}</pre>
+        <pre>{error.stack}</pre>
+      </div>
+    );
+  }
 
   return report ? (
     <div className="flex w-full flex-col gap-2">

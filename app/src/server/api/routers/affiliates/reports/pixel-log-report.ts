@@ -37,12 +37,14 @@ const pixelLogReportSchema = z.object({
     pixel_logsModel.extend({
       pixel_monitor: pixel_monitorModel.partial().extend({
         merchant: merchantsModel.pick({ id: true }),
-        affiliate: affiliatesModel.pick({
-          username: true,
-          group_id: true,
-          id: true,
-          valid: true,
-        }),
+        affiliate: affiliatesModel
+          .pick({
+            username: true,
+            group_id: true,
+            id: true,
+            valid: true,
+          })
+          .partial(),
       }),
     })
   ),
@@ -147,8 +149,21 @@ const pixelLogReportData = async (
     },
   });
 
+  // TODO https://github.com/TanStack/table/issues/4499
+  // Table not handle correctly deep nested object with missing values
+  // maybe we should flatten the object?!
   const arrRes = {
-    data: pixelReport,
+    data: pixelReport.map(({ pixel_monitor, ...rest }) => ({
+      pixel_monitor: pixel_monitor ?? {
+        type: "lead" as const,
+        method: "get" as const,
+        banner_id: 0,
+        totalFired: 0,
+        merchant: { id: 0 },
+        affiliate: { id: 0, valid: 0, group_id: 0, username: "" },
+      },
+      ...rest,
+    })),
     totals: 0,
     pageInfo: {
       ...pageParams,

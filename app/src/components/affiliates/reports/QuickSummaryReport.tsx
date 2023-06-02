@@ -41,15 +41,18 @@ export const QuickSummaryReport = () => {
     { id: number; title: string; value: string; isChecked: boolean }[]
   >([]);
   const { name, ...dateRange } = getDateRange(dates);
-  const { currentPage, itemsPerPage } = router.query;
   const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
-  const { data, isRefetching } = api.affiliates.getQuickReportSummary.useQuery({
-    ...dateRange,
-    display: display ? String(display) : undefined,
-    pageParams: pagination.pageParams,
-    sortingParam: _sorting,
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getQuickReportSummary.useQuery(
+      {
+        ...dateRange,
+        display: display ? String(display) : undefined,
+        pageParams: pagination.pageParams,
+        sortingParam: _sorting,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
 
   const { mutateAsync: reportExport } =
     api.affiliates.exportQuickSummaryReport.useMutation();
@@ -144,6 +147,7 @@ export const QuickSummaryReport = () => {
     <ReportControl
       reportName="Quick Summary Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

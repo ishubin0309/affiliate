@@ -22,13 +22,17 @@ export const PixelLogReports = () => {
   } = useSearchContext();
   const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isRefetching } = api.affiliates.getPixelLogReport.useQuery({
-    ...dateRange,
-    merchant_id: getNumberParam(merchant_id),
-    country: country ? String(country) : "",
-    group_id: group_id ? String(group_id) : "",
-    pageParams: pagination.pageParams,
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getPixelLogReport.useQuery(
+      {
+        ...dateRange,
+        merchant_id: getNumberParam(merchant_id),
+        country: country ? String(country) : "",
+        group_id: group_id ? String(group_id) : "",
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const { data: countries } = api.affiliates.getLongCountries.useQuery({});
   const columnHelper = createColumnHelper<PixelLogsReportType>();
@@ -73,7 +77,7 @@ export const PixelLogReports = () => {
       header: "Pixel State",
     }),
     columnHelper.accessor("pixel_monitor.affiliate.id", {
-      cell: (info) => info.getValue(),
+      cell: (info) => info.getValue() || "",
       header: "Affiliate ID",
     }),
     columnHelper.accessor("pixel_monitor.affiliate.username", {
@@ -84,10 +88,10 @@ export const PixelLogReports = () => {
       cell: (info) => info.getValue(),
       header: "Merchant ID",
     }),
-    columnHelper.accessor("pixel_monitor.merchant", {
-      cell: (info) => info.getValue(),
-      header: "Merchant",
-    }),
+    // columnHelper.accessor("pixel_monitor.merchant", {
+    //   cell: (info) => info.getValue(),
+    //   header: "Merchant",
+    // }),
     createColumn("product_id", "Product ID"),
     columnHelper.accessor("pixel_monitor.banner_id", {
       cell: (info) => info.getValue(),
@@ -119,10 +123,13 @@ export const PixelLogReports = () => {
       reportColumns: getColumns(columns),
     });
 
+  console.log(`muly:PixelLogReports`, { data });
+
   return (
     <ReportControl
       reportName="Pixel Log Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}
