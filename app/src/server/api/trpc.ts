@@ -21,7 +21,7 @@ import { type Session } from "next-auth";
 
 import { getServerAuthSession } from "../auth";
 import { prisma } from "../db";
-import { getConfig } from "../config";
+import { getConfig } from "../get-config";
 
 type CreateContextOptions = {
   session: Session | null;

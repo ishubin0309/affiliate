@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { indexBy, map } from "rambda";
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";
-import { getConfig } from "@/server/config";
+import { getConfig } from "@/server/get-config";
 import { checkIsUser } from "@/server/api/utils";
 
 export const getPaymentsPaid = protectedProcedure
