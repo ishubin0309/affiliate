@@ -17,10 +17,6 @@ import { getColumns } from "./utils";
 
 export const creativeType = [
   {
-    id: "",
-    title: "All",
-  },
-  {
     id: "image",
     title: "Image",
   },
@@ -97,11 +93,12 @@ export const TraderReports = () => {
     };
   });
 
-  console.log("trader render", {
+  console.log("muly:trader render", {
     data,
     merchants,
     isRefetching,
     merchant_id,
+    creativeType,
   });
 
   const createColumn = (id: keyof TraderReportType, header: string) =>

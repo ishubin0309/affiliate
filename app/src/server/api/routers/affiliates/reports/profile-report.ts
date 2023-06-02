@@ -184,32 +184,32 @@ const profileReportData = async (
     }),
   ]);
 
-  const brandsRow = await prisma.merchants.findMany({
-    select: {
-      id: true,
-      name: true,
-      type: true,
-      producttype: true,
-      rev_formula: true,
-      wallet_id: true,
-    },
-    where: {
-      valid: 1,
-      id: 1,
-    },
-  });
+  // const brandsRow = await prisma.merchants.findMany({
+  //   select: {
+  //     id: true,
+  //     name: true,
+  //     type: true,
+  //     producttype: true,
+  //     rev_formula: true,
+  //     wallet_id: true,
+  //   },
+  //   where: {
+  //     valid: 1,
+  //     id: 1,
+  //   },
+  // });
 
   // console.log("brands row ----->", brandsRow);
 
-  const merchant_count = await prisma.merchants.aggregate({
-    _sum: {
-      id: true,
-    },
-    where: {
-      valid: 1,
-      id: merchant_id ? merchant_id : 0,
-    },
-  });
+  // const merchant_count = await prisma.merchants.aggregate({
+  //   _sum: {
+  //     id: true,
+  //   },
+  //   where: {
+  //     valid: 1,
+  //     id: merchant_id ? merchant_id : 0,
+  //   },
+  // });
 
   const merchant_ww = await prisma.merchants.findMany({
     where: {
@@ -302,15 +302,15 @@ const profileReportData = async (
     totalTraffic["totalViews"] = arrClicksAndImpressions[i]?._sum.views ?? 0;
     totalTraffic["totalClicks"] = arrClicksAndImpressions[i]?._sum.clicks ?? 0;
   }
-  const count = 1;
-  const frozen = await prisma.data_reg.aggregate({
-    where: {
-      status: "frozen",
-    },
-    _count: {
-      id: true,
-    },
-  });
+  // const count = 1;
+  // const frozen = await prisma.data_reg.aggregate({
+  //   where: {
+  //     status: "frozen",
+  //   },
+  //   _count: {
+  //     id: true,
+  //   },
+  // });
 
   const regww = await prisma.data_reg.findMany({
     where: {
