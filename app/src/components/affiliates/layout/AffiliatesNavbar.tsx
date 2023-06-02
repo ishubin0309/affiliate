@@ -68,20 +68,22 @@ const AffiliatesNavbar = ({
               </a>
 
               <Link href="/">
-                <span className="bg-blueGray-200 inline-flex h-10 w-16 items-center justify-center text-sm text-white md:h-12 md:w-32">
+                <span className="bg-blueGray-200 inline-flex h-10 w-16 items-center justify-center text-sm text-white md:h-12 md:w-44">
                   {/* <Image
                     src={logoPath ? logoPath : "/img/logo.png"}
                     width="90"
                     height="90"
                     alt="logo"
                   /> */}
-                  <ImageWithFallback
-                    src={logoPath ? logoPath : "/img/logo.png"}
-                    fallbackSrc={"/img/logo.png"}
-                    width="90"
-                    height="90"
-                    alt="logo"
-                  />
+                  <div className="relative h-[90px] w-full">
+                    <ImageWithFallback
+                      src={logoPath ? logoPath : "/img/logo-test.png"}
+                      fallbackSrc={"/img/logo-test.png"}
+                      fill={true}
+                      className="mt-[12px] object-contain object-center"
+                      alt="logo"
+                    />
+                  </div>
                 </span>
               </Link>
 

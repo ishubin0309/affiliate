@@ -105,11 +105,11 @@ const Sidebar: React.FC<Props> = ({
 
   const sidebarClassName = cn(
     tempCollapseShow ? "md:rounded-none" : "",
-    "sidebar fixed top-16 left-0 z-20 flex h-full flex-col bg-white transition-all duration-300 dark:bg-gray-900 scrollbar-thin"
+    "sidebar fixed top-16 left-0 z-20 flex flex-col bg-white transition-all duration-300 dark:bg-gray-900 scrollbar-thin"
   );
 
   return (
-    <div className={sidebarClassName}>
+    <div className={sidebarClassName} style={{ height: "calc(100% - 4rem)" }}>
       <div className="flex grow flex-col justify-between overflow-y-auto overflow-x-hidden">
         <div className="scrollbar-thin relative min-h-full space-y-1 overflow-y-auto">
           <SideMenu
