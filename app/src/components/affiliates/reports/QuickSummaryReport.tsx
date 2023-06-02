@@ -13,26 +13,26 @@ import { type ExportType } from "@/server/api/routers/affiliates/reports/reports
 import { ReportControl } from "./report-control";
 import { getColumns } from "./utils";
 
-const fields = [
-  "Impressions",
-  "Clicks",
-  "Install",
-  "Leads",
-  "Demo",
-  "Real Account",
-  "FTD",
-  "Withdrawal",
-  "ChargeBack",
-  "Active Trader",
-  "Commission",
-];
+// const fields = [
+//   "Impressions",
+//   "Clicks",
+//   "Install",
+//   "Leads",
+//   "Demo",
+//   "Real Account",
+//   "FTD",
+//   "Withdrawal",
+//   "ChargeBack",
+//   "Active Trader",
+//   "Commission",
+// ];
+
 export interface ItemProps {
   id?: ExportType;
   title?: string;
 }
 
 export const QuickSummaryReport = () => {
-  const router = useRouter();
   const pagination = usePagination();
   const {
     values: { display, dates },
@@ -41,15 +41,18 @@ export const QuickSummaryReport = () => {
     { id: number; title: string; value: string; isChecked: boolean }[]
   >([]);
   const { name, ...dateRange } = getDateRange(dates);
-  const { currentPage, itemsPerPage } = router.query;
   const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
-  const { data, isRefetching } = api.affiliates.getQuickReportSummary.useQuery({
-    ...dateRange,
-    display: display ? String(display) : undefined,
-    pageParams: pagination.pageParams,
-    sortingParam: _sorting,
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getQuickReportSummary.useQuery(
+      {
+        ...dateRange,
+        display: display ? String(display) : undefined,
+        pageParams: pagination.pageParams,
+        sortingParam: _sorting,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
 
   const { mutateAsync: reportExport } =
     api.affiliates.exportQuickSummaryReport.useMutation();
@@ -66,7 +69,6 @@ export const QuickSummaryReport = () => {
   const columns = [
     createColumn("merchant_id", "Merchant"),
     createColumn("Impressions", "Impressions"),
-    createColumn("Clicks", "Clicks"),
     createColumn("Clicks", "Clicks"),
     createColumn("Install", "Installation"),
     createColumn("Leads", "Leads"),
@@ -144,6 +146,7 @@ export const QuickSummaryReport = () => {
     <ReportControl
       reportName="Quick Summary Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

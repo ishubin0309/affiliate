@@ -52,16 +52,19 @@ export const InstallReport = () => {
     values: { dates, country, trader_id, banner_id },
   } = useSearchContext();
   const pagination = usePagination();
-  const { currentPage, itemsPerPage } = router.query;
   const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isRefetching } = api.affiliates.getInstallReport.useQuery({
-    ...dateRange,
-    country: country,
-    trader_id: getNumberParam(trader_id),
-    banner_id: banner_id,
-    pageParams: pagination.pageParams,
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getInstallReport.useQuery(
+      {
+        ...dateRange,
+        country: country,
+        trader_id: getNumberParam(trader_id),
+        banner_id: banner_id,
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const { data: countries } = api.affiliates.getLongCountries.useQuery({});
 
@@ -115,6 +118,7 @@ export const InstallReport = () => {
     <ReportControl
       reportName="Install Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

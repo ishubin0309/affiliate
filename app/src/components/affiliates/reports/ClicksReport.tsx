@@ -79,7 +79,7 @@ export const ClicksReport = () => {
   const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
   console.log("sorting ---------->", _sorting);
-  const { data, isRefetching } = api.affiliates.getClicksReport.useQuery(
+  const { data, isRefetching, error } = api.affiliates.getClicksReport.useQuery(
     {
       ...dateRange,
       type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
@@ -123,6 +123,7 @@ export const ClicksReport = () => {
     <ReportControl
       reportName="Clicks Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

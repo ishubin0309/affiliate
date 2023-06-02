@@ -2,10 +2,7 @@
 // YES FocusOption/FocusOption-main/site/common/creatives/edit_banner.php
 
 import type { PrismaClient } from "@prisma/client";
-// import { urlToShortCode } from "@/server/api/routers/misc/short-url";
-// import { env } from "@/env.mjs";
-import { pause } from "@/utils/pause";
-import { getConfig } from "@/server/config";
+import { getConfig } from "@/server/get-config";
 import { protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import QRCode from "qrcode";

@@ -20,12 +20,16 @@ export const ProfileReport = () => {
   const pagination = usePagination();
   const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isRefetching } = api.affiliates.getProfileReportData.useQuery({
-    ...dateRange,
-    merchant_id: getNumberParam(merchant_id),
-    search_type: search_type,
-    pageParams: pagination.pageParams,
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getProfileReportData.useQuery(
+      {
+        ...dateRange,
+        merchant_id: getNumberParam(merchant_id),
+        search_type: search_type,
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<ProfileReportType>();
 
@@ -120,6 +124,7 @@ export const ProfileReport = () => {
     <ReportControl
       reportName="Profile Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

@@ -17,10 +17,6 @@ import { getColumns } from "./utils";
 
 export const creativeType = [
   {
-    id: "",
-    title: "All",
-  },
-  {
     id: "image",
     title: "Image",
   },
@@ -61,18 +57,18 @@ export const TraderReports = () => {
   } = useSearchContext();
   const pagination = usePagination();
   const { name, ...dateRange } = getDateRange(dates);
-  const [reportFields, setReportFields] = useState<
-    { id: number; title: string; value: string; isChecked: boolean }[]
-  >([]);
 
-  const { data, isRefetching } = api.affiliates.getTraderReport.useQuery({
-    ...dateRange,
-    merchant_id: getNumberParam(merchant_id),
-    trader_id: trader_id,
-    country: country,
-    banner_id: getNumberParam(banner_id),
-    pageParams: pagination.pageParams,
-  });
+  const { data, isRefetching, error } = api.affiliates.getTraderReport.useQuery(
+    {
+      ...dateRange,
+      merchant_id: getNumberParam(merchant_id),
+      trader_id: trader_id,
+      country: country,
+      banner_id: getNumberParam(banner_id),
+      pageParams: pagination.pageParams,
+    },
+    { keepPreviousData: true, refetchOnWindowFocus: false }
+  );
 
   const { mutateAsync: reportExport } =
     api.affiliates.exportTraderReport.useMutation();
@@ -97,11 +93,12 @@ export const TraderReports = () => {
     };
   });
 
-  console.log("trader render", {
+  console.log("muly:trader render", {
     data,
     merchants,
     isRefetching,
     merchant_id,
+    creativeType,
   });
 
   const createColumn = (id: keyof TraderReportType, header: string) =>
@@ -144,6 +141,7 @@ export const TraderReports = () => {
     <ReportControl
       reportName="Users Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

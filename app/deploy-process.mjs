@@ -19,6 +19,7 @@
 // ./deploy-process.mjs --step=dns
 // ./deploy-process.mjs --step=secret --prod
 // ./deploy-process.mjs --step=secret
+// ./deploy-process.mjs --step=db-connection -- prod
 
 import { sites } from "./deploy.secrets.mjs";
 
@@ -233,6 +234,8 @@ CNAME: ghs.googlehosted.com (Make sure to DISABLE proxy)
     );
     await setEnv("NEXT_PUBLIC_API", `https://${name}.backend.affiliatets.com`);
     await setEnv("LEGACY_PHP_URL", LEGACY_PHP_URL);
+  } else if (step === "db-connection") {
+    console.log(`DATABASE_URL="${databaseUrl}"`);
   }
 }
 

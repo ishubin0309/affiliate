@@ -162,6 +162,7 @@ export const CreativeReport = () => {
     <ReportControl
       reportName="Creative Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

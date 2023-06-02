@@ -48,8 +48,8 @@ const AffiliatesNavbar = ({
     <>
       {/* Navbar */}
       <nav className="sticky left-0 top-0 z-10 flex max-h-[66px] w-full flex-row flex-nowrap items-center justify-start border-b-2 border-[#E7E7E7] bg-[#F5F8FA] p-2">
-        <div className="mx-autp flex w-full flex-wrap items-center justify-between md:flex-nowrap ">
-          <div className="flex-col items-center justify-center ">
+        <div className="mx-auto flex max-h-full w-full flex-wrap items-center justify-between md:flex-nowrap ">
+          <div className="items-center justify-center ">
             <div className="flex items-center">
               <a
                 onClick={(e) => {
@@ -68,20 +68,16 @@ const AffiliatesNavbar = ({
               </a>
 
               <Link href="/">
-                <span className="bg-blueGray-200 inline-flex h-10 w-16 items-center justify-center text-sm text-white md:h-12 md:w-32">
-                  {/* <Image
-                    src={logoPath ? logoPath : "/img/logo.png"}
-                    width="90"
-                    height="90"
-                    alt="logo"
-                  /> */}
-                  <ImageWithFallback
-                    src={logoPath ? logoPath : "/img/logo.png"}
-                    fallbackSrc={"/img/logo.png"}
-                    width="90"
-                    height="90"
-                    alt="logo"
-                  />
+                <span className="bg-blueGray-200 inline-flex h-[60px] w-28 items-center justify-center text-sm text-white md:w-44">
+                  <div className="relative my-2 h-full w-full">
+                    <ImageWithFallback
+                      src={logoPath ? logoPath : "/img/logo-test.png"}
+                      fallbackSrc={"/img/logo-test.png"}
+                      fill={true}
+                      className="object-contain object-center"
+                      alt="logo"
+                    />
+                  </div>
                 </span>
               </Link>
 

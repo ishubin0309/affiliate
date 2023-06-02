@@ -17,14 +17,17 @@ export const SubAffiliateReport = () => {
     values: { merchant_id, dates, trader_id, unique_id, type },
   } = useSearchContext();
   const pagination = usePagination();
-  const { currentPage, itemsPerPage } = router.query;
   const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isRefetching } = api.affiliates.getSubAffiliateReport.useQuery({
-    ...dateRange,
-    user_level: "admin",
-    pageParams: pagination.pageParams,
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getSubAffiliateReport.useQuery(
+      {
+        ...dateRange,
+        user_level: "admin",
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<SubAffiliateReportType>();
 
@@ -78,6 +81,7 @@ export const SubAffiliateReport = () => {
     <ReportControl
       reportName="Sub Affiliate Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
       isRefetching={isRefetching}

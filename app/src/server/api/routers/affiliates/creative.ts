@@ -14,7 +14,7 @@ import {
   pageInfo,
   PageParamsSchema,
 } from "./reports/reports-utils";
-import { getConfig } from "@/server/config";
+import { getConfig } from "@/server/get-config";
 import { checkIsUser } from "@/server/api/utils";
 import { serverStoragePath } from "@/server/utils";
 import { imageProxy } from "@/components/utils";
