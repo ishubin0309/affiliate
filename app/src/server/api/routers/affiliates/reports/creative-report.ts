@@ -77,6 +77,16 @@ const creativeReportResultSchema = z.object({
   totals: creativeReportTotalsSchema,
 });
 
+type SortingInfo =
+  | Array<{
+      [key: string]: string;
+    }>
+  | undefined;
+
+interface OrderType {
+  [key: string]: any;
+}
+
 const creativeReport = async (
   prisma: PrismaClient,
   affiliate_id: number,
@@ -95,35 +105,35 @@ const creativeReport = async (
   const sorting_info = getSortingInfo(sortingParam);
 
   const sortBy = sorting_info ? Object.keys(sorting_info[0] ?? "")[0] : "";
-  console.log("sorted by  ------>", sortBy);
   const sortOrder = sorting_info ? Object.values(sorting_info[0] ?? "")[0] : "";
-  console.log("sorted order  ------>", sortOrder);
 
   let sortBy_new = {};
-  let orderBy = {};
-  if (sortBy && sortBy !== "") {
-    if (sortBy == "affiliate_username") {
-      sortBy_new = "af.username";
-    } else if (sortBy == "merchant_name") {
-      sortBy_new = "m.name";
-    } else if (sortBy == "trader_id" || sortBy == "trader_alias") {
-      sortBy_new = "";
-    } else {
-      (sortBy_new = ""), sortBy;
-    }
-
-    if (sortOrder && sortOrder != "") {
-      if (sortBy_new !== "") {
-        orderBy = { sortBy_new: sortOrder };
-      }
-    } else {
-      if (sortBy_new !== "") orderBy = { sortBy_new: "asc" };
-    }
+  const orderBy_creative: OrderType = {};
+  const orderBy_banner: OrderType = {};
+  let sortBy_creative = "";
+  if (
+    sortBy === "BannerID" ||
+    sortBy === "Impressions" ||
+    sortBy === "Clicks"
+  ) {
+    orderBy_creative[`${sortBy}`] = sortOrder;
+    sortBy_creative = sortBy;
+  } else if (sortBy === "title" || sortBy === "merchant.name") {
+    orderBy_banner[`${sortBy}`] = sortOrder;
   } else {
     sortBy_new = {
       id: "desc",
     };
   }
+
+  // console.log("order by", orderBy);
+  // if (sortOrder && sortOrder != "") {
+  //   if (sortBy_new !== "") {
+  //     orderBy = { sortBy_new: sortOrder };
+  //   }
+  // } else {
+  //   if (sortBy_new !== "") orderBy = {};
+  // }
 
   let creatives_stats_where = Prisma.empty;
   const country = "";
@@ -175,6 +185,7 @@ const creativeReport = async (
     prisma.merchants_creative.findMany({
       take: pageParams.pageSize,
       skip: offset,
+      orderBy: Object.keys(orderBy_banner).length !== 0 ? orderBy_banner : {},
       select: {
         id: true,
         title: true,
@@ -233,7 +244,7 @@ const creativeReport = async (
   }
 
   const trafficRow = await prisma.merchants_creative_stats.groupBy({
-    by: ["BannerID"],
+    by: sortBy_creative ? [`${sortBy}`] : ["BannerID"],
     _sum: {
       Impressions: true,
       Clicks: true,

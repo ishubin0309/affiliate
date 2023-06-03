@@ -1,9 +1,11 @@
 import { merchant_id } from "@/server/api/routers/affiliates/const";
 import {
   PageParamsSchema,
+  SortingParamSchema,
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   pageInfo,
   reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
@@ -24,7 +26,10 @@ const Input = z.object({
   filter: z.string().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const installReportSchema = z.object({
   data: z.array(dataInstallSchema),
@@ -44,9 +49,12 @@ const installReport = async (
     param2,
     filter,
     pageParams,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   const offset = getPageOffset(pageParams);
+  const sorting_info = getSortingInfo(sortingParam);
+
   // type filter
   let type_filter = {};
   if (merchant_id) {
@@ -85,9 +93,7 @@ const installReport = async (
     };
   }
   const data = await prisma.data_install.findMany({
-    orderBy: {
-      rdate: "asc",
-    },
+    orderBy: sorting_info,
     include: {
       merchant_creative: {
         select: {

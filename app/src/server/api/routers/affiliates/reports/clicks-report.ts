@@ -175,6 +175,7 @@ const clicksReport = async (
   //     },
   //   },
   // });
+  console.log("order by ----->>", orderBy);
 
   const [traficDataFull, totals] = await Promise.all([
     prisma.traffic.findMany({

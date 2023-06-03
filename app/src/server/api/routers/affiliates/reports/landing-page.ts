@@ -10,6 +10,7 @@ import {
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   pageInfo,
   reportColumns,
 } from "./reports-utils";
@@ -58,7 +59,7 @@ export const landingPageData = async (
   let sumDeposits = 0;
 
   const offset = getPageOffset(pageParams);
-
+  const sorting_info = getSortingInfo(sortingParam);
   const orderBy = {};
 
   const [bannersww, totals] = await Promise.all([
