@@ -10,6 +10,8 @@ import {
   pageInfo,
   reportColumns,
   splitToPages,
+  formatSqlDate,
+  isFieldExists,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { protectedProcedure } from "@/server/api/trpc";
 import { checkIsUser } from "@/server/api/utils";
@@ -51,7 +53,7 @@ const BaseCountryArrayItem = z.object({
   country: z.string(),
 });
 
-const CountryData = BaseCountryArrayItem.extend({
+const CountryData = BaseCountryArrayItem.partial().extend({
   cpi: z.number(),
   merchant: z.string(),
   volume: z.number(),
@@ -94,18 +96,19 @@ export const countryReport = async (
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   const userLevel = level;
-  const where = Prisma.sql`1 = 1`; // Set a default where condition to retrieve all data
-  let whereDashboard = Prisma.sql`1 = 1`; // Set a default where condition for dashboard data
-  let install_main = Prisma.sql`1 = 1`;
-  let traders_main = Prisma.sql`1 = 1`;
+  let whereDashboard = "";
+  let install_main = "";
+  let traders_main = "";
 
   const appendCondition = (
-    where: Sql,
+    where: string,
     condition: string,
-    value?: string | number | null
+    value?: string | number | null | undefined
   ) => {
     if (value !== null && value !== undefined) {
-      where = Prisma.sql`${where} AND ${condition} = ${value}`;
+      where = where
+        ? `${where} AND ${condition} = ${value}`
+        : `${condition} = ${value}`;
     }
     return where;
   };
@@ -163,7 +166,7 @@ export const countryReport = async (
   // }
 
   const getInstallationsData = async (
-    install_main: Sql,
+    install_main: string,
     from: Date,
     to: Date
   ): Promise<{ [key: string]: number }> => {
@@ -172,14 +175,16 @@ export const countryReport = async (
         installations: number;
         country: string;
       }[]
-    >`
+    >(
+      Prisma.raw(`
         SELECT COUNT(affiliate_id) AS installations, country
         FROM data_install
-        WHERE ${install_main}
-          AND data_install.rdate >= ${from}
-          AND data_install.rdate <= ${to}
+        WHERE ${install_main ? install_main + " AND" : ""}
+          data_install.rdate >= ${formatSqlDate(from)}
+          AND data_install.rdate <= ${formatSqlDate(to)}
         GROUP BY country
-      `;
+      `)
+    );
 
     const installationsDataItems: { [key: string]: number } = {};
 
@@ -203,16 +208,25 @@ export const countryReport = async (
     CountryID: string | null;
   };
 
-  const StatsData = await prisma.$queryRaw<
-    StatsDataItem[]
-  >`SELECT SUM(Clicks) as clicks,
+  const merchants_creative_stats_Has_CountryID = await isFieldExists(
+    prisma,
+    "merchants_creative_stats",
+    "CountryID"
+  );
+
+  let StatsData: StatsDataItem[] = [];
+  if (merchants_creative_stats_Has_CountryID) {
+    StatsData = await prisma.$queryRaw<StatsDataItem[]>(
+      Prisma.raw(`SELECT SUM(Clicks) as clicks,
            SUM(Impressions) as impressions,
             AffiliateID, MerchantID, CountryID
             FROM merchants_creative_stats
-            WHERE Date >= ${from} AND
-            Date <= ${to} AND
-            ${whereDashboard}
-            GROUP BY CountryID`;
+            WHERE Date >= ${formatSqlDate(from)} AND
+            Date <= ${formatSqlDate(to)}
+            ${whereDashboard ? " AND " + whereDashboard : ""}
+            GROUP BY CountryID`)
+    );
+  }
 
   const MerchantsDataItems = await getMerchantsData();
 
@@ -272,9 +286,8 @@ export const countryReport = async (
   };
 
   // Define the SQL query
-  const ReportTradersDataItems = await prisma.$queryRaw<
-    ReportTradersSummary[]
-  >`SELECT AffiliateID, MerchantID, country,
+  const ReportTradersDataItems = await prisma.$queryRaw<ReportTradersSummary[]>(
+    Prisma.raw(`SELECT AffiliateID, MerchantID, country,
         SUM(ReportTraders.Volume) as Volume,
         SUM(ReportTraders.WithdrawalAmount) as WithdrawalAmount,
         SUM(CASE ReportTraders.TraderStatus WHEN 'leads' THEN 1 ELSE 0 END) leads,
@@ -291,12 +304,17 @@ export const countryReport = async (
         SUM(CASE WHEN (ReportTraders.PNL > 0 OR ReportTraders.NextDeposits > 0 OR ReportTraders.Volume > 0 ) THEN 1 ELSE 0 END) as Qftd,
         SUM(CASE ReportTraders.FirstDeposit WHEN ReportTraders.FirstDeposit > '0000-00-00 00:00:00' THEN 1 ELSE 0 END) as FirstDeposit
         FROM ReportTraders
-        WHERE ReportTraders.RegistrationDate >= ${from} AND
-        ReportTraders.RegistrationDate <= ${to} AND
-        ${traders_main}
-        GROUP BY Country`;
+        WHERE ReportTraders.RegistrationDate >= ${formatSqlDate(from)} AND
+        ReportTraders.RegistrationDate <= ${formatSqlDate(to)}
+        ${traders_main ? " AND " + traders_main : ""}
+        GROUP BY Country`)
+  );
 
   console.log(`muly:countryReport before merge`, {
+    t: typeof affiliate_id,
+    traders_main,
+    from,
+    to,
     ReportTradersDataItems: ReportTradersDataItems.length,
     baseCountryArray: Object.keys(baseCountryArray),
     countries: ReportTradersDataItems.map((item) => item.country),
@@ -306,31 +324,29 @@ export const countryReport = async (
   ReportTradersDataItems.map(convertPrismaResultsToNumbers).forEach((item) => {
     const country = item["country"] || "-";
     const base = baseCountryArray[country];
-    if (base) {
-      countryArray.push({
-        ...base,
-        cpi: InstallationsDataItems[country] || 0,
-        merchant: MerchantsDataItems[item["MerchantID"]] || "",
-        country: item.country,
-        // type: item.type,
-        volume: item.Volume,
-        withdrawal: item.WithdrawalAmount,
-        leads: item.leads,
-        demo: item.demo,
-        real: item.reals,
-        depositingAccounts: item.NextDeposits,
-        real_ftd: item.demo,
-        ftd: item.FirstDeposit,
-        ftd_amount: item.FTDAmount,
-        sumDeposits: item.DepositAmount,
-        bonus: item.BonusAmount,
-        chargeback: item.ChargeBackAmount,
-        netRevenue: item.NetDeposit,
-        pnl: item.PNL,
-        totalCom: item.Commission,
-        Qftd: item.Qftd,
-      });
-    }
+    countryArray.push({
+      ...base,
+      cpi: InstallationsDataItems[country] || 0,
+      merchant: MerchantsDataItems[item["MerchantID"]] || "",
+      country: item.country,
+      // type: item.type,
+      volume: item.Volume,
+      withdrawal: item.WithdrawalAmount,
+      leads: item.leads,
+      demo: item.demo,
+      real: item.reals,
+      depositingAccounts: item.NextDeposits,
+      real_ftd: item.demo,
+      ftd: item.FirstDeposit,
+      ftd_amount: item.FTDAmount,
+      sumDeposits: item.DepositAmount,
+      bonus: item.BonusAmount,
+      chargeback: item.ChargeBackAmount,
+      netRevenue: item.NetDeposit,
+      pnl: item.PNL,
+      totalCom: item.Commission,
+      Qftd: item.Qftd,
+    });
   });
 
   return splitToPages(
@@ -349,7 +365,7 @@ export const getCountryReport = protectedProcedure
         from,
         to,
         merchant_id,
-        group_id = "manager",
+        group_id, //  = "manager",
         country_id,
         level,
         pageParams,
