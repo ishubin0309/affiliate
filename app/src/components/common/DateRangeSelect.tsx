@@ -92,6 +92,7 @@ interface Props {
 }
 
 export const DateRangeSelect = ({ value, setValue }: Props) => {
+  console.log(`muly:DateRangeSelect`, { value });
   return (
     <div>
       <div className="relative my-1 mr-2 inline-block lg:my-0">

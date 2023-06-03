@@ -11,7 +11,7 @@ import type { MerchantCreativeType } from "@/server/db-types";
 import React from "react";
 import { api } from "../../../utils/api";
 import { CreativeMaterialComponent } from "./CreativeMaterialComponent";
-import { IconMenuRadioGroup } from "../../common/forms/IconMenuRadioGroup";
+import { IconMenuRadioGroup } from "../../common/controls/IconMenuRadioGroup";
 
 const renderRow = (item: MerchantCreativeType, gridView: boolean) => {
   const values = [
