@@ -1,4 +1,5 @@
 import { env } from "@/env.mjs";
+import { format } from "date-fns";
 import fs, { writeFileSync } from "fs";
 import os from "os";
 import path from "path";
@@ -7,6 +8,7 @@ import { uploadFile } from "../config/cloud-storage";
 import { generateCSVReport } from "../config/exportCSV";
 import { generateJSONReport } from "../config/generateJSONReport";
 import { generateXLSXReport } from "../config/generateXLSXReport";
+import type { PrismaClient } from "@prisma/client";
 
 // Common params for all reports
 export const PageParamsSchema = z.object({
@@ -145,4 +147,22 @@ export const flattenObject = (
   }
 
   return result;
+};
+
+export const formatSqlDate = (date: Date) => `"${format(date, "yyyy-MM-dd")}"`;
+
+export const isFieldExists = async (
+  prisma: PrismaClient,
+  table: string,
+  field: string
+): Promise<boolean> => {
+  const result = await prisma.$queryRaw<{ count: number }[]>`
+  SELECT COUNT(COLUMN_NAME) as count
+  FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_NAME = ${table}
+  AND COLUMN_NAME = ${field}`;
+
+  console.log(`muly:isFieldExists`, { table, field, result });
+
+  return result && !!result[0]?.count;
 };

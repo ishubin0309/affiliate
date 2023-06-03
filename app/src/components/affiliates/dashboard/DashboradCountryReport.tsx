@@ -5,7 +5,7 @@ import { SelectInput } from "@/components/common/select-input";
 import type { DashboardCountryReportType } from "../../../server/db-types";
 import type { DashboardCountryReportInputType } from "../../../server/db-types";
 
-export const reportDropDown = ["Clicks", "Accounts", "FTD"];
+export const reportDropDown = ["Accounts", "FTD", "Clicks"];
 
 export const daysBackChoices = [
   { id: "90", title: "Last 90 Days" },
@@ -16,7 +16,7 @@ export const daysBackChoices = [
 type ValueType = DashboardCountryReportInputType["value"];
 
 export const DashboardCountryReport = () => {
-  const [selectedReport, setSelectedReport] = useState<ValueType>("Clicks");
+  const [selectedReport, setSelectedReport] = useState<ValueType>("Accounts");
   const [lastDays, setLastDays] = useState<string>("90");
   const { data: reportData } =
     api.affiliates.getCountryReportDashboard.useQuery(
