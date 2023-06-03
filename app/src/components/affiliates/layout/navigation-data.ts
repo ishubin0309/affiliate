@@ -1,5 +1,3 @@
-import { isDev } from "@/utils/nextjs-utils";
-
 interface SingleLinkData {
   type: "single";
   link: string;
@@ -17,7 +15,7 @@ interface DropdownLinkData {
 
 export type NavigationLinkData = SingleLinkData | DropdownLinkData;
 
-const dev = isDev();
+const dev = false;
 
 export const navigationData: NavigationLinkData[] = [
   {
