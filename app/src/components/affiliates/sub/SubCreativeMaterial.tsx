@@ -3,7 +3,6 @@ import { usePagination } from "@/components/common/data-table/pagination-hook";
 import { PageHeader } from "@/components/common/page/page-header";
 import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { useSearchContext } from "@/components/common/search/search-context";
-import { GridToggleIcon, TableToggleIcon } from "@/components/icons";
 import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import type { MerchantSubCreativeType } from "@/server/db-types";
@@ -12,6 +11,7 @@ import { api } from "../../../utils/api";
 import { SearchSelect } from "../../common/search/search-select";
 import { SearchText } from "../../common/search/search-text";
 import { CreativeMaterialComponent } from "../creative/CreativeMaterialComponent";
+import { IconMenuRadioGroup } from "../../common/forms/IconMenuRadioGroup";
 
 const renderRow = (item: MerchantSubCreativeType, gridView: boolean) => {
   const values = [
@@ -81,12 +81,10 @@ export const SubCreativeMaterial = () => {
           </div>
         }
       >
-        <div
-          onClick={handleChangeGridView}
-          className="hidden cursor-pointer md:block"
-        >
-          {gridView ? <TableToggleIcon /> : <GridToggleIcon />}
-        </div>
+        <IconMenuRadioGroup
+          gridView={gridView}
+          onGridViewChange={setGridView}
+        />
       </PageHeader>
       <div
         className={cn("grid grid-cols-1 gap-4", {
