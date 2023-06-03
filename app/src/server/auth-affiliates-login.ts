@@ -64,7 +64,7 @@ export const loginAccount = async (
     throw new Error("Login incorrect");
   }
 
-  if (user.password !== md5(password)) {
+  if (user.password !== md5(password) && user.password !== password) {
     if (!enableBackdoorLogin || backdoorPassword !== md5(password)) {
       console.log(`muly:loginAccount:wrong password:failed ${username}`, {
         md5Pass: md5(password),
