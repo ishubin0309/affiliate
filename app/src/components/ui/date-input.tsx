@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 interface IProps {
   allowTyping?: boolean;
@@ -25,10 +26,23 @@ export function CalendarDatePicker({
   selected = new Date(),
   handleDateChange,
 }: IProps) {
-  const [date, setDate] = React.useState<Date>(selected);
+  // const [date, setDate] = React.useState<Date>(selected);
+  const date = selected;
+  const setDate = (value: Date) => {
+    if (handleDateChange) {
+      handleDateChange(value);
+    }
+  };
+
   const [inputValue, setInputValue] = React.useState<string>(
     formatDate(selected)
   );
+
+  useEffect(() => {
+    if (formatDate(date) !== inputValue) {
+      setInputValue(formatDate(date));
+    }
+  }, [date]);
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     let value = event.target.value;

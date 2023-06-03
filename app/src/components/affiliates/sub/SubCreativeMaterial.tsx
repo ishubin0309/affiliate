@@ -11,7 +11,7 @@ import { api } from "../../../utils/api";
 import { SearchSelect } from "../../common/search/search-select";
 import { SearchText } from "../../common/search/search-text";
 import { CreativeMaterialComponent } from "../creative/CreativeMaterialComponent";
-import { IconMenuRadioGroup } from "../../common/forms/IconMenuRadioGroup";
+import { IconMenuRadioGroup } from "../../common/controls/IconMenuRadioGroup";
 
 const renderRow = (item: MerchantSubCreativeType, gridView: boolean) => {
   const values = [
