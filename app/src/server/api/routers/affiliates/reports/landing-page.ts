@@ -21,6 +21,10 @@ const LandingPageReportResultSchema = z.object({
   totals: z.any(),
 });
 
+interface OrderType {
+  [key: string]: any;
+}
+
 const Input = z.object({
   from: z.date().optional(),
   to: z.date().optional(),
@@ -60,7 +64,22 @@ export const landingPageData = async (
 
   const offset = getPageOffset(pageParams);
   const sorting_info = getSortingInfo(sortingParam);
-  const orderBy = {};
+  const sortBy = sorting_info ? Object.keys(sorting_info[0] ?? "")[0] : "";
+  const sortOrder = sorting_info ? Object.values(sorting_info[0] ?? "")[0] : "";
+
+  console.log("base type filter ----->", sortBy);
+
+  let orderBy: OrderType = {};
+  const trafficeBy: OrderType = {};
+
+  if (sortBy === "merchant.name") {
+    orderBy = { merchant: { name: "asc" } };
+  }
+  if (sortBy === "clicks" || sortBy === "views") {
+    trafficeBy[`${sortBy}`] = sortOrder;
+  } else {
+    orderBy[`${sortBy}`] = sortOrder;
+  }
 
   const [bannersww, totals] = await Promise.all([
     prisma.merchants_creative.findMany({
@@ -97,7 +116,7 @@ export const landingPageData = async (
 
   //clicks and impressions
   const trafficRow = await prisma.traffic.groupBy({
-    by: ["banner_id", "id"],
+    by: trafficeBy ? [`${sortBy}`, "banner_id", "id"] : ["banner_id", "id"],
     _sum: {
       clicks: true,
       views: true,
@@ -111,7 +130,6 @@ export const landingPageData = async (
         lt: to,
       },
     },
-    orderBy: orderBy,
     skip: offset,
     take: pageParams.pageSize,
   });
@@ -133,7 +151,7 @@ export const landingPageData = async (
         lt: to,
       },
     },
-    orderBy: orderBy,
+    // orderBy: orderBy,
     skip: offset,
     take: pageParams.pageSize,
   });
@@ -268,7 +286,7 @@ export const landingPageData = async (
       },
       banner_id: banner_id ? banner_id : 0,
     },
-    orderBy: orderBy,
+    // orderBy: orderBy,
     skip: offset,
     take: pageParams.pageSize,
   });

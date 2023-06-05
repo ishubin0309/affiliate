@@ -1,4 +1,5 @@
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 import {
   getNumberParam,
   useSearchContext,
@@ -19,6 +20,7 @@ export const ProfileReport = () => {
   } = useSearchContext();
   const pagination = usePagination();
   const { name, ...dateRange } = getDateRange(dates);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
   const { data, isRefetching, error } =
     api.affiliates.getProfileReportData.useQuery(
@@ -27,6 +29,7 @@ export const ProfileReport = () => {
         merchant_id: getNumberParam(merchant_id),
         search_type: search_type,
         pageParams: pagination.pageParams,
+        sortingParam: _sorting,
       },
       { keepPreviousData: true, refetchOnWindowFocus: false }
     );

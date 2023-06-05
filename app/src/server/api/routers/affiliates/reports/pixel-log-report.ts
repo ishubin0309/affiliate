@@ -8,11 +8,13 @@ import {
 } from "prisma/zod";
 import { z } from "zod";
 import {
+  PageParamsSchema,
+  SortingParamSchema,
   exportReportLoop,
   exportType,
   flattenObject,
+  getSortingInfo,
   pageInfo,
-  PageParamsSchema,
   reportColumns,
 } from "./reports-utils";
 
@@ -23,11 +25,12 @@ const Input = z.object({
   country: z.string().optional(),
   banner_id: z.string().optional(),
   group_id: z.string().optional(),
-  sortBy: z.string().optional(),
-  sortOrder: z.string().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const dataItemSchema = pixel_logsModel
   .extend({
@@ -62,9 +65,8 @@ const pixelLogReportData = async (
     country,
     banner_id,
     group_id,
-    sortBy,
-    sortOrder,
     pageParams,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   console.log("from ----->", from, " to ------->", to, merchant_id);
@@ -117,11 +119,10 @@ const pixelLogReportData = async (
 
                 //}
              */
-  console.log("type filter", type_filter);
+  const sorting_info = getSortingInfo(sortingParam);
+
   const pixelReport = await prisma.pixel_logs.findMany({
-    orderBy: {
-      dateTime: "asc",
-    },
+    orderBy: sorting_info ? sorting_info[0] : {},
     where: {
       ...type_filter,
       dateTime: {

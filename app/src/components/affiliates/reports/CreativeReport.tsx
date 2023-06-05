@@ -40,7 +40,7 @@ const columns = [
   createColumn("BannerID", "Creative ID"),
   createColumn("title", "Creative Name"),
   columnHelper.accessor("merchant.name", {
-    cell: (info) => info.getValue() as string,
+    cell: (info) => info.getValue() ,
     header: "Merchant",
   }),
   createColumn("type", "Type"),

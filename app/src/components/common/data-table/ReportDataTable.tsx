@@ -116,7 +116,7 @@ export function ReportDataTable<Data extends object>({
                     key={header.id}
                     // onClick={header.column.getToggleSortingHandler()}
                     onClick={() =>
-                      onSortingChange(header.column.columnDef.accessorKey)
+                      onSortingChange(header.column.columnDef?.accessorKey)
                     }
                     className="border"
                   >

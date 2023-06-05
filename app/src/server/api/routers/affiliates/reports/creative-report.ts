@@ -502,8 +502,8 @@ const creativeReport = async (
 
   const view_clicks = trafficRow.map((item) => {
     return {
-      Clicks: item?._sum.Clicks,
-      Impressions: item?._sum.Impressions,
+      Clicks: item._sum?.Clicks,
+      Impressions: item._sum?.Impressions,
       BannerID: item.BannerID,
     };
   });
