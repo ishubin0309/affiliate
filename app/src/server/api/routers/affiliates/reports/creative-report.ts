@@ -20,9 +20,10 @@ import { z } from "zod";
 // import { uploadFile } from "../config";
 
 type RegType = {
-  totalDemo: number;
-  totalReal: number;
+  comms: number;
   total_leads: number;
+  total_demo: number;
+  total_real: number;
 };
 
 type MerchantIds = {
@@ -258,42 +259,14 @@ const creativeReport = async (
     },
   });
 
-  const regww = await prisma.data_reg.findMany({
-    include: {
-      merchant: {
-        select: {
-          name: true,
-        },
-      },
-    },
-    where: {
-      merchant_id: {
-        gt: 0,
-      },
-      rdate: {
-        gte: from,
-        lte: to,
-      },
-      banner_id: banner_id ? banner_id : undefined,
-      group_id: group_id ? group_id : undefined,
-    },
-  });
-
-  for (const item of regww) {
-    switch (item.type) {
-      case "demo":
-        creativeItems.demo += 1;
-        break;
-      case "lead":
-        creativeItems.leads += 1;
-
-      case "real":
-        // const totalTraffic = await prisma?.traffic.aggregate({
-
-        // });
-        creativeItems.real += 1;
-    }
-  }
+  const regww = await prisma.$queryRaw<RegType[]>(Prisma.sql`SELECT 
+SUM(cm.Commission) as comms, 
+SUM(IF(dr.type='lead', 1, 0)) AS total_leads, 
+SUM(IF(dr.type='demo', 1, 0)) AS total_demo, 
+SUM(IF(dr.type='real', 1, 0)) AS total_real 
+FROM data_reg dr 
+LEFT JOIN commissions cm ON dr.trader_id = cm.traderID AND cm.Date BETWEEN ${from} AND ${to}
+WHERE dr.merchant_id =  ${merchant_id} and dr.affiliate_id = ${affiliate_id} and dr.rdate BETWEEN ${from} AND ${to} GROUP BY dr.banner_id`);
 
   const traderIDs = await prisma.data_sales.findMany({
     select: {
@@ -465,39 +438,6 @@ const creativeReport = async (
       }
       creativeItems.volume += item?._sum?.turnover || 0;
     }
-
-    // const toww = await ctx.prisma.data_stats.findMany({
-    //   select: {
-    //     turnover: true,
-    //     trader_id: true,
-    //     rdate: true,
-    //     affiliate_id: true,
-    //     profile_id: true,
-    //     banner_id: true,
-    //     data_reg: {
-    //       select: {
-    //         country: true,
-    //         initialftdtranzid: true,
-    //       },
-    //     },
-    //   },
-    //   where: {
-    //     ...where_main,
-
-    //     merchant_id: {
-    //       AND: [
-    //         {
-    //           merchant_id: item.id,
-    //         },
-    //         {
-    //           merchant_id: {
-    //             gt: 0,
-    //           },
-    //         },
-    //       ],
-    //     },
-    //   },
-    // });
   }
 
   const view_clicks = trafficRow.map((item) => {
@@ -515,6 +455,10 @@ const creativeReport = async (
       ...creativeItems,
       ...resItem,
       ...view_clicks[i],
+      leads: regww[i]?.total_leads,
+      demo: regww[i]?.total_demo,
+      real: regww[i]?.total_real,
+      totalCom: regww[i]?.comms,
       merchant,
       language,
     };
