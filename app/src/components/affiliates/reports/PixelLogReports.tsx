@@ -1,31 +1,46 @@
-import { FormLabel, Grid, GridItem, Input } from "@chakra-ui/react";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import {
+  getNumberParam,
+  useSearchContext,
+} from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
+import { SearchSelect } from "@/components/common/search/search-select";
+import { SearchText } from "@/components/common/search/search-text";
+import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import { QuerySelect } from "../../../components/common/QuerySelect";
-import { DataTable } from "../../../components/common/data-table/DataTable";
 import type { PixelLogsReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
-import { Loading } from "../../common/Loading";
-import { creativeType } from "@/components/affiliates/reports/TraderReports";
+import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
 
 export const PixelLogReports = () => {
   const router = useRouter();
-  const { merchant_id, country, groups } = router.query;
-  const { from, to } = useDateRange();
-  const [traderID, setTraderID] = useState<string>("");
+  const pagination = usePagination();
+  const {
+    values: { merchant_id, dates, group_id, country },
+  } = useSearchContext();
+  const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isLoading } = api.affiliates.getPixelLogReport.useQuery({
-    from,
-    to,
-    merchant_id: merchant_id ? Number(merchant_id) : undefined,
-    country: country ? String(country) : "",
-    group_id: groups ? String(groups) : "",
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getPixelLogReport.useQuery(
+      {
+        ...dateRange,
+        merchant_id: getNumberParam(merchant_id),
+        country: country ? String(country) : "",
+        group_id: group_id ? String(group_id) : "",
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const { data: countries } = api.affiliates.getLongCountries.useQuery({});
   const columnHelper = createColumnHelper<PixelLogsReportType>();
+  const createColumn = (id: keyof PixelLogsReportType, header: string) =>
+    columnHelper.accessor(id, {
+      cell: (info) => info.getValue(),
+      header,
+    });
 
   // console.log("Clicks render", {
   // 	data,
@@ -36,73 +51,54 @@ export const PixelLogReports = () => {
   // 	merchant_id,
   // });
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
   const divCol = (valid: number | null | undefined) => {
     return valid === 1 ? <span>Active</span> : <span>Blocked</span>;
   };
 
   const columns = [
-    columnHelper.accessor("plid" as any, {
-      cell: (info) => info.getValue() as number,
-      header: "Pixel Fire ID",
-    }),
-    columnHelper.accessor("dateTime", {
+    createColumn("id", "Pixel Fire ID"),
+    createColumn("dateTime", "Date"),
+    columnHelper.accessor("pixel_monitor_type", {
       cell: (info) => info.getValue(),
-      header: "Date",
-    }),
-    columnHelper.accessor("type" as any, {
-      cell: (info) => info.getValue() as string,
       header: "Type",
     }),
-    columnHelper.accessor("method" as any, {
-      cell: (info) => info.getValue() as string,
+    columnHelper.accessor("pixel_monitor_method", {
+      cell: (info) => info.getValue(),
       header: "Method",
     }),
-    columnHelper.accessor("firedUrl", {
+    createColumn("firedUrl", "Fired URL"),
+    createColumn("pixelResponse", "Response"),
+    columnHelper.accessor("pixel_monitor_totalFired", {
       cell: (info) => info.getValue(),
-      header: "Fired URL",
-    }),
-    columnHelper.accessor("pixelResponse", {
-      cell: (info) => info.getValue(),
-      header: "Response",
-    }),
-    columnHelper.accessor("totalFired" as any, {
-      cell: (info) => info.getValue() as number,
       header: "All Time Fired",
     }),
     columnHelper.accessor("pixel-state" as any, {
-      cell: ({ row }) => divCol(row?.original?.pixel_monitor?.affiliate?.valid),
+      cell: ({ row }) => divCol(row?.original?.pixel_monitor_affiliate_valid),
       header: "Pixel State",
     }),
-    columnHelper.accessor("pixel_monitor.affiliate.id", {
-      cell: (info) => info.getValue(),
+    columnHelper.accessor("pixel_monitor_affiliate_id", {
+      cell: (info) => info.getValue() || "",
       header: "Affiliate ID",
     }),
-    columnHelper.accessor("pixel_monitor.affiliate.username", {
+    columnHelper.accessor("pixel_monitor_affiliate_username", {
       cell: (info) => info.getValue(),
       header: "Affiliate Username",
     }),
-    columnHelper.accessor("pixel_monitor.merchant.id", {
+    columnHelper.accessor("pixel_monitor_merchant_id", {
       cell: (info) => info.getValue(),
       header: "Merchant ID",
     }),
-    columnHelper.accessor("pixel_monitor.merchant", {
+    // columnHelper.accessor("pixel_monitor.merchant", {
+    //   cell: (info) => info.getValue(),
+    //   header: "Merchant",
+    // }),
+    createColumn("product_id", "Product ID"),
+    // columnHelper.accessor("banner_id", {
+    //   cell: (info) => info.getValue(),
+    //   header: "Banner ID",
+    // }),
+    columnHelper.accessor("pixel_monitor_affiliate_group_id", {
       cell: (info) => info.getValue(),
-      header: "Merchant",
-    }),
-    columnHelper.accessor("product_id", {
-      cell: (info) => info.getValue(),
-      header: "Product ID",
-    }),
-    columnHelper.accessor("banner_id" as any, {
-      cell: (info) => info.getValue() as number,
-      header: "Banner ID",
-    }),
-    columnHelper.accessor("group_id" as any, {
-      cell: (info) => info.getValue() as number,
       header: "Group ID",
     }),
   ];
@@ -114,58 +110,43 @@ export const PixelLogReports = () => {
     };
   });
 
-  return (
-    <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        width="90%"
-        alignItems={"center"}
-        alignSelf="center"
-      >
-        <GridItem>
-          <DateRangeSelect />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Merchant"
-            choices={merchants}
-            varName="merchant_id"
-          />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Country"
-            choices={country_options}
-            varName="country"
-          />
-        </GridItem>
-        <GridItem>
-          <FormLabel>Banner ID</FormLabel>
-          <Input
-            value={traderID}
-            onChange={(event) => setTraderID(event.target.value)}
-          />
-        </GridItem>
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportPixelLogReportData.useMutation();
 
-        <GridItem>
-          <QuerySelect
-            label="All Groups"
-            choices={creativeType}
-            varName="groups"
-          />
-        </GridItem>
-      </Grid>
-      <h2>Pixel Logs Report</h2>
-      <Grid
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-        alignSelf="center"
-      >
-        <DataTable data={data ? data : []} columns={columns} footerData={[]} />
-      </Grid>
-    </>
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      merchant_id: getNumberParam(merchant_id),
+      country: country ? String(country) : "",
+      group_id: group_id ? String(group_id) : "",
+      exportType,
+      reportColumns: getColumns(columns),
+    });
+
+  console.log(`muly:PixelLogReports`, { data });
+
+  return (
+    <ReportControl
+      reportName="Pixel Log Report"
+      report={data}
+      error={error}
+      columns={columns}
+      pagination={pagination}
+      isRefetching={isRefetching}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
+    >
+      <SearchSelect
+        label="Merchant"
+        choices={merchants}
+        varName="merchant_id"
+      />
+      <SearchSelect
+        label="Country"
+        choices={country_options}
+        varName="country"
+      />
+      <SearchText varName="unique_id" label="Unique ID" />
+      <SearchText varName="trader_id" label="Trader ID" />
+    </ReportControl>
   );
 };

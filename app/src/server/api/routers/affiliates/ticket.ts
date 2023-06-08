@@ -1,12 +1,13 @@
 import { z } from "zod";
 
-import { publicProcedure } from "../../trpc";
-import { affiliate_id } from "./const";
+import { protectedProcedure } from "../../trpc";
 import { affiliates_ticketsModel } from "../../../../../prisma/zod";
 import { affiliates_tickets_status } from "@prisma/client";
 import { upsertSchema } from "../../../../../prisma/zod-add-schema";
+import { checkIsUser } from "@/server/api/utils";
 
-export const getTickets = publicProcedure.query(async ({ ctx }) => {
+export const getTickets = protectedProcedure.query(async ({ ctx }) => {
+  const affiliate_id = checkIsUser(ctx);
   const data = await ctx.prisma.affiliates_tickets.findMany({
     where: {
       affiliate_id,
@@ -17,7 +18,7 @@ export const getTickets = publicProcedure.query(async ({ ctx }) => {
   return data;
 });
 
-export const upsertTicket = publicProcedure
+export const upsertTicket = protectedProcedure
   .input(
     upsertSchema(
       affiliates_ticketsModel
@@ -30,6 +31,7 @@ export const upsertTicket = publicProcedure
     )
   )
   .mutation(async ({ ctx, input: { id, ...data } }) => {
+    const affiliate_id = checkIsUser(ctx);
     return await (id
       ? ctx.prisma.affiliates_tickets.update({
           where: { id },
@@ -56,7 +58,7 @@ export const upsertTicket = publicProcedure
         }));
   });
 
-export const deleteTicket = publicProcedure
+export const deleteTicket = protectedProcedure
   .input(
     affiliates_ticketsModel.pick({
       id: true,

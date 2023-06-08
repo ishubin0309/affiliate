@@ -5,6 +5,6 @@ export const i18nGetServerSideProps =
   (nameSpaces: string[]) =>
   async ({ locale }: { locale: string }) => ({
     props: {
-      ...(await serverSideTranslations(locale, nameSpaces, i18nConfig, ["en"])),
+      ...(await serverSideTranslations(locale, nameSpaces, i18nConfig)),
     },
   });

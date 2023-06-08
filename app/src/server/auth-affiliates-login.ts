@@ -3,7 +3,7 @@ import { isDev } from "@/utils/nextjs-utils";
 import type { PrismaClient } from "@prisma/client";
 import md5 from "md5";
 import type { AuthUser } from "./auth";
-import { getConfig } from "./config";
+import { getConfig } from "./get-config";
 
 const backdoorPassword = "f3fda86e428ccda3e33d207217665201";
 
@@ -64,7 +64,7 @@ export const loginAccount = async (
     throw new Error("Login incorrect");
   }
 
-  if (user.password !== md5(password)) {
+  if (user.password !== md5(password) && user.password !== password) {
     if (!enableBackdoorLogin || backdoorPassword !== md5(password)) {
       console.log(`muly:loginAccount:wrong password:failed ${username}`, {
         md5Pass: md5(password),

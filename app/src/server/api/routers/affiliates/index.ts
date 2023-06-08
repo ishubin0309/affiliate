@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "../../trpc";
 import {
   getAccount,
+  getAdminInfo,
   recoverPassword,
   registerAccount,
   updateAccount,
@@ -39,23 +40,47 @@ import {
   exportCommissionReport,
   getCommissionReport,
 } from "@/server/api/routers/affiliates/reports/commission-report";
-import { getCountryReport } from "@/server/api/routers/affiliates/reports/country-report";
-import { getCountryReportDashboard } from "@/server/api/routers/affiliates/reports/country-report-dashboard";
-import { getCreativeReport } from "@/server/api/routers/affiliates/reports/creative-report";
 import {
-  // exportInstallReport,
+  exportCountryReport,
+  getCountryReport,
+} from "@/server/api/routers/affiliates/reports/country-report";
+import { getCountryReportDashboard } from "@/server/api/routers/affiliates/reports/country-report-dashboard";
+import {
+  exportCreativeReport,
+  getCreativeReport,
+} from "@/server/api/routers/affiliates/reports/creative-report";
+import {
+  exportInstallReport,
   getInstallReport,
 } from "@/server/api/routers/affiliates/reports/install-reports";
-import { getLandingPageData } from "@/server/api/routers/affiliates/reports/landing-page";
-import { getPixelLogReport } from "@/server/api/routers/affiliates/reports/pixel-log-report";
-import { getProfileReportData } from "@/server/api/routers/affiliates/reports/profile-report";
+import {
+  exportLandingPageData,
+  getLandingPageData,
+} from "@/server/api/routers/affiliates/reports/landing-page";
+import {
+  exportPixelLogReportData,
+  getPixelLogReport,
+} from "@/server/api/routers/affiliates/reports/pixel-log-report";
+import {
+  exportProfileReportData,
+  getProfileReportData,
+} from "@/server/api/routers/affiliates/reports/profile-report";
 import {
   exportQuickSummaryReport,
   getQuickReportSummary,
 } from "@/server/api/routers/affiliates/reports/quick-summary";
-import { getSubAffiliateReport } from "@/server/api/routers/affiliates/reports/sub-affiliate-report";
-import { getTraderReport } from "@/server/api/routers/affiliates/reports/trader-report";
-import { getTranslateReportFake } from "@/server/api/routers/affiliates/reports/translate-report-fake";
+import {
+  exportSubAffiliateReport,
+  getSubAffiliateReport,
+} from "@/server/api/routers/affiliates/reports/sub-affiliate-report";
+import {
+  exportTraderReport,
+  getTraderReport,
+} from "@/server/api/routers/affiliates/reports/trader-report";
+import {
+  exportTranslateReportFake,
+  getTranslateReportFake,
+} from "@/server/api/routers/affiliates/reports/translate-report-fake";
 import { getCommissions } from "./commission";
 import { getDocuments } from "./document";
 import {
@@ -89,6 +114,7 @@ export const affiliatesRouter = createTRPCRouter({
   updateAccount,
   registerAccount,
   recoverPassword,
+  getAdminInfo,
 
   getPaymentsPaid,
   getPaymentDetails,
@@ -99,28 +125,45 @@ export const affiliatesRouter = createTRPCRouter({
 
   getQuickReportSummary,
   exportQuickSummaryReport,
+
   getInstallReport,
-  // exportInstallReport,
+  exportInstallReport,
+
   getAllMerchants,
 
   getCommissionReport,
   exportCommissionReport,
+
   getClicksReport,
   getTranslateReportFake,
+  exportTranslateReportFake,
   exportClicksReport,
+
   getCountryReport,
+  exportCountryReport,
+
   getDocuments,
 
   getCommissions,
+
   getCreativeReport,
+  exportCreativeReport,
+
   getLandingPageData,
+  exportLandingPageData,
 
   getTraderReport,
+  exportTraderReport,
   getLongCountries,
+
+  exportPixelLogReportData,
   getPixelLogReport,
 
   getProfileReportData,
+  exportProfileReportData,
+
   getSubAffiliateReport,
+  exportSubAffiliateReport,
 
   getPixelMonitorMeta,
   getPixelMonitor,

@@ -1,12 +1,12 @@
 import type { PrismaClient } from "@prisma/client";
 import { Prisma } from "@prisma/client";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import type { Sql } from "@prisma/client/runtime";
 import { endOfDay, startOfDay, sub } from "date-fns";
 import { debugSaveData } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
+import { checkIsUser } from "@/server/api/utils";
 
 const Input = z.object({
   lastDays: z.number().int(),
@@ -46,7 +46,7 @@ export const countryReport = async ({
             Date <= ${to} AND
             AffiliateID = ${affiliate_id}
             GROUP BY CountryID
-            ORDER BY value
+            ORDER BY value DESC
             LIMIT 5`;
   } else if (value === "Accounts") {
     return prisma.$queryRaw<CountryDataType[]>`SELECT country,
@@ -58,7 +58,7 @@ export const countryReport = async ({
         ReportTraders.RegistrationDate <= ${to} AND
         AffiliateID = ${affiliate_id}
         GROUP BY Country
-        ORDER BY value
+        ORDER BY value DESC
         LIMIT 5`;
   } else {
     return prisma.$queryRaw<CountryDataType[]>`SELECT country,
@@ -70,15 +70,16 @@ export const countryReport = async ({
         ReportTraders.RegistrationDate <= ${to} AND
         AffiliateID = ${affiliate_id}
         GROUP BY Country
-        ORDER BY value
+        ORDER BY value DESC
         LIMIT 5`;
   }
 };
 
-export const getCountryReportDashboard = publicProcedure
+export const getCountryReportDashboard = protectedProcedure
   .input(Input)
   .output(z.array(CountryData))
   .query(async ({ ctx, input: { lastDays, value } }) => {
+    const affiliate_id = checkIsUser(ctx);
     const { prisma } = ctx;
 
     const to = endOfDay(new Date());
@@ -87,10 +88,10 @@ export const getCountryReportDashboard = publicProcedure
       prisma,
       from: startOfDay(sub(to, { days: lastDays })),
       to,
-      affiliate_id: 557,
+      affiliate_id,
       value,
     });
 
-    console.log(`muly:countryData`, { countryData });
-    return countryData;
+    console.log(`muly:countryData`, { countryData, affiliate_id, value });
+    return countryData.map(convertPrismaResultsToNumbers);
   });

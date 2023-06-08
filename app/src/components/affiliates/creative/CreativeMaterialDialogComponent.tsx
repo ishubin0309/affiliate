@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from "../../ui/select";
 
-import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
 import { Code2Icon, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
@@ -60,54 +59,32 @@ export const CreativeMaterialDialogComponent = ({
   creative_id,
   gridView,
 }: Props) => {
-  const { toast } = useToast();
   const { data: profiles } = api.affiliates.getProfiles.useQuery(undefined, {
     keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [parameterFirstValues, setParameterFirstValues] = useState("");
-  const [codesValues, setCodesValues] = useState<CodeProps>(initialCodeProps);
+  const [params, setParams] = useState<string[]>([""]);
+  const [profile_id, setProfile_id] = useState<number>(0);
+  const [bannerQueryParams, setBannerQueryParams] = useState({
+    creative_id,
+    params,
+    profile_id,
+  });
 
-  const [params, setParams] = useState<string[]>([]);
-  const [profile_id, setProfile_id] = useState<number>();
-  const [errorMessage, setErrorMessage] = useState("");
+  const { data: codesValues, isRefetching } =
+    api.affiliates.generateBannerCode.useQuery(bannerQueryParams, {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    });
 
-  const generateBannerCode = api.affiliates.generateBannerCode.useMutation();
-
-  const handleGetCode = async () => {
-    setIsLoading(true);
-    try {
-      console.log(`muly:handleGetCode`, {
-        creative_id,
-        params,
-        profile_id,
-      });
-
-      if (!profile_id) {
-        // TODO: Show error that need to select profile
-        setErrorMessage("Please select a profile");
-        return;
-      }
-
-      const codes = await generateBannerCode.mutateAsync({
-        creative_id,
-        params,
-        profile_id,
-      });
-      setCodesValues(codes);
-      console.log(`muly:handleGetCode codes`, {
-        codes,
-        creative_id,
-        params,
-        profile_id,
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const handleGetCode = () => {
+    setBannerQueryParams({ creative_id, params, profile_id });
   };
 
-  const downloadCode = (codesValues: CodeProps, fileType: string): void => {
+  const downloadCode = (
+    codesValues: CodeProps | undefined,
+    fileType: string
+  ): void => {
     let codeValue: string | undefined;
     let fileName: any;
 
@@ -143,13 +120,7 @@ export const CreativeMaterialDialogComponent = ({
           <div className="ml-2">
             <div className="">
               <DialogTrigger>
-                <Button
-                  variant="primary-outline"
-                  className="md:px-4"
-                  onClick={() => {
-                    setCodesValues(initialCodeProps);
-                  }}
-                >
+                <Button variant="primary-outline" className="md:px-4">
                   Get Tracking Code
                   <div className="ml-2 items-center">
                     <Code2Icon className="text-[#282560]" />
@@ -166,7 +137,7 @@ export const CreativeMaterialDialogComponent = ({
         </DialogHeader>
         <form className="w-full pt-5">
           <div className="justify-between md:flex md:space-x-4">
-            <div className="w-full md:w-1/4">
+            <div className="w-full md:w-2/4 lg:w-1/4">
               <div className="mb-11 mb-12 h-[calc(100%-43px)] justify-between md:flex md:space-x-4">
                 <div className="w-full">
                   <div className="mb-3">
@@ -177,12 +148,11 @@ export const CreativeMaterialDialogComponent = ({
                       Profile
                     </label>
                     <div className="flex">
-                      <div className="relative flex w-full items-center ">
+                      <div className="relative flex w-full items-center overflow-auto">
                         <Select
                           defaultValue={String(profile_id)}
                           onValueChange={(value) => {
                             setProfile_id(Number(value));
-                            setErrorMessage("");
                           }}
                         >
                           <SelectTrigger className="border px-4 py-3  text-xs ">
@@ -190,7 +160,10 @@ export const CreativeMaterialDialogComponent = ({
                           </SelectTrigger>
                           <SelectContent className="border text-xs">
                             <SelectGroup>
-                              {profiles?.map(({ name, url, id }, index) => (
+                              {[
+                                { name: "Global", url: "", id: 0 },
+                                ...(profiles || []),
+                              ].map(({ name, url, id }, index) => (
                                 <SelectItem value={String(id)} key={id}>
                                   <div className="flex flex-col text-left">
                                     <div>
@@ -205,11 +178,6 @@ export const CreativeMaterialDialogComponent = ({
                         </Select>
                       </div>
                     </div>
-                    <div>
-                      {errorMessage && (
-                        <p className="text-red-500">{errorMessage}</p>
-                      )}
-                    </div>
                   </div>
                   <div className="w-full">
                     <label
@@ -220,7 +188,10 @@ export const CreativeMaterialDialogComponent = ({
                     </label>
                     <div className="flex flex-wrap">
                       <div className="relative flex w-full flex-wrap items-center justify-between ">
-                        <AddDynamicParameter />
+                        <AddDynamicParameter
+                          inputValues={params}
+                          setInputValues={setParams}
+                        />
                       </div>
                     </div>
                   </div>
@@ -231,14 +202,13 @@ export const CreativeMaterialDialogComponent = ({
                   onClick={handleGetCode}
                   variant="primary"
                   className="absolute bottom-0 w-full"
-                  isLoading={isLoading}
+                  isLoading={isRefetching}
                 >
                   Get Code
                 </Button>
               </div>
             </div>
-            <div className="w-full md:w-3/4">
-              {" "}
+            <div className="w-full md:w-2/4 lg:w-3/4">
               <div className="h-full">
                 <Tabs defaultValue="HtmlCode" className="h-full">
                   <TabsList className="flex-wrap justify-start whitespace-nowrap">
@@ -249,7 +219,10 @@ export const CreativeMaterialDialogComponent = ({
                       Direct Link Code
                     </TabsTrigger>
                   </TabsList>
-                  <TabsContent className="h-full border-0 p-0" value="HtmlCode">
+                  <TabsContent
+                    className="h-full min-h-[380px] border-0 p-0"
+                    value="HtmlCode"
+                  >
                     <div className="-mx-3 flex h-full flex-wrap">
                       <div className="h-full w-full px-3">
                         <textarea
@@ -272,7 +245,10 @@ export const CreativeMaterialDialogComponent = ({
                       </div>
                     </div>
                   </TabsContent>
-                  <TabsContent className="h-full border-0 p-0" value="JSCode">
+                  <TabsContent
+                    className="h-full min-h-[380px] border-0 p-0"
+                    value="JSCode"
+                  >
                     <div className="-mx-3 flex h-full flex-wrap">
                       <div className="h-full w-full px-3">
                         <textarea
@@ -295,7 +271,10 @@ export const CreativeMaterialDialogComponent = ({
                       </div>
                     </div>
                   </TabsContent>
-                  <TabsContent className="h-full border-0 p-0" value="QrCode">
+                  <TabsContent
+                    className="h-full min-h-[380px] border-0 p-0"
+                    value="QrCode"
+                  >
                     <div className="-mx-3 flex h-full flex-wrap">
                       <div className="mb-3 mt-1.5 flex h-48 w-full items-center px-3 md:mb-12 md:h-[calc(100%-100px)]">
                         {codesValues?.qrCode && (
@@ -323,7 +302,7 @@ export const CreativeMaterialDialogComponent = ({
                     </div>
                   </TabsContent>
                   <TabsContent
-                    className="h-full border-0 p-0"
+                    className="h-full min-h-[380px] border-0 p-0"
                     value="DirectLinkCode"
                   >
                     <div className="-mx-3 flex h-full flex-wrap">
@@ -342,7 +321,7 @@ export const CreativeMaterialDialogComponent = ({
                             downloadCode(codesValues, "directLink")
                           }
                         >
-                          Download Sirect Link Code As Text
+                          Download Direct Link Code As Text
                           <div className="ml-2">
                             <ImageIcon className="h-4 w-4 text-white" />
                           </div>

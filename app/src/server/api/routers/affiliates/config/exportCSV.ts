@@ -1,13 +1,22 @@
-import csvWriter from "csv-write-stream";
+import type { ColumnsType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import fs from "fs";
+import { Parser } from "json2csv";
 
-export const exportCSVReport = (
-  header: Array<string>,
-  data: Array<number>,
+export const generateCSVReport = (
+  columns: ColumnsType[],
+  data: any[],
   fileName: string
 ) => {
-  const writer = csvWriter({ headers: header, separator: ",\t\t\t" });
-  writer.pipe(fs.createWriteStream(fileName));
-  writer.write(data);
-  writer.end();
+  const parser = new Parser({
+    fields: columns.map(({ header, accessorKey }) => ({
+      label: header,
+      value: accessorKey,
+    })),
+  });
+  const csv = parser.parse(data);
+
+  fs.writeFile(fileName, csv, function (err) {
+    if (err) throw err;
+    console.log("file saved");
+  });
 };

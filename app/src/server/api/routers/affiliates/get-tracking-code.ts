@@ -2,18 +2,15 @@
 // YES FocusOption/FocusOption-main/site/common/creatives/edit_banner.php
 
 import type { PrismaClient } from "@prisma/client";
-// import { urlToShortCode } from "@/server/api/routers/misc/short-url";
-// import { env } from "@/env.mjs";
-import { pause } from "@/utils/pause";
-import { getConfig } from "@/server/config";
-import { publicProcedure } from "@/server/api/trpc";
+import { getConfig } from "@/server/get-config";
+import { protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
 import QRCode from "qrcode";
+import { checkIsUser } from "@/server/api/utils";
 
 const Input = z.object({
   creative_id: z.number(),
-  profile_id: z.number(),
+  profile_id: z.number().nullish(),
   params: z.array(z.string()),
 });
 
@@ -30,7 +27,7 @@ const _generateBannerCode = async (
   affiliate_id: number,
   creativeType: "product" | "creative",
   creative_id: number,
-  profile_id: number,
+  profile_id: number | undefined,
   params: string[],
   // typeURL: number,
   prisma: PrismaClient
@@ -173,10 +170,13 @@ const _generateBannerCode = async (
   // const freeParam = fParam ? `&p1=${fParam}` : "";
   // const subidParam = subid ? `&p2=${subid}` : "";
   const freeParam = params
+    .filter((p: string) => !!p)
     .map((p: string, index) => `&p${index + 1}=${p}`)
     .join("");
 
-  const tag = `a${affiliate_id}-b${ww["id"]}${productTagPart}-p${profile_id}${freeParam}`; // Creat CTag
+  const tag = `a${affiliate_id}-b${ww["id"]}${productTagPart}-p${
+    profile_id ? profile_id : ""
+  }${freeParam}`; // Creat CTag
   // const webAddress = typeURL === 2 ? webAddressHttps : webAddress;
 
   let htmlCode = "";
@@ -256,15 +256,16 @@ const _generateBannerCode = async (
   };
 };
 
-export const generateBannerCode = publicProcedure
+export const generateBannerCode = protectedProcedure
   .input(Input)
   .output(BannerCode)
-  .mutation(async ({ ctx, input: { profile_id, params, creative_id } }) => {
+  .query(async ({ ctx, input: { profile_id, params, creative_id } }) => {
+    const affiliate_id = checkIsUser(ctx);
     return _generateBannerCode(
       affiliate_id,
       "creative",
       creative_id,
-      profile_id,
+      profile_id || undefined,
       params,
       ctx.prisma
     );

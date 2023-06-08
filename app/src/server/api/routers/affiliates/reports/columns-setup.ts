@@ -1,8 +1,8 @@
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
+import { checkIsUser } from "@/server/api/utils";
 
-export const getReportsColumns = publicProcedure
+export const getReportsColumns = protectedProcedure
   .input(
     z.object({
       level: z.enum(["affiliate", "admin"]),
@@ -11,6 +11,7 @@ export const getReportsColumns = publicProcedure
   )
   .output(z.array(z.string()))
   .query(async ({ ctx, input: { level, report } }) => {
+    const affiliate_id = checkIsUser(ctx);
     const location = `${level}=>${report}`;
     const data = await ctx.prisma.reports_fields.findFirst({
       where: {
@@ -22,7 +23,7 @@ export const getReportsColumns = publicProcedure
     return data?.removed_fields.split("|") || [];
   });
 
-export const upsertReportsColumns = publicProcedure
+export const upsertReportsColumns = protectedProcedure
   .input(
     z.object({
       level: z.enum(["affiliate", "admin"]),
@@ -32,6 +33,7 @@ export const upsertReportsColumns = publicProcedure
   )
   .output(z.array(z.string()))
   .mutation(async ({ ctx, input: { level, report, fields } }) => {
+    const affiliate_id = checkIsUser(ctx);
     const location = `${level}=>${report}`;
     const exists = await ctx.prisma.reports_fields.findFirst({
       where: {

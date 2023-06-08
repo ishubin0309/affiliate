@@ -12,7 +12,7 @@ export const pixel_logsModel = z.object({
 })
 
 export interface Completepixel_logs extends z.infer<typeof pixel_logsModel> {
-  pixel_monitor: Completepixel_monitor
+  pixel_monitor?: Completepixel_monitor | null
 }
 
 /**
@@ -21,5 +21,5 @@ export interface Completepixel_logs extends z.infer<typeof pixel_logsModel> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const Relatedpixel_logsModel: z.ZodSchema<Completepixel_logs> = z.lazy(() => pixel_logsModel.extend({
-  pixel_monitor: Relatedpixel_monitorModel,
+  pixel_monitor: Relatedpixel_monitorModel.nullish(),
 }))

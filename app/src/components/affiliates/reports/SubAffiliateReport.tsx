@@ -1,41 +1,41 @@
-import { QuerySelect } from "@/components/common/QuerySelect";
-import { DataTable } from "@/components/common/data-table/DataTable";
-import { FormLabel, Grid, GridItem, Input, Text } from "@chakra-ui/react";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { useSearchContext } from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
+import { SearchSelect } from "@/components/common/search/search-select";
+import { SearchText } from "@/components/common/search/search-text";
+import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import type { SubAffiliateReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { DateRangeSelect, useDateRange } from "../../common/DateRangeSelect";
-import { Loading } from "../../common/Loading";
-import { creativeType } from "@/components/affiliates/reports/TraderReports";
+import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
 
 export const SubAffiliateReport = () => {
   const router = useRouter();
-  const { merchant_id } = router.query;
-  const { from, to } = useDateRange();
-  const [traderID, setTraderID] = useState<string>("");
+  const {
+    values: { merchant_id, dates, trader_id, unique_id, type },
+  } = useSearchContext();
+  const pagination = usePagination();
+  const { name, ...dateRange } = getDateRange(dates);
 
-  const { data, isLoading } = api.affiliates.getSubAffiliateReport.useQuery({
-    from,
-    to,
-    user_level: "admin",
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getSubAffiliateReport.useQuery(
+      {
+        ...dateRange,
+        user_level: "admin",
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
   const columnHelper = createColumnHelper<SubAffiliateReportType>();
 
   console.log("sub affiliate render", {
     data,
     merchants,
-    isLoading,
-    from,
-    to,
-    merchant_id,
+    isRefetching,
   });
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   const divCol = (
     val: number | null | undefined,
@@ -47,177 +47,53 @@ export const SubAffiliateReport = () => {
       <span></span>
     );
   };
+  const createColumn = (id: keyof SubAffiliateReportType, header: string) =>
+    columnHelper.accessor(id, {
+      cell: (info) => info.getValue(),
+      header,
+    });
 
   const columns = [
-    columnHelper.accessor("id", {
-      cell: ({ row }) => <div>Total</div>,
-      header: "Affiliate ID",
-    }),
-    columnHelper.accessor("", {
-      cell: (info) => info.getValue() as string,
-      header: "Affiliate Username",
-    }),
-    columnHelper.accessor("", {
-      cell: (info) => info.getValue() as string,
-      header: "Tier Level",
-    }),
-    columnHelper.accessor("clicksSum", {
-      cell: (info) => info.getValue() as number,
-      header: "Clicks",
-    }),
-    columnHelper.accessor("totalCPI", {
-      cell: (info) => info.getValue() as number,
-      header: "Installation",
-    }),
-    columnHelper.accessor("totalLeads", {
-      cell: (info) => info.getValue() as number,
-      header: "Leads",
-    }),
-    columnHelper.accessor("totalDemo", {
-      cell: (info) => info.getValue() as number,
-      header: "Demo",
-    }),
-    columnHelper.accessor("totalVolume", {
-      cell: (info) => info.getValue() as number,
-      header: "Volume",
-    }),
-    columnHelper.accessor("totalWithdrawal", {
-      cell: (info) => info.getValue() as number,
-      header: "Withdrawal Amount",
-    }),
-    columnHelper.accessor("totalChargeback", {
-      cell: (info) => info.getValue() as number,
-      header: "ChargeBack Amount",
-    }),
-    columnHelper.accessor("totalLots", {
-      cell: (info) => info.getValue() as number,
-      header: "Lots",
-    }),
-    columnHelper.accessor("totalPNL", {
-      cell: (info) => info.getValue() as number,
-      header: "PNL",
-    }),
-    columnHelper.accessor("totalVolume", {
-      cell: (info) => info.getValue() as number,
-      header: "Total Volume",
-    }),
-    columnHelper.accessor("totalCommission", {
-      cell: (info) => info.getValue() as number,
-      header: "Your Commission",
-    }),
+    createColumn("id", "Affiliate ID"),
+    createColumn("mail", "Affiliate Username"),
+    createColumn("merchant_name", "Tier Level"),
+    createColumn("Clicks", "Clicks"),
+    createColumn("Install", "Installation"),
+    createColumn("Leads", "Leads"),
+    createColumn("Demo", "Demo"),
+    createColumn("RealAccount", "Accounts"),
+    createColumn("Volume", "Volume"),
+    createColumn("Withdrawal", "Withdrawal Amount"),
+    createColumn("ChargeBack", "ChargeBack Amount"),
   ];
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportSubAffiliateReport.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      user_level: "admin",
+      exportType,
+      reportColumns: getColumns(columns),
+    });
 
   return (
-    <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        width="90%"
-        alignItems={"center"}
-        alignSelf="center"
-      >
-        <GridItem>
-          <DateRangeSelect />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Merchant"
-            choices={merchants}
-            varName="merchant_id"
-          />
-        </GridItem>{" "}
-        <GridItem>
-          <FormLabel>Trader ID</FormLabel>
-          <Input
-            value={traderID}
-            onChange={(event) => setTraderID(event.target.value)}
-          />
-        </GridItem>
-        <GridItem>
-          <QuerySelect
-            label="Creative Type"
-            choices={creativeType}
-            varName="creative_type"
-          />
-        </GridItem>
-      </Grid>
-      <h2>Sub Affiliates Report</h2>
-      <Grid
-        templateColumns="repeat(6, 1fr)"
-        gap={6}
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-      >
-        {data?.map((item: SubAffiliateReportType, idx) => {
-          console.log("item", item);
-          return (
-            <div key={idx}>
-              <GridItem>
-                <Text>Impressions</Text>
-                <Text>{item.viewsSum}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>Clicks</Text>
-                <Text>{item.clicksSum}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>Installation</Text>
-                <Text>{item.totalCPI}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>Leads</Text>
-                <Text>{item.totalLeads}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>Demo</Text>
-                <Text>{item.totalDemo}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>Real Account</Text>
-                <Text>{item.totalReal}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>FTD</Text>
-                <Text>{item.newFTD}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>Withdrawal</Text>
-                <Text>{item.totalWithdrawal}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>ChargeBack</Text>
-                <Text>{item.totalChargeback}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>Lots</Text>
-                <Text>{item.totalLots}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>PNL</Text>
-                <Text>{item.totalPNL}</Text>
-              </GridItem>
-              <GridItem>
-                <Text> Total Volume</Text>
-                <Text>{item.totalVolume}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>Your commission</Text>
-                <Text>{item.totalCommission}</Text>
-              </GridItem>
-            </div>
-          );
-        })}
-      </Grid>
-      <Grid
-        alignContent={"center"}
-        alignItems={"center"}
-        width="100%"
-        alignSelf="center"
-      >
-        <DataTable data={data} columns={columns} footerData={[]} />
-      </Grid>
-    </>
+    <ReportControl
+      reportName="Sub Affiliate Report"
+      report={data}
+      error={error}
+      columns={columns}
+      pagination={pagination}
+      isRefetching={isRefetching}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
+    >
+      <SearchSelect
+        label="Merchant"
+        choices={merchants}
+        varName="merchant_id"
+      />
+      <SearchText varName="unique_id" label="Unique ID" />
+      <SearchText varName="trader_id" label="Trader ID" />
+    </ReportControl>
   );
 };

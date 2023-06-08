@@ -44,7 +44,7 @@ const fileConsumer = <T = unknown>(acc: T[]) => {
   return writable;
 };
 
-export async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log(`muly:handler:document-upload v2`, {});
 
   if (req.method !== "POST") return res.status(404).end();

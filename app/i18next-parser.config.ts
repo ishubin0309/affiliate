@@ -9,9 +9,10 @@ export default {
   locales: ["en"],
   sort: true,
   verbose: true,
+  keepRemoved: true,
 
   defaultValue: "*TRANSLATE*",
-  defaultNamespace: "common",
+  defaultNamespace: "affiliate",
 
   lexers: {
     ts: [

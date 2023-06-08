@@ -3,10 +3,9 @@ import { api } from "../../../utils/api";
 import CountryChart from "../../common/chart/CountryChart";
 import { SelectInput } from "@/components/common/select-input";
 import type { DashboardCountryReportType } from "../../../server/db-types";
-import { getCountryReportDashboard } from "@/server/api/routers/affiliates/reports/country-report-dashboard";
 import type { DashboardCountryReportInputType } from "../../../server/db-types";
 
-export const reportDropDown = ["Clicks", "Accounts", "FTD"];
+export const reportDropDown = ["Accounts", "FTD", "Clicks"];
 
 export const daysBackChoices = [
   { id: "90", title: "Last 90 Days" },
@@ -17,7 +16,7 @@ export const daysBackChoices = [
 type ValueType = DashboardCountryReportInputType["value"];
 
 export const DashboardCountryReport = () => {
-  const [selectedReport, setSelectedReport] = useState<ValueType>("Clicks");
+  const [selectedReport, setSelectedReport] = useState<ValueType>("Accounts");
   const [lastDays, setLastDays] = useState<string>("90");
   const { data: reportData } =
     api.affiliates.getCountryReportDashboard.useQuery(
@@ -37,7 +36,7 @@ export const DashboardCountryReport = () => {
       <div className="mb-3 text-xl font-bold text-[#2262C6]">
         Country Report
       </div>
-      <div className="mb-7 flex justify-between">
+      <div className="mb-7 flex items-center justify-between">
         <div className="text-base font-light">Session by country</div>
         <div className="flex items-center justify-center text-xs font-light">
           <SelectInput
@@ -52,7 +51,7 @@ export const DashboardCountryReport = () => {
         <img width="243" src="/img/worldMap.png" alt="worldmap" />
       </div>
 
-      <div className="mb-3 flex justify-between">
+      <div className="mb-3 flex items-center justify-between">
         <div className="text-base font-medium text-[#2262C6]">Report</div>
         <div className="flex w-48 items-center justify-center text-xs">
           <SelectInput

@@ -1,24 +1,23 @@
-import {
-  affiliate_id,
-  merchant_id,
-} from "@/server/api/routers/affiliates/const";
+import { merchant_id } from "@/server/api/routers/affiliates/const";
 import { QuickReportSummarySchema } from "@/server/api/routers/affiliates/reports";
 import {
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   pageInfo,
   PageParamsSchema,
+  reportColumns,
+  SortingParamSchema,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
+import { checkIsUser } from "@/server/api/utils";
 import { convertPrismaResultsToNumbers } from "@/utils/prisma-convert";
-import { Prisma, PrismaClient } from "@prisma/client";
-import type { Simplify } from "@trpc/server";
+import type { PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { formatISO } from "date-fns";
-import path from "path";
-import paginator from "prisma-paginate";
 import { z } from "zod";
-import { uploadFile } from "../config";
+// import { uploadFile } from "../config";
 
 const QuickReportSummaryResultSchema = z.object({
   data: z.array(QuickReportSummarySchema),
@@ -33,20 +32,30 @@ const Input = z.object({
   merchant_id: z.number().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const quickReportSummary = async (
   prisma: PrismaClient,
-  { from, to, display = "", pageParams }: z.infer<typeof InputWithPageInfo>
+  affiliate_id: number,
+  {
+    from,
+    to,
+    display = "",
+    pageParams,
+    sortingParam,
+  }: z.infer<typeof InputWithPageInfo>
 ) => {
-  console.log(from, to);
+  console.log("from", from, "to", to);
 
   // TODO: no reason to use paginator, can use the prisma query directly as paginator does not support $queryRaw
-  const prismaClient = new PrismaClient();
-  const paginate = paginator(prismaClient);
   console.log("display type", display, merchant_id);
 
   const offset = getPageOffset(pageParams);
+  const orderBy = getSortingInfo(sortingParam);
+
   let dasboardSQLperiod = Prisma.sql`GROUP BY d.MerchantId ORDER BY d.MerchantId ASC`;
   let dasboardSQLwhere = Prisma.empty;
 
@@ -72,9 +81,10 @@ const quickReportSummary = async (
 
   // dasboardSQLwhere = Prisma.sql` LIMIT ${offset}, ${items_per_page}`;
 
-  const data = await paginate.$queryRaw<
-    z.infer<typeof QuickReportSummarySchema>[]
-  >(Prisma.sql`select
+  const [data, totals] = await Promise.all([
+    prisma.$queryRaw<
+      z.infer<typeof QuickReportSummarySchema>[]
+    >(Prisma.sql`select
         d.Date,
         d.MerchantId AS merchant_id,
         YEAR(d.Date) AS Year,
@@ -111,76 +121,58 @@ const quickReportSummary = async (
         })}
         ${dasboardSQLwhere}
         ${dasboardSQLperiod}
-        LIMIT ${pageParams.pageSize} OFFSET ${offset}`);
+        LIMIT ${pageParams.pageSize} OFFSET ${offset}`),
+    prisma.dashboard.aggregate({
+      _count: {
+        merchant_id: true,
+      },
+      where: {
+        merchant_id: merchant_id,
+        affiliate_id: affiliate_id,
+        Date: {
+          gte: formatISO(from),
+          lt: formatISO(to),
+        },
+      },
+    }),
+  ]);
 
-  // console.log("quick report data ----->", data);
+  // console.log("quick report data ----->", totals);
 
   return {
     data: data?.map(convertPrismaResultsToNumbers) || data,
-    // TODO
     totals: {},
     pageInfo: {
       ...pageParams,
       // TODO
-      totalItems: 0,
+      totalItems: totals._count.merchant_id,
     },
   };
 };
 
-export const getQuickReportSummary = publicProcedure
+export const getQuickReportSummary = protectedProcedure
   .input(InputWithPageInfo)
   .output(QuickReportSummaryResultSchema)
-  .query(({ ctx, input }) => quickReportSummary(ctx.prisma, input));
+  .query(({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
+    return quickReportSummary(ctx.prisma, affiliate_id, input);
+  });
 
-export const exportQuickSummaryReport = publicProcedure
-  .input(Input.extend({ exportType }))
+export const exportQuickSummaryReport = protectedProcedure
+  .input(Input.extend({ exportType, reportColumns }))
   .mutation(async function ({ ctx, input }) {
-    const items_per_page = 5000;
-    const { exportType, ...params } = input;
+    const { exportType, reportColumns, ...params } = input;
+    const affiliate_id = checkIsUser(ctx);
 
-    const columns = [
-      "Impressions",
-      "Clicks",
-      "Install",
-      "Leads",
-      "Demo",
-      "Real Account",
-      "FTD",
-      "Withdrawal",
-      "ChargeBack",
-      "Active Trader",
-      "Commission",
-    ];
-    const file_date = new Date().toISOString();
-    const generic_filename = `quick-summary${file_date}`;
-
-    console.log("export type ---->", exportType);
-    const quick_summary = "quick-summary";
-
-    await exportReportLoop(
+    const public_url: string | undefined = await exportReportLoop(
       exportType || "csv",
-      columns,
-      generic_filename,
-      quick_summary,
-      async (pageNumber, pageSize) =>
-        quickReportSummary(ctx.prisma, {
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        quickReportSummary(ctx.prisma, affiliate_id, {
           ...params,
           pageParams: { pageNumber, pageSize },
         })
     );
 
-    const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
-
-    const public_url = uploadFile(
-      serviceKey,
-      "api-front-dashbord",
-      bucketName,
-      generic_filename,
-      exportType ? exportType : "json"
-    );
     return public_url;
   });

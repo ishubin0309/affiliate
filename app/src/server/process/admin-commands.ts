@@ -2,7 +2,7 @@ import { scratchPad } from "./scratch-pad";
 import { getFeaturesFlags } from "./get-features-flags";
 import { addSystemEvent } from "./system-events";
 import { castError } from "../../utils/errors";
-import { affiliate_id, merchant_id } from "../api/routers/affiliates/const";
+import { merchant_id } from "../api/routers/affiliates/const";
 import type { PrismaClient } from "@prisma/client";
 
 export interface AdminCommandAnswer {
@@ -12,6 +12,7 @@ export interface AdminCommandAnswer {
 
 export const executeAdminCommand = async (
   prisma: PrismaClient,
+  affiliate_id: number,
   cmd: string,
   data: any
 ): Promise<AdminCommandAnswer> => {

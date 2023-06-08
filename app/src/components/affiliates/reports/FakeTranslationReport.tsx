@@ -1,26 +1,17 @@
-import { fakeTraderReportData } from "@/components/affiliates/reports/fake-trader-report-data";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
-import type {
-  TraderReportType,
-  TranslateReportFakeType,
-} from "../../../server/db-types";
 import { ReportControl } from "@/components/affiliates/reports/report-control";
-import { SearchSelect } from "@/components/common/search/search-select";
-import { SearchText } from "@/components/common/search/search-text";
-import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { creativeType } from "@/components/affiliates/reports/TraderReports";
-import { api } from "@/utils/api";
-import { ClicksReportType } from "../../../server/db-types";
-import {
-  getDateParam,
-  getNumberParam,
-  useSearchContext,
-} from "@/components/common/search/search-context";
-import { parse, sub } from "date-fns";
 import { DateColumn } from "@/components/common/data-table/available-column";
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
+import { useSearchContext } from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
+import { SearchText } from "@/components/common/search/search-text";
+import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { api } from "@/utils/api";
+import { createColumnHelper } from "@tanstack/react-table";
+import { useTranslation } from "next-i18next";
+import "react-datepicker/dist/react-datepicker.css";
+import type { TranslateReportFakeType } from "../../../server/db-types";
+import { getColumns } from "@/components/affiliates/reports/utils";
 
 const columnHelper = createColumnHelper<TranslateReportFakeType>();
 const createColumn = (id: keyof TranslateReportFakeType, header: string) =>
@@ -50,32 +41,56 @@ const columns = [
 ];
 
 export const FakeTranslationReport = () => {
+  const { t } = useTranslation("affiliate");
   const {
-    values: { from, to, search },
+    values: { search, dates },
   } = useSearchContext();
   const pagination = usePagination();
+  const { name, ...dateRange } = getDateRange(dates);
+  console.log("*************************PAGE INFO: ", pagination.pageParams);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
-  const { data, isLoading } = api.affiliates.getTranslateReportFake.useQuery(
-    {
-      from: getDateParam(from),
-      to: getDateParam(to),
+  const { data, isRefetching, error } =
+    api.affiliates.getTranslateReportFake.useQuery(
+      {
+        ...dateRange,
+        search,
+        pageParams: pagination.pageParams,
+        sortingParam: _sorting,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
+
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportTranslateReportFake.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
       search,
-      pageParams: pagination.pageParams,
-    },
-    { keepPreviousData: true, refetchOnWindowFocus: false }
-  );
+      exportType,
+      reportColumns: getColumns(columns),
+    });
+
+  console.log(`muly:FakeTranslationReport`, {
+    data,
+    pagination,
+    _sorting,
+    columns,
+  });
 
   return (
     <ReportControl
       reportName="Fake Translation Report"
       // totalItems={data.length || 0}
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
-      isRefetching={isLoading}
-      handleExport={(exportType: ExportType) => Promise.resolve("ok")}
+      isRefetching={isRefetching}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
     >
-      <SearchText label="Search" varName="search" />
+      <SearchText label={t("Search")} varName="search" />
     </ReportControl>
   );
 };

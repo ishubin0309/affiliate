@@ -1,49 +1,46 @@
-import { ExportButton } from "@/components/affiliates/reports/export-button";
-import { DateRangeSelect, useDateRange } from "@/components/ui/date-range";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
+import { useSearchContext } from "@/components/common/search/search-context";
+import { getDateRange } from "@/components/common/search/search-date-range";
+import { SearchSelect } from "@/components/common/search/search-select";
+import { SearchText } from "@/components/common/search/search-text";
 import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
-import { Calendar, Download, Settings } from "lucide-react";
 import { useRouter } from "next/router";
 import type { ChangeEvent } from "react";
 import { useState } from "react";
-import { QuerySelect } from "../../../components/common/QuerySelect";
-import { ReportDataTable } from "../../../components/common/data-table/ReportDataTable";
 import type { CommissionReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
-import { Loading } from "../../common/Loading";
-import { Button } from "../../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../../ui/dialog";
+import { ReportControl } from "./report-control";
+import { getColumns } from "./utils";
 
 export const CommissionReport = () => {
   const router = useRouter();
-  const { merchant_id, commission } = router.query;
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const { from, to } = useDateRange();
+  const pagination = usePagination();
+  const {
+    values: { commission, trader_id, merchant_id, dates },
+  } = useSearchContext();
+  const { name, ...dateRange } = getDateRange(dates);
   const [traderID, setTraderID] = useState<string>("");
   const [reportFields, setReportFields] = useState<
     { id: number; title: string; value: string; isChecked: boolean }[]
   >([]);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
   const { currentPage, itemsPerPage } = router.query;
 
-  const { data, isLoading } = api.affiliates.getCommissionReport.useQuery({
-    from: new Date("2016-01-03"),
-    to: new Date("2023-01-03"),
-    commission: commission ? String(commission) : "",
-    trader_id: traderID,
-    pageParams: {
-      pageSize: itemsPerPage ? Number(itemsPerPage) : 10,
-      pageNumber: currentPage ? Number(currentPage) : 1,
-    },
-  });
+  const { data, isRefetching, error } =
+    api.affiliates.getCommissionReport.useQuery(
+      {
+        ...dateRange,
+        commission: commission ? String(commission) : "",
+        trader_id: traderID,
+        pageParams: pagination.pageParams,
+        sortingParam: _sorting,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
   const { mutateAsync: reportExport } =
     api.affiliates.exportCommissionReport.useMutation();
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery();
@@ -52,15 +49,8 @@ export const CommissionReport = () => {
   console.log("Commission render", {
     data,
     merchants,
-    isLoading,
-    from,
-    to,
     merchant_id,
   });
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   const divCol = (
     val: number | null | undefined,
@@ -202,140 +192,35 @@ export const CommissionReport = () => {
   // eslint-disable-next-line @typescript-eslint/require-await
   const handleExport = async (exportType: ExportType) =>
     reportExport({
-      from: new Date("2022-01-03"),
-      to: new Date("2023-01-03"),
+      ...dateRange,
+      commission: commission ? String(commission) : "",
+      trader_id: traderID,
+      reportColumns: getColumns(columns),
       exportType,
     });
 
-  if (!data) {
-    return <Loading />;
-  }
-
   return (
-    <>
-      <div className="w-full pt-3.5">
-        <div className="block text-base font-medium md:justify-between lg:flex">
-          <div className="mb-2.5 flex items-center justify-between md:mb-5 lg:mb-5 ">
-            <div>
-              <span className="text-[#2262C6]">Affliate Program</span>
-              &nbsp;/&nbsp; Commission Report
-            </div>
-            <Button className="lg:hidden">
-              <Calendar className="h-6 w-6" />
-            </Button>
-          </div>
-        </div>
-        <Dialog>
-          <div>
-            <div className="flex items-center justify-between">
-              <div className="flex">
-                <DialogTrigger>
-                  <Button variant="ghost">
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <span className="font-sm ml-3 hidden items-center justify-between font-medium lg:flex">
-                  Report Display
-                </span>
-              </div>
-              <div className="hidden lg:block">
-                <DateRangeSelect />
-              </div>
-              <div className="flex space-x-2 lg:hidden">
-                <Button variant="primary">Show Reports</Button>
-                <Button variant="primary-outline">Reset Search</Button>
-                <Button>
-                  <Download className="h-6 w-6" />
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="mt-2 items-center justify-between lg:flex">
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-              <QuerySelect
-                label="Merchant"
-                choices={merchants}
-                varName="merchant_id"
-              />
-              <div className="mt-2">
-                <Label>Trader ID</Label>
-                <Input
-                  value={traderID}
-                  onChange={(event) => setTraderID(event.target.value)}
-                />
-              </div>
-              <QuerySelect
-                label="Commission"
-                choices={commissionOption}
-                varName="commission"
-              />
-            </div>
-            <div className="flex space-x-2">
-              <button className="hidden rounded-md bg-[#2262C6] px-8 py-2 text-white lg:block">
-                Show Reports
-              </button>
-              <button className="hidden rounded-md border border-[#2262C6] px-8 py-2 text-base font-semibold text-[#2262C6] lg:block">
-                Reset Search
-              </button>
-              <ExportButton onExport={handleExport} />
-            </div>
-          </div>
+    <ReportControl
+      reportName="Commission Report"
+      report={data}
+      error={error}
+      columns={columns}
+      pagination={pagination}
+      isRefetching={isRefetching}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
+    >
+      <SearchSelect
+        label="Merchant"
+        choices={merchants}
+        varName="merchant_id"
+      />
+      <SearchText varName="trader_id" label="Trader ID" />
 
-          <DialogContent>
-            <DialogHeader className="text-left text-sm font-medium text-primary">
-              Manage Field On Report - Quick Summary
-            </DialogHeader>
-            <DialogTitle className="text-disabled text-sm font-normal md:mb-6 md:pt-2">
-              Please activate the fields you want to display on the report:
-            </DialogTitle>
-            <div className="grid grid-cols-1 md:mt-10 md:grid-cols-2">
-              {reportFields.map((field) => {
-                return (
-                  <div key={field.id}>
-                    <div className="mb-6 flex items-center md:mb-10">
-                      <input
-                        type="checkbox"
-                        id={`report-field-${field.id}`}
-                        checked={field.isChecked}
-                        value={field.id}
-                        onChange={(e) => void handleReportField(e)}
-                        className="form-checkbox text-blueGray-700 h-4 w-4 rounded border-0 transition-all duration-150 ease-linear"
-                      />
-                      <div className="ml-5 items-center text-lg font-medium text-black md:ml-10">
-                        {field.title}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex justify-between pb-5 font-medium md:pb-8 md:pt-12">
-              <div className="flex">
-                <button
-                  className="mr-3 rounded-md bg-[#2262C6] p-3 text-white md:px-14"
-                  onClick={handleSelectAll}
-                >
-                  Select All
-                </button>
-                <button
-                  className="rounded-md border border-[#1B48BB] bg-[#EFEEFF] p-3 text-[#1B48BB] md:px-12"
-                  onClick={handleUnSelectAll}
-                >
-                  Unselect All
-                </button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        <div className="mb-5 mt-4 w-full rounded bg-white px-2 py-4 shadow-sm">
-          <ReportDataTable
-            report={data}
-            columns={columns}
-            footerData={totalData}
-          />
-        </div>
-      </div>
-    </>
+      <SearchSelect
+        label="Search Type"
+        choices={commissionOption}
+        varName="commission"
+      />
+    </ReportControl>
   );
 };

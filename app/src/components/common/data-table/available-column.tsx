@@ -18,9 +18,5 @@ export const AvailableColumn = ({ value }: Props) => {
 };
 
 export const DateColumn = (date: Date | null | undefined) => {
-  return date ? (
-    <span>{format(date, "yyyy-MM-dd kk:mm:ss")}</span>
-  ) : (
-    <span></span>
-  );
+  return date ? format(date, "yyyy-MM-dd kk:mm:ss") : "";
 };

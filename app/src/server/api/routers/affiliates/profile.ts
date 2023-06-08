@@ -1,11 +1,12 @@
 import { z } from "zod";
 
-import { publicProcedure } from "../../trpc";
-import { affiliate_id } from "./const";
+import { protectedProcedure } from "../../trpc";
 import { affiliates_profilesModel } from "../../../../../prisma/zod";
 import { upsertSchema } from "../../../../../prisma/zod-add-schema";
+import { checkIsUser } from "@/server/api/utils";
 
-export const getProfiles = publicProcedure.query(async ({ ctx }) => {
+export const getProfiles = protectedProcedure.query(async ({ ctx }) => {
+  const affiliate_id = checkIsUser(ctx);
   const data = await ctx.prisma.affiliates_profiles.findMany({
     where: {
       affiliate_id,
@@ -16,7 +17,7 @@ export const getProfiles = publicProcedure.query(async ({ ctx }) => {
   return data;
 });
 
-export const upsertProfile = publicProcedure
+export const upsertProfile = protectedProcedure
   .input(
     upsertSchema(
       affiliates_profilesModel
@@ -31,6 +32,7 @@ export const upsertProfile = publicProcedure
     )
   )
   .mutation(async ({ ctx, input: { id, ...data } }) => {
+    const affiliate_id = checkIsUser(ctx);
     return await (id
       ? ctx.prisma.affiliates_profiles.update({
           where: { id },
@@ -41,7 +43,7 @@ export const upsertProfile = publicProcedure
         }));
   });
 
-export const deleteProfile = publicProcedure
+export const deleteProfile = protectedProcedure
   .input(
     affiliates_profilesModel.pick({
       id: true,

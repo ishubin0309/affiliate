@@ -1,17 +1,76 @@
 import { z } from "zod";
 
-import type { merchants_creative_type, Prisma } from "@prisma/client";
+import type {
+  merchants_creative_type,
+  Prisma,
+  PrismaClient,
+} from "@prisma/client";
 import { countBy, map, sortBy, uniq, uniqBy } from "rambda";
-import {
-  addFreeTextSearchJSFilter,
-  addFreeTextSearchWhere,
-} from "../../../../../prisma/prisma-utils";
 import { SelectSchema } from "../../../db-schema-utils";
-import { publicProcedure } from "../../trpc";
-import { affiliate_id, merchant_id } from "./const";
-import { serverStoragePath } from "../../../../components/utils";
+import { protectedProcedure } from "../../trpc";
+import { merchant_id } from "./const";
+import {
+  getPageOffset,
+  pageInfo,
+  PageParamsSchema,
+} from "./reports/reports-utils";
+import { getConfig } from "@/server/get-config";
+import { checkIsUser } from "@/server/api/utils";
+import { serverStoragePath } from "@/server/utils";
+import { imageProxy } from "@/components/utils";
+const Input = z.object({
+  category: z.number().optional(),
+  promotion: z.number().optional(),
+  language: z.number().optional(),
+  type: z.string().optional(), //merchants_creativeModel.shape.type.nullish(),
+  size: z.string().optional(),
+  search: z.string().optional(),
+});
+const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
 
-export const getMerchantCreativeMeta = publicProcedure
+const MerchantCreativeModel = z.object({
+  id: z.number(),
+  rdate: z.date().optional(),
+  last_update: z.date().optional(),
+  valid: z.number().optional(),
+  admin_id: z.number().optional(),
+  merchant_id: z.number().optional(),
+  product_id: z.number().optional(),
+  language_id: z.number().optional(),
+  promotion_id: z.number().optional(),
+  title: z.string().optional(),
+  type: z.string().optional(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+  url: z.string(),
+  directLink: z.string(),
+  iframe_url: z.string().optional(),
+  alt: z.string(),
+  scriptCode: z.string().optional(),
+  affiliate_id: z.number().optional(),
+  category_id: z.number().optional(),
+  featured: z.number().optional(),
+  affiliateReady: z.number().optional(),
+  language: z
+    .object({
+      title: z.string(),
+    })
+    .optional(),
+  category: z
+    .object({
+      categoryname: z.string(),
+    })
+    .nullable(),
+  file: z.string().optional().nullable(),
+});
+
+const MerchantCreativeResultSchema = z.object({
+  data: z.array(MerchantCreativeModel),
+  pageInfo,
+  totals: z.any(),
+});
+
+export const getMerchantCreativeMeta = protectedProcedure
   .output(
     z.object({
       merchants_creative_categories: SelectSchema(z.number()),
@@ -24,6 +83,7 @@ export const getMerchantCreativeMeta = publicProcedure
   .query(async ({ ctx }) => {
     // SELECT * FROM affiliates WHERE id='500' AND valid='1'
 
+    const affiliate_id = checkIsUser(ctx);
     const data = await ctx.prisma.merchants.findUnique({
       where: { id: merchant_id },
       select: {
@@ -106,68 +166,84 @@ export const getMerchantCreativeMeta = publicProcedure
     };
   });
 
-export const getMerchantCreative = publicProcedure
-  .input(
-    z.object({
-      category: z.number().optional(),
-      promotion: z.number().optional(),
-      language: z.number().optional(),
-      type: z.string().optional(), //merchants_creativeModel.shape.type.nullish(),
-      size: z.string().optional(),
-      search: z.string().optional(),
-    })
-  )
-  .query(
-    async ({
-      ctx,
-      input: { category, promotion, language, type, size, search },
-    }) => {
-      const [width, height] = size
-        ? size.split("x").map(Number)
-        : [undefined, undefined];
+const merchantCreativeQuery = async (
+  prisma: PrismaClient,
+  affiliate_id: number,
+  {
+    category,
+    promotion,
+    language,
+    type,
+    size,
+    search,
+    pageParams,
+  }: z.infer<typeof InputWithPageInfo>
+) => {
+  const [width, height] = size
+    ? size.split("x").map(Number)
+    : [undefined, undefined];
+  const offset = getPageOffset(pageParams);
 
-      const where: Prisma.merchants_creativeWhereInput = {
-        merchant_id,
-        product_id: 0,
-        valid: 1,
-        category_id: category,
-        promotion_id: promotion,
-        language_id: language,
-        type: type ? (type as merchants_creative_type) : undefined,
-        width,
-        height,
-        ...addFreeTextSearchWhere("title", search),
-      };
+  const where: Prisma.merchants_creativeWhereInput = {
+    merchant_id,
+    product_id: 0,
+    valid: 1,
+    category_id: category,
+    promotion_id: promotion,
+    language_id: language,
+    type: type ? (type as merchants_creative_type) : undefined,
+    width,
+    height,
+    title: {
+      contains: search,
+    },
+  };
 
-      console.log(`muly:merchants_creative:findMany`, {
+  const [data, totals, config] = await Promise.all([
+    map(
+      ({ file, ...data }) => ({
+        ...data,
+        file: imageProxy(serverStoragePath(file) || ""),
+      }),
+      await prisma.merchants_creative.findMany({
+        take: pageParams.pageSize,
+        skip: offset,
         where,
-        select: {
+        include: {
           language: {
             select: { title: true },
           },
-          merchants_creative_categories: { select: { categoryname: true } },
+          category: { select: { categoryname: true } },
         },
-      });
+      })
+    ),
 
-      const answer = map(
-        ({ file, ...data }) => ({ ...data, file: serverStoragePath(file) }),
-        addFreeTextSearchJSFilter(
-          await ctx.prisma.merchants_creative.findMany({
-            take: 10,
-            where,
-            include: {
-              language: {
-                select: { title: true },
-              },
-              category: { select: { categoryname: true } },
-            },
-          }),
-          "title",
-          search
-        )
-      );
+    prisma.merchants_creative.aggregate({
+      _count: {
+        id: true,
+      },
+      where,
+    }),
 
-      return answer;
-    }
-  );
-//
+    getConfig(prisma),
+  ]);
+
+  const { legacy_host } = config;
+
+  return {
+    data: data.map((item) => ({
+      directLink: `${legacy_host}/click.php?ctag=a${affiliate_id}-b${item.id}-p`,
+      ...item,
+    })),
+    pageInfo: { ...pageParams, totalItems: totals._count.id },
+    totals: undefined,
+  };
+};
+
+export const getMerchantCreative = protectedProcedure
+  .input(InputWithPageInfo)
+  .output(MerchantCreativeResultSchema)
+  .query(({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
+    return merchantCreativeQuery(ctx.prisma, affiliate_id, input);
+  });

@@ -1,16 +1,15 @@
-import { affiliate_id } from "@/server/api/routers/affiliates/const";
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
+import { checkIsUser } from "@/server/api/utils";
 import type { PrismaClient } from "@prisma/client";
-import type { Simplify } from "@trpc/server";
-import path from "path";
-import paginator from "prisma-paginate";
 import { z } from "zod";
-import { uploadFile } from "../config";
 import {
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   PageParamsSchema,
+  reportColumns,
+  SortingParamSchema,
 } from "./reports-utils";
 
 const Input = z.object({
@@ -20,19 +19,25 @@ const Input = z.object({
   trader_id: z.string().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const commissionSummary = async (
   prisma: PrismaClient,
+  affiliate_id: number,
   {
     from,
     to,
     trader_id,
     commission,
     pageParams,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   const offset = getPageOffset(pageParams);
+  const orderBy = getSortingInfo(sortingParam);
 
   let deal_filter = {};
   switch (commission) {
@@ -53,16 +58,14 @@ const commissionSummary = async (
   const data = await prisma.commissions.findMany({
     take: pageParams.pageSize,
     skip: offset,
-    orderBy: {
-      Date: "asc",
-    },
+    orderBy,
     where: {
       ...deal_filter,
       Date: {
         gte: from,
         lt: to,
       },
-      affiliate_id: affiliate_id,
+      affiliate_id,
       traderID: trader_id ? trader_id : "",
     },
     include: {
@@ -82,66 +85,38 @@ const commissionSummary = async (
   console.log("commission report ----->", data);
 
   return {
-    data,
-    // TODO
+    data: data,
     totals: {},
     pageInfo: {
       ...pageParams,
-      // TODO
-      totalItems: 0,
+      totalItems: data.length,
     },
   };
 };
 
-export const getCommissionReport = publicProcedure
+export const getCommissionReport = protectedProcedure
   .input(InputWithPageInfo)
-  .query(({ ctx, input }) => commissionSummary(ctx.prisma, input));
+  .query(({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
+    return commissionSummary(ctx.prisma, affiliate_id, input);
+  });
 
-export const exportCommissionReport = publicProcedure
-  .input(Input.extend({ exportType }))
+export const exportCommissionReport = protectedProcedure
+  .input(Input.extend({ exportType, reportColumns }))
   .mutation(async function ({ ctx, input }) {
-    const { exportType, ...params } = input;
+    const { exportType, reportColumns, ...params } = input;
 
-    const columns = [
-      "Merchant Name",
-      "Merchant ID",
-      "Trader ID",
-      "Transaction ID",
-      "Type",
-      "Amount",
-      "Location",
-      "Commission",
-    ];
+    const affiliate_id = checkIsUser(ctx);
 
-    const file_date = new Date().toISOString();
-    const generic_filename = `commission-report${file_date}`;
-
-    console.log("export type ---->", exportType);
-    const commission_report = "commission-report";
-    await exportReportLoop(
+    const public_url: string | undefined = await exportReportLoop(
       exportType || "csv",
-      columns,
-      generic_filename,
-      commission_report,
-      async (pageNumber, pageSize) =>
-        commissionSummary(ctx.prisma, {
+      reportColumns,
+      async (pageNumber: number, pageSize: number) =>
+        commissionSummary(ctx.prisma, affiliate_id, {
           ...params,
           pageParams: { pageNumber, pageSize },
         })
     );
 
-    const bucketName = "reports-download-tmp";
-    const serviceKey = path.join(
-      __dirname,
-      "../../../../../api-front-dashbord-a4ee8aec074c.json"
-    );
-
-    const public_url = uploadFile(
-      serviceKey,
-      "api-front-dashbord",
-      bucketName,
-      generic_filename,
-      exportType ? exportType : "json"
-    );
     return public_url;
   });

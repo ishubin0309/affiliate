@@ -3,7 +3,7 @@ import Link from "next/link";
 import { z } from "zod";
 import { imUserTypes } from "./common";
 
-export const schema = z
+export const registerSchema = z
   .object({
     username: z.string().describe("Username"),
     password: z.string().describe("Password").meta({ type: "password" }),

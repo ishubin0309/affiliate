@@ -3,7 +3,7 @@ import {
   type NavigationLinkData,
 } from "@/components/affiliates/layout/navigation-data";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Menu,
   menuClasses,
@@ -12,6 +12,8 @@ import {
 } from "react-pro-sidebar";
 import DropdownLink from "./DropdownLink";
 import SingleLink from "./SingleLink";
+import { useTranslation } from "next-i18next";
+import { toKey } from "@/components/affiliates/reports/utils";
 
 interface Props {
   isDesktop: boolean;
@@ -34,6 +36,7 @@ const renderLink = (
   if (item.type === "single") {
     return (
       <SingleLink
+        key={index}
         isDesktop={isDesktop}
         setactiveName={setActiveName}
         setdropdown={setDropdown}
@@ -47,6 +50,7 @@ const renderLink = (
   } else if (item.type === "dropdown") {
     return (
       <DropdownLink
+        key={index}
         isDesktop={isDesktop}
         setactiveName={setActiveName}
         setCollapseShow={setCollapseShow}
@@ -70,16 +74,42 @@ const Sidebar: React.FC<Props> = ({
   tempCollapseShow,
   setTempCollapseShow,
 }) => {
+  const { t } = useTranslation("affiliate");
+  const navigation = useMemo(
+    () =>
+      navigationData.map((item) => {
+        if (item.type === "dropdown") {
+          return {
+            ...item,
+            linkName: t(`menu.${toKey(item.linkName)}.name`, item.linkName),
+            links: item.links.map(({ link, name }) => ({
+              link,
+              name: t(
+                `menu.${toKey(item.linkName)}.items.${toKey(name)}`,
+                name
+              ),
+            })),
+          };
+        } else {
+          return {
+            ...item,
+            linkName: t(`menu.${toKey(item.linkName)}`, item.linkName),
+          };
+        }
+      }),
+    [t]
+  );
+
   const [activeName, setActiveName] = React.useState("dashboard");
   const [dropdown, setDropdown] = React.useState("");
 
   const sidebarClassName = cn(
     tempCollapseShow ? "md:rounded-none" : "",
-    "sidebar fixed top-16 left-0 z-20 flex h-full flex-col bg-white transition-all duration-300 dark:bg-gray-900 scrollbar-thin"
+    "sidebar fixed top-16 left-0 z-20 flex flex-col bg-white transition-all duration-300 dark:bg-gray-900 scrollbar-thin"
   );
 
   return (
-    <div className={sidebarClassName}>
+    <div className={sidebarClassName} style={{ height: "calc(100% - 4rem)" }}>
       <div className="flex grow flex-col justify-between overflow-y-auto overflow-x-hidden">
         <div className="scrollbar-thin relative min-h-full space-y-1 overflow-y-auto">
           <SideMenu
@@ -96,7 +126,7 @@ const Sidebar: React.FC<Props> = ({
             width="280px"
           >
             <Menu closeOnClick={true}>
-              {navigationData.map((item, index) =>
+              {navigation.map((item, index) =>
                 renderLink(
                   item,
                   index,

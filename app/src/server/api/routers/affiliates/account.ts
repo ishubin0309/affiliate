@@ -1,23 +1,21 @@
 // affiliates
 
-import { publicProcedure } from "../../trpc";
-import { affiliate_id } from "./const";
-import { affiliatesModel } from "../../../../../prisma/zod";
-import { TRPCError } from "@trpc/server";
-import { schema as schemaRegister } from "../../../../shared-types/forms/register";
-import { schema as schemaLostPassword } from "../../../../shared-types/forms/lost-password";
-import md5 from "md5";
-import type { queryRawId } from "../../../db-utils";
-import { getConfig } from "../../../config";
-import type { PrismaClient } from "@prisma/client";
-import { Awaitable, User } from "next-auth";
-import type { AuthUser } from "../../../auth";
 import type { affiliates } from ".prisma/client";
-import { sentEmailTemplate } from "../../../email";
-import { Prisma } from "@prisma/client";
 import { env } from "@/env.mjs";
+import { TRPCError } from "@trpc/server";
+import md5 from "md5";
+import { affiliatesModel } from "../../../../../prisma/zod";
+import { lostPasswordSchema as schemaLostPassword } from "../../../../shared-types/forms/lost-password";
+import { registerSchema as schemaRegister } from "../../../../shared-types/forms/register";
+import type { queryRawId } from "../../../db-utils";
+import { sentEmailTemplate } from "../../../email";
+import { protectedProcedure } from "../../trpc";
+import { z } from "zod";
+import { checkIsUser } from "@/server/api/utils";
 
-export const getAccount = publicProcedure.query(async ({ ctx }) => {
+export const getAccount = protectedProcedure.query(async ({ ctx }) => {
+  const affiliate_id = checkIsUser(ctx);
+
   const data = await ctx.prisma.affiliates.findUnique({
     where: { id: affiliate_id },
   });
@@ -32,9 +30,53 @@ export const getAccount = publicProcedure.query(async ({ ctx }) => {
   return data;
 });
 
-export const updateAccount = publicProcedure
+export const getAdminInfo = protectedProcedure
+  .output(
+    z.object({
+      first_name: z.string().nullish(),
+      last_name: z.string().nullish(),
+      email: z.string().nullish(),
+      phone: z.string().nullish(),
+      IMUser: z.string().nullish(),
+      group_title: z.string().nullish(),
+      additionalLinkUrl: z.string().nullish(),
+      level: z.string().nullish(),
+      group_id: z.number().nullish(),
+    })
+  )
+  .query(async ({ ctx }) => {
+    const affiliate_id = checkIsUser(ctx);
+    const account_data = await ctx.prisma.affiliates.findUniqueOrThrow({
+      where: { id: affiliate_id },
+    });
+
+    const group_id = account_data.group_id;
+    const [admins, groups] = await Promise.all([
+      ctx.prisma.admins.findFirst({
+        where: {
+          valid: 1,
+          group_id,
+        },
+      }),
+      ctx.prisma.groups.findFirst({
+        where: {
+          id: group_id,
+        },
+      }),
+    ]);
+
+    return {
+      ...admins,
+      additionalLinkUrl: "/affiliates/support",
+      group_title: groups?.title,
+      group_id,
+    };
+  });
+
+export const updateAccount = protectedProcedure
   .input(affiliatesModel.partial())
   .mutation(async ({ ctx, input }) => {
+    const affiliate_id = checkIsUser(ctx);
     const data = await ctx.prisma.affiliates.update({
       where: { id: affiliate_id },
       data: input,
@@ -43,7 +85,7 @@ export const updateAccount = publicProcedure
     return data;
   });
 
-export const registerAccount = publicProcedure
+export const registerAccount = protectedProcedure
   .input(schemaRegister)
   .mutation(async ({ ctx, input }) => {
     const { username, mail, password, approvedTerms, ...data } = input;
@@ -134,7 +176,7 @@ export const registerAccount = publicProcedure
     return newData;
   });
 
-export const recoverPassword = publicProcedure
+export const recoverPassword = protectedProcedure
   .input(schemaLostPassword)
   .mutation(async ({ ctx, input }) => {
     console.log(`muly:recoverPassword`, { input });

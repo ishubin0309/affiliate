@@ -1,16 +1,19 @@
 import { Loading } from "@/components/common/Loading";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 import { PageHeader } from "@/components/common/page/page-header";
 import { SearchApply } from "@/components/common/search/saerch-apply-button";
 import { useSearchContext } from "@/components/common/search/search-context";
+import { Pagination } from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 import type { MerchantSubCreativeType } from "@/server/db-types";
+import React from "react";
 import { api } from "../../../utils/api";
 import { SearchSelect } from "../../common/search/search-select";
 import { SearchText } from "../../common/search/search-text";
 import { CreativeMaterialComponent } from "../creative/CreativeMaterialComponent";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
-import { Pagination } from "@/components/ui/pagination";
+import { IconMenuRadioGroup } from "../../common/controls/IconMenuRadioGroup";
 
-const renderRow = (item: MerchantSubCreativeType) => {
+const renderRow = (item: MerchantSubCreativeType, gridView: boolean) => {
   const values = [
     { title: "Creative Name", value: item.title },
     { title: "Format", value: item.type },
@@ -31,7 +34,7 @@ const renderRow = (item: MerchantSubCreativeType) => {
       alt={item.alt}
       url={item.url}
       creative_id={item.id}
-      gridView={false}
+      gridView={gridView}
     />
   );
 };
@@ -42,39 +45,58 @@ export const SubCreativeMaterial = () => {
   } = useSearchContext();
   const pagination = usePagination();
 
+  const [gridView, setGridView] = React.useState(true);
+
   const { data: meta } = api.affiliates.getMerchantSubCreativeMeta.useQuery();
 
-  const { data, isRefetching } = api.affiliates.getMerchantSubCreative.useQuery(
-    {
-      type: type ? String(type) : undefined,
-      search: search ? String(search) : undefined,
-    },
-    { keepPreviousData: true }
-  );
+  const { data: subCreativeReport, isRefetching } =
+    api.affiliates.getMerchantSubCreative.useQuery(
+      {
+        type: type ? String(type) : undefined,
+        search: search ? String(search) : undefined,
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true }
+    );
 
-  return data ? (
+  const handleChangeGridView = () => {
+    setGridView(!gridView);
+  };
+  console.log("********subCreativeReport: ", subCreativeReport);
+  return subCreativeReport ? (
     <div className="w-full">
       <PageHeader
         title="Marketing Tools"
         subTitle="Sub Creative Materials"
-      ></PageHeader>
-      <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
-        <SearchSelect
-          label="Creative Type"
-          varName="type"
-          choices={meta?.type}
+        searchComponent={
+          <div className="flex flex-row flex-wrap items-end gap-2 pb-3">
+            <SearchSelect
+              label="Creative Type"
+              varName="type"
+              choices={meta?.type}
+            />
+            <div className="flex-grow" />
+            <SearchText varName="search" />
+            <SearchApply isLoading={isRefetching} />
+          </div>
+        }
+      >
+        <IconMenuRadioGroup
+          gridView={gridView}
+          onGridViewChange={setGridView}
         />
-        <div className="flex-grow" />
-        <SearchText varName="search" />
-        <SearchApply isLoading={isRefetching} />
+      </PageHeader>
+      <div
+        className={cn("grid grid-cols-1 gap-4", {
+          "md:grid-cols-2 lg:grid-cols-4": gridView,
+        })}
+      >
+        {subCreativeReport.data.map((item) => renderRow(item, gridView))}
       </div>
-      {data?.map(renderRow)}
-      <div className="grid grid-cols-2 gap-2">
-        <Pagination
-          pagination={pagination}
-          totalItems={data.length}
-        />
-      </div>
+      <Pagination
+        pagination={pagination}
+        totalItems={subCreativeReport.pageInfo.totalItems}
+      />
     </div>
   ) : (
     <Loading />

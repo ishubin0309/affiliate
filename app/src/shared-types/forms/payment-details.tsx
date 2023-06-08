@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { affiliates_paymentMethod } from "@prisma/client";
 
-export const schema = z
+export const paymentSchema = z
   .object({
     paymentMethod: z
       .nativeEnum(affiliates_paymentMethod)

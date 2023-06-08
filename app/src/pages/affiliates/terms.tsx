@@ -2,6 +2,9 @@ import Head from "next/head";
 
 import Terms from "../../components/affiliates/terms/Terms";
 import type { MyPage } from "../../components/common/types";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
 
 const TermsPage: MyPage = () => {
   return (
@@ -9,7 +12,7 @@ const TermsPage: MyPage = () => {
       <Head>
         <title>Terms & Condition</title>
         <meta name="description" content="Terms" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <Terms />
     </>

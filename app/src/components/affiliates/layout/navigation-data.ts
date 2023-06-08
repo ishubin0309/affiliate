@@ -15,6 +15,8 @@ interface DropdownLinkData {
 
 export type NavigationLinkData = SingleLinkData | DropdownLinkData;
 
+const dev = false;
+
 export const navigationData: NavigationLinkData[] = [
   {
     type: "single",
@@ -49,7 +51,9 @@ export const navigationData: NavigationLinkData[] = [
       { name: "Install Report", link: "install-reports" },
       { name: "Profile Report", link: "profile-report" },
       { name: "Sub Affiliates Report", link: "sub-affiliate-report" },
-      { name: "Fake Report Server (Debug)", link: "fake-server-report" },
+      ...(dev
+        ? [{ name: "Fake Report Server (Debug)", link: "fake-server-report" }]
+        : []),
     ],
   },
   {

@@ -1,16 +1,17 @@
-import { createColumnHelper } from "@tanstack/react-table";
-import "react-datepicker/dist/react-datepicker.css";
-import type { CountryReportType } from "../../../server/db-types";
 import { ReportControl } from "@/components/affiliates/reports/report-control";
-import { SearchSelect } from "@/components/common/search/search-select";
-import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
-import { api } from "@/utils/api";
+import { usePagination } from "@/components/common/data-table/pagination-hook";
 import {
-  getDateParam,
   getNumberParam,
   useSearchContext,
 } from "@/components/common/search/search-context";
-import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { getDateRange } from "@/components/common/search/search-date-range";
+import { SearchSelect } from "@/components/common/search/search-select";
+import type { ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
+import { api } from "@/utils/api";
+import { createColumnHelper } from "@tanstack/react-table";
+import "react-datepicker/dist/react-datepicker.css";
+import type { CountryReportType } from "../../../server/db-types";
+import { getColumns } from "./utils";
 
 const columnHelper = createColumnHelper<CountryReportType>();
 const createColumn = (id: keyof CountryReportType, header: string) =>
@@ -45,34 +46,47 @@ const columns = [
 
 export const CountryReports = () => {
   const {
-    values: { merchant_id, from, to },
+    values: { merchant_id, dates },
   } = useSearchContext();
   const pagination = usePagination();
+  const { name, ...dateRange } = getDateRange(dates);
 
   const { data: merchants } = api.affiliates.getAllMerchants.useQuery(
     undefined,
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
-  const { data, isLoading } = api.affiliates.getCountryReport.useQuery(
-    {
-      from: getDateParam(from),
-      to: getDateParam(to),
-      merchant_id: getNumberParam(merchant_id),
-      pageParams: pagination.pageParams,
-    },
-    { keepPreviousData: true, refetchOnWindowFocus: false }
-  );
+  const { data, isRefetching, error } =
+    api.affiliates.getCountryReport.useQuery(
+      {
+        ...dateRange,
+        merchant_id: getNumberParam(merchant_id),
+        pageParams: pagination.pageParams,
+      },
+      { keepPreviousData: true, refetchOnWindowFocus: false }
+    );
 
-  console.log(`muly:CountryReports:render`, { data });
+  const { mutateAsync: reportExport } =
+    api.affiliates.exportClicksReport.useMutation();
+
+  const handleExport = async (exportType: ExportType) =>
+    reportExport({
+      ...dateRange,
+      merchant_id: getNumberParam(merchant_id),
+      exportType,
+      reportColumns: getColumns(columns),
+    });
+
+  console.log(`muly:CountryReports:render`, { data, error });
 
   return (
     <ReportControl
       reportName="Country Report"
       report={data}
+      error={error}
       columns={columns}
       pagination={pagination}
-      isRefetching={isLoading}
-      handleExport={(exportType: ExportType) => Promise.resolve("ok")}
+      isRefetching={isRefetching}
+      handleExport={async (exportType: ExportType) => handleExport(exportType)}
     >
       <SearchSelect
         label="Merchant"

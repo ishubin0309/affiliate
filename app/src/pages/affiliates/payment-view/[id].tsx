@@ -5,6 +5,9 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
 import { payments_details } from "@prisma/client";
+import { i18nGetServerSideProps } from "@/utils/i18n-ssr";
+
+export const getServerSideProps = i18nGetServerSideProps(["affiliate"]);
 
 const PDFViewer = dynamic(
   () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
@@ -16,8 +19,13 @@ const Page: MyPage = () => {
   const { data } = api.affiliates.getPaymentDetails.useQuery({
     paymentId: String(id),
   });
-  const { payments_paid, affiliatesDetail, merchants, payments_details } =
-    data || {};
+  const {
+    payments_paid,
+    affiliatesDetail,
+    merchants,
+    payments_details,
+    billingLogoPath,
+  } = data || {};
   console.log(data);
 
   return (
@@ -25,7 +33,7 @@ const Page: MyPage = () => {
       <Head>
         <title>PaymentView</title>
         <meta name="description" content="PaymentView" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       {/* <main className={styles.main}> */}
       {typeof window !== "undefined" &&
@@ -34,6 +42,7 @@ const Page: MyPage = () => {
         payments_details && (
           <PDFViewer height={window.innerHeight} width={window.innerWidth}>
             <PaymentDetail
+              billingLogoPath={billingLogoPath || ""}
               payments_paid={payments_paid}
               affiliatesDetail={affiliatesDetail}
               payments_details={payments_details}
