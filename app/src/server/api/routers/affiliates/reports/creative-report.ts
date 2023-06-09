@@ -268,16 +268,6 @@ FROM data_reg dr
 LEFT JOIN commissions cm ON dr.trader_id = cm.traderID AND cm.Date BETWEEN ${from} AND ${to}
 WHERE dr.merchant_id =  ${merchant_id} and dr.affiliate_id = ${affiliate_id} and dr.rdate BETWEEN ${from} AND ${to} GROUP BY dr.banner_id`);
 
-  const traderIDs = await prisma.data_sales.findMany({
-    select: {
-      trader_id: true,
-    },
-    where: {
-      type: "deposit",
-      product_id: merchant_id,
-    },
-  });
-
   const arrRow = await prisma.data_sales.findMany({
     take: pageParams.pageSize,
     select: {
@@ -455,10 +445,10 @@ WHERE dr.merchant_id =  ${merchant_id} and dr.affiliate_id = ${affiliate_id} and
       ...creativeItems,
       ...resItem,
       ...view_clicks[i],
-      leads: regww[i]?.total_leads,
-      demo: regww[i]?.total_demo,
-      real: regww[i]?.total_real,
-      totalCom: regww[i]?.comms,
+      leads: regww[item.id]?.total_leads,
+      demo: regww[item.id]?.total_demo,
+      real: regww[item.id]?.total_real,
+      totalCom: regww[item.id]?.comms,
       merchant,
       language,
     };
