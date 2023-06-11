@@ -47,7 +47,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/dev/aff:latest"
           labels: env=dev
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=DEV_GAMINGAFFILIATES_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=DEV_LEGACY_PHP_ACCESS_TOKEN:latest
@@ -75,7 +75,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/dev/aff:latest"
           labels: env=dev
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=DEV_BESTBROKERSPARTNERS_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=DEV_LEGACY_PHP_ACCESS_TOKEN:latest
@@ -105,7 +105,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/dev/aff:latest"
           labels: env=dev
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=DEV_FREEVPNPLANET_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=DEV_LEGACY_PHP_ACCESS_TOKEN:latest
@@ -134,7 +134,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/dev/aff:latest"
           labels: env=dev
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=DEV_BI-WINNING_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=DEV_LEGACY_PHP_ACCESS_TOKEN:latest
@@ -163,7 +163,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/dev/aff:latest"
           labels: env=dev
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=DEV_FIVESTARS-MARKET_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=DEV_LEGACY_PHP_ACCESS_TOKEN:latest
@@ -192,7 +192,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/dev/aff:latest"
           labels: env=dev
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=DEV_FOCUSOPTION_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=DEV_LEGACY_PHP_ACCESS_TOKEN:latest

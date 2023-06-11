@@ -47,7 +47,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/production/aff:latest"
           labels: env=prod
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=PROD_GAMINGAFFILIATES_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
@@ -75,7 +75,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/production/aff:latest"
           labels: env=prod
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=PROD_BESTBROKERSPARTNERS_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
@@ -104,7 +104,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/production/aff:latest"
           labels: env=prod
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=PROD_FREEVPNPLANET_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
@@ -132,7 +132,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/production/aff:latest"
           labels: env=prod
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=PROD_PARTNERSBIWINNING_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
@@ -159,7 +159,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/production/aff:latest"
           labels: env=prod
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=PROD_FIVESTARSMARKET_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
@@ -186,7 +186,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/production/aff:latest"
           labels: env=prod
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=PROD_FOCUSOPTION_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
@@ -213,7 +213,7 @@ jobs:
           image: "europe-docker.pkg.dev/api-front-dashbord/production/aff:latest"
           labels: env=prod
           project_id: api-front-dashbord
-          region: europe-west1
+          region: europe-west4
           secrets: |
             DATABASE_URL=PROD_FXORO_DATABASE_URL:latest
             LEGACY_PHP_ACCESS_TOKEN=PROD_LEGACY_PHP_ACCESS_TOKEN:latest
