@@ -5,19 +5,17 @@ import {
   merchantsModel,
   pixel_logsModel,
   pixel_monitorModel,
-  RelatedaffiliatesModel,
-  RelatedmerchantsModel,
-  Relatedpixel_logsModel,
-  Relatedpixel_monitorModel,
 } from "prisma/zod";
 import { z } from "zod";
 import {
   PageParamsSchema,
+  SortingParamSchema,
   exportReportLoop,
   exportType,
+  flattenObject,
+  getSortingInfo,
   pageInfo,
   reportColumns,
-  flattenObject,
 } from "./reports-utils";
 
 const Input = z.object({
@@ -27,11 +25,12 @@ const Input = z.object({
   country: z.string().optional(),
   banner_id: z.string().optional(),
   group_id: z.string().optional(),
-  sortBy: z.string().optional(),
-  sortOrder: z.string().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const dataItemSchema = pixel_logsModel
   .extend({
@@ -66,9 +65,8 @@ const pixelLogReportData = async (
     country,
     banner_id,
     group_id,
-    sortBy,
-    sortOrder,
     pageParams,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   console.log("from ----->", from, " to ------->", to, merchant_id);
@@ -121,13 +119,12 @@ const pixelLogReportData = async (
 
                 //}
              */
-  console.log("type filter", type_filter);
+  const sorting_info = getSortingInfo(sortingParam);
+
   const pixelReport = await prisma.pixel_logs.findMany({
-    orderBy: {
-      dateTime: "asc",
-    },
+    orderBy: sorting_info ? sorting_info[0] : {},
     where: {
-      // ...type_filter,
+      ...type_filter,
       dateTime: {
         gte: from,
         lt: to,
@@ -136,6 +133,17 @@ const pixelLogReportData = async (
     include: {
       pixel_monitor: {
         select: {
+          affiliate_id: true,
+          banner_id: true,
+          method: true,
+          totalFired: true,
+          type: true,
+          id: true,
+          merchant_id: true,
+          pixelCode: true,
+          product_id: true,
+          rdate: true,
+          valid: true,
           affiliate: {
             select: {
               username: true,
@@ -145,6 +153,11 @@ const pixelLogReportData = async (
             },
           },
           merchant: {
+            select: {
+              id: true,
+            },
+          },
+          pixel_logs: {
             select: {
               id: true,
             },
@@ -171,7 +184,7 @@ const pixelLogReportData = async (
 
 export const getPixelLogReport = protectedProcedure
   .input(InputWithPageInfo)
-  .output(pixelLogReportSchema)
+  // .output(pixelLogReportSchema)
   .query(({ ctx, input }) => pixelLogReportData(ctx.prisma, input));
 
 export const exportPixelLogReportData = protectedProcedure

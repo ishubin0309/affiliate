@@ -2,9 +2,11 @@
 import { merchant_id } from "@/server/api/routers/affiliates/const";
 import {
   PageParamsSchema,
+  SortingParamSchema,
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   pageInfo,
   reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
@@ -57,7 +59,10 @@ const Input = z.object({
   filter: z.string().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const traderReport = async (
   prisma: PrismaClient,
@@ -72,9 +77,11 @@ const traderReport = async (
     parameter_2,
     filter,
     pageParams,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   const offset = getPageOffset(pageParams);
+  const sorting_info = getSortingInfo(sortingParam);
 
   const baseTypeFilter: Prisma.reporttradersWhereInput = {
     affiliate_id,
@@ -88,7 +95,6 @@ const traderReport = async (
 
   const isFTD = filter === "ftd" || filter === "totalftd";
   const type_filter: Prisma.reporttradersWhereInput = { ...baseTypeFilter };
-  console.log("base type filter ----->", baseTypeFilter);
 
   if (
     filter === "real" ||
@@ -125,14 +131,7 @@ const traderReport = async (
     prisma.reporttraders.findMany({
       take: pageParams.pageSize,
       skip: offset,
-      orderBy: isFTD
-        ? {
-            RegistrationDate: "desc",
-            TraderID: "asc",
-          }
-        : {
-            TraderID: "asc",
-          },
+      orderBy: sorting_info ? sorting_info[0] : {},
       where,
       include: {
         data_reg: {

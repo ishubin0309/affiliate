@@ -1,4 +1,5 @@
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 import {
   getNumberParam,
   useSearchContext,
@@ -22,6 +23,7 @@ export const LandingPageReport = () => {
   const pagination = usePagination();
   const { currentPage, itemsPerPage } = router.query;
   const { name, ...dateRange } = getDateRange(dates);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
   const { data, isRefetching, error } =
     api.affiliates.getLandingPageData.useQuery(
@@ -31,6 +33,7 @@ export const LandingPageReport = () => {
         url: url,
         creative_type: creative_type,
         pageParams: pagination.pageParams,
+        sortingParam: _sorting,
       },
       { keepPreviousData: true, refetchOnWindowFocus: false }
     );
