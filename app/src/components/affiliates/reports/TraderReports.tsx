@@ -1,4 +1,5 @@
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 import {
   getNumberParam,
   useSearchContext,
@@ -9,7 +10,6 @@ import { SearchText } from "@/components/common/search/search-text";
 import { type ExportType } from "@/server/api/routers/affiliates/reports/reports-utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import type { TraderReportType } from "../../../server/db-types";
 import { api } from "../../../utils/api";
 import { ReportControl } from "./report-control";
@@ -57,6 +57,7 @@ export const TraderReports = () => {
   } = useSearchContext();
   const pagination = usePagination();
   const { name, ...dateRange } = getDateRange(dates);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
   const { data, isRefetching, error } = api.affiliates.getTraderReport.useQuery(
     {
@@ -66,6 +67,7 @@ export const TraderReports = () => {
       country: country,
       banner_id: getNumberParam(banner_id),
       pageParams: pagination.pageParams,
+      sortingParam: _sorting,
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );

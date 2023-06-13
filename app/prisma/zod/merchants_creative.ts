@@ -1,7 +1,19 @@
-import * as z from "zod"
-import * as imports from "../zod-add-schema"
-import { merchants_creative_type } from "@prisma/client"
-import { Completemerchants_creative_categories, Relatedmerchants_creative_categoriesModel, Completemerchants, RelatedmerchantsModel, Completelanguages, RelatedlanguagesModel, Completetraffic, RelatedtrafficModel, Completepixel_monitor, Relatedpixel_monitorModel, Completedata_install, Relateddata_installModel } from "./index"
+import { merchants_creative_type } from "@prisma/client";
+import * as z from "zod";
+import {
+  Completedata_install,
+  Completelanguages,
+  Completemerchants,
+  Completemerchants_creative_categories,
+  Completepixel_monitor,
+  Completetraffic,
+  Relateddata_installModel,
+  RelatedlanguagesModel,
+  RelatedmerchantsModel,
+  Relatedmerchants_creative_categoriesModel,
+  Relatedpixel_monitorModel,
+  RelatedtrafficModel,
+} from "./index";
 
 export const merchants_creativeModel = z.object({
   id: z.number().int(),
@@ -26,15 +38,16 @@ export const merchants_creativeModel = z.object({
   category_id: z.number().int(),
   featured: z.number().int(),
   affiliateReady: z.number().int(),
-})
+});
 
-export interface Completemerchants_creative extends z.infer<typeof merchants_creativeModel> {
-  category?: Completemerchants_creative_categories | null
-  merchant: Completemerchants
-  language: Completelanguages
-  traffic: Completetraffic[]
-  pixel_monitor: Completepixel_monitor[]
-  data_install: Completedata_install[]
+export interface Completemerchants_creative
+  extends z.infer<typeof merchants_creativeModel> {
+  category?: Completemerchants_creative_categories | null;
+  merchant: Completemerchants;
+  language: Completelanguages;
+  traffic: Completetraffic[];
+  pixel_monitor: Completepixel_monitor[];
+  data_install: Completedata_install[];
 }
 
 /**
@@ -42,11 +55,14 @@ export interface Completemerchants_creative extends z.infer<typeof merchants_cre
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const Relatedmerchants_creativeModel: z.ZodSchema<Completemerchants_creative> = z.lazy(() => merchants_creativeModel.extend({
-  category: Relatedmerchants_creative_categoriesModel.nullish(),
-  merchant: RelatedmerchantsModel,
-  language: RelatedlanguagesModel,
-  traffic: RelatedtrafficModel.array(),
-  pixel_monitor: Relatedpixel_monitorModel.array(),
-  data_install: Relateddata_installModel.array(),
-}))
+export const Relatedmerchants_creativeModel: z.ZodSchema<Completemerchants_creative> =
+  z.lazy(() =>
+    merchants_creativeModel.extend({
+      category: Relatedmerchants_creative_categoriesModel.nullish(),
+      merchant: RelatedmerchantsModel,
+      language: RelatedlanguagesModel,
+      traffic: RelatedtrafficModel.array(),
+      pixel_monitor: Relatedpixel_monitorModel.array(),
+      data_install: Relateddata_installModel.array(),
+    })
+  );
