@@ -5,23 +5,29 @@ import { Loading } from "@/components/common/Loading";
 
 interface ConfigContextInterface {
   config: Record<string, any>;
+  permissions: {
+    reports: Record<string, boolean>;
+    fields: Record<string, boolean>;
+  };
 }
 
 export const ConfigContext = React.createContext<ConfigContextInterface>({
   config: {},
+  permissions: {
+    reports: {},
+    fields: {},
+  },
 });
 
 export const ConfigProvider = ({
   children,
-  config,
+  value,
 }: {
   children: React.ReactNode;
-  config: Record<string, any>;
+  value: ConfigContextInterface;
 }) => {
-  return config ? (
-    <ConfigContext.Provider value={{ config }}>
-      {children}
-    </ConfigContext.Provider>
+  return value ? (
+    <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>
   ) : (
     <Loading />
   );

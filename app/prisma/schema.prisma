@@ -185,6 +185,7 @@ model affiliates {
   traffic                         traffic[]
   commission                      commissions[]
   pixel_monitor                   pixel_monitor[]
+  permissionprofile               permissionprofile?          @relation(fields: [profilePermissionID], references: [id])
 
   @@index([group_id], map: "group_id")
   @@index([mail], map: "mail")
@@ -1203,6 +1204,9 @@ model permissionprofile {
   fieldsPermissions      String                                   @db.VarChar(300)
   valid                  Boolean                                  @default(true)
   created_by_admin_id    Int
+
+  // affiliate affiliates @relation(fields: [affiliate_id], references: [id])
+  affiliates affiliates[]
 }
 
 model permissionsdescription {
