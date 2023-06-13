@@ -25,7 +25,7 @@ const getPermissions = async (prisma: PrismaClient, affiliate_id?: string) => {
     const affiliate = await prisma.affiliates.findUniqueOrThrow({
       where: { id: Number(affiliate_id) },
       select: {
-        permissionprofile: {
+        permissionProfile: {
           select: {
             id: true,
             reportsPermissions: true,
@@ -37,9 +37,9 @@ const getPermissions = async (prisma: PrismaClient, affiliate_id?: string) => {
 
     return {
       reports: parsePermissions(
-        affiliate.permissionprofile?.reportsPermissions
+        affiliate.permissionProfile?.reportsPermissions
       ),
-      fields: parsePermissions(affiliate.permissionprofile?.fieldsPermissions),
+      fields: parsePermissions(affiliate.permissionProfile?.fieldsPermissions),
     };
   }
 

@@ -14,6 +14,7 @@ import DropdownLink from "./DropdownLink";
 import SingleLink from "./SingleLink";
 import { useTranslation } from "next-i18next";
 import { toKey } from "@/components/affiliates/reports/utils";
+import { useConfigContext } from "@/components/common/config/config-context";
 
 interface Props {
   isDesktop: boolean;
@@ -75,6 +76,13 @@ const Sidebar: React.FC<Props> = ({
   setTempCollapseShow,
 }) => {
   const { t } = useTranslation("affiliate");
+
+  const {
+    permissions: { reports },
+  } = useConfigContext();
+
+  console.log(`muly:Sidebar`, { reports });
+
   const navigation = useMemo(
     () =>
       navigationData.map((item) => {

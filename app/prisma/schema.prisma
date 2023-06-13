@@ -185,7 +185,7 @@ model affiliates {
   traffic                         traffic[]
   commission                      commissions[]
   pixel_monitor                   pixel_monitor[]
-  permissionprofile               permissionprofile?          @relation(fields: [profilePermissionID], references: [id])
+  permissionProfile               permissionProfile?          @relation(fields: [profilePermissionID], references: [id])
 
   @@index([group_id], map: "group_id")
   @@index([mail], map: "mail")
@@ -1194,7 +1194,7 @@ model payments_paid {
   @@index([year], map: "year")
 }
 
-model permissionprofile {
+model permissionProfile {
   id                     Int                                      @id @default(autoincrement())
   defaultViewForDealType permissionprofile_defaultViewForDealType @default(EMPTY_ENUM_VALUE)
   name                   String                                   @db.VarChar(18)
