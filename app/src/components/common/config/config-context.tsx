@@ -1,9 +1,9 @@
-import { api } from "@/utils/api";
-import { parse } from "date-fns";
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Loading } from "@/components/common/Loading";
+import { AppFlags, config } from "@/flags/config";
 
 interface ConfigContextInterface {
+  flags: AppFlags;
   config: Record<string, any>;
   permissions: {
     reports: Record<string, boolean>;
@@ -12,6 +12,7 @@ interface ConfigContextInterface {
 }
 
 export const ConfigContext = React.createContext<ConfigContextInterface>({
+  flags: config.defaultFlags!,
   config: {},
   permissions: {
     reports: {},

@@ -76,6 +76,9 @@ const Sidebar: React.FC<Props> = ({
   setTempCollapseShow,
 }) => {
   const { t } = useTranslation("affiliate");
+  const {
+    flags: { localDev },
+  } = useConfigContext();
 
   const {
     permissions: { reports },
@@ -90,13 +93,15 @@ const Sidebar: React.FC<Props> = ({
           return {
             ...item,
             linkName: t(`menu.${toKey(item.linkName)}.name`, item.linkName),
-            links: item.links.map(({ link, name }) => ({
-              link,
-              name: t(
-                `menu.${toKey(item.linkName)}.items.${toKey(name)}`,
-                name
-              ),
-            })),
+            links: item.links
+              .filter(({ filter }) => localDev || !filter || reports[filter])
+              .map(({ link, name }) => ({
+                link,
+                name: t(
+                  `menu.${toKey(item.linkName)}.items.${toKey(name)}`,
+                  name
+                ),
+              })),
           };
         } else {
           return {

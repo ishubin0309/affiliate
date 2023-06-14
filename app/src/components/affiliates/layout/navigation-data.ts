@@ -10,7 +10,7 @@ interface DropdownLinkData {
   dropdownName: string;
   defaultLink: string;
   parentLink?: string;
-  links: Array<{ name: string; link: string, filter?: string }>;
+  links: Array<{ name: string; link: string; filter?: string }>;
 }
 
 export type NavigationLinkData = SingleLinkData | DropdownLinkData;
@@ -40,19 +40,47 @@ export const navigationData: NavigationLinkData[] = [
     defaultLink: "quick-summary",
     parentLink: "reports",
     links: [
-      { name: "Quick Summary Report", link: "quick-summary", filter: "af-quick" },
-      { name: "Commission Report", link: "commission-report", filter: "af-comm" },
-      { name: "Clicks Report", link: "clicks-report", filter: "" },
-      { name: "Creative Report", link: "creative-report", filter: "af-creative" },
+      {
+        name: "Quick Summary Report",
+        link: "quick-summary",
+        filter: "af-quick",
+      },
+      {
+        name: "Commission Report",
+        link: "commission-report",
+        filter: "af-comm",
+      },
+      { name: "Clicks Report", link: "clicks-report" },
+      {
+        name: "Creative Report",
+        link: "creative-report",
+        filter: "af-creative",
+      },
       { name: "Country Report", link: "country-report", filter: "af-country" },
-      { name: "Landing Page Report", link: "landing-page", filter: "af-landing" },
+      {
+        name: "Landing Page Report",
+        link: "landing-page",
+        filter: "af-landing",
+      },
       { name: "Users Report", link: "trader-report", filter: "af-trader" },
-      { name: "Pixels Logs Report", link: "pixel-log-report", filter: "af-traffic" },
+      {
+        name: "Pixels Logs Report",
+        link: "pixel-log-report",
+        filter: "af-traffic",
+      },
       { name: "Install Report", link: "install-reports", filter: "af-install" },
-      { name: "Profile Report", link: "profile-report", filter: "" },
-      { name: "Sub Affiliates Report", link: "sub-affiliate-report", filter: "" },
+      { name: "Profile Report", link: "profile-report" },
+      {
+        name: "Sub Affiliates Report",
+        link: "sub-affiliate-report",
+      },
       ...(dev
-        ? [{ name: "Fake Report Server (Debug)", link: "fake-server-report", filter: "" }]
+        ? [
+            {
+              name: "Fake Report Server (Debug)",
+              link: "fake-server-report",
+            },
+          ]
         : []),
     ],
   },
