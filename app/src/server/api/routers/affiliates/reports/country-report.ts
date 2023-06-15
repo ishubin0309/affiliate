@@ -208,16 +208,15 @@ export const countryReport = async (
     CountryID: string | null;
   };
 
-  const merchants_creative_stats_Has_CountryID = await isFieldExists(
-    prisma,
-    "merchants_creative_stats",
-    "CountryID"
-  );
+  // const merchants_creative_stats_Has_CountryID = await isFieldExists(
+  //   prisma,
+  //   "merchants_creative_stats",
+  //   "CountryID"
+  // );
 
   let StatsData: StatsDataItem[] = [];
-  if (merchants_creative_stats_Has_CountryID) {
-    StatsData = await prisma.$queryRaw<StatsDataItem[]>(
-      Prisma.raw(`SELECT SUM(Clicks) as clicks,
+  StatsData = await prisma.$queryRaw<StatsDataItem[]>(
+    Prisma.raw(`SELECT SUM(Clicks) as clicks,
            SUM(Impressions) as impressions,
             AffiliateID, MerchantID, CountryID
             FROM merchants_creative_stats
@@ -225,8 +224,7 @@ export const countryReport = async (
             Date <= ${formatSqlDate(to)}
             ${whereDashboard ? " AND " + whereDashboard : ""}
             GROUP BY CountryID`)
-    );
-  }
+  );
 
   const MerchantsDataItems = await getMerchantsData();
 
