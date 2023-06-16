@@ -66,6 +66,7 @@ jobs:
             --port=3000
             --max-instances=5
             --min-instances=0
+            --memory=2Gi
 
       - id: "deploy_best-brokers-partners"
         name: deploy best-brokers-partners
@@ -94,6 +95,7 @@ jobs:
             --port=3000
             --max-instances=5
             --min-instances=0
+            --memory=2Gi
 
 
       - id: "deploy_freevpnplanet"
@@ -123,6 +125,7 @@ jobs:
             --port=3000
             --max-instances=5
             --min-instances=0
+            --memory=2Gi
 
       - id: "deploy_partners-bi-winning"
         name: deploy partners-bi-winning
@@ -150,6 +153,7 @@ jobs:
             --port=3000
             --max-instances=5
             --min-instances=0
+            --memory=2Gi
 
       - id: "deploy_partners-fivestars-market"
         name: deploy partners-fivestars-market
@@ -177,6 +181,7 @@ jobs:
             --port=3000
             --max-instances=5
             --min-instances=0
+            --memory=2Gi
 
       - id: "deploy_partners-focusoption"
         name: deploy partners-focusoption
@@ -204,6 +209,7 @@ jobs:
             --port=3000
             --max-instances=5
             --min-instances=0
+            --memory=2Gi
 
       - id: "deploy_fxoro"
         name: deploy fxoro
@@ -232,3 +238,4 @@ jobs:
             --port=3000
             --max-instances=5
             --min-instances=0
+            --memory=2Gi
