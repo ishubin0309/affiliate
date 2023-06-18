@@ -1,6 +1,7 @@
 import React from "react";
 import { Loading } from "@/components/common/Loading";
-import { AppFlags, config } from "@/flags/config";
+import type { AppFlags } from "@/flags/config";
+import { config } from "@/flags/config";
 
 interface ConfigContextInterface {
   flags: AppFlags;
