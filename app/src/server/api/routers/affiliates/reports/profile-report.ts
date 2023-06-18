@@ -5,9 +5,11 @@ import { getUnixTime } from "date-fns";
 import { z } from "zod";
 import {
   PageParamsSchema,
+  SortingParamSchema,
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   pageInfo,
   reportColumns,
 } from "./reports-utils";
@@ -32,7 +34,10 @@ const Input = z.object({
   search_type: z.string().optional(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 
 const profileReportDataSchema = z.object({
   data: z.array(profileReportSchema),
@@ -40,6 +45,9 @@ const profileReportDataSchema = z.object({
   totals: z.any(),
 });
 
+interface OrderType {
+  [key: string]: any;
+}
 const profileReportData = async (
   prisma: PrismaClient,
   {
@@ -48,9 +56,14 @@ const profileReportData = async (
     merchant_id,
     search_type,
     pageParams,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   const offset = getPageOffset(pageParams);
+  const sorting_info = getSortingInfo(sortingParam);
+
+  const sortBy = sorting_info ? Object.keys(sorting_info[0] ?? "")[0] : "";
+  const sortOrder = sorting_info ? Object.values(sorting_info[0] ?? "")[0] : "";
 
   const intMerchantCount = await prisma.merchants.aggregate({
     _sum: {
@@ -79,7 +92,12 @@ const profileReportData = async (
     };
   }
 
-  const orderBy = {};
+  const orderBy: OrderType = {};
+  const trafficOrder: OrderType = {};
+
+  if (sortBy === "clicks" || sortBy === "views") {
+    trafficOrder[`${sortBy}`] = sortOrder;
+  }
   // Initialize total counters per affiliate.
   let totalImpressionsM = 0;
   let totalClicksM = 0;
@@ -162,9 +180,7 @@ const profileReportData = async (
   // console.log("date ranges ----->", dateRanges);
   const [ww, totals] = await Promise.all([
     prisma.affiliates_profiles.findMany({
-      orderBy: {
-        id: "desc",
-      },
+      orderBy: sorting_info ? sorting_info[0] : {},
       where: {
         valid: 1,
       },
@@ -299,8 +315,8 @@ const profileReportData = async (
   }
 
   for (let i = 0; i < Object.keys(arrClicksAndImpressions).length; i++) {
-    totalTraffic["totalViews"] = arrClicksAndImpressions[i]?._sum.views ?? 0;
-    totalTraffic["totalClicks"] = arrClicksAndImpressions[i]?._sum.clicks ?? 0;
+    totalTraffic["totalViews"] = arrClicksAndImpressions[i]?._sum?.views ?? 0;
+    totalTraffic["totalClicks"] = arrClicksAndImpressions[i]?._sum?.clicks ?? 0;
   }
   // const count = 1;
   // const frozen = await prisma.data_reg.aggregate({
@@ -569,7 +585,7 @@ const profileReportData = async (
 
 export const getProfileReportData = protectedProcedure
   .input(InputWithPageInfo)
-  .output(profileReportDataSchema)
+  // .output(profileReportDataSchema)
   .query(({ ctx, input }) => {
     return profileReportData(ctx.prisma, input);
   });

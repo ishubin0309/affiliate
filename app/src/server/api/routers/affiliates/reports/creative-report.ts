@@ -3,9 +3,11 @@ import { merchant_id } from "@/server/api/routers/affiliates/const";
 import type { CreativeReportSchema } from "@/server/api/routers/affiliates/reports";
 import {
   PageParamsSchema,
+  SortingParamSchema,
   exportReportLoop,
   exportType,
   getPageOffset,
+  getSortingInfo,
   pageInfo,
   reportColumns,
 } from "@/server/api/routers/affiliates/reports/reports-utils";
@@ -18,9 +20,10 @@ import { z } from "zod";
 // import { uploadFile } from "../config";
 
 type RegType = {
-  totalDemo: number;
-  totalReal: number;
+  comms: number;
   total_leads: number;
+  total_demo: number;
+  total_real: number;
 };
 
 type MerchantIds = {
@@ -65,12 +68,25 @@ const creativeReportTotalsSchema = z.object({
   totalTotalCom: z.number(),
 });
 
-const InputWithPageInfo = Input.extend({ pageParams: PageParamsSchema });
+const InputWithPageInfo = Input.extend({
+  pageParams: PageParamsSchema,
+  sortingParam: SortingParamSchema,
+});
 const creativeReportResultSchema = z.object({
   data: z.array(traderReportSchema),
   pageInfo,
   totals: creativeReportTotalsSchema,
 });
+
+type SortingInfo =
+  | Array<{
+      [key: string]: string;
+    }>
+  | undefined;
+
+interface OrderType {
+  [key: string]: any;
+}
 
 const creativeReport = async (
   prisma: PrismaClient,
@@ -82,10 +98,43 @@ const creativeReport = async (
     type,
     group_id,
     pageParams,
+    sortingParam,
   }: z.infer<typeof InputWithPageInfo>
 ) => {
   console.log("pageParams", pageParams);
   const offset = getPageOffset(pageParams);
+  const sorting_info = getSortingInfo(sortingParam);
+
+  const sortBy = sorting_info ? Object.keys(sorting_info[0] ?? "")[0] : "";
+  const sortOrder = sorting_info ? Object.values(sorting_info[0] ?? "")[0] : "";
+
+  let sortBy_new = {};
+  const orderBy_creative: OrderType = {};
+  const orderBy_banner: OrderType = {};
+  let sortBy_creative = "";
+  if (
+    sortBy === "BannerID" ||
+    sortBy === "Impressions" ||
+    sortBy === "Clicks"
+  ) {
+    orderBy_creative[`${sortBy}`] = sortOrder;
+    sortBy_creative = sortBy;
+  } else if (sortBy === "title" || sortBy === "merchant.name") {
+    orderBy_banner[`${sortBy}`] = sortOrder;
+  } else {
+    sortBy_new = {
+      id: "desc",
+    };
+  }
+
+  // console.log("order by", orderBy);
+  // if (sortOrder && sortOrder != "") {
+  //   if (sortBy_new !== "") {
+  //     orderBy = { sortBy_new: sortOrder };
+  //   }
+  // } else {
+  //   if (sortBy_new !== "") orderBy = {};
+  // }
 
   let creatives_stats_where = Prisma.empty;
   const country = "";
@@ -133,32 +182,40 @@ const creativeReport = async (
     real_ftd_amount: 0,
     real: 0,
   };
-  const bannersww = await prisma.merchants_creative.findMany({
-    take: pageParams.pageSize,
-    skip: offset,
-    select: {
-      id: true,
-      title: true,
-      merchant_id: true,
-      type: true,
-      width: true,
-      height: true,
-      merchant: {
-        select: {
-          name: true,
+  const [bannersww, totals] = await Promise.all([
+    prisma.merchants_creative.findMany({
+      take: pageParams.pageSize,
+      skip: offset,
+      orderBy: Object.keys(orderBy_banner).length !== 0 ? orderBy_banner : {},
+      select: {
+        id: true,
+        title: true,
+        merchant_id: true,
+        type: true,
+        width: true,
+        height: true,
+        merchant: {
+          select: {
+            name: true,
+          },
+        },
+        language: {
+          select: {
+            title: true,
+          },
         },
       },
-      language: {
-        select: {
-          title: true,
-        },
+      where: {
+        merchant_id: merchant_id,
+        valid: 1,
       },
-    },
-    where: {
-      merchant_id: merchant_id,
-      valid: 1,
-    },
-  });
+    }),
+    prisma.merchants_creative.aggregate({
+      _count: {
+        merchant_id: true,
+      },
+    }),
+  ]);
 
   // console.log("banners ww -------->", bannersww);
 
@@ -188,69 +245,31 @@ const creativeReport = async (
   }
 
   const trafficRow = await prisma.merchants_creative_stats.groupBy({
-    by: ["BannerID"],
+    by: sortBy_creative ? [`${sortBy}`] : ["BannerID"],
     _sum: {
       Impressions: true,
       Clicks: true,
     },
     where: {
       ...where_main,
-      Date: {
-        gt: from,
-        lt: to,
-      },
+      // Date: {
+      //   gt: from,
+      //   lt: to,
+      // },
     },
   });
 
-  const regww = await prisma.data_reg.findMany({
-    include: {
-      merchant: {
-        select: {
-          name: true,
-        },
-      },
-    },
-    where: {
-      merchant_id: {
-        gt: 0,
-      },
-      rdate: {
-        gte: from,
-        lte: to,
-      },
-      banner_id: banner_id ? banner_id : undefined,
-      group_id: group_id ? group_id : undefined,
-    },
-  });
-
-  for (const item of regww) {
-    switch (item.type) {
-      case "demo":
-        creativeItems.demo += 1;
-        break;
-      case "lead":
-        creativeItems.leads += 1;
-
-      case "real":
-        // const totalTraffic = await prisma?.traffic.aggregate({
-
-        // });
-        creativeItems.real += 1;
-    }
-  }
-
-  const traderIDs = await prisma.data_sales.findMany({
-    select: {
-      trader_id: true,
-    },
-    where: {
-      type: "deposit",
-      product_id: merchant_id,
-    },
-  });
+  const regww = await prisma.$queryRaw<RegType[]>(Prisma.sql`SELECT 
+SUM(cm.Commission) as comms, 
+SUM(IF(dr.type='lead', 1, 0)) AS total_leads, 
+SUM(IF(dr.type='demo', 1, 0)) AS total_demo, 
+SUM(IF(dr.type='real', 1, 0)) AS total_real 
+FROM data_reg dr 
+LEFT JOIN commissions cm ON dr.trader_id = cm.traderID AND cm.Date BETWEEN ${from} AND ${to}
+WHERE dr.merchant_id =  ${merchant_id} and dr.affiliate_id = ${affiliate_id} and dr.rdate BETWEEN ${from} AND ${to} GROUP BY dr.banner_id`);
 
   const arrRow = await prisma.data_sales.findMany({
-    take: 10,
+    take: pageParams.pageSize,
     select: {
       product_id: true,
       banner_id: true,
@@ -409,50 +428,15 @@ const creativeReport = async (
       }
       creativeItems.volume += item?._sum?.turnover || 0;
     }
-
-    // const toww = await ctx.prisma.data_stats.findMany({
-    //   select: {
-    //     turnover: true,
-    //     trader_id: true,
-    //     rdate: true,
-    //     affiliate_id: true,
-    //     profile_id: true,
-    //     banner_id: true,
-    //     data_reg: {
-    //       select: {
-    //         country: true,
-    //         initialftdtranzid: true,
-    //       },
-    //     },
-    //   },
-    //   where: {
-    //     ...where_main,
-
-    //     merchant_id: {
-    //       AND: [
-    //         {
-    //           merchant_id: item.id,
-    //         },
-    //         {
-    //           merchant_id: {
-    //             gt: 0,
-    //           },
-    //         },
-    //       ],
-    //     },
-    //   },
-    // });
   }
 
   const view_clicks = trafficRow.map((item) => {
     return {
-      clicks: item?._sum.Clicks,
-      views: item?._sum.Impressions,
-      banner_id: item.BannerID,
+      Clicks: item._sum?.Clicks,
+      Impressions: item._sum?.Impressions,
+      BannerID: item.BannerID,
     };
   });
-
-  // console.log("item ------>", view_clicks);
 
   const creativeArray = bannersww?.map((item, i) => {
     const { merchant, language, ...resItem } = item;
@@ -461,8 +445,12 @@ const creativeReport = async (
       ...creativeItems,
       ...resItem,
       ...view_clicks[i],
-      merchant_name: merchant.name,
-      language: language.title,
+      leads: regww[item.id]?.total_leads,
+      demo: regww[item.id]?.total_demo,
+      real: regww[item.id]?.total_real,
+      totalCom: regww[item.id]?.comms,
+      merchant,
+      language,
     };
   });
 
@@ -471,7 +459,7 @@ const creativeReport = async (
     totals: creativeItems,
     pageInfo: {
       ...pageParams,
-      totalItems: creativeArray.length,
+      totalItems: totals._count.merchant_id,
     },
   };
 

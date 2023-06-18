@@ -1,4 +1,5 @@
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 import {
   getNumberParam,
   useSearchContext,
@@ -53,6 +54,7 @@ export const InstallReport = () => {
   } = useSearchContext();
   const pagination = usePagination();
   const { name, ...dateRange } = getDateRange(dates);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
   const { data, isRefetching, error } =
     api.affiliates.getInstallReport.useQuery(
@@ -62,6 +64,7 @@ export const InstallReport = () => {
         trader_id: getNumberParam(trader_id),
         banner_id: banner_id,
         pageParams: pagination.pageParams,
+        sortingParam: _sorting,
       },
       { keepPreviousData: true, refetchOnWindowFocus: false }
     );

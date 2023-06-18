@@ -1,27 +1,34 @@
-import { api } from "@/utils/api";
-import { parse } from "date-fns";
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Loading } from "@/components/common/Loading";
+import { AppFlags, config } from "@/flags/config";
 
 interface ConfigContextInterface {
+  flags: AppFlags;
   config: Record<string, any>;
+  permissions: {
+    reports: Record<string, boolean>;
+    fields: Record<string, boolean>;
+  };
 }
 
 export const ConfigContext = React.createContext<ConfigContextInterface>({
+  flags: config.defaultFlags!,
   config: {},
+  permissions: {
+    reports: {},
+    fields: {},
+  },
 });
 
 export const ConfigProvider = ({
   children,
-  config,
+  value,
 }: {
   children: React.ReactNode;
-  config: Record<string, any>;
+  value: ConfigContextInterface;
 }) => {
-  return config ? (
-    <ConfigContext.Provider value={{ config }}>
-      {children}
-    </ConfigContext.Provider>
+  return value ? (
+    <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>
   ) : (
     <Loading />
   );

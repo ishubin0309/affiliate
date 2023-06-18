@@ -1,6 +1,7 @@
 //
 
 import { usePagination } from "@/components/common/data-table/pagination-hook";
+import { deserializeSorting } from "@/components/common/data-table/sorting";
 import {
   getNumberParam,
   useSearchContext,
@@ -36,23 +37,26 @@ const divCol = (
 };
 
 const columns = [
-  createColumn("banner_id", "Creative ID"),
+  createColumn("BannerID", "Creative ID"),
   createColumn("title", "Creative Name"),
-  createColumn("merchant_name", "Merchant"),
+  columnHelper.accessor("merchant.name", {
+    cell: (info) => info.getValue() ,
+    header: "Merchant",
+  }),
   createColumn("type", "Type"),
-  createColumn("views", "Impressions"),
-  createColumn("clicks", "Clicks"),
+  createColumn("Impressions", "Impressions"),
+  createColumn("Clicks", "Clicks"),
   createColumn("totalCPI", "Installation"),
   columnHelper.accessor("ctr" as any, {
-    cell: ({ row }) => divCol(row?.original?.clicks, row.original.views),
+    cell: ({ row }) => divCol(row?.original?.Clicks, row.original.Impressions),
     header: "Click Through Ratio (CTR)",
   }),
   columnHelper.accessor("click-to-account" as any, {
-    cell: ({ row }) => divCol(row?.original?.real, row.original.clicks),
+    cell: ({ row }) => divCol(row?.original?.real, row.original.Clicks),
     header: "Click to Account",
   }),
   columnHelper.accessor("click-to-sale" as any, {
-    cell: ({ row }) => divCol(row?.original?.ftd, row.original.clicks),
+    cell: ({ row }) => divCol(row?.original?.ftd, row.original.Clicks),
     header: "Click to Sale",
   }),
   createColumn("leads", "Leads"),
@@ -80,22 +84,20 @@ export const CreativeReport = () => {
   const pagination = usePagination();
   const { currentPage, itemsPerPage } = router.query;
   const { name, ...dateRange } = getDateRange(dates);
+  const _sorting = deserializeSorting(pagination.pageParams.sortInfo);
 
   const { data, isRefetching, error } =
-    api.affiliates.getCreativeReport.useQuery(
-      {
-        ...dateRange,
-        merchant_id: getNumberParam(merchant_id),
-        trader_id: getNumberParam(trader_id),
-        banner_id: getNumberParam(banner_id),
-        unique_id: getNumberParam(unique_id),
-        type:
-          type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
-        group_id: getNumberParam(group_id),
-        pageParams: pagination.pageParams,
-      },
-      { keepPreviousData: true, refetchOnWindowFocus: false }
-    );
+    api.affiliates.getCreativeReport.useQuery({
+      ...dateRange,
+      merchant_id: getNumberParam(merchant_id),
+      trader_id: getNumberParam(trader_id),
+      banner_id: getNumberParam(banner_id),
+      unique_id: getNumberParam(unique_id),
+      type: type === "all" ? undefined : type === "clicks" ? "clicks" : "views",
+      group_id: getNumberParam(group_id),
+      pageParams: pagination.pageParams,
+      sortingParam: _sorting,
+    });
 
   const { mutateAsync: reportExport } =
     api.affiliates.exportCreativeReport.useMutation();
@@ -119,6 +121,8 @@ export const CreativeReport = () => {
     merchants,
     merchant_id,
   });
+
+  console.log("sorting info ----->", _sorting);
 
   const typeOptions = [
     {

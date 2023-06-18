@@ -49,9 +49,9 @@ const MyApp = ({
     keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
-  const faviconPath = config?.faviconPath;
+  const faviconPath = config?.config.faviconPath;
 
-  if (!config) {
+  if (!config || !flagBag.flags) {
     return <Loading />;
   }
 
@@ -66,16 +66,14 @@ const MyApp = ({
       {/*	}*/}
       {/*}`}</style>*/}
       <ProSidebarProvider>
-        <FlagBagProvider value={flagBag}>
-          <SessionProvider session={session}>
-            <ConfigProvider config={config}>
-              <Layout>
-                <Component {...pageProps} />
-                <Toaster />
-              </Layout>
-            </ConfigProvider>
-          </SessionProvider>
-        </FlagBagProvider>
+        <SessionProvider session={session}>
+          <ConfigProvider value={{ flags: flagBag.flags, ...config }}>
+            <Layout>
+              <Component {...pageProps} />
+              <Toaster />
+            </Layout>
+          </ConfigProvider>
+        </SessionProvider>
       </ProSidebarProvider>
     </>
   );
