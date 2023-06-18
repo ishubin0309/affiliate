@@ -116,7 +116,10 @@ export const landingPageData = async (
 
   //clicks and impressions
   const trafficRow = await prisma.traffic.groupBy({
-    by: trafficeBy ? [`${sortBy}`, "banner_id", "id"] : ["banner_id", "id"],
+    by: ["banner_id", "id"],
+    // TODO - fix this, maybe client side sorting?
+    orderBy: [{ banner_id: "asc" }, { id: "asc" }],
+    // by: trafficeBy ? [`${sortBy}`, "banner_id", "id"] : ["banner_id", "id"],
     _sum: {
       clicks: true,
       views: true,
@@ -215,9 +218,9 @@ export const landingPageData = async (
     : Prisma.empty;
 
   const salesww = await prisma.$queryRaw<SalesWWType[]>`select * from (
-			SELECT data_reg.merchant_id,data_reg.affiliate_id,data_reg.initialftddate,tb1.rdate,tb1.tranz_id,data_reg.banner_id,data_reg.trader_id,data_reg.group_id,data_reg.profile_id,tb1.amount, tb1.type AS data_sales_type  ,data_reg.country as country FROM data_sales as tb1 
-					  INNER JOIN merchants_creative mc on mc.id= tb1.banner_id 
-					 INNER JOIN data_reg AS data_reg ON tb1.merchant_id = data_reg.merchant_id AND tb1.trader_id = data_reg.trader_id AND data_reg.type <> 'demo'  
+			SELECT data_reg.merchant_id,data_reg.affiliate_id,data_reg.initialftddate,tb1.rdate,tb1.tranz_id,data_reg.banner_id,data_reg.trader_id,data_reg.group_id,data_reg.profile_id,tb1.amount, tb1.type AS data_sales_type  ,data_reg.country as country FROM data_sales as tb1
+					  INNER JOIN merchants_creative mc on mc.id= tb1.banner_id
+					 INNER JOIN data_reg AS data_reg ON tb1.merchant_id = data_reg.merchant_id AND tb1.trader_id = data_reg.trader_id AND data_reg.type <> 'demo'
 					 WHERE tb1.merchant_id> 0 and mc.valid=1 and tb1.rdate BETWEEN ${from} AND ${to}
 					 ${cond_banner_id} ${cond_group_id} ${cond_affiliate_id}
 					  ) a group by merchant_id , tranz_id , data_sales_type

@@ -110,7 +110,7 @@ const Sidebar: React.FC<Props> = ({
           };
         }
       }),
-    [t]
+    [t, reports, localDev]
   );
 
   const [activeName, setActiveName] = React.useState("dashboard");

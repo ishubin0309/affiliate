@@ -116,12 +116,16 @@ export function ReportDataTable<Data extends object>({
                     key={header.id}
                     // onClick={header.column.getToggleSortingHandler()}
                     onClick={() =>
+                      // TODO: Clean this up
+                      // @ts-ignore
                       onSortingChange(header.column.columnDef?.accessorKey)
                     }
                     className="border"
                   >
                     <div className="text=[#323232] flex p-2 text-sm">
                       {flexRender(
+                        // TODO: Clean this up
+                        // @ts-ignore
                         header.column.columnDef?.title,
                         header.getContext()
                       )}

@@ -42,6 +42,7 @@ export function CalendarDatePicker({
     if (formatDate(date) !== inputValue) {
       setInputValue(formatDate(date));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {

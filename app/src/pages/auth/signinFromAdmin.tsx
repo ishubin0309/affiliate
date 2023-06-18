@@ -2,7 +2,7 @@ import { Loading } from "@/components/common/Loading";
 import type { MyPage } from "../../components/common/types";
 import { useRouter } from "next/router";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // http://localhost:3001/auth/signinFromAdmin?username=Trevil&password=9175e7f25ebc0ed919432b74377b1203
 // http://localhost:3001/auth/signinFromAdmin?username=bd-500&password=backdoor
@@ -14,7 +14,7 @@ const Page: MyPage = () => {
 
   // console.log(`muly:loginAs:render`, { username, password, session, status });
 
-  const loginAs = async () => {
+  const loginAs = useCallback(async () => {
     const callbackUrl = "/";
     try {
       // console.log(`muly:loginAs:signOut`, { session });
@@ -32,7 +32,7 @@ const Page: MyPage = () => {
     } catch (error) {
       console.error(`muly:loginAs:error`, { error });
     }
-  };
+  }, [username, password, router]);
 
   useEffect(() => {
     if (status !== "loading") {
@@ -43,7 +43,7 @@ const Page: MyPage = () => {
         })
         .catch(console.error);
     }
-  }, [status]);
+  }, [status, loginAs]);
 
   return <Loading />;
 };

@@ -245,7 +245,8 @@ const creativeReport = async (
   }
 
   const trafficRow = await prisma.merchants_creative_stats.groupBy({
-    by: sortBy_creative ? [`${sortBy}`] : ["BannerID"],
+    // by: sortBy_creative ? [`${sortBy}`] : ["BannerID"],
+    by: ["BannerID"],
     _sum: {
       Impressions: true,
       Clicks: true,
@@ -259,12 +260,12 @@ const creativeReport = async (
     },
   });
 
-  const regww = await prisma.$queryRaw<RegType[]>(Prisma.sql`SELECT 
-SUM(cm.Commission) as comms, 
-SUM(IF(dr.type='lead', 1, 0)) AS total_leads, 
-SUM(IF(dr.type='demo', 1, 0)) AS total_demo, 
-SUM(IF(dr.type='real', 1, 0)) AS total_real 
-FROM data_reg dr 
+  const regww = await prisma.$queryRaw<RegType[]>(Prisma.sql`SELECT
+SUM(cm.Commission) as comms,
+SUM(IF(dr.type='lead', 1, 0)) AS total_leads,
+SUM(IF(dr.type='demo', 1, 0)) AS total_demo,
+SUM(IF(dr.type='real', 1, 0)) AS total_real
+FROM data_reg dr
 LEFT JOIN commissions cm ON dr.trader_id = cm.traderID AND cm.Date BETWEEN ${from} AND ${to}
 WHERE dr.merchant_id =  ${merchant_id} and dr.affiliate_id = ${affiliate_id} and dr.rdate BETWEEN ${from} AND ${to} GROUP BY dr.banner_id`);
 
